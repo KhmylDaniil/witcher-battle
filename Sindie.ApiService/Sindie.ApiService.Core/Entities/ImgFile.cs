@@ -7,7 +7,7 @@ namespace Sindie.ApiService.Core.Entities
 	/// Графический файл
 	/// </summary>
 	public class ImgFile : EntityBase
-	{ 
+	{
 		/// <summary>
 		/// Название файла
 		/// </summary>
@@ -29,7 +29,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// Пользователи
 		/// </summary>
 		public List<User> Users { get; set; }
-		
+
 		/// <summary>
 		/// Игры
 		/// </summary>
@@ -94,6 +94,16 @@ namespace Sindie.ApiService.Core.Entities
 		/// Сумка
 		/// </summary>
 		public Bag Bag { get; set; }
+
+		/// <summary>
+		/// Шаблон существа
+		/// </summary>
+		public CreatureTemplate CreatureTemplate {get; set;}
+
+		/// <summary>
+		/// Существо
+		/// </summary>
+		public Creature Creature { get; set; }
 
 		#endregion navigation properties
 

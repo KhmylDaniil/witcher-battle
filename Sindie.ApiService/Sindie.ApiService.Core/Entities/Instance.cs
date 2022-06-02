@@ -158,6 +158,16 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public List<Character> Characters { get; set; }
 
+		/// <summary>
+		/// Существа
+		/// </summary>
+		public List<Creature> Creatures { get; set; }
+
+		/// <summary>
+		/// Тела существ
+		/// </summary>
+		public List<CreatureBody> CreatureBodies { get; set; }
+
 		#endregion navigation properties
 
 		/// <summary>

@@ -57,7 +57,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Границы модификатора
 		/// </summary>
-		public ParameterBound ParameterBounds { get; set; }
+		public ParameterBound ParameterBounds { get;  protected set; }
 
 		#region navigation properties
 
@@ -78,6 +78,21 @@ namespace Sindie.ApiService.Core.Entities
 		/// Параметры персонажа
 		/// </summary>
 		public List<CharacterParameter> CharacterParameters { get; set; }
+
+		/// <summary>
+		/// Параметры шаблона существа
+		/// </summary>
+		public List<CreatureTemplateParameter> CreatureTemplateParameters { get; set; }
+
+		/// <summary>
+		/// Параметры существа
+		/// </summary>
+		public List<CreatureParameter> CreatureParameters { get; set; }
+
+		/// <summary>
+		/// Способности
+		/// </summary>
+		public List<Ability> Abilities { get; set; } 
 
 		#endregion navigation properties
 	}

@@ -7,7 +7,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 		where TEntity : EntityBase
 	{
 		/// <summary>
-		/// Пустой метод для айдишника фиг знает зачем пустой
+		/// Пустой метод для айдишника
 		/// </summary>
 		/// <param name="builder">Строитель</param>
 		public override void ConfigureId(EntityTypeBuilder<TEntity> builder)

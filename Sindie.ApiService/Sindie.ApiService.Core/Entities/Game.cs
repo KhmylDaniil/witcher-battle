@@ -140,6 +140,16 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public List<Instance> Instances { get; set; }
 
+		/// <summary>
+		/// Шаблоны существ
+		/// </summary>
+		public List<CreatureTemplate> CreatureTemplates { get; set; }
+
+		/// <summary>
+		/// Шаблоны тел
+		/// </summary>
+		public List<BodyTemplate> BodyTemplates { get; set; }
+
 		#endregion navigation properties
 
 		/// <summary>

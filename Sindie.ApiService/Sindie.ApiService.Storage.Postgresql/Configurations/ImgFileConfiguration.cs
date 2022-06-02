@@ -110,6 +110,18 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasForeignKey<Bag>(x => x.ImgFileId)
 				.HasPrincipalKey<ImgFile>(x => x.Id)
 				.OnDelete(DeleteBehavior.SetNull);
+
+			builder.HasOne(x => x.CreatureTemplate)
+				.WithOne(x => x.ImgFile)
+				.HasForeignKey<CreatureTemplate>(x => x.ImgFileId)
+				.HasPrincipalKey<ImgFile>(x => x.Id)
+				.OnDelete(DeleteBehavior.SetNull);
+
+			builder.HasOne(x => x.Creature)
+				.WithOne(x => x.ImgFile)
+				.HasForeignKey<Creature>(x => x.ImgFileId)
+				.HasPrincipalKey<ImgFile>(x => x.Id)
+				.OnDelete(DeleteBehavior.SetNull);
 		}
 	}
 }

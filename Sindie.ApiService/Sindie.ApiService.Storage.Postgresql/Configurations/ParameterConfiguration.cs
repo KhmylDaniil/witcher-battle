@@ -47,6 +47,24 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
+			builder.HasMany(x => x.CreatureParameters)
+				.WithOne(x => x.Parameter)
+				.HasForeignKey(x => x.ParameterId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.CreatureTemplateParameters)
+				.WithOne(x => x.Parameter)
+				.HasForeignKey(x => x.ParameterId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.Abilities)
+				.WithOne(x => x.AttackParameter)
+				.HasForeignKey(x => x.AttackParameterId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
 			var gameNavigationGame = builder.Metadata.FindNavigation(nameof(Parameter.Game));
 			gameNavigationGame.SetField(Parameter.GameField);
 			gameNavigationGame.SetPropertyAccessMode(PropertyAccessMode.Field);
