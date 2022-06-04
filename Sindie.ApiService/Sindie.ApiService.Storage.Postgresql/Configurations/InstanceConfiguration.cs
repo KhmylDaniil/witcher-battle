@@ -88,12 +88,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasMany(x => x.CreatureBodies)
-				.WithOne(x => x.Instance)
-				.HasForeignKey(x => x.InstanceId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
 			var imgFileNavigation = builder.Metadata.FindNavigation(nameof(Instance.ImgFile));
 			imgFileNavigation.SetField(Instance.ImgFileField);
 			imgFileNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);

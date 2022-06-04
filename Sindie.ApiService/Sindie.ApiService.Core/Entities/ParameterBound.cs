@@ -18,8 +18,8 @@
 		/// <param name="minValueParameter">Минимальное значение параметра</param>
 		/// <param name="maxValueParameter">Максимальное значение параметра</param>
 		public ParameterBound(
-			double minValueParameter,
-			double maxValueParameter
+			int minValueParameter,
+			int maxValueParameter
 			)
 		{
 			MinValueParameter = minValueParameter;
@@ -29,11 +29,11 @@
 		/// <summary>
 		/// Минимальное значение параметра
 		/// </summary>
-		public double MinValueParameter { get; set; }
+		public int MinValueParameter { get; set; }
 
 		/// <summary>
 		/// Максимальное значение параметра
 		/// </summary>
-		public double MaxValueParameter { get; set; }
+		public int MaxValueParameter { get; set; }
 	}
 }

@@ -5,14 +5,13 @@ using Sindie.ApiService.Core.Entities;
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
 	/// <summary>
-	/// Конфигурация для сущности Параметр
+	/// Конфигурация для <see cref="ParameterConfiguration"/>
 	/// </summary>
-	public class ParameterConfiguration : HierarchyConfiguration<Parameter>
+	public class ParameterConfiguration : EntityBaseConfiguration<Parameter>
 	{
 		/// <summary>
-		/// Конфигурация для сущности параметр
+		/// Конфигурация для <see cref="ParameterConfiguration"/>
 		/// </summary>
-		/// <param name="builder">Строитель</param>
 		public override void ConfigureChild(EntityTypeBuilder<Parameter> builder)
 		{
 			builder.ToTable("Parameters", "GameRules").
@@ -22,6 +21,15 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasColumnName("GameId")
 				.HasComment("Айди игры")
 				.IsRequired();
+
+			builder.Property(r => r.Name)
+				.HasColumnName("Name")
+				.HasComment("Название параметра")
+				.IsRequired();
+
+			builder.Property(r => r.Description)
+				.HasColumnName("Description")
+				.HasComment("Описание параметра");
 
 			builder.OwnsOne(p => p.ParameterBounds, pb =>
 			{

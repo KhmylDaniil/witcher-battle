@@ -22,13 +22,19 @@ namespace Sindie.ApiService.Core.Entities
 		public const string ImgFileField = nameof(_imgFile);
 
 		/// <summary>
+		/// Поле для <see cref="_creatureTemplate"/>
+		/// </summary>
+		public const string CreatureTemplateField = nameof(_creatureTemplate);
+
+		/// <summary>
 		/// Поле для <see cref="_bodyTemplate"/>
 		/// </summary>
-		public const string CreatureBodyField = nameof(_creatureBody);
+		public const string BodyTemplateField = nameof(_bodyTemplate);
 
 		private Instance _instance;
 		private ImgFile _imgFile;
-		private CreatureBody _creatureBody;
+		private CreatureTemplate _creatureTemplate;
+		private BodyTemplate _bodyTemplate;
 
 		/// <summary>
 		/// Пустой конструктор
@@ -48,9 +54,14 @@ namespace Sindie.ApiService.Core.Entities
 		public Guid? ImgFileId { get; protected set; }
 
 		/// <summary>
-		/// Айди тела существа
+		/// Айди шаблона существа
 		/// </summary>
-		public Guid CreatureBodyId { get; protected set; }
+		public Guid CreatureTemplateId { get; protected set; }
+
+		/// <summary>
+		/// Айди шаблона тела
+		/// </summary>
+		public Guid BodyTemplateId { get; protected set; }
 
 		/// <summary>
 		/// Название существа
@@ -66,7 +77,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// Тип существа
 		/// </summary>
 		public string Type { get; set; }
-
 
 		#region navigation properties
 
@@ -99,13 +109,26 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Тело существа
 		/// </summary>
-		public CreatureBody CreatureBody
+		public CreatureTemplate CreatureTemplate
 		{
-			get => _creatureBody;
+			get => _creatureTemplate;
 			set
 			{
-				_creatureBody = value ?? throw new ApplicationException("Необходимо передать тело существа");
-				CreatureBodyId = value.Id;
+				_creatureTemplate = value ?? throw new ApplicationException("Необходимо передать шаблон существа");
+				CreatureTemplateId = value.Id;
+			}
+		}
+
+		/// <summary>
+		/// Шаблон тела
+		/// </summary>
+		public BodyTemplate BodyTemplate
+		{
+			get => _bodyTemplate;
+			set
+			{
+				_bodyTemplate = value ?? throw new ApplicationException("Необходимо передать шаблон тела");
+				BodyTemplateId = value.Id;
 			}
 		}
 
@@ -123,6 +146,11 @@ namespace Sindie.ApiService.Core.Entities
 		/// Наложенные состояния
 		/// </summary>
 		public List<Condition> Conditions { get; set; }
+
+		/// <summary>
+		/// Части тела
+		/// </summary>
+		public List<BodyPart> BodyParts { get; protected set; }
 
 		#endregion navigation properties
 	}

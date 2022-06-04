@@ -13,13 +13,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public const string GameField = nameof(_game);
 
-		/// <summary>
-		/// Поле для <see cref="_creatureTemplate"/>
-		/// </summary>
-		public const string CreatureTemplateField = nameof(_creatureTemplate);
-
 		private Game _game;
-		private CreatureTemplate _creatureTemplate;
 
 		/// <summary>
 		/// Пустой конструктор
@@ -27,21 +21,21 @@ namespace Sindie.ApiService.Core.Entities
 		protected BodyTemplate()
 		{
 		}
-		
+
 		/// <summary>
-		/// Название шаблона
+		/// Название
 		/// </summary>
 		public string Name { get; set; }
+
+		/// <summary>
+		/// Описание
+		/// </summary>
+		public string Description { get; set; }
 
 		/// <summary>
 		/// Айди игры
 		/// </summary>
 		public Guid GameId { get; protected set; }
-
-		/// <summary>
-		/// Айди шаблона тела
-		/// </summary>
-		public Guid CreatureTemplateId { get; protected set; }
 
 		#region navigation properties
 
@@ -59,27 +53,20 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Шаблон существа
+		/// Список частей тела
 		/// </summary>
-		public CreatureTemplate CreatureTemplate
-		{
-			get => _creatureTemplate;
-			protected set
-			{
-				_creatureTemplate = value ?? throw new ApplicationException("Необходимо передать шаблон существа");
-				CreatureTemplateId = value.Id;
-			}
-		}
+		public List<BodyTemplatePart> BodyTemplateParts { get; set; }
 
 		/// <summary>
-		/// Части тела
+		/// Шаблоны существ
 		/// </summary>
-		public List<BodyPart> BodyParts { get; protected set; }
+		public List<CreatureTemplate> CreatureTemplates { get; set; }
 
 		/// <summary>
-		/// Тела
+		/// Существа
 		/// </summary>
-		public List<CreatureBody> CreatureBodies { get; set; }
+		public List<Creature> Creatures { get; set; }
+	
 
 		#endregion navigation properties
 	}

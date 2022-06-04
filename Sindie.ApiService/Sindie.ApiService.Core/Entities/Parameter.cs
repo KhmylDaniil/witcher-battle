@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Entities
 	/// <summary>
 	/// Параметр
 	/// </summary>
-	public class Parameter : Prerequisite
+	public class Parameter : EntityBase
 	{
 		/// <summary>
 		/// Поле для <see cref="_game"/>
@@ -28,25 +28,23 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="game">Игра</param>
 		/// <param name="minValueParameter">Минимальное значение параметра</param>
 		/// <param name="maxValueParameter">Максимальное значение параметра</param>
-		/// <param name="imgFile">Графический файл</param>
 		/// <param name="name">Имя</param>
 		/// <param name="description">Описание</param>
 		public Parameter(
 			Game game,
-			double minValueParameter,
-			double maxValueParameter,
-			ImgFile imgFile,
+			int minValueParameter,
+			int maxValueParameter,
 			string name,
 			string description)
-			: base(
-				  imgFile,
-				  name,
-				  description)
 		{
 			Game = game;
+
 			ParameterBounds = new ParameterBound(
 				minValueParameter,
 				maxValueParameter);
+			CreatureParameters = new List<CreatureParameter>();
+			CreatureTemplateParameters = new List<CreatureTemplateParameter>();
+			Abilities = new List<Ability>();
 		}
 
 		/// <summary>
@@ -55,7 +53,17 @@ namespace Sindie.ApiService.Core.Entities
 		public Guid GameId { get; protected set; }
 
 		/// <summary>
-		/// Границы модификатора
+		/// Название параметра
+		/// </summary>
+		public string Name { get; set; }
+
+		/// <summary>
+		/// Описание параметра
+		/// </summary>
+		public string Description { get; set; }
+
+		/// <summary>
+		/// Границы параметра
 		/// </summary>
 		public ParameterBound ParameterBounds { get;  protected set; }
 
@@ -95,5 +103,30 @@ namespace Sindie.ApiService.Core.Entities
 		public List<Ability> Abilities { get; set; } 
 
 		#endregion navigation properties
+
+		/// <summary>
+		/// Изменение параметра
+		/// </summary>
+		/// <param name="game">Игра</param>
+		/// <param name="imgFile">Графический файл</param>
+		/// <param name="name">Название</param>
+		/// <param name="description">Описание</param>
+		/// <param name="minValueParameter">МИнимальное значение</param>
+		/// <param name="maxValueParameter">Максимальное значение</param>
+		public void ChangeParameter(
+			Game game,
+			string name,
+			string description,
+			int minValueParameter,
+			int maxValueParameter)
+		{
+			Game = game;
+			Name = name;
+			Description = description;
+			ParameterBounds = new ParameterBound(
+				minValueParameter,
+				maxValueParameter);
+
+		}
 	}
 }

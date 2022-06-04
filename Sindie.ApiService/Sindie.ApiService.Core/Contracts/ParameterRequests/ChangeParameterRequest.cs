@@ -4,14 +4,19 @@ using System;
 namespace Sindie.ApiService.Core.Contracts.ParameterRequests
 {
 	/// <summary>
-	/// Команда создания параметра
+	/// Запрос на изменение параметра
 	/// </summary>
-	public class CreateParameterCommand : IRequest<CreateParameterResponse>
+	public class ChangeParameterRequest: IRequest
 	{
 		/// <summary>
-		/// АйДи игры
+		/// Айди игры
 		/// </summary>
 		public Guid GameId { get; set; }
+
+		/// <summary>
+		/// Айди
+		/// </summary>
+		public Guid Id { get; set; }
 
 		/// <summary>
 		/// Название параметра
@@ -26,11 +31,11 @@ namespace Sindie.ApiService.Core.Contracts.ParameterRequests
 		/// <summary>
 		/// Минимальное значение параметра
 		/// </summary>
-		public double MinValueParameter { get; set; }
+		public int MinValueParameter { get; set; }
 
 		/// <summary>
 		/// Максимальное значение параметра
 		/// </summary>
-		public double MaxValueParameter { get; set; }
+		public int MaxValueParameter { get; set; }
 	}
 }

@@ -23,16 +23,14 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Айди игры")
 				.IsRequired();
 
-
-			builder.Property(r => r.CreatureTemplateId)
-				.HasColumnName("CreatureTemplateId")
-				.HasComment("Айди шаблона существа")
-				.IsRequired();
-
 			builder.Property(r => r.Name)
 				.HasColumnName("Name")
 				.HasComment("Название шаблона тела")
 				.IsRequired();
+
+			builder.Property(x => x.Description)
+				.HasColumnName("Description")
+				.HasComment("Описание");
 
 			builder.HasOne(x => x.Game)
 				.WithMany(x => x.BodyTemplates)
@@ -40,19 +38,20 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasOne(x => x.CreatureTemplate)
-				.WithOne(x => x.BodyTemplate)
-				.HasForeignKey<BodyTemplate>(x => x.CreatureTemplateId)
-				.HasPrincipalKey<CreatureTemplate>(x => x.BodyTemplateId)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			builder.HasMany(x => x.CreatureBodies)
+			builder.HasMany(x => x.CreatureTemplates)
 				.WithOne(x => x.BodyTemplate)
 				.HasForeignKey(x => x.BodyTemplateId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.OwnsMany(bt => bt.BodyParts, bp =>
+			builder.HasMany(x => x.Creatures)
+				.WithOne(x => x.BodyTemplate)
+				.HasForeignKey(x => x.BodyTemplateId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
+
+			builder.OwnsMany(bt => bt.BodyTemplateParts, bp =>
 			{
 				bp.Property(bp => bp.Name)
 				.HasColumnName("Name")
@@ -73,25 +72,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasColumnName("MaxToHit")
 				.HasComment("Максимальное значение попадания")
 				.IsRequired();
-
-				bp.Property(bp => bp.StartingArmor)
-				.HasColumnName("StartingArmor")
-				.HasComment("Начальная броня")
-				.IsRequired();
-
-				bp.Property(bp => bp.CurrentArmor)
-				.HasColumnName("CurrentArmor")
-				.HasComment("Текущая броня")
-				.IsRequired();
 			});
 
 			var gameNavigation = builder.Metadata.FindNavigation(nameof(BodyTemplate.Game));
 			gameNavigation.SetField(BodyTemplate.GameField);
 			gameNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
-
-			var creatureTemplateNavigation = builder.Metadata.FindNavigation(nameof(BodyTemplate.CreatureTemplate));
-			creatureTemplateNavigation.SetField(BodyTemplate.CreatureTemplateField);
-			creatureTemplateNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

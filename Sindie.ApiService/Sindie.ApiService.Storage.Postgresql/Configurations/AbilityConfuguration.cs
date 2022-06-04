@@ -63,7 +63,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasMany(x => x.Creatures)
-				.WithMany(x => x.Abilities);
+				.WithMany(x => x.Abilities)
+				.UsingEntity(x => x.ToTable("CreatureAbilities", "GameInstance"));
 
 			builder.HasMany(x => x.AppliedConditions)
 				.WithOne(x => x.Ability)
@@ -80,6 +81,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			var creatureTemplateNavigation = builder.Metadata.FindNavigation(nameof(Ability.CreatureTemplate));
 			creatureTemplateNavigation.SetField(Ability.CreatureTemplateField);
 			creatureTemplateNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+			var parameterNavigation = builder.Metadata.FindNavigation(nameof(Ability.AttackParameter));
+			parameterNavigation.SetField(Ability.ParameterField);
+			parameterNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

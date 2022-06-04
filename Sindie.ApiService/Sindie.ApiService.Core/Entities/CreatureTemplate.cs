@@ -116,6 +116,16 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public List<CreatureTemplateParameter> CreatureTemplateParameters { get; protected set; }
 
+		/// <summary>
+		/// Части тела
+		/// </summary>
+		public List<BodyPart> BodyParts { get; protected set; }
+
+		/// <summary>
+		/// Существа
+		/// </summary>
+		public List<Creature> Creatures { get; set; }
+
 		#endregion navigation properties
 
 		//private int Roll(int parameter)

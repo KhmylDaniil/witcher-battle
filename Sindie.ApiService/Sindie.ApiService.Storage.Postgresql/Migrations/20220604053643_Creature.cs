@@ -15,6 +15,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 schema: "Notifications",
                 table: "NotificationTradeRequests");
 
+            migrationBuilder.DropForeignKey(
+                name: "FK_Parameters_Prerequisites_Id",
+                schema: "GameRules",
+                table: "Parameters");
+
             migrationBuilder.DropIndex(
                 name: "IX_NotificationTradeRequests_BagId",
                 schema: "Notifications",
@@ -24,6 +29,122 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 name: "BagId",
                 schema: "Notifications",
                 table: "NotificationTradeRequests");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "MinValueParameters",
+                schema: "GameRules",
+                table: "Parameters",
+                type: "integer",
+                nullable: true,
+                comment: "Минимальные значения параметра",
+                oldClrType: typeof(double),
+                oldType: "double precision",
+                oldNullable: true,
+                oldComment: "Минимальные значения параметра");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "MaxValueParameters",
+                schema: "GameRules",
+                table: "Parameters",
+                type: "integer",
+                nullable: true,
+                comment: "Максимальные значения параметра",
+                oldClrType: typeof(double),
+                oldType: "double precision",
+                oldNullable: true,
+                oldComment: "Максимальные значения параметра");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "CreatedByUserId",
+                schema: "GameRules",
+                table: "Parameters",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedOn",
+                schema: "GameRules",
+                table: "Parameters",
+                type: "timestamp with time zone",
+                nullable: false,
+                defaultValueSql: "now() at time zone 'utc'");
+
+            migrationBuilder.AddColumn<string>(
+                name: "Description",
+                schema: "GameRules",
+                table: "Parameters",
+                type: "text",
+                nullable: true,
+                comment: "Описание параметра");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "ModifiedByUserId",
+                schema: "GameRules",
+                table: "Parameters",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedOn",
+                schema: "GameRules",
+                table: "Parameters",
+                type: "timestamp with time zone",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<string>(
+                name: "Name",
+                schema: "GameRules",
+                table: "Parameters",
+                type: "text",
+                nullable: false,
+                defaultValue: "",
+                comment: "Название параметра");
+
+            migrationBuilder.AddColumn<string>(
+                name: "RoleCreatedUser",
+                schema: "GameRules",
+                table: "Parameters",
+                type: "text",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "RoleModifiedUser",
+                schema: "GameRules",
+                table: "Parameters",
+                type: "text",
+                nullable: true);
+
+            migrationBuilder.CreateTable(
+                name: "BodyTemplates",
+                schema: "GameRules",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
+                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название шаблона тела"),
+                    Description = table.Column<string>(type: "text", nullable: true, comment: "Описание"),
+                    GameId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди игры"),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
+                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BodyTemplates", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BodyTemplates_Games_GameId",
+                        column: x => x.GameId,
+                        principalSchema: "BaseGame",
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Шаблоны тел");
 
             migrationBuilder.CreateTable(
                 name: "Conditions",
@@ -46,44 +167,29 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 comment: "Состояния");
 
             migrationBuilder.CreateTable(
-                name: "Creatures",
+                name: "BodyTemplatePart",
                 schema: "GameRules",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
-                    InstanceId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди Экземпляра"),
-                    ImgFileId = table.Column<Guid>(type: "uuid", nullable: true, comment: "Айди графического файла"),
-                    CreatureBodyId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди тела существа"),
-                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название существа"),
-                    Description = table.Column<string>(type: "text", nullable: true, comment: "Описание шаблона"),
-                    Type = table.Column<string>(type: "text", nullable: false, comment: "Тип шаблона существа"),
-                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
-                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
-                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
+                    BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
+                    DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
+                    MinToHit = table.Column<int>(type: "integer", nullable: false, comment: "Минимальное значение попадания"),
+                    MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Creatures", x => x.Id);
-                    table.UniqueConstraint("AK_Creatures_CreatureBodyId", x => x.CreatureBodyId);
+                    table.PrimaryKey("PK_BodyTemplatePart", x => new { x.BodyTemplateId, x.Id });
                     table.ForeignKey(
-                        name: "FK_Creatures_ImgFiles_ImgFileId",
-                        column: x => x.ImgFileId,
-                        principalSchema: "System",
-                        principalTable: "ImgFiles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "FK_Creatures_Instances_InstanceId",
-                        column: x => x.InstanceId,
-                        principalSchema: "GameInstance",
-                        principalTable: "Instances",
+                        name: "FK_BodyTemplatePart_BodyTemplates_BodyTemplateId",
+                        column: x => x.BodyTemplateId,
+                        principalSchema: "GameRules",
+                        principalTable: "BodyTemplates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                },
-                comment: "Существа");
+                });
 
             migrationBuilder.CreateTable(
                 name: "CreatureTemplates",
@@ -107,7 +213,13 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CreatureTemplates", x => x.Id);
-                    table.UniqueConstraint("AK_CreatureTemplates_BodyTemplateId", x => x.BodyTemplateId);
+                    table.ForeignKey(
+                        name: "FK_CreatureTemplates_BodyTemplates_BodyTemplateId",
+                        column: x => x.BodyTemplateId,
+                        principalSchema: "GameRules",
+                        principalTable: "BodyTemplates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CreatureTemplates_Games_GameId",
                         column: x => x.GameId,
@@ -124,69 +236,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         onDelete: ReferentialAction.SetNull);
                 },
                 comment: "Шаблоны существ");
-
-            migrationBuilder.CreateTable(
-                name: "ConditionCreature",
-                schema: "GameRules",
-                columns: table => new
-                {
-                    ConditionsId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreaturesId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ConditionCreature", x => new { x.ConditionsId, x.CreaturesId });
-                    table.ForeignKey(
-                        name: "FK_ConditionCreature_Conditions_ConditionsId",
-                        column: x => x.ConditionsId,
-                        principalSchema: "GameRules",
-                        principalTable: "Conditions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ConditionCreature_Creatures_CreaturesId",
-                        column: x => x.CreaturesId,
-                        principalSchema: "GameRules",
-                        principalTable: "Creatures",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CreatureParameters",
-                schema: "GameInstance",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
-                    CreatureId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди существа"),
-                    ParameterId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди параметра"),
-                    ParametrValue = table.Column<double>(type: "double precision", nullable: false, comment: "Значение параметра"),
-                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
-                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
-                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CreatureParameters", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CreatureParameters_Creatures_CreatureId",
-                        column: x => x.CreatureId,
-                        principalSchema: "GameRules",
-                        principalTable: "Creatures",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CreatureParameters_Parameters_ParameterId",
-                        column: x => x.ParameterId,
-                        principalSchema: "GameRules",
-                        principalTable: "Parameters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                },
-                comment: "Параметры существа");
 
             migrationBuilder.CreateTable(
                 name: "Abilities",
@@ -230,14 +279,18 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 comment: "Способности");
 
             migrationBuilder.CreateTable(
-                name: "BodyTemplates",
-                schema: "GameRules",
+                name: "Creatures",
+                schema: "GameInstance",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
-                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название шаблона тела"),
-                    GameId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди игры"),
+                    InstanceId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди экземпляра"),
+                    ImgFileId = table.Column<Guid>(type: "uuid", nullable: true, comment: "Айди графического файла"),
                     CreatureTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона существа"),
+                    BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона тела"),
+                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название существа"),
+                    Description = table.Column<string>(type: "text", nullable: true, comment: "Описание шаблона"),
+                    Type = table.Column<string>(type: "text", nullable: false, comment: "Тип шаблона существа"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -247,23 +300,37 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BodyTemplates", x => x.Id);
+                    table.PrimaryKey("PK_Creatures", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BodyTemplates_CreatureTemplates_CreatureTemplateId",
+                        name: "FK_Creatures_BodyTemplates_BodyTemplateId",
+                        column: x => x.BodyTemplateId,
+                        principalSchema: "GameRules",
+                        principalTable: "BodyTemplates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Creatures_CreatureTemplates_CreatureTemplateId",
                         column: x => x.CreatureTemplateId,
                         principalSchema: "GameRules",
                         principalTable: "CreatureTemplates",
-                        principalColumn: "BodyTemplateId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BodyTemplates_Games_GameId",
-                        column: x => x.GameId,
-                        principalSchema: "BaseGame",
-                        principalTable: "Games",
+                        name: "FK_Creatures_ImgFiles_ImgFileId",
+                        column: x => x.ImgFileId,
+                        principalSchema: "System",
+                        principalTable: "ImgFiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Creatures_Instances_InstanceId",
+                        column: x => x.InstanceId,
+                        principalSchema: "GameInstance",
+                        principalTable: "Instances",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 },
-                comment: "Шаблоны тел");
+                comment: "Существа");
 
             migrationBuilder.CreateTable(
                 name: "CreatureTemplateParameters",
@@ -302,103 +369,41 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 comment: "Параметры шаблона существа");
 
             migrationBuilder.CreateTable(
-                name: "AbilityCreature",
+                name: "CreatureTemplates_BodyParts",
                 schema: "GameRules",
                 columns: table => new
                 {
-                    AbilitiesId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreaturesId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AbilityCreature", x => new { x.AbilitiesId, x.CreaturesId });
-                    table.ForeignKey(
-                        name: "FK_AbilityCreature_Abilities_AbilitiesId",
-                        column: x => x.AbilitiesId,
-                        principalSchema: "GameRules",
-                        principalTable: "Abilities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AbilityCreature_Creatures_CreaturesId",
-                        column: x => x.CreaturesId,
-                        principalSchema: "GameRules",
-                        principalTable: "Creatures",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AppliedCondition",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    AbilityId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ApplyChance = table.Column<double>(type: "double precision", nullable: false),
-                    ConditionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
-                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppliedCondition", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppliedCondition_Abilities_AbilityId",
-                        column: x => x.AbilityId,
-                        principalSchema: "GameRules",
-                        principalTable: "Abilities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AppliedCondition_Conditions_ConditionId",
-                        column: x => x.ConditionId,
-                        principalSchema: "GameRules",
-                        principalTable: "Conditions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "BodyTemplates_BodyParts",
-                schema: "GameRules",
-                columns: table => new
-                {
-                    BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatureTemplateId = table.Column<Guid>(type: "uuid", nullable: false),
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Начальная броня"),
+                    CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
                     DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
                     MinToHit = table.Column<int>(type: "integer", nullable: false, comment: "Минимальное значение попадания"),
-                    MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания"),
-                    StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Начальная броня"),
-                    CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня")
+                    MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BodyTemplates_BodyParts", x => new { x.BodyTemplateId, x.Id });
+                    table.PrimaryKey("PK_CreatureTemplates_BodyParts", x => new { x.CreatureTemplateId, x.Id });
                     table.ForeignKey(
-                        name: "FK_BodyTemplates_BodyParts_BodyTemplates_BodyTemplateId",
-                        column: x => x.BodyTemplateId,
+                        name: "FK_CreatureTemplates_BodyParts_CreatureTemplates_CreatureTempl~",
+                        column: x => x.CreatureTemplateId,
                         principalSchema: "GameRules",
-                        principalTable: "BodyTemplates",
+                        principalTable: "CreatureTemplates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "CreatureBodies",
-                schema: "GameInstance",
+                name: "AppliedConditions",
+                schema: "GameRules",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
-                    InstanceId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди экземпляра"),
-                    BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона тела"),
-                    CreatureId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди сущесттва"),
-                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название тела существа"),
+                    AbilityId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди способнности"),
+                    ApplyChance = table.Column<double>(type: "double precision", nullable: false, comment: "Шанс применения"),
+                    ConditionId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди состояния"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -408,54 +413,137 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CreatureBodies", x => x.Id);
+                    table.PrimaryKey("PK_AppliedConditions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CreatureBodies_BodyTemplates_BodyTemplateId",
-                        column: x => x.BodyTemplateId,
+                        name: "FK_AppliedConditions_Abilities_AbilityId",
+                        column: x => x.AbilityId,
                         principalSchema: "GameRules",
-                        principalTable: "BodyTemplates",
+                        principalTable: "Abilities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CreatureBodies_Creatures_CreatureId",
-                        column: x => x.CreatureId,
+                        name: "FK_AppliedConditions_Conditions_ConditionId",
+                        column: x => x.ConditionId,
                         principalSchema: "GameRules",
-                        principalTable: "Creatures",
-                        principalColumn: "CreatureBodyId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CreatureBodies_Instances_InstanceId",
-                        column: x => x.InstanceId,
-                        principalSchema: "GameInstance",
-                        principalTable: "Instances",
+                        principalTable: "Conditions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 },
-                comment: "Шаблоны тел");
+                comment: "Применяемые состояния");
 
             migrationBuilder.CreateTable(
-                name: "CreatureBodies_BodyParts",
+                name: "CreatureAbilities",
                 schema: "GameInstance",
                 columns: table => new
                 {
-                    CreatureBodyId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
-                    DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
-                    MinToHit = table.Column<int>(type: "integer", nullable: false, comment: "Минимальное значение попадания"),
-                    MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания"),
-                    StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Начальная броня"),
-                    CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня")
+                    AbilitiesId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreaturesId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CreatureBodies_BodyParts", x => new { x.CreatureBodyId, x.Id });
+                    table.PrimaryKey("PK_CreatureAbilities", x => new { x.AbilitiesId, x.CreaturesId });
                     table.ForeignKey(
-                        name: "FK_CreatureBodies_BodyParts_CreatureBodies_CreatureBodyId",
-                        column: x => x.CreatureBodyId,
+                        name: "FK_CreatureAbilities_Abilities_AbilitiesId",
+                        column: x => x.AbilitiesId,
+                        principalSchema: "GameRules",
+                        principalTable: "Abilities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CreatureAbilities_Creatures_CreaturesId",
+                        column: x => x.CreaturesId,
                         principalSchema: "GameInstance",
-                        principalTable: "CreatureBodies",
+                        principalTable: "Creatures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CreatureParameters",
+                schema: "GameInstance",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
+                    CreatureId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди существа"),
+                    ParameterId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди параметра"),
+                    ParametrValue = table.Column<double>(type: "double precision", nullable: false, comment: "Значение параметра"),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
+                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CreatureParameters", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CreatureParameters_Creatures_CreatureId",
+                        column: x => x.CreatureId,
+                        principalSchema: "GameInstance",
+                        principalTable: "Creatures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CreatureParameters_Parameters_ParameterId",
+                        column: x => x.ParameterId,
+                        principalSchema: "GameRules",
+                        principalTable: "Parameters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Параметры существа");
+
+            migrationBuilder.CreateTable(
+                name: "Creatures_BodyParts",
+                schema: "GameInstance",
+                columns: table => new
+                {
+                    CreatureId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Начальная броня"),
+                    CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня"),
+                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
+                    DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
+                    MinToHit = table.Column<int>(type: "integer", nullable: false, comment: "Минимальное значение попадания"),
+                    MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Creatures_BodyParts", x => new { x.CreatureId, x.Id });
+                    table.ForeignKey(
+                        name: "FK_Creatures_BodyParts_Creatures_CreatureId",
+                        column: x => x.CreatureId,
+                        principalSchema: "GameInstance",
+                        principalTable: "Creatures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CurrentConditions",
+                schema: "GameInstance",
+                columns: table => new
+                {
+                    ConditionsId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreaturesId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CurrentConditions", x => new { x.ConditionsId, x.CreaturesId });
+                    table.ForeignKey(
+                        name: "FK_CurrentConditions_Conditions_ConditionsId",
+                        column: x => x.ConditionsId,
+                        principalSchema: "GameRules",
+                        principalTable: "Conditions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CurrentConditions_Creatures_CreaturesId",
+                        column: x => x.CreaturesId,
+                        principalSchema: "GameInstance",
+                        principalTable: "Creatures",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -473,27 +561,16 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 column: "CreatureTemplateId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AbilityCreature_CreaturesId",
+                name: "IX_AppliedConditions_AbilityId",
                 schema: "GameRules",
-                table: "AbilityCreature",
-                column: "CreaturesId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppliedCondition_AbilityId",
-                table: "AppliedCondition",
+                table: "AppliedConditions",
                 column: "AbilityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppliedCondition_ConditionId",
-                table: "AppliedCondition",
-                column: "ConditionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BodyTemplates_CreatureTemplateId",
+                name: "IX_AppliedConditions_ConditionId",
                 schema: "GameRules",
-                table: "BodyTemplates",
-                column: "CreatureTemplateId",
-                unique: true);
+                table: "AppliedConditions",
+                column: "ConditionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BodyTemplates_GameId",
@@ -502,29 +579,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ConditionCreature_CreaturesId",
-                schema: "GameRules",
-                table: "ConditionCreature",
+                name: "IX_CreatureAbilities_CreaturesId",
+                schema: "GameInstance",
+                table: "CreatureAbilities",
                 column: "CreaturesId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CreatureBodies_BodyTemplateId",
-                schema: "GameInstance",
-                table: "CreatureBodies",
-                column: "BodyTemplateId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CreatureBodies_CreatureId",
-                schema: "GameInstance",
-                table: "CreatureBodies",
-                column: "CreatureId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CreatureBodies_InstanceId",
-                schema: "GameInstance",
-                table: "CreatureBodies",
-                column: "InstanceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CreatureParameters_CreatureId",
@@ -539,15 +597,27 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 column: "ParameterId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Creatures_BodyTemplateId",
+                schema: "GameInstance",
+                table: "Creatures",
+                column: "BodyTemplateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Creatures_CreatureTemplateId",
+                schema: "GameInstance",
+                table: "Creatures",
+                column: "CreatureTemplateId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Creatures_ImgFileId",
-                schema: "GameRules",
+                schema: "GameInstance",
                 table: "Creatures",
                 column: "ImgFileId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Creatures_InstanceId",
-                schema: "GameRules",
+                schema: "GameInstance",
                 table: "Creatures",
                 column: "InstanceId");
 
@@ -564,6 +634,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 column: "ParameterId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CreatureTemplates_BodyTemplateId",
+                schema: "GameRules",
+                table: "CreatureTemplates",
+                column: "BodyTemplateId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CreatureTemplates_GameId",
                 schema: "GameRules",
                 table: "CreatureTemplates",
@@ -575,27 +651,26 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 table: "CreatureTemplates",
                 column: "ImgFileId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CurrentConditions_CreaturesId",
+                schema: "GameInstance",
+                table: "CurrentConditions",
+                column: "CreaturesId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AbilityCreature",
+                name: "AppliedConditions",
                 schema: "GameRules");
 
             migrationBuilder.DropTable(
-                name: "AppliedCondition");
-
-            migrationBuilder.DropTable(
-                name: "BodyTemplates_BodyParts",
+                name: "BodyTemplatePart",
                 schema: "GameRules");
 
             migrationBuilder.DropTable(
-                name: "ConditionCreature",
-                schema: "GameRules");
-
-            migrationBuilder.DropTable(
-                name: "CreatureBodies_BodyParts",
+                name: "CreatureAbilities",
                 schema: "GameInstance");
 
             migrationBuilder.DropTable(
@@ -603,7 +678,19 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 schema: "GameInstance");
 
             migrationBuilder.DropTable(
+                name: "Creatures_BodyParts",
+                schema: "GameInstance");
+
+            migrationBuilder.DropTable(
                 name: "CreatureTemplateParameters",
+                schema: "GameInstance");
+
+            migrationBuilder.DropTable(
+                name: "CreatureTemplates_BodyParts",
+                schema: "GameRules");
+
+            migrationBuilder.DropTable(
+                name: "CurrentConditions",
                 schema: "GameInstance");
 
             migrationBuilder.DropTable(
@@ -615,20 +702,80 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 schema: "GameRules");
 
             migrationBuilder.DropTable(
-                name: "CreatureBodies",
+                name: "Creatures",
                 schema: "GameInstance");
+
+            migrationBuilder.DropTable(
+                name: "CreatureTemplates",
+                schema: "GameRules");
 
             migrationBuilder.DropTable(
                 name: "BodyTemplates",
                 schema: "GameRules");
 
-            migrationBuilder.DropTable(
-                name: "Creatures",
-                schema: "GameRules");
+            migrationBuilder.DropColumn(
+                name: "CreatedByUserId",
+                schema: "GameRules",
+                table: "Parameters");
 
-            migrationBuilder.DropTable(
-                name: "CreatureTemplates",
-                schema: "GameRules");
+            migrationBuilder.DropColumn(
+                name: "CreatedOn",
+                schema: "GameRules",
+                table: "Parameters");
+
+            migrationBuilder.DropColumn(
+                name: "Description",
+                schema: "GameRules",
+                table: "Parameters");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedByUserId",
+                schema: "GameRules",
+                table: "Parameters");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedOn",
+                schema: "GameRules",
+                table: "Parameters");
+
+            migrationBuilder.DropColumn(
+                name: "Name",
+                schema: "GameRules",
+                table: "Parameters");
+
+            migrationBuilder.DropColumn(
+                name: "RoleCreatedUser",
+                schema: "GameRules",
+                table: "Parameters");
+
+            migrationBuilder.DropColumn(
+                name: "RoleModifiedUser",
+                schema: "GameRules",
+                table: "Parameters");
+
+            migrationBuilder.AlterColumn<double>(
+                name: "MinValueParameters",
+                schema: "GameRules",
+                table: "Parameters",
+                type: "double precision",
+                nullable: true,
+                comment: "Минимальные значения параметра",
+                oldClrType: typeof(int),
+                oldType: "integer",
+                oldNullable: true,
+                oldComment: "Минимальные значения параметра");
+
+            migrationBuilder.AlterColumn<double>(
+                name: "MaxValueParameters",
+                schema: "GameRules",
+                table: "Parameters",
+                type: "double precision",
+                nullable: true,
+                comment: "Максимальные значения параметра",
+                oldClrType: typeof(int),
+                oldType: "integer",
+                oldNullable: true,
+                oldComment: "Максимальные значения параметра");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "BagId",
@@ -651,6 +798,16 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 principalSchema: "GameInstance",
                 principalTable: "Bags",
                 principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Parameters_Prerequisites_Id",
+                schema: "GameRules",
+                table: "Parameters",
+                column: "Id",
+                principalSchema: "GameRules",
+                principalTable: "Prerequisites",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
     }
 }

@@ -19,21 +19,26 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 		/// </summary>
 		public override void ConfigureChild(EntityTypeBuilder<Creature> builder)
 		{
-			builder.ToTable("Creatures", "GameRules").
+			builder.ToTable("Creatures", "GameInstance").
 				HasComment("Существа");
 
 			builder.Property(r => r.InstanceId)
 				.HasColumnName("InstanceId")
-				.HasComment("Айди Экземпляра")
+				.HasComment("Айди экземпляра")
 				.IsRequired();
 
 			builder.Property(r => r.ImgFileId)
 				.HasColumnName("ImgFileId")
 				.HasComment("Айди графического файла");
 
-			builder.Property(r => r.CreatureBodyId)
-				.HasColumnName("CreatureBodyId")
-				.HasComment("Айди тела существа")
+			builder.Property(r => r.CreatureTemplateId)
+				.HasColumnName("CreatureTemplateId")
+				.HasComment("Айди шаблона существа")
+				.IsRequired();
+
+			builder.Property(r => r.BodyTemplateId)
+				.HasColumnName("BodyTemplateId")
+				.HasComment("Айди шаблона тела")
 				.IsRequired();
 
 			builder.Property(r => r.Name)
@@ -62,10 +67,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey<ImgFile>(x => x.Id)
 				.OnDelete(DeleteBehavior.SetNull);
 
-			builder.HasOne(x => x.CreatureBody)
-				.WithOne(x => x.Creature)
-				.HasForeignKey<CreatureBody>(x => x.CreatureId)
-				.HasPrincipalKey<Creature>(x => x.CreatureBodyId)
+			builder.HasOne(x => x.CreatureTemplate)
+				.WithMany(x => x.Creatures)
+				.HasForeignKey(x => x.CreatureTemplateId)
+				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasMany(x => x.CreatureParameters)
@@ -73,6 +78,47 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasForeignKey(x => x.CreatureId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.Abilities)
+				.WithMany(x => x.Creatures)
+				.UsingEntity(x => x.ToTable("CreatureAbilities", "GameInstance"));
+
+			builder.HasMany(x => x.Conditions)
+				.WithMany(x => x.Creatures)
+				.UsingEntity(x => x.ToTable("CurrentConditions", "GameInstance"));
+
+			builder.OwnsMany(bt => bt.BodyParts, bp =>
+			{
+				bp.Property(bp => bp.Name)
+				.HasColumnName("Name")
+				.HasComment("Название")
+				.IsRequired();
+
+				bp.Property(bp => bp.DamageModifer)
+				.HasColumnName("DamageModifer")
+				.HasComment("Модификатор урона")
+				.IsRequired();
+
+				bp.Property(bp => bp.MinToHit)
+				.HasColumnName("MinToHit")
+				.HasComment("Минимальное значение попадания")
+				.IsRequired();
+
+				bp.Property(bp => bp.MaxToHit)
+				.HasColumnName("MaxToHit")
+				.HasComment("Максимальное значение попадания")
+				.IsRequired();
+
+				bp.Property(bp => bp.StartingArmor)
+				.HasColumnName("StartingArmor")
+				.HasComment("Начальная броня")
+				.IsRequired();
+
+				bp.Property(bp => bp.CurrentArmor)
+				.HasColumnName("CurrentArmor")
+				.HasComment("Текущая броня")
+				.IsRequired();
+			});
 
 			var instanceNavigation = builder.Metadata.FindNavigation(nameof(Creature.Instance));
 			instanceNavigation.SetField(Creature.InstanceField);
@@ -82,9 +128,13 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			imgFileNavigation.SetField(Creature.ImgFileField);
 			imgFileNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
-			var creatureBodyNavigation = builder.Metadata.FindNavigation(nameof(Creature.CreatureBody));
-			creatureBodyNavigation.SetField(Creature.CreatureBodyField);
-			creatureBodyNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+			var creatureTemplateNavigation = builder.Metadata.FindNavigation(nameof(Creature.CreatureTemplate));
+			creatureTemplateNavigation.SetField(Creature.CreatureTemplateField);
+			creatureTemplateNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+			var bodyTemplateNavigation = builder.Metadata.FindNavigation(nameof(Creature.BodyTemplate));
+			bodyTemplateNavigation.SetField(Creature.BodyTemplateField);
+			bodyTemplateNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

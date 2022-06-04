@@ -30,7 +30,6 @@ namespace Sindie.ApiService.Core.Entities
 		{
 		}
 
-
 		/// <summary>
 		/// Айди способности
 		/// </summary>
@@ -72,7 +71,6 @@ namespace Sindie.ApiService.Core.Entities
 				ConditionId = value.Id;
 			}
 		}
-
 		#endregion navigation properties
 	}
 }
