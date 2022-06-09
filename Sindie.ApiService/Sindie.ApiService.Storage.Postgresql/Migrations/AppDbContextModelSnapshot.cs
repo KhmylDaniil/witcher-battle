@@ -1234,10 +1234,20 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
 
+                    b.Property<int>("Body")
+                        .HasColumnType("integer")
+                        .HasColumnName("Body")
+                        .HasComment("Телосложение");
+
                     b.Property<Guid>("BodyTemplateId")
                         .HasColumnType("uuid")
                         .HasColumnName("BodyTemplateId")
                         .HasComment("Айди шаблона тела");
+
+                    b.Property<int>("Cra")
+                        .HasColumnType("integer")
+                        .HasColumnName("Cra")
+                        .HasComment("Крафт");
 
                     b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
@@ -1257,6 +1267,21 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("Description")
                         .HasComment("Описание шаблона");
 
+                    b.Property<int>("Dex")
+                        .HasColumnType("integer")
+                        .HasColumnName("Dex")
+                        .HasComment("Ловкость");
+
+                    b.Property<int>("Emp")
+                        .HasColumnType("integer")
+                        .HasColumnName("Emp")
+                        .HasComment("Эмпатия");
+
+                    b.Property<int>("HP")
+                        .HasColumnType("integer")
+                        .HasColumnName("HP")
+                        .HasComment("Хиты");
+
                     b.Property<Guid?>("ImgFileId")
                         .HasColumnType("uuid")
                         .HasColumnName("ImgFileId")
@@ -1266,6 +1291,16 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("InstanceId")
                         .HasComment("Айди экземпляра");
+
+                    b.Property<int>("Int")
+                        .HasColumnType("integer")
+                        .HasColumnName("Int")
+                        .HasComment("Интеллект");
+
+                    b.Property<int>("Luck")
+                        .HasColumnType("integer")
+                        .HasColumnName("Luck")
+                        .HasComment("Удача");
 
                     b.Property<Guid>("ModifiedByUserId")
                         .HasColumnType("uuid");
@@ -1279,17 +1314,37 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("Name")
                         .HasComment("Название существа");
 
+                    b.Property<int>("Ref")
+                        .HasColumnType("integer")
+                        .HasColumnName("Ref")
+                        .HasComment("Рефлексы");
+
                     b.Property<string>("RoleCreatedUser")
                         .HasColumnType("text");
 
                     b.Property<string>("RoleModifiedUser")
                         .HasColumnType("text");
 
+                    b.Property<int>("Speed")
+                        .HasColumnType("integer")
+                        .HasColumnName("Speed")
+                        .HasComment("Скорость");
+
+                    b.Property<int>("Sta")
+                        .HasColumnType("integer")
+                        .HasColumnName("Sta")
+                        .HasComment("Стамина");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("Type")
                         .HasComment("Тип шаблона существа");
+
+                    b.Property<int>("Will")
+                        .HasColumnType("integer")
+                        .HasColumnName("Will")
+                        .HasComment("Воля");
 
                     b.HasKey("Id");
 
@@ -1367,10 +1422,20 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
 
+                    b.Property<int>("Body")
+                        .HasColumnType("integer")
+                        .HasColumnName("Body")
+                        .HasComment("Телосложение");
+
                     b.Property<Guid>("BodyTemplateId")
                         .HasColumnType("uuid")
                         .HasColumnName("BodyTemplateId")
                         .HasComment("Айди шаблона тела");
+
+                    b.Property<int>("Cra")
+                        .HasColumnType("integer")
+                        .HasColumnName("Cra")
+                        .HasComment("Крафт");
 
                     b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
@@ -1385,15 +1450,40 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("Description")
                         .HasComment("Описание шаблона");
 
+                    b.Property<int>("Dex")
+                        .HasColumnType("integer")
+                        .HasColumnName("Dex")
+                        .HasComment("Ловкость");
+
+                    b.Property<int>("Emp")
+                        .HasColumnType("integer")
+                        .HasColumnName("Emp")
+                        .HasComment("Эмпатия");
+
                     b.Property<Guid>("GameId")
                         .HasColumnType("uuid")
                         .HasColumnName("GameId")
                         .HasComment("Айди игры");
 
+                    b.Property<int>("HP")
+                        .HasColumnType("integer")
+                        .HasColumnName("HP")
+                        .HasComment("Хиты");
+
                     b.Property<Guid?>("ImgFileId")
                         .HasColumnType("uuid")
                         .HasColumnName("ImgFileId")
                         .HasComment("Айди графического файла");
+
+                    b.Property<int>("Int")
+                        .HasColumnType("integer")
+                        .HasColumnName("Int")
+                        .HasComment("Интеллект");
+
+                    b.Property<int>("Luck")
+                        .HasColumnType("integer")
+                        .HasColumnName("Luck")
+                        .HasComment("Удача");
 
                     b.Property<Guid>("ModifiedByUserId")
                         .HasColumnType("uuid");
@@ -1407,17 +1497,37 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("Name")
                         .HasComment("Название шаблона");
 
+                    b.Property<int>("Ref")
+                        .HasColumnType("integer")
+                        .HasColumnName("Ref")
+                        .HasComment("Рефлексы");
+
                     b.Property<string>("RoleCreatedUser")
                         .HasColumnType("text");
 
                     b.Property<string>("RoleModifiedUser")
                         .HasColumnType("text");
 
+                    b.Property<int>("Speed")
+                        .HasColumnType("integer")
+                        .HasColumnName("Speed")
+                        .HasComment("Скорость");
+
+                    b.Property<int>("Sta")
+                        .HasColumnType("integer")
+                        .HasColumnName("Sta")
+                        .HasComment("Стамина");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("Type")
                         .HasComment("Тип шаблона существа");
+
+                    b.Property<int>("Will")
+                        .HasColumnType("integer")
+                        .HasColumnName("Will")
+                        .HasComment("Воля");
 
                     b.HasKey("Id");
 
