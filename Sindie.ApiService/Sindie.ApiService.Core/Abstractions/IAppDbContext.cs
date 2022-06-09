@@ -11,6 +11,11 @@ namespace Sindie.ApiService.Core.Abstractions
 	public interface IAppDbContext
 	{
 		/// <summary>
+		/// Способности
+		/// </summary>
+		DbSet<Ability> Abilities { get; }
+
+		/// <summary>
 		/// Действия
 		/// </summary>
 		DbSet<Core.Entities.Action> Actions { get; }
@@ -31,6 +36,11 @@ namespace Sindie.ApiService.Core.Abstractions
 		DbSet<ApplicationArea> ApplicationAreas { get; }
 
 		/// <summary>
+		/// Применяемые состояния
+		/// </summary>
+		DbSet<AppliedCondition> AppliedConditions { get; }
+
+		/// <summary>
 		/// Статьи
 		/// </summary>
 		DbSet<Article> Articles { get; }
@@ -49,6 +59,11 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// Тела
 		/// </summary>
 		DbSet<Body> Bodies { get; }
+
+		/// <summary>
+		/// Шаблоны тел
+		/// </summary>
+		DbSet<BodyTemplate> BodyTemplates { get; }
 
 		/// <summary>
 		/// Пресонажи
@@ -84,6 +99,31 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// Слоты шаблона пресонажа
 		/// </summary>
 		DbSet<CharacterTemplateSlot> CharacterTemplateSlots { get; }
+
+		/// <summary>
+		/// Состояния
+		/// </summary>
+		DbSet<Condition> Conditions { get; }
+
+		/// <summary>
+		/// Существа
+		/// </summary>
+		DbSet<Creature> Creatures { get; }
+
+		/// <summary>
+		/// Параметры существ
+		/// </summary>
+		DbSet<CreatureParameter> CreatureParameters { get; }
+
+		/// <summary>
+		/// Шаблоны существ
+		/// </summary>
+		DbSet<CreatureTemplate> CreatureTemplates { get; }
+
+		/// <summary>
+		/// Параметры шаблонов существ
+		/// </summary>
+		DbSet<CreatureTemplateParameter> CreatureTemplateParameters { get; }
 
 		/// <summary>
 		/// События

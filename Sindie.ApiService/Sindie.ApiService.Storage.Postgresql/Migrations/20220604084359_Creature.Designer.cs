@@ -12,7 +12,7 @@ using Sindie.ApiService.Storage.Postgresql;
 namespace Sindie.ApiService.Storage.Postgresql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220604053643_Creature")]
+    [Migration("20220604084359_Creature")]
     partial class Creature
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -3715,10 +3715,15 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
 
-                            b1.Property<double>("DamageModifer")
+                            b1.Property<double>("DamageModifier")
                                 .HasColumnType("double precision")
                                 .HasColumnName("DamageModifer")
                                 .HasComment("Модификатор урона");
+
+                            b1.Property<int>("HitPenalty")
+                                .HasColumnType("integer")
+                                .HasColumnName("HitPenalty")
+                                .HasComment("Пенальти за прицеливание");
 
                             b1.Property<int>("MaxToHit")
                                 .HasColumnType("integer")
@@ -3935,10 +3940,15 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                                 .HasColumnName("CurrentArmor")
                                 .HasComment("Текущая броня");
 
-                            b1.Property<double>("DamageModifer")
+                            b1.Property<double>("DamageModifier")
                                 .HasColumnType("double precision")
                                 .HasColumnName("DamageModifer")
                                 .HasComment("Модификатор урона");
+
+                            b1.Property<int>("HitPenalty")
+                                .HasColumnType("integer")
+                                .HasColumnName("HitPenalty")
+                                .HasComment("Пенальти за прицеливание");
 
                             b1.Property<int>("MaxToHit")
                                 .HasColumnType("integer")
@@ -4034,10 +4044,15 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                                 .HasColumnName("CurrentArmor")
                                 .HasComment("Текущая броня");
 
-                            b1.Property<double>("DamageModifer")
+                            b1.Property<double>("DamageModifier")
                                 .HasColumnType("double precision")
                                 .HasColumnName("DamageModifer")
                                 .HasComment("Модификатор урона");
+
+                            b1.Property<int>("HitPenalty")
+                                .HasColumnType("integer")
+                                .HasColumnName("HitPenalty")
+                                .HasComment("Пенальти за прицеливание");
 
                             b1.Property<int>("MaxToHit")
                                 .HasColumnType("integer")

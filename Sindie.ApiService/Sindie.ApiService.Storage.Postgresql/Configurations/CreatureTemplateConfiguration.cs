@@ -89,9 +89,14 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Название")
 				.IsRequired();
 
-				bp.Property(bp => bp.DamageModifer)
+				bp.Property(bp => bp.DamageModifier)
 				.HasColumnName("DamageModifer")
 				.HasComment("Модификатор урона")
+				.IsRequired();
+
+				bp.Property(bp => bp.HitPenalty)
+				.HasColumnName("HitPenalty")
+				.HasComment("Пенальти за прицеливание")
 				.IsRequired();
 
 				bp.Property(bp => bp.MinToHit)

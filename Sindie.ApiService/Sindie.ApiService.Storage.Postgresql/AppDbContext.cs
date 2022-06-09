@@ -15,6 +15,11 @@ namespace Sindie.ApiService.Storage.Postgresql
 
 	{
 		/// <summary>
+		/// Способности
+		/// </summary>
+		public DbSet<Ability> Abilities { get; set; }
+		
+		/// <summary>
 		/// Действия
 		/// </summary>
 		public DbSet<Core.Entities.Action> Actions { get; set; }
@@ -35,6 +40,11 @@ namespace Sindie.ApiService.Storage.Postgresql
 		public DbSet<ApplicationArea> ApplicationAreas { get; set; }
 
 		/// <summary>
+		/// Применяемые состояния
+		/// </summary>
+		public DbSet<AppliedCondition> AppliedConditions { get; set; }
+
+		/// <summary>
 		/// Статьи
 		/// </summary>
 		public DbSet<Article> Articles { get; set; }
@@ -53,6 +63,11 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// Тела
 		/// </summary>
 		public DbSet<Body> Bodies { get; set; }
+
+		/// <summary>
+		/// Шаблоны тел
+		/// </summary>
+		public DbSet<BodyTemplate> BodyTemplates { get; set; }
 
 		/// <summary>
 		/// Пресонажи
@@ -88,6 +103,31 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// Слоты шаблона пресонажа
 		/// </summary>
 		public DbSet<CharacterTemplateSlot> CharacterTemplateSlots { get; set; }
+
+		/// <summary>
+		/// Состояния
+		/// </summary>
+		public DbSet<Condition> Conditions { get; set; }
+
+		/// <summary>
+		/// Существа
+		/// </summary>
+		public DbSet<Creature> Creatures { get; set; }
+
+		/// <summary>
+		/// Параметры существ
+		/// </summary>
+		public DbSet<CreatureParameter> CreatureParameters { get; set; }
+
+		/// <summary>
+		/// Шаблоны существ
+		/// </summary>
+		public DbSet<CreatureTemplate> CreatureTemplates { get; set; }
+
+		/// <summary>
+		/// Параметры шаблонов существ
+		/// </summary>
+		public DbSet<CreatureTemplateParameter> CreatureTemplateParameters { get; set; }
 
 		/// <summary>
 		/// События

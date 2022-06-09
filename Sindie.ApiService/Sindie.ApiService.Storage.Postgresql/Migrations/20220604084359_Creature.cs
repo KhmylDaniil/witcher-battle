@@ -175,6 +175,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
+                    HitPenalty = table.Column<int>(type: "integer", nullable: false, comment: "Пенальти за прицеливание"),
                     DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
                     MinToHit = table.Column<int>(type: "integer", nullable: false, comment: "Минимальное значение попадания"),
                     MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания")
@@ -379,6 +380,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Начальная броня"),
                     CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
+                    HitPenalty = table.Column<int>(type: "integer", nullable: false, comment: "Пенальти за прицеливание"),
                     DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
                     MinToHit = table.Column<int>(type: "integer", nullable: false, comment: "Минимальное значение попадания"),
                     MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания")
@@ -505,6 +507,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Начальная броня"),
                     CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
+                    HitPenalty = table.Column<int>(type: "integer", nullable: false, comment: "Пенальти за прицеливание"),
                     DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
                     MinToHit = table.Column<int>(type: "integer", nullable: false, comment: "Минимальное значение попадания"),
                     MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания")
