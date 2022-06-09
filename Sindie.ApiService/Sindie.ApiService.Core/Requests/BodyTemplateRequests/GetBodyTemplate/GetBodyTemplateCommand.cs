@@ -40,10 +40,10 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 			GameId = gameId;
 			Name = name;
 			UserName = userName;
-			CreationMinTime = creationMaxTime;
-			CreationMaxTime = creationMinTime;
-			ModificationMinTime = modificationMaxTime;
-			ModificationMaxTime = modificationMinTime;
+			CreationMinTime = creationMinTime;
+			CreationMaxTime = creationMaxTime;
+			ModificationMinTime = modificationMinTime;
+			ModificationMaxTime = modificationMaxTime;
 			BodyPartName = bodyPartName;
 			PageSize = pageSize == default ? 10 : pageSize;
 			PageNumber = pageNumber == default ? 1 : pageNumber;

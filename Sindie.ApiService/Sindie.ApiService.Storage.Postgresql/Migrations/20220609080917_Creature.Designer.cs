@@ -12,11 +12,7 @@ using Sindie.ApiService.Storage.Postgresql;
 namespace Sindie.ApiService.Storage.Postgresql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-<<<<<<<< HEAD:Sindie.ApiService/Sindie.ApiService.Storage.Postgresql/Migrations/20220604084359_Creature.Designer.cs
-    [Migration("20220604084359_Creature")]
-========
-    [Migration("20220609060139_Creature")]
->>>>>>>> origin/feature/DB:Sindie.ApiService/Sindie.ApiService.Storage.Postgresql/Migrations/20220609060139_Creature.Designer.cs
+    [Migration("20220609080917_Creature")]
     partial class Creature
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -122,7 +122,8 @@ namespace Sindie.ApiService.WebApi.Controllers
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
 		public async Task<GetBodyTemplateByIdResponse> GetBodyTemplateByIdAsync([FromQuery] GetBodyTemplateByIdQuery request, CancellationToken cancellationToken)
 		{
-			return await _mediator.Send(request, cancellationToken);
+			return await _mediator.Send(request == null
+				? throw new ArgumentNullException(nameof(request)) : request, cancellationToken);
 		}
 
 		/// <summary>
@@ -136,7 +137,8 @@ namespace Sindie.ApiService.WebApi.Controllers
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
 		public async Task DeleteBodyTemplateByIdAsync([FromQuery] DeleteBodyTemplateByIdCommand request, CancellationToken cancellationToken)
 		{
-			await _mediator.Send(request, cancellationToken);
+			await _mediator.Send(request == null
+				? throw new ArgumentNullException(nameof(request)) : request, cancellationToken);
 		}
 	}
 }

@@ -86,6 +86,42 @@ namespace Sindie.ApiService.Core.Entities
 		#endregion navigation properties
 
 		/// <summary>
+		/// Создать тестовую сущность с заполненными полями
+		/// </summary>
+		/// <param name="id">Айди</param>
+		/// <param name="name">Название</param>
+		/// <param name="description">Описание</param>
+		/// <param name="game">Игра</param>
+		/// <param name="bodyTemplateParts">Список частей шаблона тела</param>
+		/// <returns>Шаблон персонажа</returns>
+		[Obsolete("Только для тестов")]
+		public static BodyTemplate CreateForTest(
+			Guid? id = default,
+			string name = default,
+			string description = default,
+			Game game = default,
+			DateTime createdOn = default,
+			DateTime modifiedOn = default,
+			Guid createdByUserId = default,
+			List<BodyTemplatePart> bodyTemplateParts = default)
+		=> new BodyTemplate()
+		{
+			Id = id ?? Guid.NewGuid(),
+			Name = name ?? "CharacterTemplate",
+			Description = description,
+			Game = game,
+			CreatedOn = createdOn,
+			ModifiedOn = modifiedOn,
+			CreatedByUserId = createdByUserId,
+			CreatureTemplates = new List<CreatureTemplate>(),
+			Creatures = new List<Creature>(),
+			BodyTemplateParts = bodyTemplateParts == null 
+			? new List<BodyTemplatePart>()
+			{ new BodyTemplatePart("torso", 1, 1, 1, 10)}
+			: bodyTemplateParts
+		};
+
+		/// <summary>
 		/// Создание списка шаблонов частей тела
 		/// </summary>
 		/// <param name="bodyTemplateParts">Данные для списка шаблонов частей тела</param>

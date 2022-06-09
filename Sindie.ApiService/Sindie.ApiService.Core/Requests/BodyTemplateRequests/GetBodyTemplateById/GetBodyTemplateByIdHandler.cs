@@ -6,6 +6,7 @@ using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +50,9 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplateBy
 		/// <returns></returns>
 		public async Task<GetBodyTemplateByIdResponse> Handle(GetBodyTemplateByIdQuery request, CancellationToken cancellationToken)
 		{
+			if (request == null)
+				throw new ExceptionRequestNull<GetBodyTemplateByIdQuery>();
+
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
 				.Include(x => x.BodyTemplates.Where(x => x.Id == request.Id))
 				.ThenInclude(x => x.BodyTemplateParts)

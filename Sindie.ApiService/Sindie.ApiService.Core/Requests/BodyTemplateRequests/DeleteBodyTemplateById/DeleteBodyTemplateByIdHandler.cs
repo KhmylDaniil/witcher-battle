@@ -5,6 +5,7 @@ using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.DeleteBodyTemplateBy
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,6 +46,9 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.DeleteBodyTemplat
 		/// <returns></returns>
 		public async Task<Unit> Handle(DeleteBodyTemplateByIdCommand request, CancellationToken cancellationToken)
 		{
+			if (request == null)
+				throw new ExceptionRequestNull<DeleteBodyTemplateByIdCommand>();
+
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.BodyTemplates.Where(x => x.Id == request.Id))
 				.FirstOrDefaultAsync(cancellationToken)
