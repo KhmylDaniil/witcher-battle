@@ -46,6 +46,61 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasColumnName("Description")
 				.HasComment("Описание шаблона");
 
+			builder.Property(r => r.HP)
+			.HasColumnName("HP")
+			.HasComment("Хиты")
+			.IsRequired();
+
+			builder.Property(r => r.Sta)
+			.HasColumnName("Sta")
+			.HasComment("Стамина")
+			.IsRequired();
+
+			builder.Property(r => r.Int)
+			.HasColumnName("Int")
+			.HasComment("Интеллект")
+			.IsRequired();
+
+			builder.Property(r => r.Ref)
+			.HasColumnName("Ref")
+			.HasComment("Рефлексы")
+			.IsRequired();
+
+			builder.Property(r => r.Dex)
+			.HasColumnName("Dex")
+			.HasComment("Ловкость")
+			.IsRequired();
+
+			builder.Property(r => r.Body)
+			.HasColumnName("Body")
+			.HasComment("Телосложение")
+			.IsRequired();
+
+			builder.Property(r => r.Emp)
+			.HasColumnName("Emp")
+			.HasComment("Эмпатия")
+			.IsRequired();
+
+			builder.Property(r => r.Cra)
+			.HasColumnName("Cra")
+			.HasComment("Крафт")
+			.IsRequired();
+
+			builder.Property(r => r.Will)
+			.HasColumnName("Will")
+			.HasComment("Воля")
+			.IsRequired();
+
+			builder.Property(r => r.Speed)
+			.HasColumnName("Speed")
+			.HasComment("Скорость")
+			.IsRequired();
+
+			builder.Property(r => r.Luck)
+			.HasColumnName("Luck")
+			.HasComment("Удача")
+			.IsRequired();
+
 			builder.HasOne(x => x.Game)
 				.WithMany(x => x.CreatureTemplates)
 				.HasForeignKey(x => x.GameId)
