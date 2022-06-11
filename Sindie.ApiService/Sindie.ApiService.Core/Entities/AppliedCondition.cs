@@ -31,6 +31,19 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
+		/// Конструктор
+		/// </summary>
+		/// <param name="ability">Способность</param>
+		/// <param name="condition">Состояние</param>
+		/// <param name="applyChance">Шанс применения</param>
+		public AppliedCondition(Ability ability, Condition condition, double applyChance)
+		{
+			Ability = ability;
+			Condition = condition;
+			ApplyChance = applyChance;
+		}
+
+		/// <summary>
 		/// Айди способности
 		/// </summary>
 		public Guid AbilityId { get; set; }
@@ -72,5 +85,26 @@ namespace Sindie.ApiService.Core.Entities
 			}
 		}
 		#endregion navigation properties
+
+		/// <summary>
+		/// Создание накладываемого состояния
+		/// </summary>
+		/// <param name="ability"></param>
+		/// <param name="condition"></param>
+		/// <param name="applyChance"></param>
+		/// <returns></returns>
+		public static AppliedCondition CreateAppliedCondition(Ability ability, Condition condition, double applyChance)
+		=> new AppliedCondition(ability, condition, applyChance);
+
+		/// <summary>
+		/// Изменение накладываемого состояния
+		/// </summary>
+		/// <param name="condition">Состояние</param>
+		/// <param name="applyChance">Шанс применения</param>
+		public void ChangeAppliedCondition(Condition condition, double applyChance)
+		{
+			Condition = condition;
+			ApplyChance -= applyChance;
+		}
 	}
 }

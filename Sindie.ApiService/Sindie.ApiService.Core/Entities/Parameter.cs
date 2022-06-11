@@ -108,7 +108,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// Изменение параметра
 		/// </summary>
 		/// <param name="game">Игра</param>
-		/// <param name="imgFile">Графический файл</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
 		/// <param name="minValueParameter">МИнимальное значение</param>
@@ -126,7 +125,46 @@ namespace Sindie.ApiService.Core.Entities
 			ParameterBounds = new ParameterBound(
 				minValueParameter,
 				maxValueParameter);
-
 		}
+
+		/// <summary>
+		/// Создать тестовую сущность
+		/// </summary>
+		/// <param name="id">Айди</param>
+		/// <param name="name">Название</param>
+		/// <param name="game">Игра</param>
+		/// <param name="description">Описание</param>
+		/// <param name="minValueParameter">Минимальнок значение</param>
+		/// <param name="maxValueParameter">Максимальное значение</param>
+		/// <param name="createdOn">Дата создания</param>
+		/// <param name="modifiedOn">Дата изменения</param>
+		/// <param name="createdByUserId">Создавший пользователь</param>
+		/// <returns>Параметр</returns>
+		[Obsolete("Только для тестов")]
+		public static Parameter CreateForTest(
+			Guid? id = default,
+			string name = default,
+			Game game = default,
+			string description = default,
+			int minValueParameter = default,
+			int maxValueParameter = default,
+			DateTime createdOn = default,
+			DateTime modifiedOn = default,
+			Guid createdByUserId = default)
+		=> new Parameter()
+		{
+			Id = id ?? Guid.NewGuid(),
+			Name = name ?? "Parameter",
+			Game = game,
+			Description = description,
+			CreatedOn = createdOn,
+			ModifiedOn = modifiedOn,
+			CreatedByUserId = createdByUserId,
+			ParameterBounds = (minValueParameter == 0 && maxValueParameter == 0)
+			? new ParameterBound(1, 10)
+			: new ParameterBound(
+				minValueParameter,
+				maxValueParameter)
+		};
 	}
 }

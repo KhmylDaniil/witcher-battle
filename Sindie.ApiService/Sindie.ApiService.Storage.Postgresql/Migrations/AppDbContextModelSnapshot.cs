@@ -1202,6 +1202,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now() at time zone 'utc'");
 
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("GameId")
+                        .HasComment("Айди игры");
+
                     b.Property<Guid>("ModifiedByUserId")
                         .HasColumnType("uuid");
 
@@ -1221,6 +1226,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GameId");
 
                     b.ToTable("Conditions", "GameRules");
 
@@ -4007,6 +4014,17 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("Slot");
                 });
 
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Condition", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
+                        .WithMany("Conditions")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+                });
+
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Creature", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.BodyTemplate", "BodyTemplate")
@@ -5031,6 +5049,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("BodyTemplates");
 
                     b.Navigation("CharacterTemplates");
+
+                    b.Navigation("Conditions");
 
                     b.Navigation("CreatureTemplates");
 

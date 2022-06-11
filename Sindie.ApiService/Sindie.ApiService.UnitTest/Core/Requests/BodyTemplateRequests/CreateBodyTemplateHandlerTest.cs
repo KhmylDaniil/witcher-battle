@@ -32,7 +32,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 		/// </summary>
 		/// <returns></returns>
 		[TestMethod]
-		public async Task Handle_CreatebodyTemplate_ShouldReturnUnit()
+		public async Task Handle_CreateBodyTemplate_ShouldReturnUnit()
 		{
 			var request = new CreateBodyTemplateCommand(
 				gameId: _game.Id,

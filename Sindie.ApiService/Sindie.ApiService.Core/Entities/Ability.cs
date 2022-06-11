@@ -1,5 +1,9 @@
-﻿using System;
+﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -48,9 +52,7 @@ namespace Sindie.ApiService.Core.Entities
 			int damageModifier,
 			int attackSpeed,
 			int accuracy,
-			Parameter attackParameter,
-			List<AppliedCondition> appliedConditions)
-
+			Parameter attackParameter)
 		{
 			CreatureTemplate = creatureTemplate;
 			Name = name;
@@ -59,8 +61,9 @@ namespace Sindie.ApiService.Core.Entities
 			DamageModifier = damageModifier;
 			AttackSpeed = attackSpeed;
 			Accuracy = accuracy;
-			AppliedConditions = appliedConditions;
 			AttackParameter = attackParameter;
+			AppliedConditions = new List<AppliedCondition>();
+			Creatures = new List<Creature>();
 		}
 
 		/// <summary>
@@ -142,5 +145,113 @@ namespace Sindie.ApiService.Core.Entities
 		public List<AppliedCondition> AppliedConditions { get; set; }
 		
 		#endregion navigation properties
+
+		/// <summary>
+		/// Создание способности
+		/// </summary>
+		/// <param name="creatureTemplate">Шаблон существа</param>
+		/// <param name="name">Название</param>
+		/// <param name="description">Описание</param>
+		/// <param name="attackParameter">Параметр атаки</param>
+		/// <param name="attackDiceQuantity">Количество кубов атаки</param>
+		/// <param name="damageModifier">Модификатор атаки</param>
+		/// <param name="attackSpeed">Скорость атааки</param>
+		/// <param name="accuracy">Точность атаки</param>
+		/// <param name="appliedConditions">Накладываемые состояния</param>
+		/// <returns>Способность</returns>
+		public static Ability CreateAbility(
+			CreatureTemplate creatureTemplate,
+			string name,
+			string description,
+			Parameter attackParameter,
+			int attackDiceQuantity,
+			int damageModifier,
+			int attackSpeed,
+			int accuracy,
+			List<(Guid Id, Condition Condition, double ApplyChance)> appliedConditions)
+		{
+			var ability = new Ability(
+				creatureTemplate: creatureTemplate,
+				name: name,
+				description: description,
+				attackParameter: attackParameter,
+				attackDiceQuantity: attackDiceQuantity,
+				damageModifier: damageModifier,
+				attackSpeed: attackSpeed,
+				accuracy: accuracy);
+			
+			ability.UpdateAplliedConditions(appliedConditions);
+			
+			return ability;
+		}
+
+		/// <summary>
+		/// Изменение способности
+		/// </summary>
+		/// <param name="name">Название</param>
+		/// <param name="description">Описание</param>
+		/// <param name="attackParameter">Параметр атаки</param>
+		/// <param name="attackDiceQuantity">Количество кубов атаки</param>
+		/// <param name="damageModifier">Модификатор урона</param>
+		/// <param name="attackSpeed">Скорость атаки</param>
+		/// <param name="accuracy">Точность атаки</param>
+		/// <param name="appliedConditions">Накладываемые состояния</param>
+		public void ChangeAbility(
+			string name,
+			string description,
+			Parameter attackParameter,
+			int attackDiceQuantity,
+			int damageModifier,
+			int attackSpeed,
+			int accuracy,
+			List<(Guid Id, Condition Condition, double ApplyChance)> appliedConditions)
+		{
+			Name = name;
+			Description = description;
+			AttackParameter = attackParameter;
+			AttackDiceQuantity = attackDiceQuantity;
+			DamageModifier = damageModifier;
+			AttackSpeed = attackSpeed;
+			Accuracy = accuracy;
+			UpdateAplliedConditions(appliedConditions);
+		}
+
+		/// <summary>
+		/// Обновление списка применяемых состояний
+		/// </summary>
+		/// <param name="data">Данные</param>
+		public void UpdateAplliedConditions(List<(Guid Id, Condition Condition, double ApplyChance)> data)
+		{
+			if (data == null)
+				throw new ExceptionRequestFieldNull<AbilityData>(nameof(AbilityData.AppliedConditions));
+
+			if (AppliedConditions == null)
+				throw new ExceptionEntityNotIncluded<AppliedCondition>(nameof(Ability));
+
+			var entitiesToDelete = AppliedConditions.Where(x => !data
+				.Any(y => y.Id == x.Id)).ToList();
+
+			if (entitiesToDelete.Any())
+				foreach (var entity in entitiesToDelete)
+					AppliedConditions.Remove(entity);
+
+			if (!data.Any())
+				return;
+
+			foreach (var dataItem in data)
+			{
+				var appliedCondition = AppliedConditions.FirstOrDefault(x => x.Id == dataItem.Id);
+				if (appliedCondition == null)
+					AppliedConditions.Add(
+						AppliedCondition.CreateAppliedCondition(
+							ability: this,
+							condition: dataItem.Condition,
+							applyChance: dataItem.ApplyChance));
+				else
+					appliedCondition.ChangeAppliedCondition(
+						condition: dataItem.Condition,
+						applyChance: dataItem.ApplyChance);
+			}
+		}
 	}
 }

@@ -93,7 +93,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="description">Описание</param>
 		/// <param name="game">Игра</param>
 		/// <param name="bodyTemplateParts">Список частей шаблона тела</param>
-		/// <returns>Шаблон персонажа</returns>
+		/// <returns>Шаблон тела</returns>
 		[Obsolete("Только для тестов")]
 		public static BodyTemplate CreateForTest(
 			Guid? id = default,
@@ -107,7 +107,7 @@ namespace Sindie.ApiService.Core.Entities
 		=> new BodyTemplate()
 		{
 			Id = id ?? Guid.NewGuid(),
-			Name = name ?? "CharacterTemplate",
+			Name = name ?? "BodyTemplate",
 			Description = description,
 			Game = game,
 			CreatedOn = createdOn,

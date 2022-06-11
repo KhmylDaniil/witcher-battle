@@ -1,6 +1,8 @@
 ﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -45,6 +47,70 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		protected CreatureTemplate()
 		{
+		}
+
+		/// <summary>
+		/// Конструктор создания шаблона существа
+		/// </summary>
+		/// <param name="game">Игра</param>
+		/// <param name="imgFile">Графический файл</param>
+		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="hp">Хиты</param>
+		/// <param name="sta">Стамина</param>
+		/// <param name="int">Интеллект</param>
+		/// <param name="ref">Рефлексы</param>
+		/// <param name="dex">Ловкость</param>
+		/// <param name="body">Телосложение</param>
+		/// <param name="emp">Эмпатия</param>
+		/// <param name="cra">Крафт</param>
+		/// <param name="will">Воля</param>
+		/// <param name="speed">Скорость</param>
+		/// <param name="luck">Удача</param>
+		/// <param name="name">Название</param>
+		/// <param name="description">Описание</param>
+		/// <param name="type">Тип существа</param>
+		/// <param name="armor">Броня существа</param>
+		public CreatureTemplate(
+			Game game,
+			ImgFile imgFile,
+			BodyTemplate bodyTemplate,
+			int hp,
+			int sta,
+			int @int,
+			int @ref,
+			int dex,
+			int body,
+			int emp,
+			int cra,
+			int will,
+			int speed,
+			int luck,
+			string name, 
+			string description, 
+			string type,
+			int armor)
+		{
+			Game = game;
+			ImgFile = imgFile;
+			BodyTemplate = bodyTemplate;
+			_hp = hp;
+			Sta = sta;
+			Int = @int;
+			Ref = @ref;
+			Dex = dex;
+			Body = body;
+			Emp = emp;
+			Cra = cra;
+			Will = will;
+			Speed = speed;
+			Luck = luck;
+			Name = name;
+			Description = description;
+			Type = type;
+			Abilities = new List<Ability>();
+			CreatureTemplateParameters = new List<CreatureTemplateParameter>();
+			Creatures = new List<Creature>();
+			BodyParts = CreateBody(bodyTemplate, armor);
 		}
 
 		/// <summary>
@@ -293,6 +359,196 @@ namespace Sindie.ApiService.Core.Entities
 		public List<Creature> Creatures { get; set; }
 
 		#endregion navigation properties
+
+		/// <summary>
+		/// Обновление списка способностей
+		/// </summary>
+		/// <param name="data">Данные</param>
+		internal void UpdateAlibilities(List<AbilityData> data)
+		{
+			if (data == null)
+				throw new ExceptionEntityNotFound<AbilityData>(nameof(data));
+
+			if (Abilities == null)
+				throw new ExceptionEntityNotFound<List<Ability>>(nameof(Abilities));
+
+			var entitiesToDelete = Abilities.Where(x => !data
+				.Any(y => y.Id == x.Id)).ToList();
+
+			if (entitiesToDelete.Any())
+				foreach (var entity in entitiesToDelete)
+					Abilities.Remove(entity);
+
+			if (!data.Any())
+				return;
+
+			foreach (var dataItem in data)
+			{
+				var ability = Abilities.FirstOrDefault(x => x.Id == dataItem.Id);
+				if (ability == null)
+					Abilities.Add(
+						Ability.CreateAbility(
+						creatureTemplate: this,
+						name: dataItem.Name,
+						description: dataItem.Description,
+						attackParameter: dataItem.AttackParameter,
+						attackDiceQuantity: dataItem.AttackDiceQuantity,
+						damageModifier: dataItem.DamageModifier,
+						attackSpeed: dataItem.AttackSpeed,
+						accuracy: dataItem.Accuracy,
+						appliedConditions: dataItem.AppliedConditions));
+				else
+					ability.ChangeAbility(
+						name: dataItem.Name,
+						description: dataItem.Description,
+						attackParameter: dataItem.AttackParameter,
+						attackDiceQuantity: dataItem.AttackDiceQuantity,
+						damageModifier: dataItem.DamageModifier,
+						attackSpeed: dataItem.AttackSpeed,
+						accuracy: dataItem.Accuracy,
+						appliedConditions: dataItem.AppliedConditions);
+			}
+		}
+
+		/// <summary>
+		/// Метод изменения списка параметров шаблона существа
+		/// </summary>
+		/// <param name="request">Запрос</param>
+		internal void UpdateCreatureTemplateParameters(List<(Parameter Parameter, int Value)> request)
+		{
+			if (CreatureTemplateParameters == null)
+				throw new ExceptionEntityNotIncluded<CreatureTemplateParameter>(nameof(CreatureTemplateParameters));
+
+			if (request != null || CreatureTemplateParameters.Any())
+			{
+				var entitiesToDelete = CreatureTemplateParameters
+					.Where(x => !request.Any(y => y.Parameter.Id == x.ParameterId)).ToList();
+
+				var entitiesToAdd = request.Where(x => !CreatureTemplateParameters
+					.Any(y => y.ParameterId == x.Parameter.Id)).ToList();
+
+				if (entitiesToAdd.Any())
+					foreach (var entity in entitiesToAdd)
+						CreatureTemplateParameters.Add(
+							new CreatureTemplateParameter(
+								parameter: entity.Parameter,
+								parameterValue: entity.Value,
+								creatureTemplate: this));
+
+				if (entitiesToDelete.Any())
+					foreach (var entity in entitiesToDelete)
+						CreatureTemplateParameters.Remove(entity);
+			}
+		}
+
+		/// <summary>
+		/// Создание тела шаблона существа
+		/// </summary>
+		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="armor">Броня</param>
+		/// <returns></returns>
+		private static List<BodyPart> CreateBody(BodyTemplate bodyTemplate, int armor)
+		{
+			var bodyParts = new List<BodyPart>();
+
+			foreach (var part in bodyTemplate.BodyTemplateParts)
+				bodyParts.Add(new BodyPart()
+				{
+					Name = part.Name,
+					HitPenalty = part.HitPenalty,
+					DamageModifier = part.DamageModifier,
+					MinToHit = part.MinToHit,
+					MaxToHit = part.MaxToHit,
+					StartingArmor = armor,
+					CurrentArmor = armor
+				});
+			return bodyParts;
+		}
+
+		/// <summary>
+		/// изменение тела шаблона существа
+		/// </summary>
+		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="armorList">Броня</param>
+		/// <returns>Список частей шаблона тела</returns>
+		private static List<BodyPart> UpdateBody(BodyTemplate bodyTemplate, List<(string BodyPartName, int Armor)> armorList)
+		{
+			var bodyParts = new List<BodyPart>();
+
+			foreach (var part in bodyTemplate.BodyTemplateParts)
+				bodyParts.Add(new BodyPart()
+				{
+					Name = part.Name,
+					HitPenalty = part.HitPenalty,
+					DamageModifier = part.DamageModifier,
+					MinToHit = part.MinToHit,
+					MaxToHit = part.MaxToHit,
+					StartingArmor = armorList.FirstOrDefault(x => x.BodyPartName == part.Name).Armor,
+					CurrentArmor = armorList.FirstOrDefault(x => x.BodyPartName == part.Name).Armor
+				});
+			return bodyParts;
+		}
+
+		/// <summary>
+		/// Изменение шаблона существа
+		/// </summary>
+		/// <param name="game">Игра</param>
+		/// <param name="imgFile">Графический файл</param>
+		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="hp">Хиты</param>
+		/// <param name="sta">Стамина</param>
+		/// <param name="int">Интеллект</param>
+		/// <param name="ref">Рефлексы</param>
+		/// <param name="dex">Ловкость</param>
+		/// <param name="body">Телосложение</param>
+		/// <param name="emp">Эмпатия</param>
+		/// <param name="cra">Крафт</param>
+		/// <param name="will">Воля</param>
+		/// <param name="speed">Скорость</param>
+		/// <param name="luck">Удача</param>
+		/// <param name="name">Название</param>
+		/// <param name="description">Описание</param>
+		/// <param name="type">Тип существа</param>
+		/// <param name="armorList">Список брони</param>
+		public void ChangeCreatureTemplate(
+			Game game,
+			ImgFile imgFile,
+			BodyTemplate bodyTemplate,
+			int hp,
+			int sta,
+			int @int,
+			int @ref,
+			int dex,
+			int body,
+			int emp,
+			int cra,
+			int will,
+			int speed,
+			int luck,
+			string name,
+			string description,
+			string type,
+			List<(string BodyPartName, int Armor)> armorList)
+		{
+			Game = game;
+			ImgFile = imgFile;
+			BodyTemplate = bodyTemplate;
+			_hp = hp;
+			Sta = sta;
+			Int = @int;
+			Ref = @ref;
+			Dex = dex;
+			Body = body;
+			Emp = emp;
+			Cra = cra;
+			Will = will;
+			Speed = speed;
+			Luck = luck;
+			Name = name;
+			Description = description;
+			Type = type;
+			BodyParts = UpdateBody(bodyTemplate, armorList);
+		}
 
 		//private int Roll(int parameter)
 		//{

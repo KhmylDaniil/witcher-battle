@@ -150,6 +150,11 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public List<BodyTemplate> BodyTemplates { get; set; }
 
+		/// <summary>
+		/// Состояния
+		/// </summary>
+		public List<Condition> Conditions { get; set; }
+
 		#endregion navigation properties
 
 		/// <summary>
