@@ -55,13 +55,14 @@ namespace Sindie.ApiService.Core.Requests.ParameterRequests.CreateParameter
 			if (game.Parameters.Any(x => x.Name == request.Name))
 				throw new ExceptionRequestNameNotUniq<CreateParameterCommand>(nameof(request.Name));
 
-			game.Parameters.Add(new Parameter(
+			var parameter = new Parameter(
 				game: game,
 				name: request.Name,
 				description: request.Description,
 				minValueParameter: request.MinValueParameter,
-				maxValueParameter: request.MaxValueParameter));
+				maxValueParameter: request.MaxValueParameter);
 
+			_appDbContext.Parameters.Add(parameter);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
 			return Unit.Value;

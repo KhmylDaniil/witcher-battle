@@ -36,7 +36,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		}
 
 		/// <summary>
-		/// Обработчик создания шаблона существа
+		/// Cоздать шаблон существа
 		/// </summary>
 		/// <param name="request">Запрос на создание шаблона существа</param>
 		/// <param name="cancellationToken">Токен отмены</param>
@@ -73,7 +73,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		}
 
 		/// <summary>
-		/// Обработчик изменения шаблона существа
+		/// Изменить шаблон существа
 		/// </summary>
 		/// <param name="request">Запрос на изменение шаблона существа</param>
 		/// <param name="cancellationToken">Токен отмены</param>

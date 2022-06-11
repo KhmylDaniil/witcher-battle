@@ -119,16 +119,16 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 			foreach (var ability in request.Abilities)
 			{
 				if (string.IsNullOrEmpty(ability.Name))
-					throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequestItem>(nameof(ability.Name));
+					throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequestIAbility>(nameof(ability.Name));
 
 				_ = game.Parameters.FirstOrDefault(x => x.Id == ability.AttackParameterId)
 					?? throw new ExceptionEntityNotFound<Parameter>(ability.AttackParameterId);
 
 				if (ability.AttackDiceQuantity < 0)
-					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequestItem>(nameof(ability.AttackDiceQuantity));
+					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequestIAbility>(nameof(ability.AttackDiceQuantity));
 
 				if (ability.AttackSpeed < 0)
-					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequestItem>(nameof(ability.AttackSpeed));
+					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequestIAbility>(nameof(ability.AttackSpeed));
 
 				foreach (var appliedCondition in ability.AppliedConditions)
 				{
@@ -147,7 +147,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 		/// <param name="entities">Данные из БД</param>
 		/// <param name="data">Список айди</param>
 		/// <returns>Список параметров</returns>
-		private List<(Parameter Parameter, int Value)> CreateParameterList(List<Parameter> entities, List<(Guid ParameterId, int Value)> data)
+		private List<(Parameter Parameter, int Value)> CreateParameterList(List<Parameter> entities, List<CreateCreatureTemplateRequestParameter> data)
 		{
 			var result = new List<(Parameter Parameter, int Value)>();
 			foreach (var dataItem in data)

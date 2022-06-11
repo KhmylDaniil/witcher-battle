@@ -52,8 +52,8 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 			int speed,
 			int luck,
 			int armor,
-			List<CreateCreatureTemplateRequestItem> abilities,
-			List<(Guid ParameterId, int Value)> creatureTemplateParameters)
+			List<CreateCreatureTemplateRequestIAbility> abilities,
+			List<CreateCreatureTemplateRequestParameter> creatureTemplateParameters)
 		{
 			GameId = gameId;
 			ImgFileId = imgFileId;

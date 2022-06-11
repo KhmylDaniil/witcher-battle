@@ -67,9 +67,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				speed: 7,
 				luck: 1,
 				armor: 4,
-				abilities: new List<CreateCreatureTemplateRequestItem>
+				abilities: new List<CreateCreatureTemplateRequestIAbility>
 				{
-					new CreateCreatureTemplateRequestItem()
+					new CreateCreatureTemplateRequestIAbility()
 					{
 						Name = "attack",
 						Description = "bite",
@@ -78,11 +78,24 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 						DamageModifier = 4,
 						AttackSpeed = 1,
 						Accuracy = -1,
-						AppliedConditions = new List<(Guid ConditionId, double ApplyChance)> { (_condition.Id, 50) }
+						AppliedConditions = new List<CreateCreatureTemplateAppliedCondition>
+						{
+							new CreateCreatureTemplateAppliedCondition()
+							{
+								ConditionId = _condition.Id,
+								ApplyChance = 50
+							}
+						}
 					}
 				},
-				creatureTemplateParameters: new List<(Guid ParameterId, int Value)> { (_parameter.Id, 5) }
-				);
+				creatureTemplateParameters: new List<CreateCreatureTemplateRequestParameter>
+				{
+					new CreateCreatureTemplateRequestParameter()
+					{
+						ParameterId = _parameter.Id,
+						Value = 5
+					}
+				});
 
 			var newHandler = new CreateCreatureTemplateHandler(_dbContext, AuthorizationService.Object);
 

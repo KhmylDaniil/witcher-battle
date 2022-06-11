@@ -38,7 +38,8 @@ namespace Sindie.ApiService.Core.Entities
 			string description)
 		{
 			Game = game;
-
+			Name = name;
+			Description = description;
 			ParameterBounds = new ParameterBound(
 				minValueParameter,
 				maxValueParameter);
