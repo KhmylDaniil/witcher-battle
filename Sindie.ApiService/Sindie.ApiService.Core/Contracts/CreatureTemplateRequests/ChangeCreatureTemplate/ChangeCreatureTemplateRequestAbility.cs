@@ -6,12 +6,12 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatu
 	/// <summary>
 	/// Элемент запроса изменения шаблона существа - способность
 	/// </summary>
-	public class ChangeCreatureTemplateRequestItem
+	public class ChangeCreatureTemplateRequestAbility
 	{
 		/// <summary>
 		/// Айди способности
 		/// </summary>
-		public Guid Id { get; set; }
+		public Guid? Id { get; set; }
 		
 		/// <summary>
 		/// Наазвание способности
@@ -51,6 +51,6 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatu
 		/// <summary>
 		/// Накладываемые состояния
 		/// </summary>
-		public List<(Guid Id, Guid ConditionId, double ApplyChance)> AppliedConditions { get; set; }
+		public List<ChangeCreatureTemplateRequestAppliedCondition> AppliedConditions { get; set; }
 	}
 }

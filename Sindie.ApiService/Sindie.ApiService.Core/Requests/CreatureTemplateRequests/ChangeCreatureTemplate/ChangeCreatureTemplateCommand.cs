@@ -53,10 +53,11 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			int will,
 			int speed,
 			int luck,
-			List<(string BodyPartName, int Armor)> armorList,
-			List<ChangeCreatureTemplateRequestItem> abilities,
-			List<(Guid ParameterId, int Value)> creatureTemplateParameters)
+			List<ChangeCreatureTemplateRequestArmorList> armorList,
+			List<ChangeCreatureTemplateRequestAbility> abilities,
+			List<ChangeCreatureTemplateRequestParameter> creatureTemplateParameters)
 		{
+			Id = id;
 			GameId = gameId;
 			ImgFileId = imgFileId;
 			BodyTemplateId = bodyTemplateId;
@@ -78,8 +79,8 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			Will = will < 1 ? throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateRequest>(nameof(Will)) : will;
 			Speed = speed < 1 ? throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateRequest>(nameof(Speed)) : speed;
 			Luck = luck < 1 ? throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateRequest>(nameof(Luck)) : luck;
-			ArmorList = armorList == null
-				? throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateRequest>(nameof(ArmorList))
+			ArmorList = armorList == null 
+				? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(ArmorList))
 				: armorList;
 			Abilities = abilities == null
 				? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(Abilities))

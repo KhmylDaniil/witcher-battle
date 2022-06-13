@@ -1,4 +1,5 @@
 ﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
 using System;
 using System.Collections.Generic;
@@ -88,7 +89,7 @@ namespace Sindie.ApiService.Core.Entities
 			string name, 
 			string description, 
 			string type,
-			int armor)
+			List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
 		{
 			Game = game;
 			ImgFile = imgFile;
@@ -110,7 +111,7 @@ namespace Sindie.ApiService.Core.Entities
 			Abilities = new List<Ability>();
 			CreatureTemplateParameters = new List<CreatureTemplateParameter>();
 			Creatures = new List<Creature>();
-			BodyParts = CreateBody(bodyTemplate, armor);
+			BodyParts = UpdateBody(armorList);
 		}
 
 		/// <summary>
@@ -413,56 +414,37 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Метод изменения списка параметров шаблона существа
 		/// </summary>
-		/// <param name="request">Запрос</param>
-		internal void UpdateCreatureTemplateParameters(List<(Parameter Parameter, int Value)> request)
+		/// <param name="data">Данные</param>
+		internal void UpdateCreatureTemplateParameters(List<CreatureTemplateParameterData> data)
 		{
 			if (CreatureTemplateParameters == null)
 				throw new ExceptionEntityNotIncluded<CreatureTemplateParameter>(nameof(CreatureTemplateParameters));
 
-			if (request != null || CreatureTemplateParameters.Any())
+			if (data == null)
+				throw new ExceptionEntityNotIncluded<Parameter>(nameof(CreatureTemplateParameters));
+
+			var entitiesToDelete = CreatureTemplateParameters
+					.Where(x => !data.Any(y => y.Parameter.Id == x.ParameterId)).ToList();
+
+			if (entitiesToDelete.Any())
+				foreach (var entity in entitiesToDelete)
+					CreatureTemplateParameters.Remove(entity);
+
+			if (!data.Any())
+				return;
+
+			foreach (var dataItem in data)
 			{
-				var entitiesToDelete = CreatureTemplateParameters
-					.Where(x => !request.Any(y => y.Parameter.Id == x.ParameterId)).ToList();
-
-				var entitiesToAdd = request.Where(x => !CreatureTemplateParameters
-					.Any(y => y.ParameterId == x.Parameter.Id)).ToList();
-
-				if (entitiesToAdd.Any())
-					foreach (var entity in entitiesToAdd)
-						CreatureTemplateParameters.Add(
-							new CreatureTemplateParameter(
-								parameter: entity.Parameter,
-								parameterValue: entity.Value,
+				var creatureTemplateParameter = CreatureTemplateParameters.FirstOrDefault(x => x.Id == dataItem.Id);
+				if (creatureTemplateParameter == null)
+					CreatureTemplateParameters.Add(
+						new CreatureTemplateParameter(
+								parameter: dataItem.Parameter,
+								parameterValue: dataItem.Value,
 								creatureTemplate: this));
-
-				if (entitiesToDelete.Any())
-					foreach (var entity in entitiesToDelete)
-						CreatureTemplateParameters.Remove(entity);
+				else
+					creatureTemplateParameter.ChangeValue(dataItem.Value);
 			}
-		}
-
-		/// <summary>
-		/// Создание тела шаблона существа
-		/// </summary>
-		/// <param name="bodyTemplate">Шаблон тела</param>
-		/// <param name="armor">Броня</param>
-		/// <returns></returns>
-		private static List<BodyPart> CreateBody(BodyTemplate bodyTemplate, int armor)
-		{
-			var bodyParts = new List<BodyPart>();
-
-			foreach (var part in bodyTemplate.BodyTemplateParts)
-				bodyParts.Add(new BodyPart()
-				{
-					Name = part.Name,
-					HitPenalty = part.HitPenalty,
-					DamageModifier = part.DamageModifier,
-					MinToHit = part.MinToHit,
-					MaxToHit = part.MaxToHit,
-					StartingArmor = armor,
-					CurrentArmor = armor
-				});
-			return bodyParts;
 		}
 
 		/// <summary>
@@ -471,21 +453,19 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="bodyTemplate">Шаблон тела</param>
 		/// <param name="armorList">Броня</param>
 		/// <returns>Список частей шаблона тела</returns>
-		private static List<BodyPart> UpdateBody(BodyTemplate bodyTemplate, List<(string BodyPartName, int Armor)> armorList)
+		private static List<BodyPart> UpdateBody(List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
 		{
 			var bodyParts = new List<BodyPart>();
 
-			foreach (var part in bodyTemplate.BodyTemplateParts)
-				bodyParts.Add(new BodyPart()
-				{
-					Name = part.Name,
-					HitPenalty = part.HitPenalty,
-					DamageModifier = part.DamageModifier,
-					MinToHit = part.MinToHit,
-					MaxToHit = part.MaxToHit,
-					StartingArmor = armorList.FirstOrDefault(x => x.BodyPartName == part.Name).Armor,
-					CurrentArmor = armorList.FirstOrDefault(x => x.BodyPartName == part.Name).Armor
-				});
+			foreach (var part in armorList)
+				bodyParts.Add(new BodyPart(
+					name: part.BodyTemplatePart.Name,
+					hitPenalty: part.BodyTemplatePart.HitPenalty,
+					damageModifier: part.BodyTemplatePart.DamageModifier,
+					minToHit: part.BodyTemplatePart.MinToHit,
+					maxToHit: part.BodyTemplatePart.MaxToHit,
+					startingArmor: part.Armor,
+					currentArmor: part.Armor));
 			return bodyParts;
 		}
 
@@ -528,7 +508,7 @@ namespace Sindie.ApiService.Core.Entities
 			string name,
 			string description,
 			string type,
-			List<(string BodyPartName, int Armor)> armorList)
+			List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
 		{
 			Game = game;
 			ImgFile = imgFile;
@@ -547,8 +527,91 @@ namespace Sindie.ApiService.Core.Entities
 			Name = name;
 			Description = description;
 			Type = type;
-			BodyParts = UpdateBody(bodyTemplate, armorList);
+			BodyParts = UpdateBody(armorList);
 		}
+
+		/// <summary>
+		/// Создать тестовую сущность с заполненными полями
+		/// </summary>
+		/// <param name="id">Айди</param>
+		/// <param name="game">Игра</param>
+		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="imgFile">Графический файл</param>
+		/// <param name="name">Название</param>
+		/// <param name="description">Описание</param>
+		/// <param name="type">Тип</param>
+		/// <param name="hp">Хиты</param>
+		/// <param name="sta">Стамина</param>
+		/// <param name="int">Интеллект</param>
+		/// <param name="ref">Рефлексы</param>
+		/// <param name="dex">Ловкость</param>
+		/// <param name="body">Телосложение</param>
+		/// <param name="emp">Эмпатия</param>
+		/// <param name="cra">Крафт</param>
+		/// <param name="will">Воля</param>
+		/// <param name="speed">Скорость</param>
+		/// <param name="luck">Удача</param>
+		/// <param name="createdOn">Дата создания</param>
+		/// <param name="modifiedOn">Дата изменения</param>
+		/// <param name="createdByUserId">Создавший пользователь</param>
+		/// <param name="bodyParts">Список частей тела</param>
+		/// <returns></returns>
+		[Obsolete("Только для тестов")]
+		public static CreatureTemplate CreateForTest(
+			Guid? id = default,
+			Game game = default,
+			BodyTemplate bodyTemplate = default,
+			ImgFile imgFile = default,
+			string name = default,
+			string description = default,
+			string type = default,
+			int hp = default,
+			int sta = default,
+			int @int = default,
+			int @ref = default,
+			int dex = default,
+			int body = default,
+			int emp = default,
+			int cra = default,
+			int will = default,
+			int speed = default,
+			int luck = default,
+			DateTime createdOn = default,
+			DateTime modifiedOn = default,
+			Guid createdByUserId = default,
+			List<BodyPart> bodyParts = default,
+			List<Ability> abilities = default)
+		=> new CreatureTemplate()
+		{
+			Id = id ?? Guid.NewGuid(),
+			Game = game,
+			ImgFile = imgFile,
+			BodyTemplate = bodyTemplate,
+			Name = name ?? "CreatureTemplate",
+			Description = description,
+			Type = type ?? "human",
+			HP = hp == default ? 10 : hp,
+			Sta = sta == default ? 10 : sta,
+			Int = @int == default ? 1 : @int,
+			Ref = @ref == default ? 1 : @ref,
+			Dex = dex == default ? 1 : dex,
+			Body = body == default ? 1 : body,
+			Emp = emp == default ? 1 : emp,
+			Cra = cra == default ? 1 : cra,
+			Will = will == default ? 1 : will,
+			Speed = speed == default ? 1 : speed,
+			Luck = luck == default ? 1 : luck,
+			CreatedOn = createdOn,
+			ModifiedOn = modifiedOn,
+			CreatedByUserId = createdByUserId,
+			Creatures = new List<Creature>(),
+			CreatureTemplateParameters = new List<CreatureTemplateParameter>(),
+			Abilities = new List<Ability>(),
+			BodyParts = bodyParts == null
+			? new List<BodyPart>()
+			{ new BodyPart("torso", 1, 1, 1, 10, 5, 5)}
+			: bodyParts
+		};
 
 		//private int Roll(int parameter)
 		//{

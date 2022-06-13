@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 	/// <summary>
 	/// Элемент запроса создания шаблона существа - способность
 	/// </summary>
-	public class CreateCreatureTemplateRequestIAbility
+	public class CreateCreatureTemplateRequestAbility
 	{
 		/// <summary>
 		/// Наазвание способности
@@ -46,6 +46,6 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 		/// <summary>
 		/// Накладываемые состояния
 		/// </summary>
-		public List<CreateCreatureTemplateAppliedCondition> AppliedConditions { get; set; }
+		public List<CreateCreatureTemplateRequestAppliedCondition> AppliedConditions { get; set; }
 	}
 }

@@ -14,6 +14,41 @@ namespace Sindie.ApiService.Core.Entities
 		private int _hitPenalty;
 
 		/// <summary>
+		/// Пустой конструктор
+		/// </summary>
+		protected BodyPart()
+		{
+		}
+
+		/// <summary>
+		/// Конструктор части тела
+		/// </summary>
+		/// <param name="name">Название</param>
+		/// <param name="damageModifier">Модификатор урона</param>
+		/// <param name="hitPenalty">Пенальти за прицеливание</param>
+		/// <param name="minToHit">Минимум на попадание</param>
+		/// <param name="maxToHit">Максимум на попадание</param>
+		/// <param name="startingArmor">Стартовая броня</param>
+		/// <param name="currentArmor">Текущая броня</param>
+		public BodyPart(
+			string name,
+			double damageModifier,
+			int hitPenalty,
+			int minToHit,
+			int maxToHit,
+			int startingArmor,
+			int currentArmor)
+		{
+			Name = name;
+			DamageModifier = damageModifier;
+			HitPenalty = hitPenalty;
+			MinToHit = minToHit;
+			MaxToHit = maxToHit;
+			StartingArmor = startingArmor;
+			CurrentArmor = currentArmor;
+		}
+
+		/// <summary>
 		/// Название
 		/// </summary>
 		public string Name { get; set; }

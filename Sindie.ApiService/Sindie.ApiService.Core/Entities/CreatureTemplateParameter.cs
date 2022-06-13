@@ -87,5 +87,45 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		#endregion navigation properties
+
+		/// <summary>
+		/// изменить значение параметра шаблона существа
+		/// </summary>
+		/// <param name="value">зЗначение параметра</param>
+		public void ChangeValue(int value)
+		{
+			ParameterValue = value;
+		}
+
+		/// <summary>
+		/// Создать тестовую сущность
+		/// </summary>
+		/// <param name="id">Айди</param>
+		/// <param name="creatureTemplate">Параметр шаблона существа</param>
+		/// <param name="parameter">Параметр</param>
+		/// <param name="value">ЗНачение параметра</param>
+		/// <param name="createdOn">Дата создания</param>
+		/// <param name="modifiedOn">Дата изменения</param>
+		/// <param name="createdByUserId">Создавший пользователь</param>
+		/// <returns>Параметр шаблона существа</returns>
+		[Obsolete("Только для тестов")]
+		public static CreatureTemplateParameter CreateForTest(
+			Guid? id = default,
+			CreatureTemplate creatureTemplate = default,
+			Parameter parameter = default,
+			double value = default,
+			DateTime createdOn = default,
+			DateTime modifiedOn = default,
+			Guid createdByUserId = default)
+		=> new CreatureTemplateParameter()
+		{
+			Id = id ?? Guid.NewGuid(),
+			CreatureTemplate = creatureTemplate,
+			Parameter = parameter,
+			ParameterValue = value,
+			CreatedOn = createdOn,
+			ModifiedOn = modifiedOn,
+			CreatedByUserId = createdByUserId
+		};
 	}
 }

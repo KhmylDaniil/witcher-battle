@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById
 {
@@ -11,6 +7,11 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateB
 	/// </summary>
 	public class GetBodyTemplateByIdResponseItem
 	{
+		/// <summary>
+		/// Айди части шаблона тела
+		/// </summary>
+		public Guid Id { get; set; }
+
 		/// <summary>
 		/// Название
 		/// </summary>

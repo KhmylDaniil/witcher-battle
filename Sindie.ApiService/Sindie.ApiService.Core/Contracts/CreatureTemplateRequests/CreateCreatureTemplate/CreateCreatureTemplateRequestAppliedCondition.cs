@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 	/// <summary>
 	/// Элемент запроса создания шаблона существа - применяемое состояние
 	/// </summary>
-	public class CreateCreatureTemplateAppliedCondition
+	public class CreateCreatureTemplateRequestAppliedCondition
 	{
 		/// <summary>
 		/// Айди состояния

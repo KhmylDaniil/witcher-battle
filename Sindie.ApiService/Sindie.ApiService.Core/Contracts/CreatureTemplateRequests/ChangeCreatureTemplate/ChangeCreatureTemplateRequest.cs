@@ -102,16 +102,16 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatu
 		/// <summary>
 		/// Броня
 		/// </summary>
-		public List<(string BodyPartName, int Armor)> ArmorList { get; set; }
+		public List<ChangeCreatureTemplateRequestArmorList> ArmorList { get; set; }
 
 		/// <summary>
 		/// Способности
 		/// </summary>
-		public List<ChangeCreatureTemplateRequestItem> Abilities { get; set; }
+		public List<ChangeCreatureTemplateRequestAbility> Abilities { get; set; }
 
 		/// <summary>
 		/// Параметры шаблона существа
 		/// </summary>
-		public List<(Guid ParameterId, int Value)> CreatureTemplateParameters { get; set; }
+		public List<ChangeCreatureTemplateRequestParameter> CreatureTemplateParameters { get; set; }
 	}
 }

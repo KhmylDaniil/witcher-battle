@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate
 {
 	/// <summary>

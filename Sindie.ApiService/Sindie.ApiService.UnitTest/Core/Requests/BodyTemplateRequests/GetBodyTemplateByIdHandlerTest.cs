@@ -20,21 +20,37 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
 		private readonly BodyTemplate _bodyTemplate;
+		private readonly BodyTemplatePart _torso;
+		private readonly BodyTemplatePart _head;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="GetBodyTemplateByIdHandler"/>
 		/// </summary>
 		public GetBodyTemplateByIdHandlerTest() : base()
 		{
-
 			_game = Game.CreateForTest();
 
 			_bodyTemplate = BodyTemplate.CreateForTest(
 				name: "testName",
-				game: _game,
-				bodyTemplateParts: new List<BodyTemplatePart>()
-				{new BodyTemplatePart("head", 3, 3, 1, 3), new BodyTemplatePart("body", 1, 1, 4, 10)});
+				game: _game);
 
+			_head = BodyTemplatePart.CreateForTest(
+				bodyTemplate: _bodyTemplate,
+					name: "head",
+					hitPenalty: 3,
+					damageModifier: 3,
+					minToHit: 1,
+					maxToHit: 3);
+
+			_torso = BodyTemplatePart.CreateForTest(
+				bodyTemplate: _bodyTemplate,
+					name: "torso",
+					hitPenalty: 1,
+					damageModifier: 1,
+					minToHit: 4,
+					maxToHit: 10);
+
+			_bodyTemplate.BodyTemplateParts = new List<BodyTemplatePart> { _head, _torso};
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game, _bodyTemplate));
 		}
@@ -46,11 +62,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 		[TestMethod]
 		public async Task Handle_GetCharacterTemplate_ShouldReturn_GetCharacterTemplateResponse()
 		{
-			var creationMinTime = DateTimeProvider.Object.TimeProvider.AddDays(-1);
-			var creationMaxTime = DateTimeProvider.Object.TimeProvider.AddDays(1);
-			var modificationMinTime = DateTimeProvider.Object.TimeProvider.AddDays(-1);
-			var modificationMaxTime = DateTimeProvider.Object.TimeProvider.AddDays(1);
-
 			var request = new GetBodyTemplateByIdQuery()
 			{
 				GameId = _game.Id,
@@ -68,19 +79,21 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 			Assert.AreEqual(result.Description, _bodyTemplate.Description);
 			Assert.IsNotNull(result.GetBodyTemplateByIdResponseItems);
 
-			var head = result.GetBodyTemplateByIdResponseItems.FirstOrDefault(x => x.Name == "head");
+			var head = result.GetBodyTemplateByIdResponseItems.FirstOrDefault(x => x.Id == _head.Id);
 			Assert.IsNotNull(head);
+			Assert.AreEqual(head.Name, "head");
 			Assert.AreEqual(head.DamageModifier, 3);
 			Assert.AreEqual(head.HitPenalty, 3);
 			Assert.AreEqual(head.MinToHit, 1);
 			Assert.AreEqual(head.MaxToHit, 3);
 
-			var body = result.GetBodyTemplateByIdResponseItems.FirstOrDefault(x => x.Name == "body");
-			Assert.IsNotNull(body);
-			Assert.AreEqual(body.DamageModifier, 1);
-			Assert.AreEqual(body.HitPenalty, 1);
-			Assert.AreEqual(body.MinToHit, 4);
-			Assert.AreEqual(body.MaxToHit, 10);
+			var torso = result.GetBodyTemplateByIdResponseItems.FirstOrDefault(x => x.Id == _torso.Id);
+			Assert.IsNotNull(torso);
+			Assert.AreEqual(torso.Name, "torso");
+			Assert.AreEqual(torso.DamageModifier, 1);
+			Assert.AreEqual(torso.HitPenalty, 1);
+			Assert.AreEqual(torso.MinToHit, 4);
+			Assert.AreEqual(torso.MaxToHit, 10);
 		}
 	}
 }

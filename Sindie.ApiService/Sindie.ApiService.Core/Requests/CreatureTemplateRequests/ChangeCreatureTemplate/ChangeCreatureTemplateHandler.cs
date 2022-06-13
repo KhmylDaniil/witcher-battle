@@ -1,14 +1,13 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -50,9 +49,14 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 		{
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.BodyTemplates.Where(bt => bt.Id == request.BodyTemplateId))
+					.ThenInclude(x => x.BodyTemplateParts)
 				.Include(x => x.Conditions)
 				.Include(x => x.Parameters)
 				.Include(x => x.CreatureTemplates)
+					.ThenInclude(x => x.CreatureTemplateParameters)
+				.Include(x => x.CreatureTemplates)
+					.ThenInclude(x => x.Abilities)
+						.ThenInclude(x => x.AppliedConditions)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
@@ -84,12 +88,12 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 				name: request.Name,
 				description: request.Description,
 				type: request.Type,
-				armorList: request.ArmorList);
+				armorList: CreateArmorList(bodyTemplate, request.ArmorList));
 
 			creatureTemplate.UpdateAlibilities(AbilityData.CreateAbilityData(request, game));
 
 			creatureTemplate.UpdateCreatureTemplateParameters(
-							CreateParameterList(game.Parameters, request.CreatureTemplateParameters));
+				CreatureTemplateParameterData.CreateCreatureTemplateParameterData(request, game));
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
@@ -111,17 +115,27 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId)
 				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.BodyTemplateId);
 
-			var bodyTemplatePartsList = bodyTemplate.BodyTemplateParts.Select(x => x.Name).ToList();
-
 			foreach (var item in request.ArmorList)
-				if(!bodyTemplatePartsList.Contains(item.BodyPartName)
-					|| item.Armor < 0)
-					throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateCommand>(nameof(request.ArmorList));
+			{
+				_ = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == item.BodyTemplatePartId)
+					?? throw new ExceptionEntityNotFound<BodyTemplatePart>(item.BodyTemplatePartId);
+
+				if (item.Armor < 0)
+					throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateCommand>(nameof(item.Armor));
+			}
 
 			foreach (var parameter in request.CreatureTemplateParameters)
 			{
 				_ = game.Parameters.FirstOrDefault(x => x.Id == parameter.ParameterId)
 					?? throw new ExceptionEntityNotFound<Parameter>(parameter.ParameterId);
+
+				if (parameter.Id != default)
+					_ = creatureTemplate.CreatureTemplateParameters
+						.FirstOrDefault(x => x.Id == parameter.Id && x.ParameterId == parameter.ParameterId)
+						?? throw new ExceptionEntityNotFound<CreatureTemplateParameter>(parameter.Id.Value);
+				else
+					if (creatureTemplate.CreatureTemplateParameters.Any(x => x.ParameterId == parameter.ParameterId))
+						throw new ExceptionRequestNotUniq<CreatureTemplateParameter>(parameter.ParameterId);
 
 				if (parameter.Value < 1)
 					throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateCommand>(nameof(parameter.Value));
@@ -129,6 +143,10 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 
 			foreach (var ability in request.Abilities)
 			{
+				if (ability.Id != default)
+					_ = creatureTemplate.Abilities.FirstOrDefault(x => x.Id == ability.Id)
+							?? throw new ExceptionEntityNotFound<Ability>(ability.Id.Value);
+
 				if (string.IsNullOrEmpty(ability.Name))
 					throw new ExceptionRequestFieldNull<ChangeCreatureTemplateCommand>(nameof(ability.Name));
 
@@ -143,8 +161,9 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 
 				foreach (var appliedCondition in ability.AppliedConditions)
 				{
-					_ = creatureTemplate.Abilities.SelectMany(x => x.AppliedConditions).FirstOrDefault(x => x.Id == appliedCondition.Id)
-						?? throw new ExceptionEntityNotFound<AppliedCondition>(appliedCondition.Id);
+					if (appliedCondition.Id != default)
+						_ = creatureTemplate.Abilities.SelectMany(x => x.AppliedConditions).FirstOrDefault(x => x.Id == appliedCondition.Id)
+							?? throw new ExceptionEntityNotFound<AppliedCondition>(appliedCondition.Id.Value);
 
 					_ = game.Conditions.FirstOrDefault(x => x.Id == appliedCondition.ConditionId)
 						?? throw new ExceptionEntityNotFound<Condition>(appliedCondition.ConditionId);
@@ -156,18 +175,18 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 		}
 
 		/// <summary>
-		/// Создание списка параметров
+		/// Создание списка частей шаблона тела
 		/// </summary>
-		/// <param name="entities">Данные из БД</param>
-		/// <param name="data">Список айди</param>
-		/// <returns>Список параметров</returns>
-		private List<(Parameter Parameter, int Value)> CreateParameterList(List<Parameter> entities, List<(Guid ParameterId, int Value)> data)
+		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="data">Данные</param>
+		/// <returns>Список частей шаблона тела</returns>
+		private List<(BodyTemplatePart BodyTemplatePart, int Armor)> CreateArmorList(BodyTemplate bodyTemplate, List<ChangeCreatureTemplateRequestArmorList> data)
 		{
-			var result = new List<(Parameter Parameter, int Value)>();
-			foreach (var dataItem in data)
+			var result = new List<(BodyTemplatePart BodyTemplatePart, int Armor)>();
+			foreach (var item in data)
 				result.Add((
-					entities.FirstOrDefault(y => y.Id == dataItem.ParameterId),
-					dataItem.Value));
+					bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == item.BodyTemplatePartId),
+					item.Armor));
 			return result;
 		}
 	}

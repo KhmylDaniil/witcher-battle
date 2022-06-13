@@ -1,9 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatureTemplate;
+using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatureTemplate;
-using System;
+using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatureTemplate;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,10 +10,10 @@ using System.Threading.Tasks;
 namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 {
 	/// <summary>
-	/// Тест для <see cref="CreateCreatureTemlplateHandler"/>
+	/// Тест для <see cref="ChangeCreatureTemplateHandler"/>
 	/// </summary>
 	[TestClass]
-	public class CreateCreatureTemlplateHandlerTest : UnitTestBase
+	public class ChangeCreatureTemplateHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -22,12 +21,16 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly BodyTemplatePart _torso;
 		private readonly Condition _condition;
-		private readonly Parameter _parameter;
+		private readonly Parameter _parameter1;
+		private readonly Parameter _parameter2;
+		private readonly CreatureTemplate _creatureTemplate;
+		private readonly CreatureTemplateParameter _creatureTemplateParameter;
+		private readonly Ability _ability;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="CreateCreatureTemlplateHandler"/>
 		/// </summary>
-		public CreateCreatureTemlplateHandlerTest() : base()
+		public ChangeCreatureTemplateHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
 			_imgFile = ImgFile.CreateForTest();
@@ -40,24 +43,65 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				minToHit: 1,
 				maxToHit: 10);
 			_condition = Condition.CreateForTest(game: _game);
-			_parameter = Parameter.CreateForTest(game: _game);
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _parameter, _bodyTemplate, _torso, _condition));
+			_parameter1 = Parameter.CreateForTest(game: _game);
+			_parameter2 = Parameter.CreateForTest(game: _game);
+
+			_creatureTemplate = CreatureTemplate.CreateForTest(
+				game: _game,
+				bodyTemplate: _bodyTemplate,
+				bodyParts: new List<BodyPart>
+				{
+					new BodyPart(
+						name: "torso",
+						hitPenalty: 1,
+						damageModifier: 1,
+						minToHit: 1,
+						maxToHit: 10,
+						startingArmor: 5,
+						currentArmor: 5)
+				});
+			_ability = Ability.CreateForTest(
+				creatureTemplate: _creatureTemplate,
+				name: "attack",
+				attackDiceQuantity: 1,
+				damageModifier: 1,
+				attackSpeed: 1,
+				accuracy: 1,
+				attackParameter: _parameter1);
+
+			_creatureTemplateParameter = CreatureTemplateParameter.CreateForTest(
+				creatureTemplate: _creatureTemplate,
+				parameter: _parameter1,
+				value: 6);
+
+			_dbContext = CreateInMemoryContext(x => x.AddRange(
+				_game,
+				_imgFile,
+				_parameter1,
+				_parameter2,
+				_bodyTemplate,
+				_torso,
+				_ability,
+				_creatureTemplate,
+				_creatureTemplateParameter,
+				_condition));
 		}
 
 		/// <summary>
-		/// Тест метода Handle - создание шаблона существа
+		/// Тест метода Handle - изменение шаблона существа
 		/// </summary>
 		/// <returns></returns>
 		[TestMethod]
-		public async Task Handle_CreateCreatureTemplate_ShouldReturnUnit()
+		public async Task Handle_ChangeCreatureTemplate_ShouldReturnUnit()
 		{
-			var request = new CreateCreatureTemplateCommand(
+			var request = new ChangeCreatureTemplateCommand(
+				id: _creatureTemplate.Id,
 				gameId: _game.Id,
 				imgFileId: _imgFile.Id,
 				bodyTemplateId: _bodyTemplate.Id,
-				name: "name",
+				name: "newCT",
 				description: "description",
-				type: "type",
+				type: "newType",
 				hp: 10,
 				sta: 10,
 				@int: 6,
@@ -69,28 +113,29 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				will: 5,
 				speed: 7,
 				luck: 1,
-				armorList: new List<CreateCreatureTemplateRequestArmorList>
+				armorList: new List<ChangeCreatureTemplateRequestArmorList>
 				{
-					new CreateCreatureTemplateRequestArmorList()
+					new ChangeCreatureTemplateRequestArmorList()
 					{
 						BodyTemplatePartId = _torso.Id,
 						Armor = 4
 					}
 				},
-				abilities: new List<CreateCreatureTemplateRequestAbility>
+				abilities: new List<ChangeCreatureTemplateRequestAbility>
 				{
-					new CreateCreatureTemplateRequestAbility()
+					new ChangeCreatureTemplateRequestAbility()
 					{
-						Name = "attack",
+						Id = _ability.Id,
+						Name = "attack2",
 						Description = "bite",
-						AttackParameterId = _parameter.Id,
+						AttackParameterId = _parameter2.Id,
 						AttackDiceQuantity = 2,
 						DamageModifier = 4,
 						AttackSpeed = 1,
 						Accuracy = -1,
-						AppliedConditions = new List<CreateCreatureTemplateRequestAppliedCondition>
+						AppliedConditions = new List<ChangeCreatureTemplateRequestAppliedCondition>
 						{
-							new CreateCreatureTemplateRequestAppliedCondition()
+							new ChangeCreatureTemplateRequestAppliedCondition()
 							{
 								ConditionId = _condition.Id,
 								ApplyChance = 50
@@ -98,21 +143,28 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 						}
 					}
 				},
-				creatureTemplateParameters: new List<CreateCreatureTemplateRequestParameter>
+				creatureTemplateParameters: new List<ChangeCreatureTemplateRequestParameter>
 				{
-					new CreateCreatureTemplateRequestParameter()
+					new ChangeCreatureTemplateRequestParameter()
 					{
-						ParameterId = _parameter.Id,
-						Value = 5
+						Id = _creatureTemplateParameter.Id,
+						ParameterId = _parameter1.Id,
+						Value = 9
+					},
+					new ChangeCreatureTemplateRequestParameter()
+					{
+						ParameterId = _parameter2.Id,
+						Value = 3
 					}
 				});
 
-			var newHandler = new CreateCreatureTemplateHandler(_dbContext, AuthorizationService.Object);
+			var newHandler = new ChangeCreatureTemplateHandler(_dbContext, AuthorizationService.Object);
 
 			var result = await newHandler.Handle(request, default);
 
 			Assert.IsNotNull(result);
-			var creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault();
+
+			var creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault(x => x.Id == request.Id);
 			Assert.IsNotNull(creatureTemplate);
 			Assert.AreEqual(_dbContext.CreatureTemplates.Count(), 1);
 
@@ -150,14 +202,15 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			Assert.IsNotNull(creatureTemplate.Abilities);
 			Assert.AreEqual(creatureTemplate.Abilities.Count(), 1);
-			var ability = _dbContext.Abilities.FirstOrDefault();
+			var ability = creatureTemplate.Abilities.FirstOrDefault(x => x.Id == _ability.Id);
+			Assert.IsNotNull(ability);
 
-			Assert.AreEqual(ability.Name, "attack");
+			Assert.AreEqual(ability.Name, "attack2");
 			Assert.AreEqual(ability.Description, "bite");
 			Assert.AreEqual(ability.Accuracy, -1);
 			Assert.AreEqual(ability.AttackSpeed, 1);
 			Assert.AreEqual(ability.AttackDiceQuantity, 2);
-			Assert.AreEqual(ability.AttackParameterId, _parameter.Id);
+			Assert.AreEqual(ability.AttackParameterId, _parameter2.Id);
 			Assert.AreEqual(ability.DamageModifier, 4);
 
 			Assert.IsNotNull(ability.AppliedConditions);
@@ -168,12 +221,14 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(appliedCondition.ConditionId, _condition.Id);
 
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateParameters);
-			Assert.AreEqual(creatureTemplate.CreatureTemplateParameters.Count(), 1);
-			var creatureTemplateParameter = _dbContext.CreatureTemplateParameters
-				.FirstOrDefault(x => x.CreatureTemplateId == creatureTemplate.Id);
+			Assert.AreEqual(creatureTemplate.CreatureTemplateParameters.Count(), 2);
+			var creatureTemplateParameter1 = creatureTemplate.CreatureTemplateParameters
+				.FirstOrDefault(x => x.ParameterId == _parameter1.Id);
+			Assert.IsTrue(creatureTemplateParameter1.ParameterValue == 9);
 
-			Assert.IsTrue(creatureTemplateParameter.ParameterId == _parameter.Id);
-			Assert.IsTrue(creatureTemplateParameter.ParameterValue == 5);
+			var creatureTemplateParameter2 = creatureTemplate.CreatureTemplateParameters
+				.FirstOrDefault(x => x.ParameterId == _parameter2.Id);
+			Assert.IsTrue(creatureTemplateParameter2.ParameterValue == 3);
 		}
 	}
 }

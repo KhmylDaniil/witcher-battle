@@ -4,13 +4,9 @@ using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -63,6 +59,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplateBy
 
 			var bodyTemplateParts = bodyTemplate.BodyTemplateParts.Select(x => new GetBodyTemplateByIdResponseItem()
 			{
+				Id = x.Id,
 				Name = x.Name,
 				HitPenalty = x.HitPenalty,
 				DamageModifier = x.DamageModifier,

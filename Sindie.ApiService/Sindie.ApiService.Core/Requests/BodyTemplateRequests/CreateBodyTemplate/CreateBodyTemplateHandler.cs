@@ -53,12 +53,13 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 
 			CheckRequest(request, game);
 
-			game.BodyTemplates.Add(new BodyTemplate(
+			var newBodyTemplate = new BodyTemplate(
 				game: game,
 				name: request.Name,
 				description: request.Description,
-				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request)));
+				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request));
 
+			_appDbContext.BodyTemplates.Add(newBodyTemplate);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
 		}

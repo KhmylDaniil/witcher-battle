@@ -50,33 +50,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.OwnsMany(bt => bt.BodyTemplateParts, bp =>
-			{
-				bp.Property(bp => bp.Name)
-				.HasColumnName("Name")
-				.HasComment("Название")
-				.IsRequired();
-
-				bp.Property(bp => bp.DamageModifier)
-				.HasColumnName("DamageModifer")
-				.HasComment("Модификатор урона")
-				.IsRequired();
-
-				bp.Property(bp => bp.HitPenalty)
-				.HasColumnName("HitPenalty")
-				.HasComment("Пенальти за прицеливание")
-				.IsRequired();
-
-				bp.Property(bp => bp.MinToHit)
-				.HasColumnName("MinToHit")
-				.HasComment("Минимальное значение попадания")
-				.IsRequired();
-
-				bp.Property(bp => bp.MaxToHit)
-				.HasColumnName("MaxToHit")
-				.HasComment("Максимальное значение попадания")
-				.IsRequired();
-			});
+			builder.HasMany(x => x.BodyTemplateParts)
+				.WithOne(x => x.BodyTemplate)
+				.HasForeignKey(x => x.BodyTemplateId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 
 			var gameNavigation = builder.Metadata.FindNavigation(nameof(BodyTemplate.Game));
 			gameNavigation.SetField(BodyTemplate.GameField);

@@ -30,7 +30,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 		/// <param name="will">Воля</param>
 		/// <param name="speed">Скорость</param>
 		/// <param name="luck">Удача</param>
-		/// <param name="armor">Броня</param>
+		/// <param name="armorList">Броня</param>
 		/// <param name="abilities">Способности</param>
 		/// <param name="creatureTemplateParameters">Параметры шаблона существа</param>
 		public CreateCreatureTemplateCommand(
@@ -51,8 +51,8 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 			int will,
 			int speed,
 			int luck,
-			int armor,
-			List<CreateCreatureTemplateRequestIAbility> abilities,
+			List<CreateCreatureTemplateRequestArmorList> armorList,
+			List<CreateCreatureTemplateRequestAbility> abilities,
 			List<CreateCreatureTemplateRequestParameter> creatureTemplateParameters)
 		{
 			GameId = gameId;
@@ -76,8 +76,12 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 			Will = will < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Will)) : will;
 			Speed = speed < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Speed)) : speed;
 			Luck = luck < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Luck)) : luck;
-			Armor = armor < 0 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Armor)) : armor;
-			Abilities = abilities == null ? throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequest>(nameof(Abilities)) : abilities;
+			ArmorList = armorList == null 
+				? throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequest>(nameof(ArmorList))
+				: armorList;
+			Abilities = abilities == null
+				? throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequest>(nameof(Abilities))
+				: abilities;
 			CreatureTemplateParameters = creatureTemplateParameters == null
 				? throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequest>(nameof(CreatureTemplateParameters))
 				: creatureTemplateParameters;

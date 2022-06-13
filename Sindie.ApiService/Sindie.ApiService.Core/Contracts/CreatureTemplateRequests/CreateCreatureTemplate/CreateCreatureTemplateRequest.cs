@@ -97,12 +97,12 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 		/// <summary>
 		/// Броня
 		/// </summary>
-		public int Armor { get; set; }
+		public List<CreateCreatureTemplateRequestArmorList> ArmorList { get; set; }
 
 		/// <summary>
 		/// Способности
 		/// </summary>
-		public List<CreateCreatureTemplateRequestIAbility> Abilities { get; set; }
+		public List<CreateCreatureTemplateRequestAbility> Abilities { get; set; }
 
 		/// <summary>
 		/// Параметры шаблона существа

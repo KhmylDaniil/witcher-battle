@@ -1,9 +1,13 @@
 ﻿using Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplate;
+using System;
 using System.Collections.Generic;
 
 namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 {
+	/// <summary>
+	/// Данные для обновления частей шаблона тела
+	/// </summary>
 	public class BodyTemplatePartsData
 	{
 		/// <summary>

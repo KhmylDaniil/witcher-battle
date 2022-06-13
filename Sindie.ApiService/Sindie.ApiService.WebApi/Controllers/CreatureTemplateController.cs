@@ -67,7 +67,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 					will: request.Will,
 					speed: request.Speed,
 					luck: request.Luck,
-					armor: request.Armor,
+					armorList: request.ArmorList,
 					abilities: request.Abilities,
 					creatureTemplateParameters: request.CreatureTemplateParameters), cancellationToken);
 		}

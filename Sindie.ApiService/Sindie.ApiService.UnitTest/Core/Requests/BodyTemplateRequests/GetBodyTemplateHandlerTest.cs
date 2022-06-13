@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
@@ -17,6 +18,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly BodyTemplate _bodyTemplate;
+		private readonly BodyTemplatePart _torso;
+		private readonly BodyTemplatePart _head;
 		private readonly User _user;
 		private readonly Game _game;
 
@@ -40,12 +43,28 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 				game: _game,
 				createdOn: DateTimeProvider.Object.TimeProvider,
 				modifiedOn: DateTimeProvider.Object.TimeProvider,
-				createdByUserId: _user.Id,
-				bodyTemplateParts: new List<BodyTemplatePart>()
-				{new BodyTemplatePart("head", 3, 3, 1, 3), new BodyTemplatePart("body", 1, 1, 4, 10)});
+				createdByUserId: _user.Id);
+
+			_head = BodyTemplatePart.CreateForTest(
+				bodyTemplate: _bodyTemplate,
+					name: "head",
+					hitPenalty: 3,
+					damageModifier: 3,
+					minToHit: 1,
+					maxToHit: 3);
+
+			_torso = BodyTemplatePart.CreateForTest(
+				bodyTemplate: _bodyTemplate,
+					name: "torso",
+					hitPenalty: 1,
+					damageModifier: 1,
+					minToHit: 4,
+					maxToHit: 10);
+
+			_bodyTemplate.BodyTemplateParts = new List<BodyTemplatePart> { _head, _torso };
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
-				_game, _user, _bodyTemplate));
+				_game, _user, _bodyTemplate, _torso, _head));
 		}
 
 		/// <summary>
@@ -88,6 +107,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 			Assert.IsTrue(resultItem.ModifiedOn >= modificationMinTime && resultItem.ModifiedOn <= modificationMaxTime);
 
 			var bodyTemplate = _dbContext.BodyTemplates
+				.Include(x => x.BodyTemplateParts)
 				.FirstOrDefault(x => x.Id == resultItem.Id);
 			Assert.IsNotNull(bodyTemplate);
 

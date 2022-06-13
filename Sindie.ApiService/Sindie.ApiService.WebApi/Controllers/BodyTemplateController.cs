@@ -40,7 +40,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		}
 
 		/// <summary>
-		/// Обработчик создания шаблона тела
+		/// Создать шаблон тела
 		/// </summary>
 		/// <param name="request">Запрос на создание шаблона тела</param>
 		/// <param name="cancellationToken">Токен отмены</param>
@@ -61,7 +61,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		}
 
 		/// <summary>
-		/// Обработчик изменения шаблона тела
+		/// Изменить шаблон тела
 		/// </summary>
 		/// <param name="request">Запрос на изменение шаблона тела</param>
 		/// <param name="cancellationToken">Токен отмены</param>
@@ -83,7 +83,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		}
 
 		/// <summary>
-		/// Обработчик предоставления списка шаблонов тела
+		/// Предоставить список шаблонов тела
 		/// </summary>
 		/// <param name="request">Запрос на предоставление списка шаблонов тела</param>
 		/// <param name="cancellationToken">Токен отмены</param>
@@ -112,7 +112,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		}
 
 		/// <summary>
-		/// Обработчик предоставления шаблона тела по айди
+		/// Предоставтьб шаблон тела по айди
 		/// </summary>
 		/// <param name="request">Запрос на предоставление шаблона тела по айди</param>
 		/// <param name="cancellationToken">Токен отмены</param>
@@ -127,7 +127,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		}
 
 		/// <summary>
-		/// Обработчик удаления шаблона тела по айди
+		/// удалить шаблон тела по айди
 		/// </summary>
 		/// <param name="request">Запрос на удаление шаблона тела по айди</param>
 		/// <param name="cancellationToken">Токен отмены</param>

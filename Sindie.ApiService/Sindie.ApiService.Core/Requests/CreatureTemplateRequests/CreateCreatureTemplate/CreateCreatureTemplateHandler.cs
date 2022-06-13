@@ -50,6 +50,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 		{
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.BodyTemplates.Where(bt => bt.Id == request.BodyTemplateId))
+					.ThenInclude(x => x.BodyTemplateParts)
 				.Include(x => x.Conditions)
 				.Include(x => x.Parameters)
 				.Include(x => x.CreatureTemplates)
@@ -64,6 +65,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 			CheckRequest(request, game);
 
 			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId);
+
 
 			var newCreatureTemplate = new CreatureTemplate(
 				game: game,
@@ -83,11 +85,11 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 				name: request.Name,
 				description: request.Description,
 				type: request.Type,
-				armor: request.Armor);
+				armorList: CreateArmorList(bodyTemplate, request.ArmorList));
 
 			newCreatureTemplate.UpdateAlibilities(AbilityData.CreateAbilityData(request, game));
 			newCreatureTemplate.UpdateCreatureTemplateParameters(
-				CreateParameterList(game.Parameters, request.CreatureTemplateParameters));
+				CreatureTemplateParameterData.CreateCreatureTemplateParameterData(request, game));
 
 			_appDbContext.CreatureTemplates.Add(newCreatureTemplate);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
@@ -104,8 +106,17 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 			if (game.CreatureTemplates.Any(x => x.Name == request.Name))
 				throw new ExceptionRequestNameNotUniq<CreateCreatureTemplateCommand>(nameof(request.Name));
 
-			_ = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId)
+			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId)
 				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.BodyTemplateId);
+
+			foreach (var item in request.ArmorList)
+			{
+				_ = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == item.BodyTemplatePartId)
+					?? throw new ExceptionEntityNotFound<BodyTemplatePart>(item.BodyTemplatePartId);
+				
+				if (item.Armor < 0)
+					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateCommand>(nameof(item.Armor));
+			}
 
 			foreach (var parameter in request.CreatureTemplateParameters)
 			{
@@ -119,16 +130,16 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 			foreach (var ability in request.Abilities)
 			{
 				if (string.IsNullOrEmpty(ability.Name))
-					throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequestIAbility>(nameof(ability.Name));
+					throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequestAbility>(nameof(ability.Name));
 
 				_ = game.Parameters.FirstOrDefault(x => x.Id == ability.AttackParameterId)
 					?? throw new ExceptionEntityNotFound<Parameter>(ability.AttackParameterId);
 
 				if (ability.AttackDiceQuantity < 0)
-					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequestIAbility>(nameof(ability.AttackDiceQuantity));
+					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequestAbility>(nameof(ability.AttackDiceQuantity));
 
 				if (ability.AttackSpeed < 0)
-					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequestIAbility>(nameof(ability.AttackSpeed));
+					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequestAbility>(nameof(ability.AttackSpeed));
 
 				foreach (var appliedCondition in ability.AppliedConditions)
 				{
@@ -142,18 +153,18 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 		}
 
 		/// <summary>
-		/// Создание списка параметров
+		/// Созадние списка частей шаблона тела
 		/// </summary>
-		/// <param name="entities">Данные из БД</param>
-		/// <param name="data">Список айди</param>
-		/// <returns>Список параметров</returns>
-		private List<(Parameter Parameter, int Value)> CreateParameterList(List<Parameter> entities, List<CreateCreatureTemplateRequestParameter> data)
+		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="data">Данные</param>
+		/// <returns>Список частей шаблона тела</returns>
+		private List<(BodyTemplatePart BodyTemplatePart, int Armor)> CreateArmorList(BodyTemplate bodyTemplate, List<CreateCreatureTemplateRequestArmorList> data)
 		{
-			var result = new List<(Parameter Parameter, int Value)>();
-			foreach (var dataItem in data)
+			var result = new List<(BodyTemplatePart BodyTemplatePart, int Armor)>();
+			foreach (var item in data)
 				result.Add((
-					entities.FirstOrDefault(y => y.Id == dataItem.ParameterId),
-					dataItem.Value));
+					bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == item.BodyTemplatePartId),
+					item.Armor));
 			return result;
 		}
 	}
