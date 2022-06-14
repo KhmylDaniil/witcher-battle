@@ -15,6 +15,6 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 		/// <summary>
 		/// Шанс применения
 		/// </summary>
-		public double ApplyChance { get; set; }
+		public int ApplyChance { get; set; }
 	}
 }

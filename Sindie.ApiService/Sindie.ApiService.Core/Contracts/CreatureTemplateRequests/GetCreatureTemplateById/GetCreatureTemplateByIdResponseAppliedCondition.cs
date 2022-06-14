@@ -25,6 +25,6 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// <summary>
 		/// Шанс применения
 		/// </summary>
-		public double ApplyChance { get; set; }
+		public int ApplyChance { get; set; }
 	}
 }

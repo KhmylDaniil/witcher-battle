@@ -34,7 +34,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="creature">Cущество</param>
 		/// <param name="parameter">Параметр</param>
 		public CreatureParameter(
-			double parameterValue,
+			int parameterValue,
 			Creature creature,
 			Parameter parameter)
 		{
@@ -56,7 +56,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// значение параметра у существа
 		/// </summary>
-		public double ParameterValue { get; set; }
+		public int ParameterValue { get; set; }
 
 		#region navigation properties
 

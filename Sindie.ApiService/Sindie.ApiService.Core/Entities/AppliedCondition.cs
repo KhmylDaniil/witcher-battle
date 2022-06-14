@@ -36,7 +36,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="ability">Способность</param>
 		/// <param name="condition">Состояние</param>
 		/// <param name="applyChance">Шанс применения</param>
-		public AppliedCondition(Ability ability, Condition condition, double applyChance)
+		public AppliedCondition(Ability ability, Condition condition, int applyChance)
 		{
 			Ability = ability;
 			Condition = condition;
@@ -51,7 +51,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Шанс применения
 		/// </summary>
-		public double ApplyChance { get; set; }
+		public int ApplyChance { get; set; }
 
 		/// <summary>
 		/// Айди состояния
@@ -93,7 +93,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="condition"></param>
 		/// <param name="applyChance"></param>
 		/// <returns></returns>
-		public static AppliedCondition CreateAppliedCondition(Ability ability, Condition condition, double applyChance)
+		public static AppliedCondition CreateAppliedCondition(Ability ability, Condition condition, int applyChance)
 		=> new AppliedCondition(ability, condition, applyChance);
 
 		/// <summary>
@@ -101,7 +101,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		/// <param name="condition">Состояние</param>
 		/// <param name="applyChance">Шанс применения</param>
-		public void ChangeAppliedCondition(Condition condition, double applyChance)
+		public void ChangeAppliedCondition(Condition condition, int applyChance)
 		{
 			Condition = condition;
 			ApplyChance -= applyChance;

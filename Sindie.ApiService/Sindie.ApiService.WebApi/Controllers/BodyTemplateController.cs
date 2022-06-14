@@ -112,7 +112,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		}
 
 		/// <summary>
-		/// Предоставтьб шаблон тела по айди
+		/// Предоставить шаблон тела по айди
 		/// </summary>
 		/// <param name="request">Запрос на предоставление шаблона тела по айди</param>
 		/// <param name="cancellationToken">Токен отмены</param>
@@ -127,7 +127,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		}
 
 		/// <summary>
-		/// удалить шаблон тела по айди
+		/// Удалить шаблон тела по айди
 		/// </summary>
 		/// <param name="request">Запрос на удаление шаблона тела по айди</param>
 		/// <param name="cancellationToken">Токен отмены</param>

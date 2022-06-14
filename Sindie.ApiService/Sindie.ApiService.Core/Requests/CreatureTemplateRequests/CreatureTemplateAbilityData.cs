@@ -58,7 +58,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
 		/// <summary>
 		/// Применяемые состояния
 		/// </summary>
-		public List<(Guid? Id, Condition Condition, double ApplyChance)>  AppliedConditions { get; set; } 
+		public List<(Guid? Id, Condition Condition, int ApplyChance)>  AppliedConditions { get; set; } 
 
 		/// <summary>
 		/// Создание данных для способности
@@ -89,7 +89,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
 					DamageModifier = requestItem.DamageModifier,
 					AttackSpeed = requestItem.AttackSpeed,
 					Accuracy = requestItem.Accuracy,
-					AppliedConditions = new List<(Guid? Id, Condition Condition, double ApplyChance)>()
+					AppliedConditions = new List<(Guid? Id, Condition Condition, int ApplyChance)>()
 				};
 				foreach (var appliedCondition in requestItem.AppliedConditions)
 					resultItem.AppliedConditions.Add((
@@ -130,7 +130,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
 					DamageModifier = requestItem.DamageModifier,
 					AttackSpeed = requestItem.AttackSpeed,
 					Accuracy = requestItem.Accuracy,
-					AppliedConditions = new List<(Guid? Id, Condition Condition, double ApplyChance)>()
+					AppliedConditions = new List<(Guid? Id, Condition Condition, int ApplyChance)>()
 				};
 				foreach (var appliedCondition in requestItem.AppliedConditions)
 					resultItem.AppliedConditions.Add((

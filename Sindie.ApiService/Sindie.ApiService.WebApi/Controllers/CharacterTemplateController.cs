@@ -30,6 +30,8 @@ namespace Sindie.ApiService.WebApi.Controllers
 			_mediator = mediator;
 		}
 
+		/*
+
 		/// <summary>
 		/// Создание шаблона персонажа
 		/// </summary>
@@ -77,5 +79,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		{
 			return await _mediator.Send(request);
 		}
+
+		*/
 	}
 }

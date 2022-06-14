@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatureTemplate;
+using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.DeleteCreatureTemplateById;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplate;
+using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplateById;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatureTemplate;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTemplate;
@@ -118,10 +120,10 @@ namespace Sindie.ApiService.WebApi.Controllers
 		/// <param name="request">Запрос на предоставление списка шаблонов существа</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns>Ответ на запрос предоставления списка шаблонов существа</returns>
-		[HttpGet("GetBodyTemplate")]
+		[HttpGet("GetCreatureTemplate")]
 		[SwaggerResponse(StatusCodes.Status200OK)]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task<GetCreatureTemplateResponse> GetBodyTemplateAsync([FromQuery] GetCreatureTemplateQuery request, CancellationToken cancellationToken)
+		public async Task<GetCreatureTemplateResponse> GetCreatureTemplateAsync([FromQuery] GetCreatureTemplateQuery request, CancellationToken cancellationToken)
 		{
 			return await _mediator.Send(
 				request == null
@@ -142,6 +144,36 @@ namespace Sindie.ApiService.WebApi.Controllers
 					pageSize: request.PageSize,
 					orderBy: request.OrderBy,
 					isAscending: request.IsAscending), cancellationToken);
+		}
+
+		/// <summary>
+		/// Предоставить шаблон существа по айди
+		/// </summary>
+		/// <param name="request">Запрос на предоставление шаблона существа</param>
+		/// <param name="cancellationToken">Токен отмены</param>
+		/// <returns>Ответ на запрос предоставления шаблона существа</returns>
+		[HttpGet("GetCreatureTemplateById")]
+		[SwaggerResponse(StatusCodes.Status200OK)]
+		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
+		public async Task<GetCreatureTemplateByIdResponse> GetCreatureTemplateByIdAsync([FromQuery] GetCreatureTemplateByIdQuery request, CancellationToken cancellationToken)
+		{
+			return await _mediator.Send(request == null
+				? throw new ArgumentNullException(nameof(request)) : request, cancellationToken);
+		}
+
+		/// <summary>
+		/// Удалить шаблон тела по айди
+		/// </summary>
+		/// <param name="request">Запрос на удаление шаблона тела по айди</param>
+		/// <param name="cancellationToken">Токен отмены</param>
+		/// <returns></returns>
+		[HttpDelete]
+		[SwaggerResponse(StatusCodes.Status200OK)]
+		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
+		public async Task DeleteCreatureTemplateByIdAsync([FromQuery] DeleteCreatureTemplateByIdCommand request, CancellationToken cancellationToken)
+		{
+			await _mediator.Send(request == null
+				? throw new ArgumentNullException(nameof(request)) : request, cancellationToken);
 		}
 	}
 }

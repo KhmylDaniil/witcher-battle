@@ -23,7 +23,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		{
 			_mediator = mediator;
 		}
-
+		/*
 		/// <summary>
 		/// Создать слот
 		/// </summary>
@@ -35,5 +35,6 @@ namespace Sindie.ApiService.WebApi.Controllers
 		{
 			return await _mediator.Send(request);
 		}
+		*/
 	}
 }

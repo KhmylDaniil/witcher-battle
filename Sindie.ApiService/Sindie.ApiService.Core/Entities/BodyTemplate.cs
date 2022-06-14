@@ -104,22 +104,26 @@ namespace Sindie.ApiService.Core.Entities
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default,
 			List<BodyTemplatePart> bodyTemplateParts = default)
-		=> new BodyTemplate()
 		{
-			Id = id ?? Guid.NewGuid(),
-			Name = name ?? "BodyTemplate",
-			Description = description,
-			Game = game,
-			CreatedOn = createdOn,
-			ModifiedOn = modifiedOn,
-			CreatedByUserId = createdByUserId,
-			CreatureTemplates = new List<CreatureTemplate>(),
-			Creatures = new List<Creature>(),
-			BodyTemplateParts = bodyTemplateParts == null 
-			? new List<BodyTemplatePart>()
-			{ new BodyTemplatePart("torso", 1, 1, 1, 10)}
-			: bodyTemplateParts
-		};
+			var result = new BodyTemplate()
+			{
+				Id = id ?? Guid.NewGuid(),
+				Name = name ?? "BodyTemplate",
+				Description = description,
+				Game = game,
+				CreatedOn = createdOn,
+				ModifiedOn = modifiedOn,
+				CreatedByUserId = createdByUserId,
+				CreatureTemplates = new List<CreatureTemplate>(),
+				Creatures = new List<Creature>(),
+				BodyTemplateParts = bodyTemplateParts
+			};
+			if (result.BodyTemplateParts == null)
+				result.BodyTemplateParts = new List<BodyTemplatePart>()
+				{ new BodyTemplatePart(result, "torso", 1, 1, 1, 10)};
+			return result;
+		}
+
 
 		/// <summary>
 		/// Создание списка шаблонов частей тела
@@ -133,6 +137,7 @@ namespace Sindie.ApiService.Core.Entities
 			
 			foreach (var part in bodyTemplateParts)
 				result.Add(new BodyTemplatePart(
+					bodyTemplate: this,
 					name: part.Name,
 					damageModifier: part.DamageModifier,
 					hitPenalty: part.HitPenalty,

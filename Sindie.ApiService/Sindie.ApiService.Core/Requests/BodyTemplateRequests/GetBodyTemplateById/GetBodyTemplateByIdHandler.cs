@@ -65,7 +65,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplateBy
 				DamageModifier = x.DamageModifier,
 				MinToHit = x.MinToHit,
 				MaxToHit = x.MaxToHit
-			}).ToList();
+			}).OrderBy(x => x.MinToHit).ToList();
 
 			return new GetBodyTemplateByIdResponse()
 			{

@@ -187,7 +187,7 @@ namespace Sindie.ApiService.Core.Entities
 			int damageModifier,
 			int attackSpeed,
 			int accuracy,
-			List<(Guid? Id, Condition Condition, double ApplyChance)> appliedConditions)
+			List<(Guid? Id, Condition Condition, int ApplyChance)> appliedConditions)
 		{
 			var ability = new Ability(
 				creatureTemplate: creatureTemplate,
@@ -223,7 +223,7 @@ namespace Sindie.ApiService.Core.Entities
 			int damageModifier,
 			int attackSpeed,
 			int accuracy,
-			List<(Guid? Id, Condition Condition, double ApplyChance)> appliedConditions)
+			List<(Guid? Id, Condition Condition, int ApplyChance)> appliedConditions)
 		{
 			Name = name;
 			Description = description;
@@ -239,7 +239,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// Обновление списка применяемых состояний
 		/// </summary>
 		/// <param name="data">Данные</param>
-		public void UpdateAplliedConditions(List<(Guid? Id, Condition Condition, double ApplyChance)> data)
+		public void UpdateAplliedConditions(List<(Guid? Id, Condition Condition, int ApplyChance)> data)
 		{
 			if (data == null)
 				throw new ExceptionRequestFieldNull<AbilityData>(nameof(AbilityData.AppliedConditions));

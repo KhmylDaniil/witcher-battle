@@ -25,6 +25,6 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// <summary>
 		/// Значение параметра
 		/// </summary>
-		public double ParameterValue { get; set; }
+		public int ParameterValue { get; set; }
 	}
 }

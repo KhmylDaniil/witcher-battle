@@ -23,6 +23,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 			_mediator = mediator;
 		}
 
+		/*
 		/// <summary>
 		/// Запрос списка интерфейсов
 		/// </summary>
@@ -33,5 +34,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		{
 			return await _mediator.Send(request);
 		}
+
+		*/
 	}
 }

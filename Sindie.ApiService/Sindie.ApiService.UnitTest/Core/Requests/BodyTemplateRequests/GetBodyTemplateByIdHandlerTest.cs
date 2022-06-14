@@ -74,7 +74,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(result.GameId, _bodyTemplate.GameId);
-			Assert.IsNotNull(_bodyTemplate.Name);
+			Assert.IsNotNull(result.Name);
 			Assert.AreEqual(result.Name, _bodyTemplate.Name);
 			Assert.AreEqual(result.Description, _bodyTemplate.Description);
 			Assert.IsNotNull(result.GetBodyTemplateByIdResponseItems);

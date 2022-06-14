@@ -38,7 +38,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		{
 			_mediator = mediator;
 		}
-
+		/*
 		/// <summary>
 		/// Обработчик изменения сумки
 		/// </summary>
@@ -167,5 +167,6 @@ namespace Sindie.ApiService.WebApi.Controllers
 					notificationId: request.NotificationId,
 					consent: request.Consent), cancellationToken);
 		}
+		*/
 	}
 }

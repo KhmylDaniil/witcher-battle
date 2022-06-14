@@ -175,30 +175,36 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 comment: "Состояния");
 
             migrationBuilder.CreateTable(
-                name: "BodyTemplatePart",
+                name: "BodyTemplateParts",
                 schema: "GameRules",
                 columns: table => new
                 {
-                    BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
+                    BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона тела"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
                     HitPenalty = table.Column<int>(type: "integer", nullable: false, comment: "Пенальти за прицеливание"),
                     DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
                     MinToHit = table.Column<int>(type: "integer", nullable: false, comment: "Минимальное значение попадания"),
-                    MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания")
+                    MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания"),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
+                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BodyTemplatePart", x => new { x.BodyTemplateId, x.Id });
+                    table.PrimaryKey("PK_BodyTemplateParts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BodyTemplatePart_BodyTemplates_BodyTemplateId",
+                        name: "FK_BodyTemplateParts_BodyTemplates_BodyTemplateId",
                         column: x => x.BodyTemplateId,
                         principalSchema: "GameRules",
                         principalTable: "BodyTemplates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                },
+                comment: "Части шаблона тела");
 
             migrationBuilder.CreateTable(
                 name: "CreatureTemplates",
@@ -371,7 +377,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
                     CreatureId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона существа"),
                     ParameterId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди параметра"),
-                    ParametrValue = table.Column<double>(type: "double precision", nullable: false, comment: "Значение параметра"),
+                    ParametrValue = table.Column<int>(type: "integer", nullable: false, comment: "Значение параметра"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -407,13 +413,13 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     CreatureTemplateId = table.Column<Guid>(type: "uuid", nullable: false),
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Начальная броня"),
-                    CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
                     HitPenalty = table.Column<int>(type: "integer", nullable: false, comment: "Пенальти за прицеливание"),
                     DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
                     MinToHit = table.Column<int>(type: "integer", nullable: false, comment: "Минимальное значение попадания"),
-                    MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания")
+                    MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания"),
+                    StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Начальная броня"),
+                    CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня")
                 },
                 constraints: table =>
                 {
@@ -434,7 +440,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
                     AbilityId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди способнности"),
-                    ApplyChance = table.Column<double>(type: "double precision", nullable: false, comment: "Шанс применения"),
+                    ApplyChance = table.Column<int>(type: "integer", nullable: false, comment: "Шанс применения"),
                     ConditionId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди состояния"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -498,7 +504,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
                     CreatureId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди существа"),
                     ParameterId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди параметра"),
-                    ParametrValue = table.Column<double>(type: "double precision", nullable: false, comment: "Значение параметра"),
+                    ParametrValue = table.Column<int>(type: "integer", nullable: false, comment: "Значение параметра"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -534,13 +540,13 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     CreatureId = table.Column<Guid>(type: "uuid", nullable: false),
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Начальная броня"),
-                    CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
                     HitPenalty = table.Column<int>(type: "integer", nullable: false, comment: "Пенальти за прицеливание"),
                     DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
                     MinToHit = table.Column<int>(type: "integer", nullable: false, comment: "Минимальное значение попадания"),
-                    MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания")
+                    MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания"),
+                    StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Начальная броня"),
+                    CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня")
                 },
                 constraints: table =>
                 {
@@ -604,6 +610,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 schema: "GameRules",
                 table: "AppliedConditions",
                 column: "ConditionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BodyTemplateParts_BodyTemplateId",
+                schema: "GameRules",
+                table: "BodyTemplateParts",
+                column: "BodyTemplateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BodyTemplates_GameId",
@@ -705,7 +717,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 schema: "GameRules");
 
             migrationBuilder.DropTable(
-                name: "BodyTemplatePart",
+                name: "BodyTemplateParts",
                 schema: "GameRules");
 
             migrationBuilder.DropTable(

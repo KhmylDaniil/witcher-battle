@@ -34,12 +34,14 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="minToHit">Минимум на попадание</param>
 		/// <param name="maxToHit">Максимум на попадание</param>
 		public BodyTemplatePart(
+			BodyTemplate bodyTemplate,
 			string name,
 			double damageModifier,
 			int hitPenalty,
 			int minToHit,
 			int maxToHit)
 		{
+			BodyTemplate = bodyTemplate;
 			Name = name;
 			DamageModifier = damageModifier;
 			HitPenalty = hitPenalty;
@@ -66,7 +68,7 @@ namespace Sindie.ApiService.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ArgumentOutOfRangeException(nameof(DamageModifier));
+					throw new ArgumentOutOfRangeException(nameof(HitPenalty));
 				_hitPenalty = value;
 			}
 		}
@@ -150,7 +152,7 @@ namespace Sindie.ApiService.Core.Entities
 			BodyTemplate bodyTemplate = default,
 			string name = default,
 			int hitPenalty = default,
-			int damageModifier = default,
+			double damageModifier = default,
 			int minToHit = default,
 			int maxToHit = default,
 			DateTime createdOn = default,

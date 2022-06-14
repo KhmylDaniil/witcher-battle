@@ -16,8 +16,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 		/// </summary>
 		public override void ConfigureChild(EntityTypeBuilder<BodyTemplatePart> builder)
 		{
-			builder.ToTable("BodyTemplateParts", "GameRules").
-				HasComment("Части шаблона тела");
+			builder.ToTable("BodyTemplateParts", "GameRules")
+				.HasComment("Части шаблона тела");
 
 			builder.Property(r => r.BodyTemplateId)
 				.HasColumnName("BodyTemplateId")

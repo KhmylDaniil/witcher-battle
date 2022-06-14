@@ -34,7 +34,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="creatureTemplate">Шаблон существа</param>
 		/// <param name="parameter">Параметр</param>
 		public CreatureTemplateParameter(
-			double parameterValue,
+			int parameterValue,
 			CreatureTemplate creatureTemplate,
 			Parameter parameter)
 		{
@@ -56,7 +56,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// значение параметра у шаблона существа
 		/// </summary>
-		public double ParameterValue { get; set; }
+		public int ParameterValue { get; set; }
 
 		#region navigation properties
 
@@ -113,7 +113,7 @@ namespace Sindie.ApiService.Core.Entities
 			Guid? id = default,
 			CreatureTemplate creatureTemplate = default,
 			Parameter parameter = default,
-			double value = default,
+			int value = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
