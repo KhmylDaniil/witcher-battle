@@ -60,7 +60,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 		/// </summary>
 		/// <returns></returns>
 		[TestMethod]
-		public async Task Handle_GetCharacterTemplate_ShouldReturn_GetCharacterTemplateResponse()
+		public async Task Handle_GetCharacterTemplate_ShouldReturn_GetBodyTemplateByIdResponse()
 		{
 			var request = new GetBodyTemplateByIdQuery()
 			{

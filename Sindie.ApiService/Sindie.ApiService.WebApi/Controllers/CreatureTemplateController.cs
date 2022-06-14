@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatureTemplate;
+using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplate;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatureTemplate;
+using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTemplate;
 using Sindie.ApiService.WebApi.Versioning;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -108,6 +110,38 @@ namespace Sindie.ApiService.WebApi.Controllers
 					armorList: request.ArmorList,
 					abilities: request.Abilities,
 					creatureTemplateParameters: request.CreatureTemplateParameters), cancellationToken);
+		}
+
+		/// <summary>
+		/// Предоставить список шаблонов существа
+		/// </summary>
+		/// <param name="request">Запрос на предоставление списка шаблонов существа</param>
+		/// <param name="cancellationToken">Токен отмены</param>
+		/// <returns>Ответ на запрос предоставления списка шаблонов существа</returns>
+		[HttpGet("GetBodyTemplate")]
+		[SwaggerResponse(StatusCodes.Status200OK)]
+		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
+		public async Task<GetCreatureTemplateResponse> GetBodyTemplateAsync([FromQuery] GetCreatureTemplateQuery request, CancellationToken cancellationToken)
+		{
+			return await _mediator.Send(
+				request == null
+				? throw new ArgumentNullException(nameof(request))
+				: new GetCreatureTemplateCommand(
+					gameId: request.GameId,
+					name: request.Name,
+					type: request.Type,
+					userName: request.UserName,
+					creationMaxTime: request.CreationMaxTime,
+					creationMinTime: request.CreationMinTime,
+					modificationMaxTime: request.ModificationMaxTime,
+					modificationMinTime: request.ModificationMinTime,
+					bodyTemplateName: request.BodyTemplateName,
+					bodyPartName: request.BodyPartName,
+					conditionName: request.ConditionName,
+					pageNumber: request.PageNumber,
+					pageSize: request.PageSize,
+					orderBy: request.OrderBy,
+					isAscending: request.IsAscending), cancellationToken);
 		}
 	}
 }

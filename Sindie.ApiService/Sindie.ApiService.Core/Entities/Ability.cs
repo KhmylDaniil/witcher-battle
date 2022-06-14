@@ -24,6 +24,8 @@ namespace Sindie.ApiService.Core.Entities
 
 		private CreatureTemplate _creatureTemplate;
 		private Parameter _attackParameter;
+		private int _attackDiceQuantity;
+		private int _attackSpeed;
 
 		/// <summary>
 		/// Пустой конструктор
@@ -83,12 +85,21 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Айди параметра атаки
 		/// </summary>
-		public Guid AttackParameterId { get; set; }
+		public Guid AttackParameterId { get; protected set; }
 
 		/// <summary>
 		/// Количество кубов атаки
 		/// </summary>
-		public int AttackDiceQuantity { get; set; }
+		public int AttackDiceQuantity
+		{
+			get => _attackDiceQuantity;
+			set
+			{
+				if (value < 0)
+					throw new ArgumentOutOfRangeException(nameof(AttackDiceQuantity));
+				_attackDiceQuantity = value;
+			}
+		}
 
 		/// <summary>
 		/// Модификатор атаки
@@ -98,7 +109,16 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Скорость атаки
 		/// </summary>
-		public int AttackSpeed { get; set; }
+		public int AttackSpeed
+		{
+			get => _attackSpeed;
+			set
+			{
+				if (value < 0)
+					throw new ArgumentOutOfRangeException(nameof(AttackSpeed));
+				_attackSpeed = value;
+			}
+		}
 
 		/// <summary>
 		/// Точность атаки
@@ -288,7 +308,7 @@ namespace Sindie.ApiService.Core.Entities
 		{
 			Id = id ?? Guid.NewGuid(),
 			CreatureTemplate = creatureTemplate,
-			Name = name,
+			Name = name ?? "name",
 			Description = description,
 			AttackDiceQuantity = attackDiceQuantity,
 			DamageModifier = damageModifier,

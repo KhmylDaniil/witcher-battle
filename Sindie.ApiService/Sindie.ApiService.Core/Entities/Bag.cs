@@ -52,8 +52,8 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="maxWeight">Максимальная грузоподъемность</param>
 		public Bag(
 			Instance instance,
-			ImgFile? imgFile,
-			Character? character,
+			ImgFile imgFile,
+			Character character,
 			string name,
 			string description,
 			int? maxBagSize,

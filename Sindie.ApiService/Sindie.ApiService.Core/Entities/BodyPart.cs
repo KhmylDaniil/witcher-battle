@@ -12,6 +12,8 @@ namespace Sindie.ApiService.Core.Entities
 		private int _minToHit;
 		private double _damageModifier;
 		private int _hitPenalty;
+		private int _startingArmor;
+		private int _currentArmor;
 
 		/// <summary>
 		/// Пустой конструктор
@@ -112,11 +114,28 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Начальная броня
 		/// </summary>
-		public int StartingArmor { get; set; }
-
+		public int StartingArmor
+		{
+			get => _startingArmor;
+			set
+			{
+				if (value < 0)
+					throw new ArgumentOutOfRangeException(nameof(StartingArmor));
+				_startingArmor = value;
+			}
+		}
 		/// <summary>
 		/// Текущая броня
 		/// </summary>
-		public int CurrentArmor { get; set; }
+		public int CurrentArmor
+		{
+			get => _currentArmor;
+			set
+			{
+				if (value < 0)
+					throw new ArgumentOutOfRangeException(nameof(CurrentArmor));
+				_currentArmor = value;
+			}
+		}
 	}
 }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 {
 	/// <summary>
-	/// Тест для <see cref="GetBodyTemplateHandle"/>
+	/// Тест для <see cref="GetBodyTemplateHandler"/>
 	/// </summary>
 	[TestClass]
 	public class GetBodyTemplateHandlerTest : UnitTestBase
@@ -24,7 +24,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 		private readonly Game _game;
 
 		/// <summary>
-		/// Конструктор для теста <see cref="GetBodyTemplateHandle"/>
+		/// Конструктор для теста <see cref="GetBodyTemplateHandler"/>
 		/// </summary>
 		public GetBodyTemplateHandlerTest() : base()
 		{
@@ -73,7 +73,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 		/// </summary>
 		/// <returns></returns>
 		[TestMethod]
-		public async Task Handle_GetBodyTemplate_ShouldReturn_GetbodyTemplateResponse()
+		public async Task Handle_GetBodyTemplate_ShouldReturn_GetBodyTemplateResponse()
 		{
 			var creationMinTime = DateTimeProvider.Object.TimeProvider.AddDays(-1);
 			var creationMaxTime = DateTimeProvider.Object.TimeProvider.AddDays(1);

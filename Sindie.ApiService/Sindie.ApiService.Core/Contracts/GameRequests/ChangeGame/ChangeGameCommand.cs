@@ -24,7 +24,7 @@ namespace Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame
 		/// <summary>
 		/// Описание игры
 		/// </summary>
-		public string? Description { get; set; }
+		public string Description { get; set; }
 
 		/// <summary>
 		/// Текстовые файлы игры

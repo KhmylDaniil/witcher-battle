@@ -1,16 +1,13 @@
 ﻿using MediatR;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate
+namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplate
 {
 	/// <summary>
-	/// Запрос на получение списка шаблонов тела
+	/// Запрос на получение списка шаблонов существа
 	/// </summary>
-	public class GetBodyTemplateQuery: IRequest<GetBodyTemplateResponse>
+	public class GetCreatureTemplateQuery : IRequest<GetCreatureTemplateResponse>
 	{
 		/// <summary>
 		/// Айди игры
@@ -20,7 +17,12 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate
 		/// <summary>
 		/// Фильтр по названию
 		/// </summary>
-		public string Name {get; set; }
+		public string Name { get; set; }
+
+		/// <summary>
+		/// Фильтр по типу
+		/// </summary>
+		public string Type { get; set; }
 
 		/// <summary>
 		/// Фильтр по автору
@@ -48,9 +50,19 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate
 		public DateTime ModificationMaxTime { get; set; }
 
 		/// <summary>
-		/// Название части тела
+		/// Фильтр по названию шаблона тела
+		/// </summary>
+		public string BodyTemplateName { get; set; }
+
+		/// <summary>
+		/// Фильтр по названию части тела
 		/// </summary>
 		public string BodyPartName { get; set; }
+
+		/// <summary>
+		/// фильтр по названию накладываемого состояния
+		/// </summary>
+		public string ConditionName { get; set; }
 
 		/// <summary>
 		/// Количество записей на одной странице 
