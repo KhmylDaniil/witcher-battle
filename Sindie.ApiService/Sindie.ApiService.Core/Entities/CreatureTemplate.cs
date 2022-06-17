@@ -612,32 +612,5 @@ namespace Sindie.ApiService.Core.Entities
 			{ new BodyPart("torso", 1, 1, 1, 10, 5, 5)}
 			: bodyParts
 		};
-
-		//private int Roll(int parameter)
-		//{
-		//	Random random = new Random();
-		//	var roll = random.Next(1, 10);
-		//	if (roll == 10)
-		//		parameter += roll + AddRoll();
-		//	else if (roll == 1)
-		//		parameter -= AddRoll();
-		//	else
-		//		parameter += roll;
-		//	return parameter < 1 ? 1 : parameter;
-		//}
-
-		//private int AddRoll()
-		//{
-		//	var result = 0;
-		//	Random rand = new Random();
-		//	var roll = 0;
-		//	do
-		//	{
-		//		roll = rand.Next(1, 10);
-		//		result += roll;
-		//	}
-		//	while (roll == 10);
-		//	return result;
-		//}
 	}
 }

@@ -1,6 +1,8 @@
 ﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -50,6 +52,42 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		protected Creature()
 		{
+		}
+
+		/// <summary>
+		/// Конструктор инстанса
+		/// </summary>
+		/// <param name="creatureTemplate">Шаблон существа</param>
+		/// <param name="instance">интанс</param>
+		/// <param name="name">Название существа</param>
+		/// <param name="description">Описание существа</param>
+		public Creature(
+			CreatureTemplate creatureTemplate,
+			Instance instance,
+			string name,
+			string description)
+		{
+			Instance = instance;
+			ImgFile = creatureTemplate.ImgFile;
+			CreatureTemplate = creatureTemplate;
+			BodyTemplate = creatureTemplate.BodyTemplate;
+			HP = creatureTemplate.HP;
+			Sta = creatureTemplate.Sta;
+			Int = creatureTemplate.Int;
+			Ref = creatureTemplate.Ref;
+			Dex = creatureTemplate.Dex;
+			Body = creatureTemplate.Body;
+			Emp = creatureTemplate.Emp;
+			Cra	= creatureTemplate.Cra;
+			Will = creatureTemplate.Will;
+			Speed = creatureTemplate.Speed;
+			Luck = creatureTemplate.Luck;
+			Name = name;
+			Description = description;
+			BodyParts = creatureTemplate.BodyParts;
+			Abilities = creatureTemplate.Abilities;
+			Conditions = new List<Condition>();
+			CreatureParameters = CreateParameters(creatureTemplate.CreatureTemplateParameters);
 		}
 
 		/// <summary>
@@ -307,5 +345,65 @@ namespace Sindie.ApiService.Core.Entities
 		public List<BodyPart> BodyParts { get; protected set; }
 
 		#endregion navigation properties
+
+		/// <summary>
+		/// Создание списка параметров существа
+		/// </summary>
+		/// <param name="parameters">Параметры шаблона существа</param>
+		/// <returns>Список параметров существа</returns>
+		private List<CreatureParameter> CreateParameters(List<CreatureTemplateParameter> parameters)
+		{
+			var result = new List<CreatureParameter>();
+
+			foreach (var parameter in parameters)
+				result.Add(new CreatureParameter(
+					creature: this,
+					parameter: parameter.Parameter,
+					parameterValue: parameter.ParameterValue));
+			return result;
+		}
+
+		/// <summary>
+		/// Выбор способности по умолчанию
+		/// </summary>
+		/// <returns>Способность по умолчанию</returns>
+		internal Ability DefaultAbility()
+		{
+			if (!Abilities.Any())
+				throw new ApplicationException($"У существа с айди {Id} отсутствуют способности.");
+
+			if (Abilities.Count == 1)
+				return Abilities[0];
+
+			var sortedAbilities = from a in Abilities
+								orderby a.Accuracy, a.AttackSpeed, a.AttackDiceQuantity, a.DamageModifier
+								select a;
+			return sortedAbilities.FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Расчет атаки
+		/// </summary>
+		/// <param name="ability">Способность</param>
+		/// <param name="bodyTemplatePart">Шабон тела цели</param>
+		/// <param name="successValue">Значение успеха</param>
+		/// <returns>Результат атаки</returns>
+		internal string Attack(Ability ability, BodyTemplatePart bodyTemplatePart, int successValue)
+		{
+			var message = new StringBuilder($"{Name} атакует способностью {ability.Name} в {bodyTemplatePart.Name}.");
+			if (successValue > 0)
+			{
+				message.AppendLine($"Попадание с превышением на {successValue}");
+				message.AppendLine($"Нанеcено {ability.RollDamage()}. Модификатор урона после поглощения броней составляет {bodyTemplatePart.DamageModifier}"
+				foreach (var condition in ability.RollConditions())
+					message.AppendLine($"Наложено состояние {condition.Name}");
+			}
+			else if (successValue < -5)
+				message.AppendLine($"Критический промах {successValue}.");
+			else
+				message.AppendLine("Промах.");
+
+			return message.ToString();
+		}
 	}
 }

@@ -162,7 +162,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// Накладываемые состояния
 		/// </summary>
 		public List<AppliedCondition> AppliedConditions { get; set; }
-		
+
 		#endregion navigation properties
 
 		/// <summary>
@@ -198,9 +198,9 @@ namespace Sindie.ApiService.Core.Entities
 				damageModifier: damageModifier,
 				attackSpeed: attackSpeed,
 				accuracy: accuracy);
-			
+
 			ability.UpdateAplliedConditions(appliedConditions);
-			
+
 			return ability;
 		}
 
@@ -272,6 +272,39 @@ namespace Sindie.ApiService.Core.Entities
 						applyChance: dataItem.ApplyChance);
 			}
 		}
+
+		/// <summary>
+		/// Расчет урона от атаки
+		/// </summary>
+		/// <returns>Нанесенный урон</returns>
+		internal int RollDamage()
+		{
+			Random random = new Random();
+			var result = DamageModifier;
+			for (int i = 0; i < AttackDiceQuantity; i++)
+				result += random.Next(1, 6);
+			return result;
+		}
+
+		/// <summary>
+		/// Расчет применения состояний
+		/// </summary>
+		/// <returns>Наложенные состояния</returns>
+		internal List<Condition> RollConditions()
+		{
+			var result = new List<Condition>();
+			Random random = new Random();
+
+			if (!AppliedConditions.Any())
+				return result;
+
+			foreach (var condition in AppliedConditions)
+				if (random.Next(1, 100) <= condition.ApplyChance)
+					result.Add(condition.Condition);
+
+			return result;
+		}
+
 
 		/// <summary>
 		/// Создать тестовую сущность

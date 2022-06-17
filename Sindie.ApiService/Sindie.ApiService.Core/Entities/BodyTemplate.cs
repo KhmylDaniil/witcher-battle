@@ -1,6 +1,7 @@
 ﻿using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -163,6 +164,18 @@ namespace Sindie.ApiService.Core.Entities
 			Name = name;
 			Description = description;
 			BodyTemplateParts = CreateBodyTemplateParts(bodyTemplateParts);
+		}
+
+		/// <summary>
+		/// Выбор места попадания
+		/// </summary>
+		/// <param name="id">Айди части шаблона тела</param>
+		/// <returns>Часть шаблона тела</returns>
+		internal BodyTemplatePart DefaultBodyTemplatePart()
+		{
+			Random random = new Random();
+			var roll = random.Next(1, 10);
+			return BodyTemplateParts.First(x => x.MinToHit <= roll && x.MaxToHit >= roll);
 		}
 	}
 }

@@ -69,5 +69,20 @@ namespace Sindie.ApiService.Core.Services.Authorization
 						.Any(ug => ug.UserId == _userContext.CurrentUserId && ug.UserGameCharacters
 							.Any(ugc => ugc.Id == c.UserGameActivatedId))))));
 		}
+
+
+		/// <inheritdoc/>
+		public IQueryable<Game> InstanceMasterFilter(
+			IQueryable<Game> query, Guid instanceId)
+		{
+			if (query is null)
+				throw new ArgumentNullException(nameof(query));
+
+			if (_userContext.Role == SystemRoles.AndminRoleName)
+				return query;
+
+			return query.Where(g => g.Id == g.Instances.FirstOrDefault(i => i.Id == instanceId).GameId)
+			&& g.UserGames.Any(u => u.UserId == _userContext.CurrentUserId && u.GameRoleId == GameRoles.MasterRoleId);
+		}
 	}
 }

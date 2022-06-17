@@ -2,6 +2,9 @@
 
 namespace Sindie.ApiService.Core.BaseData
 {
+	/// <summary>
+	/// Состояния (справочник)
+	/// </summary>
 	public static class Conditions
 	{
 		/// <summary>
