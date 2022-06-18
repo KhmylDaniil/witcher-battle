@@ -92,10 +92,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 				.FirstOrDefault(x => x.Id == ability.AttackParameterId).ParameterValue + ability.Accuracy - hitPenalty,
 				defenseValue: request.DefenseValue);
 
-			var attackResult = monster.Attack(
-				ability: ability,
-				bodyTemplatePart: bodyTemplatePart,
-				successValue: successValue);
+			var attackResult = monster.MonsterAttack(ability, bodyTemplatePart, successValue);
 
 			return new MonsterAttackResponse()
 			{ Result = attackResult};

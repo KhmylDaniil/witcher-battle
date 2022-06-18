@@ -81,8 +81,8 @@ namespace Sindie.ApiService.Core.Services.Authorization
 			if (_userContext.Role == SystemRoles.AndminRoleName)
 				return query;
 
-			return query.Where(g => g.Id == g.Instances.FirstOrDefault(i => i.Id == instanceId).GameId)
-			&& g.UserGames.Any(u => u.UserId == _userContext.CurrentUserId && u.GameRoleId == GameRoles.MasterRoleId);
+			return query.Where(g => g.Id == g.Instances.FirstOrDefault(i => i.Id == instanceId).GameId
+			&& g.UserGames.Any(u => u.UserId == _userContext.CurrentUserId && u.GameRoleId == GameRoles.MasterRoleId));
 		}
 	}
 }

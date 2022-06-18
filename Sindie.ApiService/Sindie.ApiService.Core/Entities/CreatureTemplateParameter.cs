@@ -122,7 +122,7 @@ namespace Sindie.ApiService.Core.Entities
 			Id = id ?? Guid.NewGuid(),
 			CreatureTemplate = creatureTemplate,
 			Parameter = parameter,
-			ParameterValue = value,
+			ParameterValue = value == 0 ? 1 : value,
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId

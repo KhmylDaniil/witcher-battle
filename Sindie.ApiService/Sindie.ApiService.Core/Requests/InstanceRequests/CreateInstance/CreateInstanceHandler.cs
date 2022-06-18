@@ -50,6 +50,14 @@ namespace Sindie.ApiService.Core.Requests.InstanceRequests.CreateInstance
 		{
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.CreatureTemplates)
+					.ThenInclude(x => x.BodyTemplate)
+				.Include(x => x.CreatureTemplates)
+					.ThenInclude(x => x.Abilities)
+					.ThenInclude(x => x.AppliedConditions)
+					.ThenInclude(x => x.Condition)
+				.Include(x => x.CreatureTemplates)
+					.ThenInclude(x => x.CreatureTemplateParameters)
+					.ThenInclude(x => x.Parameter)
 				.Include(x => x.Instances)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
@@ -69,7 +77,8 @@ namespace Sindie.ApiService.Core.Requests.InstanceRequests.CreateInstance
 
 			newInstance.Creatures = CreateCreatures(request.Creatures, game, newInstance);
 
-			await _appDbContext.Instances.AddAsync(newInstance);
+			game.Instances.Add(newInstance);
+			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
 		}
 

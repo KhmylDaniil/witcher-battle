@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace Sindie.ApiService.WebApi.Controllers
 {
-
 	/// <summary>
 	/// Контроллер боя
 	/// </summary>
@@ -35,7 +34,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		}
 
 		/// <summary>
-		/// Создать шаблон тела
+		/// Атака монстра
 		/// </summary>
 		/// <param name="request">Запрос на создание шаблона тела</param>
 		/// <param name="cancellationToken">Токен отмены</param>

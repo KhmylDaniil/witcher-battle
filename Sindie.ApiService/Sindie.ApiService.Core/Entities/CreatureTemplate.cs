@@ -70,7 +70,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
 		/// <param name="type">Тип существа</param>
-		/// <param name="armor">Броня существа</param>
+		/// <param name="armorList">Броня существа</param>
 		public CreatureTemplate(
 			Game game,
 			ImgFile imgFile,

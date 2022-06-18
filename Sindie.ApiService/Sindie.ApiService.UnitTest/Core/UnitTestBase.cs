@@ -105,6 +105,9 @@ namespace Sindie.ApiService.UnitTest.Core
 			AuthorizationService
 				.Setup(x => x.BagOwnerOrMasterFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
 				.Returns<IQueryable<Game>, Guid, Guid>((x, y, z) => x);
+			AuthorizationService
+				.Setup(x => x.InstanceMasterFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>()))
+				.Returns<IQueryable<Game>, Guid>((x, y) => x);
 
 			AuthorizationServiceWithGameId = new Mock<IAuthorizationService>();
 			AuthorizationServiceWithGameId

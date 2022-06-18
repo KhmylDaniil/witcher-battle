@@ -71,6 +71,7 @@ namespace Sindie.ApiService.Core.Entities
 			ImgFile = creatureTemplate.ImgFile;
 			CreatureTemplate = creatureTemplate;
 			BodyTemplate = creatureTemplate.BodyTemplate;
+			Type = creatureTemplate.Type;
 			HP = creatureTemplate.HP;
 			Sta = creatureTemplate.Sta;
 			Int = creatureTemplate.Int;
@@ -382,19 +383,19 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Расчет атаки
+		/// Расчет атаки монстра
 		/// </summary>
 		/// <param name="ability">Способность</param>
 		/// <param name="bodyTemplatePart">Шабон тела цели</param>
 		/// <param name="successValue">Значение успеха</param>
 		/// <returns>Результат атаки</returns>
-		internal string Attack(Ability ability, BodyTemplatePart bodyTemplatePart, int successValue)
+		internal string MonsterAttack(Ability ability, BodyTemplatePart bodyTemplatePart, int successValue)
 		{
 			var message = new StringBuilder($"{Name} атакует способностью {ability.Name} в {bodyTemplatePart.Name}.");
 			if (successValue > 0)
 			{
 				message.AppendLine($"Попадание с превышением на {successValue}");
-				message.AppendLine($"Нанеcено {ability.RollDamage()}. Модификатор урона после поглощения броней составляет {bodyTemplatePart.DamageModifier}"
+				message.AppendLine($"Нанеcено {ability.RollDamage()}. Модификатор урона после поглощения броней составляет {bodyTemplatePart.DamageModifier}");
 				foreach (var condition in ability.RollConditions())
 					message.AppendLine($"Наложено состояние {condition.Name}");
 			}

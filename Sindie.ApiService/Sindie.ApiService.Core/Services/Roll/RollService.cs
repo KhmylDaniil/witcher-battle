@@ -4,6 +4,9 @@ using System;
 
 namespace Sindie.ApiService.Core.Services.Roll
 {
+	/// <summary>
+	/// Серввис случайных бросков
+	/// </summary>
 	public class RollService : IRollService
 	{
 		public Random Random { get; set; }

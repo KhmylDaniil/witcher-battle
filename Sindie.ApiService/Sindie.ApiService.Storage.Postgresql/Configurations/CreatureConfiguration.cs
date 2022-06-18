@@ -48,7 +48,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.Property(r => r.Type)
 				.HasColumnName("Type")
-				.HasComment("Тип шаблона существа")
+				.HasComment("Тип существа")
 				.IsRequired();
 
 			builder.Property(r => r.Description)

@@ -126,6 +126,27 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 
+		//[Obsolete("Только для тестов")]
+		//public static BodyTemplate CreateForTestHuman(Game game = default)
+		//{
+		//	var result = new BodyTemplate()
+		//	{
+		//		Name = "Human",
+		//		Game = game,
+		//		CreatureTemplates = new List<CreatureTemplate>(),
+		//		Creatures = new List<Creature>(),
+		//		BodyTemplateParts = new List<BodyTemplatePart>()
+		//	};
+		//	result.BodyTemplateParts.AddRange(
+		//		new List<BodyTemplatePart>
+		//		{
+		//			new BodyTemplatePart(result, BodyParts.H)
+		//		});
+		//		{ new BodyTemplatePart(result, "torso", 1, 1, 1, 10)};
+		//	return result;
+		//}
+
+
 		/// <summary>
 		/// Создание списка шаблонов частей тела
 		/// </summary>
