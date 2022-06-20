@@ -85,7 +85,7 @@ namespace Sindie.ApiService.Core.Entities
 			Luck = creatureTemplate.Luck;
 			Name = name;
 			Description = description;
-			BodyParts = creatureTemplate.BodyParts;
+			CreatureParts = CreateParts(creatureTemplate.CreatureTemplateParts);
 			Abilities = creatureTemplate.Abilities;
 			Conditions = new List<Condition>();
 			CreatureParameters = CreateParameters(creatureTemplate.CreatureTemplateParameters);
@@ -343,7 +343,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Части тела
 		/// </summary>
-		public List<BodyPart> BodyParts { get; protected set; }
+		public List<CreaturePart> CreatureParts { get; protected set; }
 
 		#endregion navigation properties
 
@@ -361,6 +361,28 @@ namespace Sindie.ApiService.Core.Entities
 					creature: this,
 					parameter: parameter.Parameter,
 					parameterValue: parameter.ParameterValue));
+			return result;
+		}
+
+		/// <summary>
+		/// Создать список частей тела
+		/// </summary>
+		/// <param name="parts">части шаблона тела</param>
+		/// <returns></returns>
+		private List<CreaturePart> CreateParts(List<CreatureTemplatePart> parts)
+		{
+			var result = new List<CreaturePart>();
+
+			foreach (var part in parts)
+				result.Add(new CreaturePart(
+					creature: this,
+					bodyPartType: part.BodyPartType,
+					name: part.Name,
+					damageModifier: part.DamageModifier,
+					hitPenalty: part.HitPenalty,
+					minToHit: part.MinToHit,
+					maxToHit: part.MaxToHit,
+					armor: part.Armor));
 			return result;
 		}
 
@@ -394,10 +416,10 @@ namespace Sindie.ApiService.Core.Entities
 			var message = new StringBuilder($"{Name} атакует способностью {ability.Name} в {bodyTemplatePart.Name}.");
 			if (successValue > 0)
 			{
-				message.AppendLine($"Попадание с превышением на {successValue}");
-				message.AppendLine($"Нанеcено {ability.RollDamage()}. Модификатор урона после поглощения броней составляет {bodyTemplatePart.DamageModifier}");
+				message.AppendLine($"Попадание с превышением на {successValue}.");
+				message.AppendLine($"Нанеcено {ability.RollDamage()}. Модификатор урона после поглощения броней составляет {bodyTemplatePart.DamageModifier}.");
 				foreach (var condition in ability.RollConditions())
-					message.AppendLine($"Наложено состояние {condition.Name}");
+					message.AppendLine($"Наложено состояние {condition.Name}.");
 			}
 			else if (successValue < -5)
 				message.AppendLine($"Критический промах {successValue}.");
@@ -406,5 +428,85 @@ namespace Sindie.ApiService.Core.Entities
 
 			return message.ToString();
 		}
+
+		/// <summary>
+		/// Создать тестовую сущность с заполненными полями
+		/// </summary>
+		/// <param name="id">Айди</param>
+		/// <param name="instance">Инстанс</param>
+		/// <param name="creatureTemlpate">Шаблон существа</param>
+		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="imgFile">Графический файл</param>
+		/// <param name="name">Название</param>
+		/// <param name="description">Описание</param>
+		/// <param name="type">Тип</param>
+		/// <param name="hp">Хиты</param>
+		/// <param name="sta">Стамина</param>
+		/// <param name="int">Интеллект</param>
+		/// <param name="ref">Рефлексы</param>
+		/// <param name="dex">Ловкость</param>
+		/// <param name="body">Телосложение</param>
+		/// <param name="emp">Эмпатия</param>
+		/// <param name="cra">Крафт</param>
+		/// <param name="will">Воля</param>
+		/// <param name="speed">Скорость</param>
+		/// <param name="luck">Удача</param>
+		/// <param name="createdOn">Дата создания</param>
+		/// <param name="modifiedOn">Дата изменения</param>
+		/// <param name="createdByUserId">Создавший пользователь</param>
+		/// <returns></returns>
+		[Obsolete("Только для тестов")]
+		public static Creature CreateForTest(
+			Guid? id = default,
+			Instance instance = default,
+			CreatureTemplate creatureTemlpate = default,
+			BodyTemplate bodyTemplate = default,
+			ImgFile imgFile = default,
+			string name = default,
+			string description = default,
+			string type = default,
+			int hp = default,
+			int sta = default,
+			int @int = default,
+			int @ref = default,
+			int dex = default,
+			int body = default,
+			int emp = default,
+			int cra = default,
+			int will = default,
+			int speed = default,
+			int luck = default,
+			DateTime createdOn = default,
+			DateTime modifiedOn = default,
+			Guid createdByUserId = default)
+			=> new Creature
+			{
+				Id = id ?? Guid.NewGuid(),
+				Instance = instance,
+				CreatureTemplate = creatureTemlpate,
+				ImgFile = imgFile,
+				BodyTemplate = bodyTemplate,
+				Name = name ?? "Creature",
+				Description = description,
+				Type = type ?? "human",
+				HP = hp == default ? 10 : hp,
+				Sta = sta == default ? 10 : sta,
+				Int = @int == default ? 1 : @int,
+				Ref = @ref == default ? 1 : @ref,
+				Dex = dex == default ? 1 : dex,
+				Body = body == default ? 1 : body,
+				Emp = emp == default ? 1 : emp,
+				Cra = cra == default ? 1 : cra,
+				Will = will == default ? 1 : will,
+				Speed = speed == default ? 1 : speed,
+				Luck = luck == default ? 1 : luck,
+				CreatedOn = createdOn,
+				ModifiedOn = modifiedOn,
+				CreatedByUserId = createdByUserId,
+				Conditions = new List<Condition>(),
+				CreatureParameters = new List<CreatureParameter>(),
+				Abilities = new List<Ability>(),
+				CreatureParts = new List<CreaturePart>()
+			};
 	}
 }

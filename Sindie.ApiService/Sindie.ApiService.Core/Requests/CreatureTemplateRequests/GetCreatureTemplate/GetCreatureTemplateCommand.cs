@@ -24,7 +24,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 		/// <param name="modificationMinTime">Минимальное время модификации</param>
 		/// <param name="modificationMaxTime">Максимальное время модификации</param>
 		/// <param name="bodyTemplateName">Название шаблона тела</param>
-		/// <param name="bodyPartName">Название части тела</param>
+		/// <param name="bodyPartTypeId">Айди типа части тела</param>
 		/// <param name="conditionName">Название накладываемого состояния</param>
 		/// <param name="pageSize">Размер страницы</param>
 		/// <param name="pageNumber">Номер страницы</param>
@@ -38,7 +38,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 			DateTime modificationMinTime,
 			DateTime modificationMaxTime,
 			string bodyTemplateName,
-			string bodyPartName,
+			Guid? bodyPartTypeId,
 			string conditionName,
 			int pageSize,
 			int pageNumber,
@@ -54,7 +54,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 			ModificationMinTime = modificationMinTime;
 			ModificationMaxTime = modificationMaxTime;
 			BodyTemplateName = bodyTemplateName;
-			BodyPartName = bodyPartName;
+			BodyPartTypeId = bodyPartTypeId;
 			ConditionName = conditionName;
 			PageSize = pageSize == default ? 10 : pageSize;
 			PageNumber = pageNumber == default ? 1 : pageNumber;

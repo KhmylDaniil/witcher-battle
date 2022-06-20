@@ -138,7 +138,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 					modificationMaxTime: request.ModificationMaxTime,
 					modificationMinTime: request.ModificationMinTime,
 					bodyTemplateName: request.BodyTemplateName,
-					bodyPartName: request.BodyPartName,
+					bodyPartTypeId: request.BodyPartTypeId,
 					conditionName: request.ConditionName,
 					pageNumber: request.PageNumber,
 					pageSize: request.PageSize,

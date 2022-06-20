@@ -1,52 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.Entities;
-using System;
-using System.Collections.Generic;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
 	/// <summary>
 	/// Конфигурация для <see cref="BodyTemplatePart"/>
 	/// </summary>
-	public class BodyTemplatePartConfiguration : EntityBaseConfiguration<BodyTemplatePart>
+	public class BodyTemplatePartConfiguration : HierarchyConfiguration<BodyTemplatePart>
 	{
 		/// <summary>
 		/// Конфигурация для <see cref="BodyTemplatePart"/>
 		/// </summary>
 		public override void ConfigureChild(EntityTypeBuilder<BodyTemplatePart> builder)
 		{
-			builder.ToTable("BodyTemplateParts", "GameRules")
-				.HasComment("Части шаблона тела");
+			builder.ToTable("BodyTemplateParts", "GameRules").
+				HasComment("Части шаблона тела");
 
-			builder.Property(r => r.BodyTemplateId)
+			builder.Property(x => x.BodyTemplateId)
 				.HasColumnName("BodyTemplateId")
 				.HasComment("Айди шаблона тела")
-				.IsRequired();
-
-			builder.Property(bp => bp.Name)
-				.HasColumnName("Name")
-				.HasComment("Название")
-				.IsRequired();
-
-			builder.Property(bp => bp.DamageModifier)
-				.HasColumnName("DamageModifer")
-				.HasComment("Модификатор урона")
-				.IsRequired();
-
-			builder.Property(bp => bp.HitPenalty)
-				.HasColumnName("HitPenalty")
-				.HasComment("Пенальти за прицеливание")
-				.IsRequired();
-
-			builder.Property(bp => bp.MinToHit)
-				.HasColumnName("MinToHit")
-				.HasComment("Минимальное значение попадания")
-				.IsRequired();
-
-			builder.Property(bp => bp.MaxToHit)
-				.HasColumnName("MaxToHit")
-				.HasComment("Максимальное значение попадания")
 				.IsRequired();
 
 			builder.HasOne(x => x.BodyTemplate)

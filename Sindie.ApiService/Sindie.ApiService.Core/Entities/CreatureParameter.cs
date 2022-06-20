@@ -87,5 +87,36 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		#endregion navigation properties
+
+		/// <summary>
+		/// Создать тестовую сущность
+		/// </summary>
+		/// <param name="id">Айди</param>
+		/// <param name="creature">Существо</param>
+		/// <param name="parameter">Параметр</param>
+		/// <param name="value">Значение параметра</param>
+		/// <param name="createdOn">Дата создания</param>
+		/// <param name="modifiedOn">Дата изменения</param>
+		/// <param name="createdByUserId">Создавший пользователь</param>
+		/// <returns>Параметр существа</returns>
+		[Obsolete("Только для тестов")]
+		public static CreatureParameter CreateForTest(
+			Guid? id = default,
+			Creature creature = default,
+			Parameter parameter = default,
+			int value = default,
+			DateTime createdOn = default,
+			DateTime modifiedOn = default,
+			Guid createdByUserId = default)
+		=> new CreatureParameter()
+		{
+			Id = id ?? Guid.NewGuid(),
+			Creature = creature,
+			Parameter = parameter,
+			ParameterValue = value == 0 ? 1 : value,
+			CreatedOn = createdOn,
+			ModifiedOn = modifiedOn,
+			CreatedByUserId = createdByUserId
+		};
 	}
 }

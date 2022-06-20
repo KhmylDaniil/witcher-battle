@@ -53,7 +53,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplat
 				game: game,
 				name: request.Name,
 				description: request.Description,
-				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request));
+				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request, await _appDbContext.BodyPartTypes.ToListAsync()));
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
@@ -79,6 +79,9 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplat
 					throw new ExceptionRequestFieldNull<ChangeBodyTemplateCommand>(nameof(ChangeBodyTemplateRequestItem.Name));
 				if (request.BodyTemplateParts.Where(x => x.Name == part.Name).Count() != 1)
 					throw new ApplicationException($"Значения в поле {nameof(part.Name)} повторяются");
+
+				if (!BaseData.BodyPartTypes.BodyPartTypesList.Contains(part.BodyPartTypeId))
+					throw new ExceptionEntityNotFound<BodyPartType>(nameof(ChangeBodyTemplateRequestItem.BodyPartTypeId));
 
 				if (part.DamageModifier <= 0)
 					throw new ExceptionRequestFieldIncorrectData<ChangeBodyTemplateCommand>(nameof(ChangeBodyTemplateRequestItem.DamageModifier));

@@ -1,4 +1,5 @@
-﻿using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
+﻿using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +71,7 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Список частей тела
+		/// Список частей шаблона тела
 		/// </summary>
 		public List<BodyTemplatePart> BodyTemplateParts { get; set; }
 
@@ -103,10 +104,8 @@ namespace Sindie.ApiService.Core.Entities
 			Game game = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
-			Guid createdByUserId = default,
-			List<BodyTemplatePart> bodyTemplateParts = default)
-		{
-			var result = new BodyTemplate()
+			Guid createdByUserId = default)
+			=> new BodyTemplate()
 			{
 				Id = id ?? Guid.NewGuid(),
 				Name = name ?? "BodyTemplate",
@@ -117,35 +116,8 @@ namespace Sindie.ApiService.Core.Entities
 				CreatedByUserId = createdByUserId,
 				CreatureTemplates = new List<CreatureTemplate>(),
 				Creatures = new List<Creature>(),
-				BodyTemplateParts = bodyTemplateParts
+				BodyTemplateParts = new List<BodyTemplatePart>()
 			};
-			if (result.BodyTemplateParts == null)
-				result.BodyTemplateParts = new List<BodyTemplatePart>()
-				{ new BodyTemplatePart(result, "torso", 1, 1, 1, 10)};
-			return result;
-		}
-
-
-		//[Obsolete("Только для тестов")]
-		//public static BodyTemplate CreateForTestHuman(Game game = default)
-		//{
-		//	var result = new BodyTemplate()
-		//	{
-		//		Name = "Human",
-		//		Game = game,
-		//		CreatureTemplates = new List<CreatureTemplate>(),
-		//		Creatures = new List<Creature>(),
-		//		BodyTemplateParts = new List<BodyTemplatePart>()
-		//	};
-		//	result.BodyTemplateParts.AddRange(
-		//		new List<BodyTemplatePart>
-		//		{
-		//			new BodyTemplatePart(result, BodyParts.H)
-		//		});
-		//		{ new BodyTemplatePart(result, "torso", 1, 1, 1, 10)};
-		//	return result;
-		//}
-
 
 		/// <summary>
 		/// Создание списка шаблонов частей тела
@@ -160,6 +132,7 @@ namespace Sindie.ApiService.Core.Entities
 			foreach (var part in bodyTemplateParts)
 				result.Add(new BodyTemplatePart(
 					bodyTemplate: this,
+					bodyPartType: part.BodyPartType,
 					name: part.Name,
 					damageModifier: part.DamageModifier,
 					hitPenalty: part.HitPenalty,

@@ -65,6 +65,11 @@ namespace Sindie.ApiService.UnitTest.Core
 		protected Mock<IChangeListService> ChangeListServiceMock { get; private set; }
 
 		/// <summary>
+		/// Сервис бросков
+		/// </summary>
+		protected Mock<IRollService> RollService { get; private set; }
+
+		/// <summary>
 		/// Проверить, есть ли пользак с таким же логином
 		/// </summary>
 		protected HasUsersWithLogin HasUsersWithLogin => (x, y) => false;
@@ -113,6 +118,10 @@ namespace Sindie.ApiService.UnitTest.Core
 			AuthorizationServiceWithGameId
 				.Setup(x => x.RoleGameFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
 				.Returns<IQueryable<Game>, Guid, Guid>((x, y, z) => x.Where(a => a.Id == y));
+
+			RollService = new Mock<IRollService>();
+			RollService.Setup(x => x.RollAttack(It.IsAny<int>(), It.IsAny<int>()))
+				.Returns<int, int>((x, y) => x-y);
 		}
 
 		/// <summary>

@@ -104,7 +104,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 					creationMinTime: request.CreationMinTime,
 					modificationMaxTime: request.ModificationMaxTime,
 					modificationMinTime: request.ModificationMinTime,
-					bodyPartName: request.BodyPartName,
+					bodyPartTypeId: request.BodyPartTypeId,
 					pageNumber: request.PageNumber,
 					pageSize: request.PageSize,
 					orderBy: request.OrderBy,

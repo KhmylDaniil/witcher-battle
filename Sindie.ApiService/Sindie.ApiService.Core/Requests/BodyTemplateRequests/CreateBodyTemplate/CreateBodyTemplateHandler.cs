@@ -4,8 +4,10 @@ using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
+using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,12 +59,14 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 				game: game,
 				name: request.Name,
 				description: request.Description,
-				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request));
+				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request, await _appDbContext.BodyPartTypes.ToListAsync(cancellationToken)));
 
 			_appDbContext.BodyTemplates.Add(newBodyTemplate);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
 		}
+
+
 
 		/// <summary>
 		/// Проверка запроса
@@ -81,6 +85,9 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 					throw new ExceptionRequestFieldNull<CreateBodyTemplateCommand>(nameof(CreateBodyTemplateRequestItem.Name));
 				if (request.BodyTemplateParts.Where(x => x.Name == part.Name).Count() != 1)
 					throw new ApplicationException($"Значения в поле {nameof(part.Name)} повторяются");
+
+				if (!BaseData.BodyPartTypes.BodyPartTypesList.Contains(part.BodyPartTypeId))
+					throw new ExceptionEntityNotFound<BodyPartType>(nameof(CreateBodyTemplateRequestItem.BodyPartTypeId));
 
 				if (part.DamageModifier <= 0)
 					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateCommand>(nameof(CreateBodyTemplateRequestItem.DamageModifier));

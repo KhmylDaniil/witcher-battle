@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace Sindie.ApiService.Storage.Postgresql.Migrations
 {
-    public partial class Creature : Migration
+    public partial class creature : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -118,6 +117,26 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 nullable: true);
 
             migrationBuilder.CreateTable(
+                name: "BodyPartTypes",
+                schema: "GameRules",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
+                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
+                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BodyPartTypes", x => x.Id);
+                },
+                comment: "Части шаблона тела");
+
+            migrationBuilder.CreateTable(
                 name: "BodyTemplates",
                 schema: "GameRules",
                 columns: table => new
@@ -175,12 +194,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 comment: "Состояния");
 
             migrationBuilder.CreateTable(
-                name: "BodyTemplateParts",
+                name: "BodyParts",
                 schema: "GameRules",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
-                    BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона тела"),
+                    BodyPartTypeId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди типа части тела"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
                     HitPenalty = table.Column<int>(type: "integer", nullable: false, comment: "Пенальти за прицеливание"),
                     DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
@@ -195,16 +214,16 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BodyTemplateParts", x => x.Id);
+                    table.PrimaryKey("PK_BodyParts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BodyTemplateParts_BodyTemplates_BodyTemplateId",
-                        column: x => x.BodyTemplateId,
+                        name: "FK_BodyParts_BodyPartTypes_BodyPartTypeId",
+                        column: x => x.BodyPartTypeId,
                         principalSchema: "GameRules",
-                        principalTable: "BodyTemplates",
+                        principalTable: "BodyPartTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 },
-                comment: "Части шаблона тела");
+                comment: "Части тела");
 
             migrationBuilder.CreateTable(
                 name: "CreatureTemplates",
@@ -264,6 +283,34 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 comment: "Шаблоны существ");
 
             migrationBuilder.CreateTable(
+                name: "BodyTemplateParts",
+                schema: "GameRules",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
+                    BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона тела")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BodyTemplateParts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BodyTemplateParts_BodyParts_Id",
+                        column: x => x.Id,
+                        principalSchema: "GameRules",
+                        principalTable: "BodyParts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BodyTemplateParts_BodyTemplates_BodyTemplateId",
+                        column: x => x.BodyTemplateId,
+                        principalSchema: "GameRules",
+                        principalTable: "BodyTemplates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Части шаблона тела");
+
+            migrationBuilder.CreateTable(
                 name: "Abilities",
                 schema: "GameRules",
                 columns: table => new
@@ -316,7 +363,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона тела"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название существа"),
                     Description = table.Column<string>(type: "text", nullable: true, comment: "Описание шаблона"),
-                    Type = table.Column<string>(type: "text", nullable: false, comment: "Тип шаблона существа"),
+                    Type = table.Column<string>(type: "text", nullable: false, comment: "Тип существа"),
                     HP = table.Column<int>(type: "integer", nullable: false, comment: "Хиты"),
                     Sta = table.Column<int>(type: "integer", nullable: false, comment: "Стамина"),
                     Int = table.Column<int>(type: "integer", nullable: false, comment: "Интеллект"),
@@ -406,32 +453,33 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 comment: "Параметры шаблона существа");
 
             migrationBuilder.CreateTable(
-                name: "CreatureTemplates_BodyParts",
+                name: "CreatureTemplateParts",
                 schema: "GameRules",
                 columns: table => new
                 {
-                    CreatureTemplateId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
-                    HitPenalty = table.Column<int>(type: "integer", nullable: false, comment: "Пенальти за прицеливание"),
-                    DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
-                    MinToHit = table.Column<int>(type: "integer", nullable: false, comment: "Минимальное значение попадания"),
-                    MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания"),
-                    StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Начальная броня"),
-                    CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня")
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
+                    CreatureTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона существа"),
+                    Armor = table.Column<int>(type: "integer", nullable: false, comment: "Броня")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CreatureTemplates_BodyParts", x => new { x.CreatureTemplateId, x.Id });
+                    table.PrimaryKey("PK_CreatureTemplateParts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CreatureTemplates_BodyParts_CreatureTemplates_CreatureTempl~",
+                        name: "FK_CreatureTemplateParts_BodyParts_Id",
+                        column: x => x.Id,
+                        principalSchema: "GameRules",
+                        principalTable: "BodyParts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CreatureTemplateParts_CreatureTemplates_CreatureTemplateId",
                         column: x => x.CreatureTemplateId,
                         principalSchema: "GameRules",
                         principalTable: "CreatureTemplates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                },
+                comment: "Части шаблона существа");
 
             migrationBuilder.CreateTable(
                 name: "AppliedConditions",
@@ -533,32 +581,34 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 comment: "Параметры существа");
 
             migrationBuilder.CreateTable(
-                name: "Creatures_BodyParts",
+                name: "CreatureParts",
                 schema: "GameInstance",
                 columns: table => new
                 {
-                    CreatureId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
-                    HitPenalty = table.Column<int>(type: "integer", nullable: false, comment: "Пенальти за прицеливание"),
-                    DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
-                    MinToHit = table.Column<int>(type: "integer", nullable: false, comment: "Минимальное значение попадания"),
-                    MaxToHit = table.Column<int>(type: "integer", nullable: false, comment: "Максимальное значение попадания"),
-                    StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Начальная броня"),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
+                    CreatureId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди существа"),
+                    StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Стартовая броня"),
                     CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Creatures_BodyParts", x => new { x.CreatureId, x.Id });
+                    table.PrimaryKey("PK_CreatureParts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Creatures_BodyParts_Creatures_CreatureId",
+                        name: "FK_CreatureParts_BodyParts_Id",
+                        column: x => x.Id,
+                        principalSchema: "GameRules",
+                        principalTable: "BodyParts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CreatureParts_Creatures_CreatureId",
                         column: x => x.CreatureId,
                         principalSchema: "GameInstance",
                         principalTable: "Creatures",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                },
+                comment: "Части существа");
 
             migrationBuilder.CreateTable(
                 name: "CurrentConditions",
@@ -587,6 +637,21 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                schema: "GameRules",
+                table: "BodyPartTypes",
+                columns: new[] { "Id", "CreatedByUserId", "CreatedOn", "ModifiedByUserId", "ModifiedOn", "Name", "RoleCreatedUser", "RoleModifiedUser" },
+                values: new object[,]
+                {
+                    { new Guid("8894e0d0-3147-4791-1153-9667cbe127d7"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Tail", "Default", "Default" },
+                    { new Guid("8894e0d0-3147-4791-1353-9667cbe127d7"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Void", "Default", "Default" },
+                    { new Guid("8894e0d0-3147-4791-9153-9667cbe127d7"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Head", "Default", "Default" },
+                    { new Guid("8894e0d0-3147-4791-9353-9667cbe127d7"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Torso", "Default", "Default" },
+                    { new Guid("8894e0d0-3147-4791-9553-9667cbe127d7"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Arm", "Default", "Default" },
+                    { new Guid("8894e0d0-3147-4791-9753-9667cbe127d7"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Leg", "Default", "Default" },
+                    { new Guid("8894e0d0-3147-4791-9953-9667cbe127d7"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Wing", "Default", "Default" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Abilities_AttackParameterId",
                 schema: "GameRules",
@@ -610,6 +675,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 schema: "GameRules",
                 table: "AppliedConditions",
                 column: "ConditionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BodyParts_BodyPartTypeId",
+                schema: "GameRules",
+                table: "BodyParts",
+                column: "BodyPartTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BodyTemplateParts_BodyTemplateId",
@@ -648,6 +719,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 column: "ParameterId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CreatureParts_CreatureId",
+                schema: "GameInstance",
+                table: "CreatureParts",
+                column: "CreatureId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Creatures_BodyTemplateId",
                 schema: "GameInstance",
                 table: "Creatures",
@@ -683,6 +760,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 schema: "GameInstance",
                 table: "CreatureTemplateParameters",
                 column: "ParameterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CreatureTemplateParts_CreatureTemplateId",
+                schema: "GameRules",
+                table: "CreatureTemplateParts",
+                column: "CreatureTemplateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CreatureTemplates_BodyTemplateId",
@@ -729,7 +812,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 schema: "GameInstance");
 
             migrationBuilder.DropTable(
-                name: "Creatures_BodyParts",
+                name: "CreatureParts",
                 schema: "GameInstance");
 
             migrationBuilder.DropTable(
@@ -737,7 +820,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 schema: "GameInstance");
 
             migrationBuilder.DropTable(
-                name: "CreatureTemplates_BodyParts",
+                name: "CreatureTemplateParts",
                 schema: "GameRules");
 
             migrationBuilder.DropTable(
@@ -749,12 +832,20 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 schema: "GameRules");
 
             migrationBuilder.DropTable(
+                name: "BodyParts",
+                schema: "GameRules");
+
+            migrationBuilder.DropTable(
                 name: "Conditions",
                 schema: "GameRules");
 
             migrationBuilder.DropTable(
                 name: "Creatures",
                 schema: "GameInstance");
+
+            migrationBuilder.DropTable(
+                name: "BodyPartTypes",
+                schema: "GameRules");
 
             migrationBuilder.DropTable(
                 name: "CreatureTemplates",

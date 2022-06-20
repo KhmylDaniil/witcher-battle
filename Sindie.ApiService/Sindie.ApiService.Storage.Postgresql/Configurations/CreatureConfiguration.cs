@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -142,43 +137,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.WithMany(x => x.Creatures)
 				.UsingEntity(x => x.ToTable("CurrentConditions", "GameInstance"));
 
-			builder.OwnsMany(bt => bt.BodyParts, bp =>
-			{
-				bp.Property(bp => bp.Name)
-				.HasColumnName("Name")
-				.HasComment("Название")
-				.IsRequired();
-
-				bp.Property(bp => bp.DamageModifier)
-				.HasColumnName("DamageModifer")
-				.HasComment("Модификатор урона")
-				.IsRequired();
-
-				bp.Property(bp => bp.HitPenalty)
-				.HasColumnName("HitPenalty")
-				.HasComment("Пенальти за прицеливание")
-				.IsRequired();
-
-				bp.Property(bp => bp.MinToHit)
-				.HasColumnName("MinToHit")
-				.HasComment("Минимальное значение попадания")
-				.IsRequired();
-
-				bp.Property(bp => bp.MaxToHit)
-				.HasColumnName("MaxToHit")
-				.HasComment("Максимальное значение попадания")
-				.IsRequired();
-
-				bp.Property(bp => bp.StartingArmor)
-				.HasColumnName("StartingArmor")
-				.HasComment("Начальная броня")
-				.IsRequired();
-
-				bp.Property(bp => bp.CurrentArmor)
-				.HasColumnName("CurrentArmor")
-				.HasComment("Текущая броня")
-				.IsRequired();
-			});
+			builder.HasMany(x => x.CreatureParts)
+				.WithOne(x => x.Creature)
+				.HasForeignKey(x => x.CreatureId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 
 			var instanceNavigation = builder.Metadata.FindNavigation(nameof(Creature.Instance));
 			instanceNavigation.SetField(Creature.InstanceField);

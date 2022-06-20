@@ -101,9 +101,9 @@ namespace Sindie.ApiService.Core.Entities
 		/// Создать тестовую сущность
 		/// </summary>
 		/// <param name="id">Айди</param>
-		/// <param name="creatureTemplate">Параметр шаблона существа</param>
+		/// <param name="creatureTemplate">Шаблон существа</param>
 		/// <param name="parameter">Параметр</param>
-		/// <param name="value">ЗНачение параметра</param>
+		/// <param name="value">Значение параметра</param>
 		/// <param name="createdOn">Дата создания</param>
 		/// <param name="modifiedOn">Дата изменения</param>
 		/// <param name="createdByUserId">Создавший пользователь</param>

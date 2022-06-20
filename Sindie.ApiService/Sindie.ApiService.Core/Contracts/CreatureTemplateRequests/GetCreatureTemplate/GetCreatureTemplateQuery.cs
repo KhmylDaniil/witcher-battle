@@ -55,9 +55,9 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		public string BodyTemplateName { get; set; }
 
 		/// <summary>
-		/// Фильтр по названию части тела
+		/// Фильтр по типу части тела
 		/// </summary>
-		public string BodyPartName { get; set; }
+		public Guid? BodyPartTypeId { get; set; }
 
 		/// <summary>
 		/// фильтр по названию накладываемого состояния

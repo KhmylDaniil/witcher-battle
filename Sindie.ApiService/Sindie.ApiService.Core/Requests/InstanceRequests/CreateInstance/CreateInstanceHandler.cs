@@ -50,6 +50,9 @@ namespace Sindie.ApiService.Core.Requests.InstanceRequests.CreateInstance
 		{
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.CreatureTemplates)
+					.ThenInclude(x => x.CreatureTemplateParts)
+					.ThenInclude(x => x.BodyPartType)
+				.Include(x => x.CreatureTemplates)
 					.ThenInclude(x => x.BodyTemplate)
 				.Include(x => x.CreatureTemplates)
 					.ThenInclude(x => x.Abilities)
@@ -91,7 +94,6 @@ namespace Sindie.ApiService.Core.Requests.InstanceRequests.CreateInstance
 		{
 			if (game.Instances.Any(x => x.Name == request.Name))
 				throw new ExceptionRequestNameNotUniq<CreateInstanceCommand>(nameof(request.Name));
-
 
 			foreach (var item in request.Creatures)
 			{

@@ -47,19 +47,21 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 
 			_head = BodyTemplatePart.CreateForTest(
 				bodyTemplate: _bodyTemplate,
-					name: "head",
-					hitPenalty: 3,
-					damageModifier: 3,
-					minToHit: 1,
-					maxToHit: 3);
+				bodyPartType: BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName),
+				name: "head",
+				hitPenalty: 3,
+				damageModifier: 3,
+				minToHit: 1,
+				maxToHit: 3);
 
 			_torso = BodyTemplatePart.CreateForTest(
 				bodyTemplate: _bodyTemplate,
-					name: "torso",
-					hitPenalty: 1,
-					damageModifier: 1,
-					minToHit: 4,
-					maxToHit: 10);
+				bodyPartType: BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName),
+				name: "torso",
+				hitPenalty: 1,
+				damageModifier: 1,
+				minToHit: 4,
+				maxToHit: 10);
 
 			_bodyTemplate.BodyTemplateParts = new List<BodyTemplatePart> { _head, _torso };
 
@@ -88,7 +90,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 				creationMaxTime: creationMaxTime,
 				modificationMinTime: modificationMinTime,
 				modificationMaxTime: modificationMaxTime,
-				bodyPartName: "head",
+				bodyPartTypeId: BodyPartTypes.HeadId,
 				pageSize: 2,
 				pageNumber: 1,
 				orderBy: null,
@@ -115,7 +117,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 			Assert.IsNotNull(user);
 			Assert.IsTrue(user.Name.Contains(request.UserName));
 
-			var bodyPart = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Name == "head");
+			var bodyPart = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.BodyPartTypeId == BodyPartTypes.HeadId);
 			Assert.IsNotNull(bodyPart);
 		}
 	}

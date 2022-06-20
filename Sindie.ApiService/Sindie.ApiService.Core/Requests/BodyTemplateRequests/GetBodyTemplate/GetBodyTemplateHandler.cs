@@ -70,7 +70,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(g => g.BodyTemplates)
-					.ThenInclude(bt => bt.BodyTemplateParts.Where(btp => request.BodyPartName == null || btp.Name.Contains(request.BodyPartName)))
+					.ThenInclude(bt => bt.BodyTemplateParts)
 					.SelectMany(x => x.BodyTemplates
 						.Where(x => request.UserName == null || x.Game.UserGames
 							.Any(u => u.User.Name.Contains(request.UserName) && u.UserId == x.CreatedByUserId))
@@ -81,7 +81,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 						.Where(x => x.ModifiedOn >= request.ModificationMinTime)
 						.Where(x => (request.ModificationMaxTime == default && x.ModifiedOn <= _dateTimeProvider.TimeProvider)
 						|| x.ModifiedOn <= request.ModificationMaxTime))
-						.Where(x => request.BodyPartName == null || x.BodyTemplateParts.Any(x => x.Name.Contains(request.BodyPartName)));
+						.Where(x => request.BodyPartTypeId == null || x.BodyTemplateParts.Any(x => x.BodyPartTypeId == request.BodyPartTypeId));
 
 			var list = await filter
 				.OrderBy(request.OrderBy, request.IsAscending)

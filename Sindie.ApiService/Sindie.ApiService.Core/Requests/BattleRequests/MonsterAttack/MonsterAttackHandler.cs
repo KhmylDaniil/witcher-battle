@@ -58,12 +58,16 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 			var game = await _authorizationService.InstanceMasterFilter(_appDbContext.Games, request.InstanceId)
 				.Include(g => g.BodyTemplates.Where(bt => bt.Id == request.TargetBodyTemplateId))
 					.ThenInclude(bt => bt.BodyTemplateParts)
+					.ThenInclude(btp => btp.BodyPartType)
 				.Include(g => g.Instances.Where(i => i.Id == request.InstanceId))
 					.ThenInclude(i => i.Creatures.Where(c => c.Id == request.Id))
 						.ThenInclude(c => c.CreatureParameters)
+						.ThenInclude(cp => cp.Parameter)
 				.Include(g => g.Instances.Where(i => i.Id == request.InstanceId))
 					.ThenInclude(i => i.Creatures.Where(c => c.Id == request.Id))
 						.ThenInclude(c => c.Abilities)
+						.ThenInclude(a => a.AppliedConditions)
+						.ThenInclude(ac => ac.Condition)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
@@ -89,13 +93,13 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 
 			var successValue = _rollService.RollAttack(
 				attackValue: monster.CreatureParameters
-				.FirstOrDefault(x => x.Id == ability.AttackParameterId).ParameterValue + ability.Accuracy - hitPenalty,
+				.FirstOrDefault(x => x.ParameterId == ability.AttackParameterId).ParameterValue + ability.Accuracy - hitPenalty,
 				defenseValue: request.DefenseValue);
 
 			var attackResult = monster.MonsterAttack(ability, bodyTemplatePart, successValue);
 
 			return new MonsterAttackResponse()
-			{ Result = attackResult};
+			{ Message = attackResult};
 		}
 
 		/// <summary>

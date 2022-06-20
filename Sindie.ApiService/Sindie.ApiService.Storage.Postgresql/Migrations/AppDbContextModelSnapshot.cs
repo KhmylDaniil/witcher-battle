@@ -775,6 +775,192 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasComment("Тела");
                 });
 
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyPart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
+
+                    b.Property<Guid>("BodyPartTypeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("BodyPartTypeId")
+                        .HasComment("Айди типа части тела");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<double>("DamageModifier")
+                        .HasColumnType("double precision")
+                        .HasColumnName("DamageModifer")
+                        .HasComment("Модификатор урона");
+
+                    b.Property<int>("HitPenalty")
+                        .HasColumnType("integer")
+                        .HasColumnName("HitPenalty")
+                        .HasComment("Пенальти за прицеливание");
+
+                    b.Property<int>("MaxToHit")
+                        .HasColumnType("integer")
+                        .HasColumnName("MaxToHit")
+                        .HasComment("Максимальное значение попадания");
+
+                    b.Property<int>("MinToHit")
+                        .HasColumnType("integer")
+                        .HasColumnName("MinToHit")
+                        .HasComment("Минимальное значение попадания");
+
+                    b.Property<Guid>("ModifiedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Name")
+                        .HasComment("Название");
+
+                    b.Property<string>("RoleCreatedUser")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleModifiedUser")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BodyPartTypeId");
+
+                    b.ToTable("BodyParts", "GameRules");
+
+                    b.HasComment("Части тела");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyPartType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<Guid>("ModifiedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Name")
+                        .HasComment("Название");
+
+                    b.Property<string>("RoleCreatedUser")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleModifiedUser")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BodyPartTypes", "GameRules");
+
+                    b.HasComment("Части шаблона тела");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8894e0d0-3147-4791-9153-9667cbe127d7"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Head",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("8894e0d0-3147-4791-9353-9667cbe127d7"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Torso",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("8894e0d0-3147-4791-9553-9667cbe127d7"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Arm",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("8894e0d0-3147-4791-9753-9667cbe127d7"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Leg",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("8894e0d0-3147-4791-9953-9667cbe127d7"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Wing",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("8894e0d0-3147-4791-1153-9667cbe127d7"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Tail",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("8894e0d0-3147-4791-1353-9667cbe127d7"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Void",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        });
+                });
+
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyTemplate", b =>
                 {
                     b.Property<Guid>("Id")
@@ -825,73 +1011,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.ToTable("BodyTemplates", "GameRules");
 
                     b.HasComment("Шаблоны тел");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyTemplatePart", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("BodyTemplateId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("BodyTemplateId")
-                        .HasComment("Айди шаблона тела");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<double>("DamageModifier")
-                        .HasColumnType("double precision")
-                        .HasColumnName("DamageModifer")
-                        .HasComment("Модификатор урона");
-
-                    b.Property<int>("HitPenalty")
-                        .HasColumnType("integer")
-                        .HasColumnName("HitPenalty")
-                        .HasComment("Пенальти за прицеливание");
-
-                    b.Property<int>("MaxToHit")
-                        .HasColumnType("integer")
-                        .HasColumnName("MaxToHit")
-                        .HasComment("Максимальное значение попадания");
-
-                    b.Property<int>("MinToHit")
-                        .HasColumnType("integer")
-                        .HasColumnName("MinToHit")
-                        .HasComment("Минимальное значение попадания");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BodyTemplateId");
-
-                    b.ToTable("BodyTemplateParts", "GameRules");
-
-                    b.HasComment("Части шаблона тела");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Character", b =>
@@ -1413,7 +1532,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("Type")
-                        .HasComment("Тип шаблона существа");
+                        .HasComment("Тип существа");
 
                     b.Property<int>("Will")
                         .HasColumnType("integer")
@@ -3435,6 +3554,22 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.ToTable("TextFileUser", "System");
                 });
 
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyTemplatePart", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.BodyPart");
+
+                    b.Property<Guid>("BodyTemplateId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("BodyTemplateId")
+                        .HasComment("Айди шаблона тела");
+
+                    b.HasIndex("BodyTemplateId");
+
+                    b.ToTable("BodyTemplateParts", "GameRules");
+
+                    b.HasComment("Части шаблона тела");
+                });
+
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Characteristic", b =>
                 {
                     b.HasBaseType("Sindie.ApiService.Core.Entities.Prerequisite");
@@ -3459,6 +3594,53 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.ToTable("Characteristics", "InteractionRules");
 
                     b.HasComment("Характеристики");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreaturePart", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.BodyPart");
+
+                    b.Property<Guid>("CreatureId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatureId")
+                        .HasComment("Айди существа");
+
+                    b.Property<int>("CurrentArmor")
+                        .HasColumnType("integer")
+                        .HasColumnName("CurrentArmor")
+                        .HasComment("Текущая броня");
+
+                    b.Property<int>("StartingArmor")
+                        .HasColumnType("integer")
+                        .HasColumnName("StartingArmor")
+                        .HasComment("Стартовая броня");
+
+                    b.HasIndex("CreatureId");
+
+                    b.ToTable("CreatureParts", "GameInstance");
+
+                    b.HasComment("Части существа");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplatePart", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.BodyPart");
+
+                    b.Property<int>("Armor")
+                        .HasColumnType("integer")
+                        .HasColumnName("Armor")
+                        .HasComment("Броня");
+
+                    b.Property<Guid>("CreatureTemplateId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatureTemplateId")
+                        .HasComment("Айди шаблона существа");
+
+                    b.HasIndex("CreatureTemplateId");
+
+                    b.ToTable("CreatureTemplateParts", "GameRules");
+
+                    b.HasComment("Части шаблона существа");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Event", b =>
@@ -3878,6 +4060,17 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("Slot");
                 });
 
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyPart", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.BodyPartType", "BodyPartType")
+                        .WithMany("BodyParts")
+                        .HasForeignKey("BodyPartTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BodyPartType");
+                });
+
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyTemplate", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
@@ -3887,17 +4080,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired();
 
                     b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyTemplatePart", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.BodyTemplate", "BodyTemplate")
-                        .WithMany("BodyTemplateParts")
-                        .HasForeignKey("BodyTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BodyTemplate");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Character", b =>
@@ -4081,63 +4263,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Sindie.ApiService.Core.Entities.BodyPart", "BodyParts", b1 =>
-                        {
-                            b1.Property<Guid>("CreatureId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("integer");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
-
-                            b1.Property<int>("CurrentArmor")
-                                .HasColumnType("integer")
-                                .HasColumnName("CurrentArmor")
-                                .HasComment("Текущая броня");
-
-                            b1.Property<double>("DamageModifier")
-                                .HasColumnType("double precision")
-                                .HasColumnName("DamageModifer")
-                                .HasComment("Модификатор урона");
-
-                            b1.Property<int>("HitPenalty")
-                                .HasColumnType("integer")
-                                .HasColumnName("HitPenalty")
-                                .HasComment("Пенальти за прицеливание");
-
-                            b1.Property<int>("MaxToHit")
-                                .HasColumnType("integer")
-                                .HasColumnName("MaxToHit")
-                                .HasComment("Максимальное значение попадания");
-
-                            b1.Property<int>("MinToHit")
-                                .HasColumnType("integer")
-                                .HasColumnName("MinToHit")
-                                .HasComment("Минимальное значение попадания");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("Name")
-                                .HasComment("Название");
-
-                            b1.Property<int>("StartingArmor")
-                                .HasColumnType("integer")
-                                .HasColumnName("StartingArmor")
-                                .HasComment("Начальная броня");
-
-                            b1.HasKey("CreatureId", "Id");
-
-                            b1.ToTable("Creatures_BodyParts", "GameInstance");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CreatureId");
-                        });
-
-                    b.Navigation("BodyParts");
-
                     b.Navigation("BodyTemplate");
 
                     b.Navigation("CreatureTemplate");
@@ -4184,63 +4309,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .WithOne("CreatureTemplate")
                         .HasForeignKey("Sindie.ApiService.Core.Entities.CreatureTemplate", "ImgFileId")
                         .OnDelete(DeleteBehavior.SetNull);
-
-                    b.OwnsMany("Sindie.ApiService.Core.Entities.BodyPart", "BodyParts", b1 =>
-                        {
-                            b1.Property<Guid>("CreatureTemplateId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("integer");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
-
-                            b1.Property<int>("CurrentArmor")
-                                .HasColumnType("integer")
-                                .HasColumnName("CurrentArmor")
-                                .HasComment("Текущая броня");
-
-                            b1.Property<double>("DamageModifier")
-                                .HasColumnType("double precision")
-                                .HasColumnName("DamageModifer")
-                                .HasComment("Модификатор урона");
-
-                            b1.Property<int>("HitPenalty")
-                                .HasColumnType("integer")
-                                .HasColumnName("HitPenalty")
-                                .HasComment("Пенальти за прицеливание");
-
-                            b1.Property<int>("MaxToHit")
-                                .HasColumnType("integer")
-                                .HasColumnName("MaxToHit")
-                                .HasComment("Максимальное значение попадания");
-
-                            b1.Property<int>("MinToHit")
-                                .HasColumnType("integer")
-                                .HasColumnName("MinToHit")
-                                .HasComment("Минимальное значение попадания");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("Name")
-                                .HasComment("Название");
-
-                            b1.Property<int>("StartingArmor")
-                                .HasColumnType("integer")
-                                .HasColumnName("StartingArmor")
-                                .HasComment("Начальная броня");
-
-                            b1.HasKey("CreatureTemplateId", "Id");
-
-                            b1.ToTable("CreatureTemplates_BodyParts", "GameRules");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CreatureTemplateId");
-                        });
-
-                    b.Navigation("BodyParts");
 
                     b.Navigation("BodyTemplate");
 
@@ -4796,6 +4864,23 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyTemplatePart", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.BodyTemplate", "BodyTemplate")
+                        .WithMany("BodyTemplateParts")
+                        .HasForeignKey("BodyTemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Sindie.ApiService.Core.Entities.BodyPart", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.BodyTemplatePart", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BodyTemplate");
+                });
+
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Characteristic", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.Prerequisite", null)
@@ -4811,6 +4896,40 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired();
 
                     b.Navigation("Interaction");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreaturePart", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Creature", "Creature")
+                        .WithMany("CreatureParts")
+                        .HasForeignKey("CreatureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Sindie.ApiService.Core.Entities.BodyPart", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.CreaturePart", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creature");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplatePart", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CreatureTemplate", "CreatureTemplate")
+                        .WithMany("CreatureTemplateParts")
+                        .HasForeignKey("CreatureTemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Sindie.ApiService.Core.Entities.BodyPart", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.CreatureTemplatePart", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatureTemplate");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Event", b =>
@@ -5023,6 +5142,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("NotificationsTradeRequestSource");
                 });
 
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyPartType", b =>
+                {
+                    b.Navigation("BodyParts");
+                });
+
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyTemplate", b =>
                 {
                     b.Navigation("BodyTemplateParts");
@@ -5064,6 +5188,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Creature", b =>
                 {
                     b.Navigation("CreatureParameters");
+
+                    b.Navigation("CreatureParts");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplate", b =>
@@ -5071,6 +5197,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("Abilities");
 
                     b.Navigation("CreatureTemplateParameters");
+
+                    b.Navigation("CreatureTemplateParts");
 
                     b.Navigation("Creatures");
                 });

@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplate;
@@ -17,6 +18,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
+		private readonly BodyPartType _head;
+		private readonly BodyPartType _torso;
 		private readonly BodyTemplate _bodyTemplate;
 
 		/// <summary>
@@ -26,7 +29,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 		{
 			_game = Game.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _bodyTemplate));
+			_head = BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName);
+			_torso = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _bodyTemplate, _head, _torso));
 		}
 
 		/// <summary>
@@ -46,6 +51,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 					new ChangeBodyTemplateRequestItem()
 					{
 						Name = "head",
+						BodyPartTypeId = _head.Id,
 						HitPenalty = 3,
 						DamageModifier = 2,
 						MinToHit = 1,
@@ -54,6 +60,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 					new ChangeBodyTemplateRequestItem()
 					{
 						Name = "body",
+						BodyPartTypeId= _torso.Id,
 						HitPenalty = 2,
 						DamageModifier = 2,
 						MinToHit = 6,
@@ -77,6 +84,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 
 			var head = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Name == "head");
 			Assert.IsNotNull(head);
+			Assert.AreEqual(head.BodyPartTypeId, _head.Id);
 			Assert.AreEqual(head.DamageModifier, 2);
 			Assert.AreEqual(head.HitPenalty, 3);
 			Assert.AreEqual(head.MinToHit, 1);
@@ -84,6 +92,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 
 			var body = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Name == "body");
 			Assert.IsNotNull(body);
+			Assert.AreEqual(body.BodyPartTypeId, _torso.Id);
 			Assert.AreEqual(body.DamageModifier, 2);
 			Assert.AreEqual(body.HitPenalty, 2);
 			Assert.AreEqual(body.MinToHit, 6);

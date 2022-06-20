@@ -24,6 +24,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly Ability _ability;
 		private readonly Parameter _parameter;
 		private readonly CreatureTemplateParameter _creatureTemplateParameter;
+		private readonly CreatureTemplatePart _creatureTemplatePart;
+		private readonly BodyPartType _bodyPartType;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="GetCreatureTemplateByIdHandler"/>
@@ -32,6 +34,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		{
 
 			_game = Game.CreateForTest();
+			_bodyPartType = BodyPartType.CreateForTest();
 
 			_parameter = Parameter.CreateForTest(game: _game);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
@@ -45,12 +48,23 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				type: "type",
 				bodyTemplate: _bodyTemplate);
 
+			_creatureTemplatePart = CreatureTemplatePart.CreateForTest(
+				creatureTemplate: _creatureTemplate,
+				bodyPartType: _bodyPartType,
+				name: "torso",
+				damageModifier: 1,
+				hitPenalty: 1,
+				minToHit: 1,
+				maxToHit: 10,
+				armor: 5);
+
 			_creatureTemplateParameter = CreatureTemplateParameter.CreateForTest(
 				creatureTemplate: _creatureTemplate,
 				parameter: _parameter,
 				value: 5);
 
 			_creatureTemplate.CreatureTemplateParameters.Add(_creatureTemplateParameter);
+			_creatureTemplate.CreatureTemplateParts.Add(_creatureTemplatePart);
 
 			_ability = Ability.CreateForTest(
 				creatureTemplate: _creatureTemplate,
@@ -62,6 +76,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
+				_bodyPartType,
 				_bodyTemplate,
 				_condition,
 				_creatureTemplate,
@@ -105,15 +120,15 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(result.CreatedOn, _creatureTemplate.CreatedOn);
 			Assert.AreEqual(result.ModifiedOn, _creatureTemplate.ModifiedOn);
 
-			Assert.IsNotNull(result.BodyParts);
-			var bodyPart = result.BodyParts.First();
-			Assert.IsNotNull(bodyPart);
-			Assert.AreEqual(bodyPart.Name, "torso");
-			Assert.AreEqual(bodyPart.HitPenalty, 1);
-			Assert.AreEqual(bodyPart.DamageModifier, 1);
-			Assert.AreEqual(bodyPart.MinToHit, 1);
-			Assert.AreEqual(bodyPart.MaxToHit, 10);
-			Assert.AreEqual(bodyPart.Armor, 5);
+			Assert.IsNotNull(result.CreatureTemplateParts);
+			var creatureTemplatePart = result.CreatureTemplateParts.First();
+			Assert.IsNotNull(creatureTemplatePart);
+			Assert.AreEqual(creatureTemplatePart.Name, "torso");
+			Assert.AreEqual(creatureTemplatePart.HitPenalty, 1);
+			Assert.AreEqual(creatureTemplatePart.DamageModifier, 1);
+			Assert.AreEqual(creatureTemplatePart.MinToHit, 1);
+			Assert.AreEqual(creatureTemplatePart.MaxToHit, 10);
+			Assert.AreEqual(creatureTemplatePart.Armor, 5);
 
 			Assert.IsNotNull(result.CreatureTemplateParameters);
 			var creatureTemplateParameter = result.CreatureTemplateParameters.First();

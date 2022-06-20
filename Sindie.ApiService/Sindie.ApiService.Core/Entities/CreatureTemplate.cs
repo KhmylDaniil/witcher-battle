@@ -111,7 +111,7 @@ namespace Sindie.ApiService.Core.Entities
 			Abilities = new List<Ability>();
 			CreatureTemplateParameters = new List<CreatureTemplateParameter>();
 			Creatures = new List<Creature>();
-			BodyParts = UpdateBody(armorList);
+			CreatureTemplateParts = UpdateBody(armorList);
 		}
 
 		/// <summary>
@@ -350,9 +350,9 @@ namespace Sindie.ApiService.Core.Entities
 		public List<CreatureTemplateParameter> CreatureTemplateParameters { get; protected set; }
 
 		/// <summary>
-		/// Части тела
+		/// Части шаблона существа
 		/// </summary>
-		public List<BodyPart> BodyParts { get; protected set; }
+		public List<CreatureTemplatePart> CreatureTemplateParts { get; protected set; }
 
 		/// <summary>
 		/// Существа
@@ -453,19 +453,20 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="bodyTemplate">Шаблон тела</param>
 		/// <param name="armorList">Броня</param>
 		/// <returns>Список частей шаблона тела</returns>
-		private static List<BodyPart> UpdateBody(List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
+		private List<CreatureTemplatePart> UpdateBody(List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
 		{
-			var bodyParts = new List<BodyPart>();
+			var bodyParts = new List<CreatureTemplatePart>();
 
 			foreach (var part in armorList)
-				bodyParts.Add(new BodyPart(
+				bodyParts.Add(new CreatureTemplatePart(
+					creatureTemplate: this,
+					bodyPartType: part.BodyTemplatePart.BodyPartType,
 					name: part.BodyTemplatePart.Name,
 					hitPenalty: part.BodyTemplatePart.HitPenalty,
 					damageModifier: part.BodyTemplatePart.DamageModifier,
 					minToHit: part.BodyTemplatePart.MinToHit,
 					maxToHit: part.BodyTemplatePart.MaxToHit,
-					startingArmor: part.Armor,
-					currentArmor: part.Armor));
+					armor: part.Armor));
 			return bodyParts;
 		}
 
@@ -527,7 +528,7 @@ namespace Sindie.ApiService.Core.Entities
 			Name = name;
 			Description = description;
 			Type = type;
-			BodyParts = UpdateBody(armorList);
+			CreatureTemplateParts = UpdateBody(armorList);
 		}
 
 		/// <summary>
@@ -578,39 +579,34 @@ namespace Sindie.ApiService.Core.Entities
 			int luck = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
-			Guid createdByUserId = default,
-			List<BodyPart> bodyParts = default,
-			List<Ability> abilities = default)
-		=> new CreatureTemplate()
-		{
-			Id = id ?? Guid.NewGuid(),
-			Game = game,
-			ImgFile = imgFile,
-			BodyTemplate = bodyTemplate,
-			Name = name ?? "CreatureTemplate",
-			Description = description,
-			Type = type ?? "human",
-			HP = hp == default ? 10 : hp,
-			Sta = sta == default ? 10 : sta,
-			Int = @int == default ? 1 : @int,
-			Ref = @ref == default ? 1 : @ref,
-			Dex = dex == default ? 1 : dex,
-			Body = body == default ? 1 : body,
-			Emp = emp == default ? 1 : emp,
-			Cra = cra == default ? 1 : cra,
-			Will = will == default ? 1 : will,
-			Speed = speed == default ? 1 : speed,
-			Luck = luck == default ? 1 : luck,
-			CreatedOn = createdOn,
-			ModifiedOn = modifiedOn,
-			CreatedByUserId = createdByUserId,
-			Creatures = new List<Creature>(),
-			CreatureTemplateParameters = new List<CreatureTemplateParameter>(),
-			Abilities = new List<Ability>(),
-			BodyParts = bodyParts == null
-			? new List<BodyPart>()
-			{ new BodyPart("torso", 1, 1, 1, 10, 5, 5)}
-			: bodyParts
-		};
+			Guid createdByUserId = default)
+			=> new CreatureTemplate
+			{
+				Id = id ?? Guid.NewGuid(),
+				Game = game,
+				ImgFile = imgFile,
+				BodyTemplate = bodyTemplate,
+				Name = name ?? "CreatureTemplate",
+				Description = description,
+				Type = type ?? "human",
+				HP = hp == default ? 10 : hp,
+				Sta = sta == default ? 10 : sta,
+				Int = @int == default ? 1 : @int,
+				Ref = @ref == default ? 1 : @ref,
+				Dex = dex == default ? 1 : dex,
+				Body = body == default ? 1 : body,
+				Emp = emp == default ? 1 : emp,
+				Cra = cra == default ? 1 : cra,
+				Will = will == default ? 1 : will,
+				Speed = speed == default ? 1 : speed,
+				Luck = luck == default ? 1 : luck,
+				CreatedOn = createdOn,
+				ModifiedOn = modifiedOn,
+				CreatedByUserId = createdByUserId,
+				Creatures = new List<Creature>(),
+				CreatureTemplateParameters = new List<CreatureTemplateParameter>(),
+				Abilities = new List<Ability>(),
+				CreatureTemplateParts = new List<CreatureTemplatePart>()
+			};
 	}
 }

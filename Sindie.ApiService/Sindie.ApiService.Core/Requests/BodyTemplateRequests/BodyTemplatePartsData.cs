@@ -1,7 +1,9 @@
-﻿using Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplate;
+﻿using Sindie.ApiService.Core.Entities;
+using Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplate;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 {
@@ -14,6 +16,8 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 		/// Название части тела
 		/// </summary>
 		public string Name { get; set; }
+
+		public BodyPartType BodyPartType { get; set; }
 
 		/// <summary>
 		/// Модификатор урона
@@ -39,9 +43,10 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 		/// Создание данных для списка шаблонов частей тела
 		/// </summary>
 		/// <param name="request">Запрос</param>
+		/// <param name="bodyPartTypes">Типы частей тела</param>
 		/// <returns>Данные для списка шаблонов частей тела</returns>
 		public static List<BodyTemplatePartsData>
-			CreateBodyTemplatePartsData(CreateBodyTemplateCommand request)
+			CreateBodyTemplatePartsData(CreateBodyTemplateCommand request, List<BodyPartType> bodyPartTypes)
 		{
 			var result = new List<BodyTemplatePartsData>();
 
@@ -49,11 +54,12 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 				result.Add(new BodyTemplatePartsData()
 				{
 					Name = part.Name,
+					BodyPartType = bodyPartTypes.First(x => x.Id == part.BodyPartTypeId),
 					DamageModifier = part.DamageModifier,
 					HitPenalty = part.HitPenalty,
 					MinToHit = part.MinToHit,
 					MaxToHit = part.MaxToHit
-				});
+				});;
 			return result;
 		}
 
@@ -61,9 +67,10 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 		/// Создание данных для списка шаблонов частей тела
 		/// </summary>
 		/// <param name="request">Запрос</param>
+		/// <param name="bodyPartTypes">Типы частей тела</param>
 		/// <returns>Данные для списка шаблонов частей тела</returns>
 		public static List<BodyTemplatePartsData>
-			CreateBodyTemplatePartsData(ChangeBodyTemplateCommand request)
+			CreateBodyTemplatePartsData(ChangeBodyTemplateCommand request, List<BodyPartType> bodyPartTypes)
 		{
 			var result = new List<BodyTemplatePartsData>();
 
@@ -71,6 +78,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 				result.Add(new BodyTemplatePartsData()
 				{
 					Name = part.Name,
+					BodyPartType = bodyPartTypes.First(x => x.Id == part.BodyPartTypeId),
 					DamageModifier = part.DamageModifier,
 					HitPenalty = part.HitPenalty,
 					MinToHit = part.MinToHit,

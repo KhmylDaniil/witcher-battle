@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate
 {
 	/// <summary>
@@ -10,6 +12,11 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTempla
 		/// Название части тела
 		/// </summary>
 		public string Name { get; set; }
+
+		/// <summary>
+		/// Айди типа части тела
+		/// </summary>
+		public Guid BodyPartTypeId { get; set; }
 
 		/// <summary>
 		/// Модификатор урона

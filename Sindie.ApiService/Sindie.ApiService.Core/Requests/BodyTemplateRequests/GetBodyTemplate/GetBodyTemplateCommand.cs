@@ -18,7 +18,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 		/// <param name="creationMaxTime">Максимальное время создания</param>
 		/// <param name="modificationMinTime">Минимальное время модификации</param>
 		/// <param name="modificationMaxTime">Максимальное время модификации</param>
-		/// <param name="bodyPartName">Название части тела</param>
+		/// <param name="bodyPartTypeId">Название части тела</param>
 		/// <param name="pageSize">Размер страницы</param>
 		/// <param name="pageNumber">Номер страниицы</param>
 		/// <param name="orderBy">Сортировка по полю</param>
@@ -31,7 +31,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 			DateTime creationMaxTime,
 			DateTime modificationMinTime,
 			DateTime modificationMaxTime,
-			string bodyPartName,
+			Guid? bodyPartTypeId,
 			int pageSize,
 			int pageNumber,
 			string orderBy,
@@ -44,7 +44,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 			CreationMaxTime = creationMaxTime;
 			ModificationMinTime = modificationMinTime;
 			ModificationMaxTime = modificationMaxTime;
-			BodyPartName = bodyPartName;
+			BodyPartTypeId = bodyPartTypeId;
 			PageSize = pageSize == default ? 10 : pageSize;
 			PageNumber = pageNumber == default ? 1 : pageNumber;
 			OrderBy = orderBy;

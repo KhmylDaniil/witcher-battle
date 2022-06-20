@@ -51,6 +51,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.BodyTemplates.Where(bt => bt.Id == request.BodyTemplateId))
 					.ThenInclude(x => x.BodyTemplateParts)
+					.ThenInclude(x => x.BodyPartType)
 				.Include(x => x.Conditions)
 				.Include(x => x.Parameters)
 				.Include(x => x.CreatureTemplates)
@@ -112,7 +113,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 			foreach (var item in request.ArmorList)
 			{
 				_ = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == item.BodyTemplatePartId)
-					?? throw new ExceptionEntityNotFound<BodyTemplatePart>(item.BodyTemplatePartId);
+					?? throw new ExceptionEntityNotFound<BodyPartType>(item.BodyTemplatePartId);
 				
 				if (item.Armor < 0)
 					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateCommand>(nameof(item.Armor));

@@ -24,6 +24,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly Game _game;
 		private readonly Condition _condition;
 		private readonly CreatureTemplate _creatureTemplate;
+		private readonly CreatureTemplatePart _creatureTemplatePart;
+		private readonly BodyPartType _bodyPartType;
 		private readonly Ability _ability;
 		private readonly Parameter _parameter;
 
@@ -42,6 +44,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 					user: _user,
 					gameRole: GameRole.CreateForTest(GameRoles.MasterRoleId)));
 
+			_bodyPartType = BodyPartType.CreateForTest();
+
 			_parameter = Parameter.CreateForTest(game: _game);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
 			_condition = Condition.CreateForTest(
@@ -57,6 +61,17 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				modifiedOn: DateTimeProvider.Object.TimeProvider,
 				createdByUserId: _user.Id);
 
+			_creatureTemplatePart = CreatureTemplatePart.CreateForTest(
+				creatureTemplate: _creatureTemplate,
+				bodyPartType: _bodyPartType,
+				damageModifier: 1,
+				hitPenalty: 1,
+				minToHit: 1,
+				maxToHit: 1,
+				armor: 0);
+
+			_creatureTemplate.CreatureTemplateParts.Add(_creatureTemplatePart);
+
 			_ability = Ability.CreateForTest(
 				creatureTemplate: _creatureTemplate,
 				attackParameter: _parameter);
@@ -69,6 +84,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				_user,
 				_game,
 				_bodyTemplate,
+				_bodyPartType,
 				_condition,
 				_creatureTemplate,
 				_ability));
@@ -97,7 +113,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				modificationMinTime: modificationMinTime,
 				modificationMaxTime: modificationMaxTime,
 				bodyTemplateName: "human",
-				bodyPartName: "torso",
+				bodyPartTypeId: BodyPartTypes.VoidId,
 				conditionName: Conditions.BleedName,
 				pageSize: 2,
 				pageNumber: 1,
@@ -119,9 +135,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsTrue(resultItem.ModifiedOn >= modificationMinTime && resultItem.ModifiedOn <= modificationMaxTime);
 
 			var creatureTemplate = _dbContext.CreatureTemplates
+				.Include(x => x.CreatureTemplateParts)
+					.ThenInclude(x => x.BodyPartType)
 				.Include(x => x.Abilities)
-				.ThenInclude(x => x.AppliedConditions)
-				.ThenInclude(x => x.Condition)
+					.ThenInclude(x => x.AppliedConditions)
+					.ThenInclude(x => x.Condition)
 				.FirstOrDefault(x => x.Id == resultItem.Id);
 			Assert.IsNotNull(creatureTemplate);
 
@@ -129,8 +147,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsNotNull(user);
 			Assert.IsTrue(user.Name.Contains(request.UserName));
 
-			Assert.IsNotNull(creatureTemplate.BodyParts
-				.Any(x => x.Name.Contains(request.BodyPartName)));
+			Assert.IsNotNull(creatureTemplate.CreatureTemplateParts
+				.Any(x => x.BodyPartTypeId == request.BodyPartTypeId));
 			Assert.IsNotNull(creatureTemplate.Abilities
 				.Any(a => a.AppliedConditions.Any(ac => ac.Condition.Name.Contains(request.ConditionName))));
 		}

@@ -60,6 +60,9 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 					.ThenInclude(x => x.Abilities)
 					.ThenInclude(x => x.AppliedConditions)
 					.ThenInclude(x => x.Condition)
+				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
+					.ThenInclude(x => x.CreatureTemplateParts)
+					.ThenInclude(x => x.BodyPartType)
 				.SelectMany(x => x.CreatureTemplates);
 
 			var creatureTemplate = await filter.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
@@ -88,15 +91,16 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 				ModifiedByUserId = creatureTemplate.ModifiedByUserId,
 				CreatedOn = creatureTemplate.CreatedOn,
 				ModifiedOn = creatureTemplate.ModifiedOn,
-				BodyParts = creatureTemplate.BodyParts
+				CreatureTemplateParts = creatureTemplate.CreatureTemplateParts
 					.Select(x => new GetCreatureTemplateByIdResponseBodyPart()
 					{
 						Name = x.Name,
+						BodyPartTypeName = x.BodyPartType.Name,
 						HitPenalty = x.HitPenalty,
 						DamageModifier = x.DamageModifier,
 						MinToHit = x.MinToHit,
 						MaxToHit = x.MaxToHit,
-						Armor = x.StartingArmor
+						Armor = x.Armor
 					}).ToList(),
 				CreatureTemplateParameters = creatureTemplate.CreatureTemplateParameters
 					.Select(x => new GetCreatureTemplateByIdResponseParameter()

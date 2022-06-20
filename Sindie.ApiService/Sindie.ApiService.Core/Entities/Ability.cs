@@ -305,7 +305,6 @@ namespace Sindie.ApiService.Core.Entities
 			return result;
 		}
 
-
 		/// <summary>
 		/// Создать тестовую сущность
 		/// </summary>

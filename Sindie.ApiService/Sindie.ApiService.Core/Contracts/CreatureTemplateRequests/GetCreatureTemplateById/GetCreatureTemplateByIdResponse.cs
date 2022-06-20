@@ -117,9 +117,9 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		public Guid ModifiedByUserId { get; set; }
 
 		/// <summary>
-		/// Список частей тела
+		/// Список частей шаблона существа
 		/// </summary>
-		public List<GetCreatureTemplateByIdResponseBodyPart> BodyParts { get; set; }
+		public List<GetCreatureTemplateByIdResponseBodyPart> CreatureTemplateParts { get; set; }
 
 		/// <summary>
 		/// Список параметров шаблона существа

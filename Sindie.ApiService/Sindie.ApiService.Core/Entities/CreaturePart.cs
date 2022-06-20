@@ -3,42 +3,46 @@
 namespace Sindie.ApiService.Core.Entities
 {
 	/// <summary>
-	/// Часть шаблона тела
+	/// Часть тела существа
 	/// </summary>
-	public class BodyTemplatePart: BodyPart
+	public class CreaturePart: BodyPart
 	{
-		private BodyTemplate _bodyTemplate;
+		private int _startingArmor;
+		private int _currentArmor;
+		private Creature _creature;
 
 		/// <summary>
-		/// Поле для <see cref="_bodyTemplate"/>
+		/// Поле для <see cref="_creature"/>
 		/// </summary>
-		public const string BodyTemplateField = nameof(_bodyTemplate);
+		public const string CreatureField = nameof(_creature);
 
 		/// <summary>
 		/// Пустой конструктор
 		/// </summary>
-		public BodyTemplatePart()
+		public CreaturePart()
 		{
 		}
 
 		/// <summary>
-		/// Конструктор для класса часть шаблона тела
+		/// Конструктор части существа
 		/// </summary>
-		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="creature">Существо</param>
 		/// <param name="name">Название</param>
 		/// <param name="bodyPartType">Тип части тела</param>
 		/// <param name="damageModifier">Модификатор урона</param>
 		/// <param name="hitPenalty">Пенальти за прицеливание</param>
 		/// <param name="minToHit">Минимум на попадание</param>
 		/// <param name="maxToHit">Максимум на попадание</param>
-		public BodyTemplatePart(
-			BodyTemplate bodyTemplate,
+		/// <param name="armor">Броня</param> 
+		public CreaturePart(
+			Creature creature,
 			BodyPartType bodyPartType,
 			string name,
 			double damageModifier,
 			int hitPenalty,
 			int minToHit,
-			int maxToHit
+			int maxToHit,
+			int armor
 			)
 			: base(
 			bodyPartType,
@@ -48,24 +52,53 @@ namespace Sindie.ApiService.Core.Entities
 			minToHit,
 			maxToHit)
 		{
-			BodyTemplate = bodyTemplate;
+			Creature = creature;
+			StartingArmor = armor;
+			CurrentArmor = armor;
 		}
 
 		/// <summary>
-		/// Айди шаблона тела
+		/// Айди существа
 		/// </summary>
-		public Guid BodyTemplateId { get; protected set; }
+		public Guid CreatureId { get; protected set; }
+
+		/// <summary>
+		/// Начальная броня
+		/// </summary>
+		public int StartingArmor
+		{
+			get => _startingArmor;
+			set
+			{
+				if (value < 0)
+					throw new ArgumentOutOfRangeException(nameof(StartingArmor));
+				_startingArmor = value;
+			}
+		}
+		/// <summary>
+		/// Текущая броня
+		/// </summary>
+		public int CurrentArmor
+		{
+			get => _currentArmor;
+			set
+			{
+				if (value < 0)
+					throw new ArgumentOutOfRangeException(nameof(CurrentArmor));
+				_currentArmor = value;
+			}
+		}
 
 		#region navigation properties
 		/// <summary>
-		/// Шаблон тела
+		/// Существо
 		/// </summary>
-		public BodyTemplate BodyTemplate
+		public Creature Creature
 		{
-			get => _bodyTemplate;
-			protected set
+			get => _creature;
+			set
 			{
-				_bodyTemplate = value ?? throw new ApplicationException("Необходимо передать тип части тела");
+				_creature = value ?? throw new ApplicationException("Необходимо передать существо");
 				BodyPartTypeId = value.Id;
 			}
 		}
@@ -75,40 +108,46 @@ namespace Sindie.ApiService.Core.Entities
 		/// Создать тестовую сущность
 		/// </summary>
 		/// <param name="id">Айди</param>
-		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="creature">Шаблон существа</param>
 		/// <param name="bodyPartType">Тип части тела</param>
 		/// <param name="name">Название</param>
 		/// <param name="damageModifier">Модификатор урона</param>
 		/// <param name="hitPenalty">Пенальти на попадание</param>
 		/// <param name="minToHit">Минимум на попадание</param>
 		/// <param name="maxToHit">Максимум на попадание</param>
+		/// <param name="startingArmor">Стартовая броня</param>
+		/// <param name="currentArmor">Текущая броня</param>
 		/// <param name="createdOn">Дата создания</param>
 		/// <param name="modifiedOn">Дата изменения</param>
 		/// <param name="createdByUserId">Создавший пользователь</param>
 		/// <returns></returns>
 		[Obsolete("Только для тестов")]
-		public static BodyTemplatePart CreateForTest(
+		public static CreaturePart CreateForTest(
 			Guid? id = default,
-			BodyTemplate bodyTemplate = default,
+			Creature creature = default,
 			BodyPartType bodyPartType = default,
 			string name = default,
 			int damageModifier = default,
 			int hitPenalty = default,
 			int minToHit = default,
 			int maxToHit = default,
+			int startingArmor = default,
+			int currentArmor = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
-		=> new BodyTemplatePart()
+		=> new CreaturePart()
 		{
 			Id = id ?? Guid.NewGuid(),
-			BodyTemplate = bodyTemplate,
+			Creature = creature,
 			BodyPartType = bodyPartType,
 			Name = name ?? "name",
 			DamageModifier = damageModifier,
 			HitPenalty = hitPenalty,
 			MinToHit = minToHit,
 			MaxToHit = maxToHit,
+			StartingArmor = startingArmor,
+			CurrentArmor = currentArmor,
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId,

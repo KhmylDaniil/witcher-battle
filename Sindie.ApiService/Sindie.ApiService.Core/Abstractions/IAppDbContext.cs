@@ -61,9 +61,24 @@ namespace Sindie.ApiService.Core.Abstractions
 		DbSet<Body> Bodies { get; }
 
 		/// <summary>
+		/// Части тела
+		/// </summary>
+		DbSet<BodyPart> BodyParts { get; }
+
+		/// <summary>
+		/// Типы частей тела
+		/// </summary>
+		DbSet<BodyPartType> BodyPartTypes { get; }
+
+		/// <summary>
 		/// Шаблоны тел
 		/// </summary>
 		DbSet<BodyTemplate> BodyTemplates { get; }
+
+		/// <summary>
+		/// Части шаблона тела
+		/// </summary>
+		DbSet<BodyTemplatePart> BodyTemplateParts { get; }
 
 		/// <summary>
 		/// Пресонажи
@@ -116,9 +131,19 @@ namespace Sindie.ApiService.Core.Abstractions
 		DbSet<CreatureParameter> CreatureParameters { get; }
 
 		/// <summary>
+		/// Части тел существ
+		/// </summary>
+		DbSet<CreaturePart> CreatureParts { get; }
+
+		/// <summary>
 		/// Шаблоны существ
 		/// </summary>
 		DbSet<CreatureTemplate> CreatureTemplates { get; }
+
+		/// <summary>
+		/// Части тел шаблонов существ
+		/// </summary>
+		DbSet<CreatureTemplatePart> CreatureTemplateParts { get; }
 
 		/// <summary>
 		/// Параметры шаблонов существ
