@@ -53,26 +53,26 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
-			CheckRequest(request, game);
+			var bodyPartTypes = await _appDbContext.BodyPartTypes.ToListAsync(cancellationToken);
+
+			CheckRequest(request, game, bodyPartTypes);
 
 			var newBodyTemplate = new BodyTemplate(
 				game: game,
 				name: request.Name,
 				description: request.Description,
-				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request, await _appDbContext.BodyPartTypes.ToListAsync(cancellationToken)));
+				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request, bodyPartTypes));
 
 			_appDbContext.BodyTemplates.Add(newBodyTemplate);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
 		}
 
-
-
 		/// <summary>
 		/// Проверка запроса
 		/// </summary>
 		/// <param name="request">Запрос</param>
-		private void CheckRequest(CreateBodyTemplateCommand request, Game game)
+		private void CheckRequest(CreateBodyTemplateCommand request, Game game, List<BodyPartType> bodyPartTypes)
 		{
 			if (game.BodyTemplates.Any(x => x.Name == request.Name))
 				throw new ExceptionRequestNameNotUniq<CreateBodyTemplateCommand>(nameof(request.Name));
@@ -86,8 +86,8 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 				if (request.BodyTemplateParts.Where(x => x.Name == part.Name).Count() != 1)
 					throw new ApplicationException($"Значения в поле {nameof(part.Name)} повторяются");
 
-				if (!BaseData.BodyPartTypes.BodyPartTypesList.Contains(part.BodyPartTypeId))
-					throw new ExceptionEntityNotFound<BodyPartType>(nameof(CreateBodyTemplateRequestItem.BodyPartTypeId));
+				_= bodyPartTypes.FirstOrDefault(x => x.Id == part.BodyPartTypeId)
+					?? throw new ExceptionEntityNotFound<BodyPartType>(nameof(CreateBodyTemplateRequestItem.BodyPartTypeId));					
 
 				if (part.DamageModifier <= 0)
 					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateCommand>(nameof(CreateBodyTemplateRequestItem.DamageModifier));

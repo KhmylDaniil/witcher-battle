@@ -28,6 +28,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly BodyPartType _bodyPartType;
 		private readonly Ability _ability;
 		private readonly Parameter _parameter;
+		private readonly CreatureType _creatureType;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="GetCreatureTemplateHandler"/>
@@ -45,6 +46,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 					gameRole: GameRole.CreateForTest(GameRoles.MasterRoleId)));
 
 			_bodyPartType = BodyPartType.CreateForTest();
+			_creatureType = CreatureType.CreateForTest();
 
 			_parameter = Parameter.CreateForTest(game: _game);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
@@ -55,7 +57,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				name: "testName",
 				game: _game,
-				type: "type",
+				creatureType: _creatureType,
 				bodyTemplate: _bodyTemplate,
 				createdOn: DateTimeProvider.Object.TimeProvider,
 				modifiedOn: DateTimeProvider.Object.TimeProvider,
@@ -87,6 +89,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				_bodyPartType,
 				_condition,
 				_creatureTemplate,
+				_creatureType,
 				_ability));
 		}
 
@@ -107,7 +110,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				gameId: _game.Id,
 				name: "testName",
 				userName: "Author",
-				type: "type",
+				creatureTypeId: _creatureType.Id,
 				creationMinTime: creationMinTime,
 				creationMaxTime: creationMaxTime,
 				modificationMinTime: modificationMinTime,
@@ -129,7 +132,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			var resultItem = result.CreatureTemplatesList.First();
 			Assert.IsTrue(resultItem.Name.Contains(request.Name));
-			Assert.IsTrue(resultItem.Type.Contains(request.Type));
+			Assert.AreEqual(resultItem.Type, _creatureType.Name);
 			Assert.IsTrue(resultItem.BodyTemplateName.Contains(request.BodyTemplateName));
 			Assert.IsTrue(resultItem.CreatedOn >= creationMinTime && resultItem.CreatedOn <= creationMaxTime);
 			Assert.IsTrue(resultItem.ModifiedOn >= modificationMinTime && resultItem.ModifiedOn <= modificationMaxTime);

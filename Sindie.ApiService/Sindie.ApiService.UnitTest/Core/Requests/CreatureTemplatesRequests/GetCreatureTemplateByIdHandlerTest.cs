@@ -26,6 +26,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly CreatureTemplateParameter _creatureTemplateParameter;
 		private readonly CreatureTemplatePart _creatureTemplatePart;
 		private readonly BodyPartType _bodyPartType;
+		private readonly CreatureType _creatureType;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="GetCreatureTemplateByIdHandler"/>
@@ -35,6 +36,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			_game = Game.CreateForTest();
 			_bodyPartType = BodyPartType.CreateForTest();
+			_creatureType = CreatureType.CreateForTest();
 
 			_parameter = Parameter.CreateForTest(game: _game);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
@@ -45,7 +47,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				name: "testName",
 				game: _game,
-				type: "type",
+				creatureType: _creatureType,
 				bodyTemplate: _bodyTemplate);
 
 			_creatureTemplatePart = CreatureTemplatePart.CreateForTest(
@@ -80,6 +82,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				_bodyTemplate,
 				_condition,
 				_creatureTemplate,
+				_creatureType,
 				_ability));
 		}
 
@@ -104,7 +107,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(result.ImgFileId, _creatureTemplate.ImgFileId);
 			Assert.AreEqual(result.BodyTemplateId, _bodyTemplate.Id);
 			Assert.AreEqual(result.Name, "testName");
-			Assert.AreEqual(result.Type, "type");
+			Assert.AreEqual(result.CreatureTypeId, _creatureType.Id);
+			Assert.AreEqual(result.Type, _creatureType.Name);
 			Assert.AreEqual(result.Int, _creatureTemplate.Int);
 			Assert.AreEqual(result.Ref, _creatureTemplate.Ref);
 			Assert.AreEqual(result.Dex, _creatureTemplate.Dex);

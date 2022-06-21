@@ -28,6 +28,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.InstanceRequests
 		private readonly Ability _ability;
 		private readonly Condition _condition;
 		private readonly Parameter _parameter;
+		private readonly CreatureType _creatureType;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="CreateInstanceHandler"/>
@@ -37,10 +38,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.InstanceRequests
 			_game = Game.CreateForTest();
 			_imgFile = ImgFile.CreateForTest();
 			_bodyPartType = BodyPartType.CreateForTest();
+			_creatureType = CreatureType.CreateForTest();
 			_condition = Condition.CreateForTest(game: _game);
 			_parameter = Parameter.CreateForTest(game: _game);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
-			_creatureTemplate = CreatureTemplate.CreateForTest(game: _game, bodyTemplate: _bodyTemplate);
+			_creatureTemplate = CreatureTemplate.CreateForTest(game: _game, bodyTemplate: _bodyTemplate, creatureType: _creatureType);
 			_creatureTemplatePart = CreatureTemplatePart.CreateForTest(
 				creatureTemplate: _creatureTemplate,
 				bodyPartType: _bodyPartType,
@@ -71,6 +73,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.InstanceRequests
 				_parameter,
 				_bodyTemplate,
 				_creatureTemplate,
+				_creatureType,
 				_ability));
 		}
 
@@ -120,8 +123,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.InstanceRequests
 			Assert.AreEqual(creature.Description, "newMonster");
 			Assert.AreEqual(_creatureTemplate.ImgFileId, creature.ImgFileId);
 			Assert.AreEqual(_creatureTemplate.BodyTemplateId, creature.BodyTemplateId);
-			Assert.IsNotNull(creature.Type);
-			Assert.AreEqual(_creatureTemplate.Type, creature.Type);
+			Assert.AreEqual(_creatureTemplate.CreatureTypeId, creature.CreatureTypeId);
 			Assert.AreEqual(_creatureTemplate.HP, creature.HP);
 			Assert.AreEqual(_creatureTemplate.Sta, creature.Sta);
 			Assert.AreEqual(_creatureTemplate.Int, creature.Int);

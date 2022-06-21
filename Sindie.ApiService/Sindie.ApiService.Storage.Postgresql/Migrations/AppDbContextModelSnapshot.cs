@@ -879,7 +879,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.ToTable("BodyPartTypes", "GameRules");
 
-                    b.HasComment("Части шаблона тела");
+                    b.HasComment("Типы частей тела");
 
                     b.HasData(
                         new
@@ -1455,6 +1455,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("CreatureTemplateId")
                         .HasComment("Айди шаблона существа");
 
+                    b.Property<Guid>("CreatureTypeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatureTypeId")
+                        .HasComment("Айди типа существа");
+
                     b.Property<string>("Description")
                         .HasColumnType("text")
                         .HasColumnName("Description")
@@ -1528,12 +1533,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("Sta")
                         .HasComment("Стамина");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Type")
-                        .HasComment("Тип существа");
-
                     b.Property<int>("Will")
                         .HasColumnType("integer")
                         .HasColumnName("Will")
@@ -1544,6 +1543,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasIndex("BodyTemplateId");
 
                     b.HasIndex("CreatureTemplateId");
+
+                    b.HasIndex("CreatureTypeId");
 
                     b.HasIndex("ImgFileId")
                         .IsUnique();
@@ -1638,6 +1639,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now() at time zone 'utc'");
 
+                    b.Property<Guid>("CreatureTypeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatureTypeId")
+                        .HasComment("Айди типа существа");
+
                     b.Property<string>("Description")
                         .HasColumnType("text")
                         .HasColumnName("Description")
@@ -1711,12 +1717,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("Sta")
                         .HasComment("Стамина");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Type")
-                        .HasComment("Тип шаблона существа");
-
                     b.Property<int>("Will")
                         .HasColumnType("integer")
                         .HasColumnName("Will")
@@ -1725,6 +1725,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BodyTemplateId");
+
+                    b.HasIndex("CreatureTypeId");
 
                     b.HasIndex("GameId");
 
@@ -1787,6 +1789,180 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.ToTable("CreatureTemplateParameters", "GameInstance");
 
                     b.HasComment("Параметры шаблона существа");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<Guid>("ModifiedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Name")
+                        .HasComment("Название");
+
+                    b.Property<string>("RoleCreatedUser")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleModifiedUser")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CreatureTypes", "GameRules");
+
+                    b.HasComment("Типы существ");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("03ca5eb6-6534-4eea-9616-78e3ef0d572c"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Human",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("04ca5eb6-6534-4eea-9616-78e3ef0d572c"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Necrophage",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("05ca5eb6-6534-4eea-9616-78e3ef0d572c"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Specter",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("06ca5eb6-6534-4eea-9616-78e3ef0d572c"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Beast",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("07ca5eb6-6534-4eea-9616-78e3ef0d572c"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Cursed",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("08ca5eb6-6534-4eea-9616-78e3ef0d572c"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Hybrid",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("09ca5eb6-6534-4eea-9616-78e3ef0d572c"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Insectoid",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("13ca5eb6-6534-4eea-9616-78e3ef0d572c"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Elementa",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("23ca5eb6-6534-4eea-9616-78e3ef0d572c"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Relict",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("33ca5eb6-6534-4eea-9616-78e3ef0d572c"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Ogroid",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("43ca5eb6-6534-4eea-9616-78e3ef0d572c"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Draconid",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("53ca5eb6-6534-4eea-9616-78e3ef0d572c"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Vampire",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        });
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Game", b =>
@@ -4252,6 +4428,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Sindie.ApiService.Core.Entities.CreatureType", "CreatureType")
+                        .WithMany("Creatures")
+                        .HasForeignKey("CreatureTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
                         .WithOne("Creature")
                         .HasForeignKey("Sindie.ApiService.Core.Entities.Creature", "ImgFileId")
@@ -4266,6 +4448,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("BodyTemplate");
 
                     b.Navigation("CreatureTemplate");
+
+                    b.Navigation("CreatureType");
 
                     b.Navigation("ImgFile");
 
@@ -4299,6 +4483,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Sindie.ApiService.Core.Entities.CreatureType", "CreatureType")
+                        .WithMany("CreatureTemplates")
+                        .HasForeignKey("CreatureTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
                         .WithMany("CreatureTemplates")
                         .HasForeignKey("GameId")
@@ -4311,6 +4501,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("BodyTemplate");
+
+                    b.Navigation("CreatureType");
 
                     b.Navigation("Game");
 
@@ -5199,6 +5391,13 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("CreatureTemplateParameters");
 
                     b.Navigation("CreatureTemplateParts");
+
+                    b.Navigation("Creatures");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureType", b =>
+                {
+                    b.Navigation("CreatureTemplates");
 
                     b.Navigation("Creatures");
                 });

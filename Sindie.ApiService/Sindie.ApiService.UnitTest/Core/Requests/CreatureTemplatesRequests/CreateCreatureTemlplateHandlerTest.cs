@@ -23,6 +23,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly BodyTemplatePart _bodyTemplatePart;
 		private readonly Condition _condition;
 		private readonly Parameter _parameter;
+		private readonly CreatureType _creatureType;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="CreateCreatureTemlplateHandler"/>
@@ -31,6 +32,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		{
 			_game = Game.CreateForTest();
 			_imgFile = ImgFile.CreateForTest();
+			_creatureType = CreatureType.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 			_bodyTemplatePart = BodyTemplatePart.CreateForTest(
 				bodyTemplate: _bodyTemplate,
@@ -44,7 +46,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			_condition = Condition.CreateForTest(game: _game);
 			_parameter = Parameter.CreateForTest(game: _game);
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _parameter, _bodyTemplate, _bodyTemplatePart, _condition));
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _parameter, _bodyTemplate, _bodyTemplatePart, _condition, _creatureType));
 		}
 
 		/// <summary>
@@ -60,7 +62,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				bodyTemplateId: _bodyTemplate.Id,
 				name: "name",
 				description: "description",
-				type: "type",
+				creatureTypeId: _creatureType.Id,
 				hp: 10,
 				sta: 10,
 				@int: 6,
@@ -125,8 +127,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(request.Description, creatureTemplate.Description);
 			Assert.AreEqual(request.ImgFileId, creatureTemplate.ImgFileId);
 			Assert.AreEqual(request.BodyTemplateId, creatureTemplate.BodyTemplateId);
-			Assert.IsNotNull(creatureTemplate.Type);
-			Assert.AreEqual(request.Type, creatureTemplate.Type);
+			Assert.AreEqual(request.CreatureTypeId, creatureTemplate.CreatureTypeId);
 			Assert.AreEqual(request.HP, creatureTemplate.HP);
 			Assert.AreEqual(request.Sta, creatureTemplate.Sta);
 			Assert.AreEqual(request.Int, creatureTemplate.Int);

@@ -151,6 +151,11 @@ namespace Sindie.ApiService.Core.Abstractions
 		DbSet<CreatureTemplateParameter> CreatureTemplateParameters { get; }
 
 		/// <summary>
+		/// Типы существ
+		/// </summary>
+		DbSet<CreatureType> CreatureTypes { get; }
+
+		/// <summary>
 		/// События
 		/// </summary>
 		DbSet<Event> Events { get; }

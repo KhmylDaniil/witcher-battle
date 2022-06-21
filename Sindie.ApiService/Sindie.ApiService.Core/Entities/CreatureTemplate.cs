@@ -1,5 +1,4 @@
 ﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
 using System;
 using System.Collections.Generic;
@@ -27,9 +26,15 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public const string BodyTemplateField = nameof(_bodyTemplate);
 
+		/// <summary>
+		/// Поле для <see cref="_creatureType"/>
+		/// </summary>
+		public const string CreatureTypeField = nameof(_creatureType);
+
 		private Game _game;
 		private ImgFile _imgFile;
 		private BodyTemplate _bodyTemplate;
+		private CreatureType _creatureType;
 
 		private int _hp;
 		private int _sta;
@@ -56,6 +61,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="game">Игра</param>
 		/// <param name="imgFile">Графический файл</param>
 		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="creatureType">Тип существа</param>
 		/// <param name="hp">Хиты</param>
 		/// <param name="sta">Стамина</param>
 		/// <param name="int">Интеллект</param>
@@ -69,12 +75,12 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="luck">Удача</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
-		/// <param name="type">Тип существа</param>
 		/// <param name="armorList">Броня существа</param>
 		public CreatureTemplate(
 			Game game,
 			ImgFile imgFile,
 			BodyTemplate bodyTemplate,
+			CreatureType creatureType,
 			int hp,
 			int sta,
 			int @int,
@@ -88,12 +94,12 @@ namespace Sindie.ApiService.Core.Entities
 			int luck,
 			string name, 
 			string description, 
-			string type,
 			List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
 		{
 			Game = game;
 			ImgFile = imgFile;
 			BodyTemplate = bodyTemplate;
+			CreatureType = creatureType;
 			_hp = hp;
 			Sta = sta;
 			Int = @int;
@@ -107,7 +113,6 @@ namespace Sindie.ApiService.Core.Entities
 			Luck = luck;
 			Name = name;
 			Description = description;
-			Type = type;
 			Abilities = new List<Ability>();
 			CreatureTemplateParameters = new List<CreatureTemplateParameter>();
 			Creatures = new List<Creature>();
@@ -130,6 +135,11 @@ namespace Sindie.ApiService.Core.Entities
 		public Guid BodyTemplateId { get; protected set; }
 
 		/// <summary>
+		/// Айди типа существа
+		/// </summary>
+		public Guid CreatureTypeId { get; protected set; }
+
+		/// <summary>
 		/// Название шаблона
 		/// </summary>
 		public string Name { get; set; }
@@ -138,11 +148,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// Описание шаблона
 		/// </summary>
 		public string Description { get; set; }
-
-		/// <summary>
-		/// Тип существа
-		/// </summary>
-		public string Type { get; set; }
 
 		/// <summary>
 		/// Хиты
@@ -340,6 +345,19 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
+		/// Тип существа
+		/// </summary>
+		public CreatureType CreatureType
+		{
+			get => _creatureType;
+			set
+			{
+				_creatureType = value ?? throw new ApplicationException($"Необходимо передать {nameof(CreatureType)}");
+				CreatureTypeId = value.Id;
+			}
+		}
+
+		/// <summary>
 		/// Способности
 		/// </summary>
 		public List<Ability> Abilities { get; protected set; }
@@ -476,6 +494,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="game">Игра</param>
 		/// <param name="imgFile">Графический файл</param>
 		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="creatureType">Тип существа</param>
 		/// <param name="hp">Хиты</param>
 		/// <param name="sta">Стамина</param>
 		/// <param name="int">Интеллект</param>
@@ -495,6 +514,7 @@ namespace Sindie.ApiService.Core.Entities
 			Game game,
 			ImgFile imgFile,
 			BodyTemplate bodyTemplate,
+			CreatureType creatureType,
 			int hp,
 			int sta,
 			int @int,
@@ -508,7 +528,6 @@ namespace Sindie.ApiService.Core.Entities
 			int luck,
 			string name,
 			string description,
-			string type,
 			List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
 		{
 			Game = game;
@@ -527,7 +546,7 @@ namespace Sindie.ApiService.Core.Entities
 			Luck = luck;
 			Name = name;
 			Description = description;
-			Type = type;
+			CreatureType = creatureType;
 			CreatureTemplateParts = UpdateBody(armorList);
 		}
 
@@ -537,10 +556,10 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="id">Айди</param>
 		/// <param name="game">Игра</param>
 		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="creatureType">Тип существа</param>
 		/// <param name="imgFile">Графический файл</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
-		/// <param name="type">Тип</param>
 		/// <param name="hp">Хиты</param>
 		/// <param name="sta">Стамина</param>
 		/// <param name="int">Интеллект</param>
@@ -555,17 +574,16 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="createdOn">Дата создания</param>
 		/// <param name="modifiedOn">Дата изменения</param>
 		/// <param name="createdByUserId">Создавший пользователь</param>
-		/// <param name="bodyParts">Список частей тела</param>
 		/// <returns></returns>
 		[Obsolete("Только для тестов")]
 		public static CreatureTemplate CreateForTest(
 			Guid? id = default,
 			Game game = default,
 			BodyTemplate bodyTemplate = default,
+			CreatureType creatureType = default,
 			ImgFile imgFile = default,
 			string name = default,
 			string description = default,
-			string type = default,
 			int hp = default,
 			int sta = default,
 			int @int = default,
@@ -588,7 +606,7 @@ namespace Sindie.ApiService.Core.Entities
 				BodyTemplate = bodyTemplate,
 				Name = name ?? "CreatureTemplate",
 				Description = description,
-				Type = type ?? "human",
+				CreatureType = creatureType,
 				HP = hp == default ? 10 : hp,
 				Sta = sta == default ? 10 : sta,
 				Int = @int == default ? 1 : @int,

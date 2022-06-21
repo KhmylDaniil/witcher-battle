@@ -51,6 +51,8 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
+					.ThenInclude(x => x.CreatureType)
+				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.CreatureTemplateParameters)
 					.ThenInclude(x => x.Parameter)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
@@ -75,7 +77,8 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 				BodyTemplateId = creatureTemplate.BodyTemplateId,
 				Name = creatureTemplate.Name,
 				Description = creatureTemplate.Description,
-				Type = creatureTemplate.Type,
+				Type = creatureTemplate.CreatureType.Name,
+				CreatureTypeId = creatureTemplate.CreatureTypeId,
 				HP = creatureTemplate.HP,
 				Sta = creatureTemplate.Sta,
 				Int = creatureTemplate.Int,

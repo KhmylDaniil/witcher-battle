@@ -46,14 +46,16 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplat
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
-			CheckRequest(request, game);
+			var bodyPartTypes = await _appDbContext.BodyPartTypes.ToListAsync(cancellationToken);
+
+			CheckRequest(request, game, bodyPartTypes);
 
 			game.BodyTemplates.FirstOrDefault(x => x.Id == request.Id)
 				.ChangeBodyTemplate(
 				game: game,
 				name: request.Name,
 				description: request.Description,
-				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request, await _appDbContext.BodyPartTypes.ToListAsync()));
+				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request, bodyPartTypes));
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
@@ -63,7 +65,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplat
 		/// Проверка запроса
 		/// </summary>
 		/// <param name="request">Запрос</param>
-		private void CheckRequest(ChangeBodyTemplateCommand request, Game game)
+		private void CheckRequest(ChangeBodyTemplateCommand request, Game game, List<BodyPartType> bodyPartTypes)
 		{
 			if (game.BodyTemplates.Any(x => x.Name == request.Name && x.Id != request.Id))
 				throw new ExceptionRequestNameNotUniq<ChangeBodyTemplateCommand>(nameof(request.Name));
@@ -80,8 +82,8 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplat
 				if (request.BodyTemplateParts.Where(x => x.Name == part.Name).Count() != 1)
 					throw new ApplicationException($"Значения в поле {nameof(part.Name)} повторяются");
 
-				if (!BaseData.BodyPartTypes.BodyPartTypesList.Contains(part.BodyPartTypeId))
-					throw new ExceptionEntityNotFound<BodyPartType>(nameof(ChangeBodyTemplateRequestItem.BodyPartTypeId));
+				_ = bodyPartTypes.FirstOrDefault(x => x.Id == part.BodyPartTypeId)
+					?? throw new ExceptionEntityNotFound<BodyPartType>(nameof(ChangeBodyTemplateRequestItem.BodyPartTypeId));
 
 				if (part.DamageModifier <= 0)
 					throw new ExceptionRequestFieldIncorrectData<ChangeBodyTemplateCommand>(nameof(ChangeBodyTemplateRequestItem.DamageModifier));

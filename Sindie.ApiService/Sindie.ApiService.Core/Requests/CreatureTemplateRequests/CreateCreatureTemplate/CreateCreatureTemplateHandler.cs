@@ -63,15 +63,17 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 				: await _appDbContext.ImgFiles.FirstOrDefaultAsync(x => x.Id == request.ImgFileId, cancellationToken)
 				?? throw new ExceptionEntityNotFound<ImgFile>(request.ImgFileId.Value);
 
-			CheckRequest(request, game);
+			var creatureTypes = await _appDbContext.CreatureTypes.ToListAsync(cancellationToken);
+
+			CheckRequest(request, game, creatureTypes);
 
 			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId);
-
 
 			var newCreatureTemplate = new CreatureTemplate(
 				game: game,
 				imgFile: imgFile,
 				bodyTemplate: bodyTemplate,
+				creatureType: creatureTypes.FirstOrDefault(x => x.Id == request.CreatureTypeId),
 				hp: request.HP,
 				sta: request.Sta,
 				@int: request.Int,
@@ -85,7 +87,6 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 				luck: request.Luck,
 				name: request.Name,
 				description: request.Description,
-				type: request.Type,
 				armorList: CreateArmorList(bodyTemplate, request.ArmorList));
 
 			newCreatureTemplate.UpdateAlibilities(AbilityData.CreateAbilityData(request, game));
@@ -102,13 +103,17 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="game">Игра</param>
-		private void CheckRequest(CreateCreatureTemplateCommand request, Game game)
+		/// <param name="creatureTypes">Типы существ</param>
+		private void CheckRequest(CreateCreatureTemplateCommand request, Game game, List<CreatureType> creatureTypes)
 		{
 			if (game.CreatureTemplates.Any(x => x.Name == request.Name))
 				throw new ExceptionRequestNameNotUniq<CreateCreatureTemplateCommand>(nameof(request.Name));
 
 			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId)
 				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.BodyTemplateId);
+
+			_ = creatureTypes.FirstOrDefault(x => x.Id == request.CreatureTypeId)
+				?? throw new ExceptionEntityNotFound<CreatureType>(request.CreatureTypeId);
 
 			foreach (var item in request.ArmorList)
 			{

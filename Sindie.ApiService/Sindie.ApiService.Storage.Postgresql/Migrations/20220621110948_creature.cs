@@ -134,7 +134,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 {
                     table.PrimaryKey("PK_BodyPartTypes", x => x.Id);
                 },
-                comment: "Части шаблона тела");
+                comment: "Типы частей тела");
 
             migrationBuilder.CreateTable(
                 name: "BodyTemplates",
@@ -194,6 +194,26 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 comment: "Состояния");
 
             migrationBuilder.CreateTable(
+                name: "CreatureTypes",
+                schema: "GameRules",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
+                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
+                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CreatureTypes", x => x.Id);
+                },
+                comment: "Типы существ");
+
+            migrationBuilder.CreateTable(
                 name: "BodyParts",
                 schema: "GameRules",
                 columns: table => new
@@ -234,9 +254,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     GameId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди игры"),
                     ImgFileId = table.Column<Guid>(type: "uuid", nullable: true, comment: "Айди графического файла"),
                     BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона тела"),
+                    CreatureTypeId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди типа существа"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название шаблона"),
                     Description = table.Column<string>(type: "text", nullable: true, comment: "Описание шаблона"),
-                    Type = table.Column<string>(type: "text", nullable: false, comment: "Тип шаблона существа"),
                     HP = table.Column<int>(type: "integer", nullable: false, comment: "Хиты"),
                     Sta = table.Column<int>(type: "integer", nullable: false, comment: "Стамина"),
                     Int = table.Column<int>(type: "integer", nullable: false, comment: "Интеллект"),
@@ -263,6 +283,13 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         column: x => x.BodyTemplateId,
                         principalSchema: "GameRules",
                         principalTable: "BodyTemplates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CreatureTemplates_CreatureTypes_CreatureTypeId",
+                        column: x => x.CreatureTypeId,
+                        principalSchema: "GameRules",
+                        principalTable: "CreatureTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -363,7 +390,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона тела"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название существа"),
                     Description = table.Column<string>(type: "text", nullable: true, comment: "Описание шаблона"),
-                    Type = table.Column<string>(type: "text", nullable: false, comment: "Тип существа"),
+                    CreatureTypeId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди типа существа"),
                     HP = table.Column<int>(type: "integer", nullable: false, comment: "Хиты"),
                     Sta = table.Column<int>(type: "integer", nullable: false, comment: "Стамина"),
                     Int = table.Column<int>(type: "integer", nullable: false, comment: "Интеллект"),
@@ -397,6 +424,13 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         column: x => x.CreatureTemplateId,
                         principalSchema: "GameRules",
                         principalTable: "CreatureTemplates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Creatures_CreatureTypes_CreatureTypeId",
+                        column: x => x.CreatureTypeId,
+                        principalSchema: "GameRules",
+                        principalTable: "CreatureTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -652,6 +686,26 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     { new Guid("8894e0d0-3147-4791-9953-9667cbe127d7"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Wing", "Default", "Default" }
                 });
 
+            migrationBuilder.InsertData(
+                schema: "GameRules",
+                table: "CreatureTypes",
+                columns: new[] { "Id", "CreatedByUserId", "CreatedOn", "ModifiedByUserId", "ModifiedOn", "Name", "RoleCreatedUser", "RoleModifiedUser" },
+                values: new object[,]
+                {
+                    { new Guid("03ca5eb6-6534-4eea-9616-78e3ef0d572c"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Human", "Default", "Default" },
+                    { new Guid("04ca5eb6-6534-4eea-9616-78e3ef0d572c"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Necrophage", "Default", "Default" },
+                    { new Guid("05ca5eb6-6534-4eea-9616-78e3ef0d572c"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Specter", "Default", "Default" },
+                    { new Guid("06ca5eb6-6534-4eea-9616-78e3ef0d572c"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Beast", "Default", "Default" },
+                    { new Guid("07ca5eb6-6534-4eea-9616-78e3ef0d572c"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Cursed", "Default", "Default" },
+                    { new Guid("08ca5eb6-6534-4eea-9616-78e3ef0d572c"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Hybrid", "Default", "Default" },
+                    { new Guid("09ca5eb6-6534-4eea-9616-78e3ef0d572c"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Insectoid", "Default", "Default" },
+                    { new Guid("13ca5eb6-6534-4eea-9616-78e3ef0d572c"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Elementa", "Default", "Default" },
+                    { new Guid("23ca5eb6-6534-4eea-9616-78e3ef0d572c"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Relict", "Default", "Default" },
+                    { new Guid("33ca5eb6-6534-4eea-9616-78e3ef0d572c"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Ogroid", "Default", "Default" },
+                    { new Guid("43ca5eb6-6534-4eea-9616-78e3ef0d572c"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Draconid", "Default", "Default" },
+                    { new Guid("53ca5eb6-6534-4eea-9616-78e3ef0d572c"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Vampire", "Default", "Default" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Abilities_AttackParameterId",
                 schema: "GameRules",
@@ -737,6 +791,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 column: "CreatureTemplateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Creatures_CreatureTypeId",
+                schema: "GameInstance",
+                table: "Creatures",
+                column: "CreatureTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Creatures_ImgFileId",
                 schema: "GameInstance",
                 table: "Creatures",
@@ -772,6 +832,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 schema: "GameRules",
                 table: "CreatureTemplates",
                 column: "BodyTemplateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CreatureTemplates_CreatureTypeId",
+                schema: "GameRules",
+                table: "CreatureTemplates",
+                column: "CreatureTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CreatureTemplates_GameId",
@@ -853,6 +919,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
             migrationBuilder.DropTable(
                 name: "BodyTemplates",
+                schema: "GameRules");
+
+            migrationBuilder.DropTable(
+                name: "CreatureTypes",
                 schema: "GameRules");
 
             migrationBuilder.DropColumn(

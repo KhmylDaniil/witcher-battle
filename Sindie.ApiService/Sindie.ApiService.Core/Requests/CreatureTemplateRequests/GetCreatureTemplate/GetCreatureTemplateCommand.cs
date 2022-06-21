@@ -17,7 +17,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 		/// </summary>
 		/// <param name="gameId">Айди игры</param>
 		/// <param name="name">Название</param>
-		/// <param name="type">Тип</param>
+		/// <param name="creatureTypeId">Айди типа существа</param>
 		/// <param name="userName">Автор</param>
 		/// <param name="creationMinTime">Минимальное время создания</param>
 		/// <param name="creationMaxTime">Максимальное время создания</param>
@@ -31,7 +31,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 		public GetCreatureTemplateCommand(
 			Guid gameId,
 			string name,
-			string type,
+			Guid? creatureTypeId,
 			string userName,
 			DateTime creationMinTime,
 			DateTime creationMaxTime,
@@ -47,7 +47,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 		{
 			GameId = gameId;
 			Name = name;
-			Type = type;
+			CreatureTypeId = creatureTypeId;
 			UserName = userName;
 			CreationMinTime = creationMinTime;
 			CreationMaxTime = creationMaxTime;

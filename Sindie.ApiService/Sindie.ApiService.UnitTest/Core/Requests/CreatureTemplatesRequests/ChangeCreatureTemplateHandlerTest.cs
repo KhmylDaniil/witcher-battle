@@ -29,6 +29,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly CreatureTemplateParameter _creatureTemplateParameter;
 		private readonly Ability _ability;
 		private readonly BodyPartType _torsoType;
+		private readonly CreatureType _creatureType1;
+		private readonly CreatureType _creatureType2;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="CreateCreatureTemlplateHandler"/>
@@ -38,6 +40,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_game = Game.CreateForTest();
 			_torsoType = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
 			_imgFile = ImgFile.CreateForTest();
+			_creatureType1 = CreatureType.CreateForTest(CreatureTypes.BeastId, CreatureTypes.BeastName);
+			_creatureType2 = CreatureType.CreateForTest(CreatureTypes.CursedId, CreatureTypes.CursedName);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
 			_torso = BodyTemplatePart.CreateForTest(
@@ -56,7 +60,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
-				bodyTemplate: _bodyTemplate);
+				bodyTemplate: _bodyTemplate,
+				creatureType: _creatureType1);
 
 			_creatureTemplatePart = CreatureTemplatePart.CreateForTest(
 				creatureTemplate: _creatureTemplate,
@@ -94,6 +99,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				_ability,
 				_creatureTemplate,
 				_creatureTemplateParameter,
+				_creatureType1,
+				_creatureType2,
 				_condition));
 		}
 
@@ -111,7 +118,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				bodyTemplateId: _bodyTemplate.Id,
 				name: "newCT",
 				description: "description",
-				type: "newType",
+				creatureTypeId: _creatureType2.Id,
 				hp: 10,
 				sta: 10,
 				@int: 6,
@@ -184,8 +191,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(request.Description, creatureTemplate.Description);
 			Assert.AreEqual(request.ImgFileId, creatureTemplate.ImgFileId);
 			Assert.AreEqual(request.BodyTemplateId, creatureTemplate.BodyTemplateId);
-			Assert.IsNotNull(creatureTemplate.Type);
-			Assert.AreEqual(request.Type, creatureTemplate.Type);
+			Assert.AreEqual(request.CreatureTypeId, creatureTemplate.CreatureTypeId);
 			Assert.AreEqual(request.HP, creatureTemplate.HP);
 			Assert.AreEqual(request.Sta, creatureTemplate.Sta);
 			Assert.AreEqual(request.Int, creatureTemplate.Int);

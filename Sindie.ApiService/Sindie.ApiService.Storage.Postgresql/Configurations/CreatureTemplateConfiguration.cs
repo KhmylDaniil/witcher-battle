@@ -32,14 +32,14 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Айди шаблона тела")
 				.IsRequired();
 
+			builder.Property(r => r.CreatureTypeId)
+				.HasColumnName("CreatureTypeId")
+				.HasComment("Айди типа существа")
+				.IsRequired();
+
 			builder.Property(r => r.Name)
 				.HasColumnName("Name")
 				.HasComment("Название шаблона")
-				.IsRequired();
-
-			builder.Property(r => r.Type)
-				.HasColumnName("Type")
-				.HasComment("Тип шаблона существа")
 				.IsRequired();
 
 			builder.Property(r => r.Description)
@@ -119,6 +119,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
+			builder.HasOne(x => x.CreatureType)
+				.WithMany(x => x.CreatureTemplates)
+				.HasForeignKey(x => x.CreatureTypeId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
 			builder.HasMany(x => x.CreatureTemplateParameters)
 				.WithOne(x => x.CreatureTemplate)
 				.HasForeignKey(x => x.CreatureTemplateId)
@@ -154,6 +160,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			var bodyTemplateNavigation = builder.Metadata.FindNavigation(nameof(CreatureTemplate.BodyTemplate));
 			bodyTemplateNavigation.SetField(CreatureTemplate.BodyTemplateField);
 			bodyTemplateNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+			var creatureTypeNavigation = builder.Metadata.FindNavigation(nameof(CreatureTemplate.CreatureType));
+			creatureTypeNavigation.SetField(CreatureTemplate.CreatureTypeField);
+			creatureTypeNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

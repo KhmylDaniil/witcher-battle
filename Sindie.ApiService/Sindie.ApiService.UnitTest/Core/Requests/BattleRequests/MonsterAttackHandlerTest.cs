@@ -27,6 +27,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
 		private readonly Creature _creature;
+		private readonly CreatureType _creatureType;
 
 		/// <summary>
 		/// Тест для <see cref="MonsterAttackHandler"/>
@@ -34,6 +35,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		public MonsterAttackHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
+			_creatureType = CreatureType.CreateForTest(CreatureTypes.SpecterId, CreatureTypes.SpecterName);
 			_instance = Instance.CreateForTest(game: _game);
 			_target = BodyTemplate.CreateForTest(game: _game);
 			_torso = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
@@ -65,7 +67,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
-				bodyTemplate: _target);
+				bodyTemplate: _target,
+				creatureType: _creatureType);
 
 			_ability = Ability.CreateForTest(
 				creatureTemplate: _creatureTemplate,
@@ -80,7 +83,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_creature = Creature.CreateForTest(
 				instance: _instance,
 				creatureTemlpate: _creatureTemplate,
-				bodyTemplate: _target);
+				bodyTemplate: _target,
+				creatureType: _creatureType);
 			_creature.Abilities.Add(_ability);
 			_creature.CreatureParameters.Add(CreatureParameter.CreateForTest(
 				creature: _creature,
@@ -98,7 +102,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_target,
 				_creatureTemplate,
 				_ability,
-				_creature));
+				_creature,
+				_creatureType));
 		}
 
 		/// <summary>
@@ -113,8 +118,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				id: _creature.Id,
 				abilityId: _ability.Id,
 				targetBodyTemplateId: _target.Id,
-				bodyTemplatePartId: _torsoPart.Id,
-				defenseValue: 5);
+				bodyTemplatePartId: _headPart.Id,
+				defenseValue: 2);
 
 			var newHandler = new MonsterAttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 

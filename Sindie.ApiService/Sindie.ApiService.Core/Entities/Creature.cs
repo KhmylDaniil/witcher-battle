@@ -1,7 +1,9 @@
-﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+﻿using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Sindie.ApiService.Core.Entities
@@ -31,10 +33,16 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public const string BodyTemplateField = nameof(_bodyTemplate);
 
+		/// <summary>
+		/// Поле для <see cref="_creatureType"/>
+		/// </summary>
+		public const string CreatureTypeField = nameof(_creatureType);
+
 		private Instance _instance;
 		private ImgFile _imgFile;
 		private CreatureTemplate _creatureTemplate;
 		private BodyTemplate _bodyTemplate;
+		private CreatureType _creatureType;
 
 		private int _sta;
 		private int _int;
@@ -71,7 +79,7 @@ namespace Sindie.ApiService.Core.Entities
 			ImgFile = creatureTemplate.ImgFile;
 			CreatureTemplate = creatureTemplate;
 			BodyTemplate = creatureTemplate.BodyTemplate;
-			Type = creatureTemplate.Type;
+			CreatureTypeId = creatureTemplate.CreatureTypeId;
 			HP = creatureTemplate.HP;
 			Sta = creatureTemplate.Sta;
 			Int = creatureTemplate.Int;
@@ -122,9 +130,9 @@ namespace Sindie.ApiService.Core.Entities
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Тип существа
+		/// Айди типа существа
 		/// </summary>
-		public string Type { get; set; }
+		public Guid CreatureTypeId { get; protected set; }
 
 		/// <summary>
 		/// Хиты
@@ -326,6 +334,19 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
+		/// Тип существа
+		/// </summary>
+		public CreatureType CreatureType
+		{
+			get => _creatureType;
+			set
+			{
+				_creatureType = value ?? throw new ApplicationException($"Необходимо передать {nameof(CreatureType)}");
+				CreatureTypeId = value.Id;
+			}
+		}
+
+		/// <summary>
 		/// Способности
 		/// </summary>
 		public List<Ability> Abilities { get; protected set; }
@@ -420,6 +441,8 @@ namespace Sindie.ApiService.Core.Entities
 				message.AppendLine($"Нанеcено {ability.RollDamage()}. Модификатор урона после поглощения броней составляет {bodyTemplatePart.DamageModifier}.");
 				foreach (var condition in ability.RollConditions())
 					message.AppendLine($"Наложено состояние {condition.Name}.");
+				if (successValue > 6)
+					CheckCrit(message, successValue, bodyTemplatePart);
 			}
 			else if (successValue < -5)
 				message.AppendLine($"Критический промах {successValue}.");
@@ -427,6 +450,76 @@ namespace Sindie.ApiService.Core.Entities
 				message.AppendLine("Промах.");
 
 			return message.ToString();
+		}
+
+		private void CheckCrit(StringBuilder message, int successValue, BodyTemplatePart bodyTemplatePart)
+		{
+			//int bonusDamage;
+			//string critSeverity;
+			//if (successValue < 10)
+			//{
+			//	critSeverity = "Simple";
+			//	bonusDamage = 3;
+			//}
+			//else if (successValue < 13)
+			//{
+			//	critSeverity = "Complex";
+			//	bonusDamage = 5;
+			//}
+			//else if (successValue < 15)
+			//{
+			//	critSeverity = "Difficult";
+			//	bonusDamage = 8;
+			//}
+			//else
+			//{
+			//	critSeverity = "Deadly";
+			//	bonusDamage = 10;
+			//}
+				
+
+
+			//if (bodyTemplatePart.BodyPartType.Id == BodyPartTypes.VoidId)
+			//{
+			//	switch (critSeverity)
+			//	{
+			//		case "Simple":
+			//			bonusDamage = 5;
+			//			break;
+			//		case "Complex":
+			//			bonusDamage = 10;
+			//			break;
+			//		case "Difficult":
+			//			bonusDamage = 15;
+			//			break;
+			//		case "Deadly":
+			//			bonusDamage = 20;
+			//			break;
+			//		default:
+			//			throw new ApplicationException("Значение тяжести критического повреждения находится вне таблицы");
+			//	}
+			//	message.AppendLine($"Критическое повреждение не может быть нанесено из-за особенной существа. Бонусный урон равен {bonusDamage}.");
+			//	return;
+			//}
+
+			//string critName = critSeverity + bodyTemplatePart.BodyPartType.Name;
+			//if (bodyTemplatePart.BodyPartType.Name == BodyPartTypes.HeadName || bodyTemplatePart.BodyPartType.Name == BodyPartTypes.TorsoName)
+			//{
+			//	Random random = new Random();
+			//	var suffix = random.Next(1, 6) < 5 ? 1 : 2;
+			//	critName += suffix;
+			//}
+
+			//if (bodyTemplatePart.BodyPartType)
+
+
+			//Type myType = typeof(Crit);
+
+			//var name = myType.GetField(critName, BindingFlags.Instance | BindingFlags.NonPublic).ToString();
+			//message.AppendLine($"Нанесено критическое повреждение {name}. Бонусный урон равен {bonusDamage}.");
+
+
+
 		}
 
 		/// <summary>
@@ -439,7 +532,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="imgFile">Графический файл</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
-		/// <param name="type">Тип</param>
+		/// <param name="creatureType">Тип существа</param>
 		/// <param name="hp">Хиты</param>
 		/// <param name="sta">Стамина</param>
 		/// <param name="int">Интеллект</param>
@@ -462,9 +555,9 @@ namespace Sindie.ApiService.Core.Entities
 			CreatureTemplate creatureTemlpate = default,
 			BodyTemplate bodyTemplate = default,
 			ImgFile imgFile = default,
+			CreatureType creatureType = default, 
 			string name = default,
 			string description = default,
-			string type = default,
 			int hp = default,
 			int sta = default,
 			int @int = default,
@@ -486,9 +579,9 @@ namespace Sindie.ApiService.Core.Entities
 				CreatureTemplate = creatureTemlpate,
 				ImgFile = imgFile,
 				BodyTemplate = bodyTemplate,
-				Name = name ?? "Creature",
+				CreatureType = creatureType,
+				Name = name ?? creatureType.Name,
 				Description = description,
-				Type = type ?? "human",
 				HP = hp == default ? 10 : hp,
 				Sta = sta == default ? 10 : sta,
 				Int = @int == default ? 1 : @int,

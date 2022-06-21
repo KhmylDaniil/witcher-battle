@@ -22,7 +22,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// <summary>
 		/// Фильтр по типу
 		/// </summary>
-		public string Type { get; set; }
+		public Guid? CreatureTypeId { get; set; }
 
 		/// <summary>
 		/// Фильтр по автору

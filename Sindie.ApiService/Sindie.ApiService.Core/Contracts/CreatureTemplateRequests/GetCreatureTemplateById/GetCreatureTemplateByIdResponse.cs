@@ -37,9 +37,14 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Тип существа
+		/// Название типа существа
 		/// </summary>
 		public string Type { get; set; }
+
+		/// <summary>
+		/// Айди типа существа
+		/// </summary>
+		public Guid CreatureTypeId { get; set; }
 
 		/// <summary>
 		/// Хиты

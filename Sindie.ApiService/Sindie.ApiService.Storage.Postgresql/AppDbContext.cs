@@ -155,6 +155,11 @@ namespace Sindie.ApiService.Storage.Postgresql
 		public DbSet<CreatureTemplateParameter> CreatureTemplateParameters { get; set; }
 
 		/// <summary>
+		/// Типы существ
+		/// </summary>
+		public DbSet<CreatureType> CreatureTypes { get; set; }
+
+		/// <summary>
 		/// События
 		/// </summary>
 		public DbSet<Event> Events { get; set; }
