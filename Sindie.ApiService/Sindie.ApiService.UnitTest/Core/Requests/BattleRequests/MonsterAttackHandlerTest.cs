@@ -119,7 +119,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				abilityId: _ability.Id,
 				targetBodyTemplateId: _target.Id,
 				bodyTemplatePartId: _headPart.Id,
-				defenseValue: 2);
+				defenseValue: 1);
 
 			var newHandler = new MonsterAttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 
@@ -130,6 +130,33 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			var message = result.Message;
 			Assert.IsNotNull(message);
 			Assert.IsTrue(message.Contains("Попадание"));
+		}
+
+
+		/// <summary>
+		/// Тест метода Handle - атака монстра
+		/// </summary>
+		/// <returns></returns>
+		[TestMethod]
+		public async Task Handle_MonsterAttackСrit_ShouldReturnUnit()
+		{
+			var request = new MonsterAttackCommand(
+				instanceId: _instance.Id,
+				id: _creature.Id,
+				abilityId: _ability.Id,
+				targetBodyTemplateId: _target.Id,
+				bodyTemplatePartId: null,
+				defenseValue: 1);
+
+			var newHandler = new MonsterAttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);
+
+			var result = await newHandler.Handle(request, default);
+
+			Assert.IsNotNull(result);
+
+			var message = result.Message;
+			Assert.IsNotNull(message);
+			Assert.IsTrue(message.Contains("повреждение"));
 		}
 	}
 }
