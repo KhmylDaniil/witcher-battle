@@ -32,6 +32,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Значение параметра")
 				.IsRequired();
 
+			builder.Property(r => r.StatName)
+				.HasColumnName("StatName")
+				.HasComment("Название корреспондирующей характеристики");
+
 			builder.HasOne(x => x.CreatureTemplate)
 				.WithMany(x => x.CreatureTemplateParameters)
 				.HasForeignKey(x => x.CreatureTemplateId)

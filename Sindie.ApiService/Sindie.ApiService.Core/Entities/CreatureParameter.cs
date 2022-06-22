@@ -54,6 +54,11 @@ namespace Sindie.ApiService.Core.Entities
 		public Guid ParameterId { get; protected set; }
 
 		/// <summary>
+		/// Название корреспондирующей характеристики
+		/// </summary>
+		public string StatName { get; protected set; }
+
+		/// <summary>
 		/// значение параметра у существа
 		/// </summary>
 		public int ParameterValue { get; set; }
@@ -83,6 +88,7 @@ namespace Sindie.ApiService.Core.Entities
 			{
 				_parameter = value ?? throw new ApplicationException("Необходимо передать параметр");
 				ParameterId = value.Id;
+				StatName = value.StatName;
 			}
 		}
 

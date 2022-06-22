@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -14,6 +15,7 @@ namespace Sindie.ApiService.Core.Entities
 		public const string GameField = nameof(_game);
 
 		private Game _game;
+		private string _statName;
 
 		/// <summary>
 		/// Пустой конструктор для EF
@@ -30,12 +32,14 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="maxValueParameter">Максимальное значение параметра</param>
 		/// <param name="name">Имя</param>
 		/// <param name="description">Описание</param>
+		/// <param name="statName">Название корреспондирующей характеристики</param>
 		public Parameter(
 			Game game,
 			int minValueParameter,
 			int maxValueParameter,
 			string name,
-			string description)
+			string description,
+			string statName)
 		{
 			Game = game;
 			Name = name;
@@ -46,10 +50,11 @@ namespace Sindie.ApiService.Core.Entities
 			CreatureParameters = new List<CreatureParameter>();
 			CreatureTemplateParameters = new List<CreatureTemplateParameter>();
 			Abilities = new List<Ability>();
+			StatName = statName;
 		}
 
 		/// <summary>
-		/// Айди Игры
+		/// Айди bгры
 		/// </summary>
 		public Guid GameId { get; protected set; }
 
@@ -62,6 +67,15 @@ namespace Sindie.ApiService.Core.Entities
 		/// Описание параметра
 		/// </summary>
 		public string Description { get; set; }
+
+		/// <summary>
+		/// Название корреспондирующей характеристики
+		/// </summary>
+		public string StatName
+		{
+			get => _statName;
+			set =>_statName = BaseData.Stats.StatsList.Contains(value) ? value : string.Empty;
+		}
 
 		/// <summary>
 		/// Границы параметра
@@ -101,7 +115,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Способности
 		/// </summary>
-		public List<Ability> Abilities { get; set; } 
+		public List<Ability> Abilities { get; set; }
 
 		#endregion navigation properties
 
@@ -113,16 +127,19 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="description">Описание</param>
 		/// <param name="minValueParameter">МИнимальное значение</param>
 		/// <param name="maxValueParameter">Максимальное значение</param>
+		/// <param name="statName">Название корреспондирующей характеристики</param>
 		public void ChangeParameter(
 			Game game,
 			string name,
 			string description,
 			int minValueParameter,
-			int maxValueParameter)
+			int maxValueParameter,
+			string statName)
 		{
 			Game = game;
 			Name = name;
 			Description = description;
+			StatName = statName;
 			ParameterBounds = new ParameterBound(
 				minValueParameter,
 				maxValueParameter);
@@ -140,6 +157,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="createdOn">Дата создания</param>
 		/// <param name="modifiedOn">Дата изменения</param>
 		/// <param name="createdByUserId">Создавший пользователь</param>
+		/// <param name="statName">Название корреспондирующей характеристики</param>
 		/// <returns>Параметр</returns>
 		[Obsolete("Только для тестов")]
 		public static Parameter CreateForTest(
@@ -147,6 +165,7 @@ namespace Sindie.ApiService.Core.Entities
 			string name = default,
 			Game game = default,
 			string description = default,
+			string statName = default,
 			int minValueParameter = default,
 			int maxValueParameter = default,
 			DateTime createdOn = default,
@@ -158,6 +177,7 @@ namespace Sindie.ApiService.Core.Entities
 			Name = name ?? "Parameter",
 			Game = game,
 			Description = description,
+			StatName = statName,
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId,

@@ -24,6 +24,11 @@ namespace Sindie.ApiService.Core.Contracts.ParameterRequests
 		public string Description { get; set; }
 
 		/// <summary>
+		/// Название корреспондиирующей характеристики
+		/// </summary>
+		public string StatName { get; set; }
+
+		/// <summary>
 		/// Минимальное значение параметра
 		/// </summary>
 		public int MinValueParameter { get; set; }

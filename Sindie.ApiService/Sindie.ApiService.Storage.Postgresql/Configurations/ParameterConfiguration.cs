@@ -31,6 +31,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasColumnName("Description")
 				.HasComment("Описание параметра");
 
+			builder.Property(r => r.StatName)
+				.HasColumnName("StatName")
+				.HasComment("Название корреспондирующей характеристики");
+
 			builder.OwnsOne(p => p.ParameterBounds, pb =>
 			{
 				pb.Property(p => p.MaxValueParameter)
