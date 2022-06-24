@@ -117,9 +117,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				instanceId: _instance.Id,
 				id: _creature.Id,
 				abilityId: _ability.Id,
-				targetBodyTemplateId: _target.Id,
+				targetCreatureId: _creature.Id,
 				bodyTemplatePartId: _headPart.Id,
-				defenseValue: 1);
+				defenseValue: 1,
+				specialToHit: null,
+				specialToDamage: null);
 
 			var newHandler = new MonsterAttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 
@@ -144,9 +146,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				instanceId: _instance.Id,
 				id: _creature.Id,
 				abilityId: _ability.Id,
-				targetBodyTemplateId: _target.Id,
+				targetCreatureId: _creature.Id,
 				bodyTemplatePartId: null,
-				defenseValue: 1);
+				defenseValue: 1,
+				specialToHit: null,
+				specialToDamage: null);
 
 			var newHandler = new MonsterAttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 

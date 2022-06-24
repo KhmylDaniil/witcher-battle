@@ -277,13 +277,13 @@ namespace Sindie.ApiService.Core.Entities
 		/// Расчет урона от атаки
 		/// </summary>
 		/// <returns>Нанесенный урон</returns>
-		internal int RollDamage()
+		internal int RollDamage(int specialBonus = default)
 		{
 			Random random = new Random();
-			var result = DamageModifier;
+			var result = DamageModifier + specialBonus;
 			for (int i = 0; i < AttackDiceQuantity; i++)
 				result += random.Next(1, 6);
-			return result;
+			return result < 0 ? 0 : result;
 		}
 
 		/// <summary>

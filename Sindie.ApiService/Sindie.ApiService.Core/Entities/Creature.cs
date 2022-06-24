@@ -426,6 +426,20 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
+		/// Расчет базы параметра
+		/// </summary>
+		/// <param name="parameterId">Айди параметра</param>
+		/// <returns></returns>
+		public int ParameterBase(Guid parameterId)
+		{
+			var parameter = CreatureParameters.FirstOrDefault(x => x.ParameterId == parameterId);
+			var statBase = String.IsNullOrEmpty(parameter.StatName)
+				? 0
+				: (int)this.GetType().GetField(parameter.StatName).GetValue(parameter.StatName);
+			return statBase + parameter.ParameterValue;
+		}
+
+		/// <summary>
 		/// Расчет атаки монстра
 		/// </summary>
 		/// <param name="ability">Способность</param>

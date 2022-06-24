@@ -111,6 +111,7 @@ namespace Sindie.ApiService.Core.Entities
 			Creature creature = default,
 			Parameter parameter = default,
 			int value = default,
+			string statName = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
@@ -120,6 +121,7 @@ namespace Sindie.ApiService.Core.Entities
 			Creature = creature,
 			Parameter = parameter,
 			ParameterValue = value == 0 ? 1 : value,
+			StatName = statName ?? "Ref",
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId

@@ -177,7 +177,7 @@ namespace Sindie.ApiService.Core.Entities
 			Name = name ?? "Parameter",
 			Game = game,
 			Description = description,
-			StatName = statName,
+			StatName = statName ?? "Ref",
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId,

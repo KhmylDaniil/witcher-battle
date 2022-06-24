@@ -24,9 +24,9 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.MonsterAttack
 		public Guid? AbilityId { get; set; }
 
 		/// <summary>
-		/// Айди шаблона цели тела
+		/// Айди цели
 		/// </summary>
-		public Guid TargetBodyTemplateId { get; set; }
+		public Guid TargetCreatureId { get; set; }
 
 		/// <summary>
 		/// Айди части тела при прицельной атаке
@@ -37,5 +37,16 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.MonsterAttack
 		/// Значение защиты
 		/// </summary>
 		public int DefenseValue { get; set; }
+
+		/// <summary>
+		/// Специальный бонус к попаданию
+		/// </summary>
+		public int? SpecialToHit { get; set; }
+
+		/// <summary>
+		/// Специальный бонус к урону
+		/// </summary>
+		public int? SpecialToDamage { get; set; }
+
 	}
 }

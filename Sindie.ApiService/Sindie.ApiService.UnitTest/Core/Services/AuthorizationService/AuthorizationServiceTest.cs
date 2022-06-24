@@ -112,11 +112,11 @@ namespace Sindie.ApiService.UnitTest.Core.Services.Authorization
 			var authorizationService = new AuthorizationService(UserContextAsUser.Object);
 
 			//Act
-			var result = authorizationService.InstanceMasterFilter(_dbContext.Games, _instance.Id);
+			var result = authorizationService.InstanceMasterFilter(_dbContext.Instances, _instance.Id);
 
 			//Assert
 			Assert.AreEqual(1, result.Count());
-			Assert.AreEqual(_game.Id, result.First().Id);
+			Assert.AreEqual(_instance.Id, result.First().Id);
 		}
 	}
 }

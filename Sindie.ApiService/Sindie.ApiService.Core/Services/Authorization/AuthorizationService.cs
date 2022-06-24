@@ -72,8 +72,8 @@ namespace Sindie.ApiService.Core.Services.Authorization
 
 
 		/// <inheritdoc/>
-		public IQueryable<Game> InstanceMasterFilter(
-			IQueryable<Game> query, Guid instanceId)
+		public IQueryable<Instance> InstanceMasterFilter(
+			IQueryable<Instance> query, Guid instanceId)
 		{
 			if (query is null)
 				throw new ArgumentNullException(nameof(query));
@@ -81,8 +81,8 @@ namespace Sindie.ApiService.Core.Services.Authorization
 			if (_userContext.Role == SystemRoles.AndminRoleName)
 				return query;
 
-			return query.Where(g => g.Id == g.Instances.FirstOrDefault(i => i.Id == instanceId).GameId
-			&& g.UserGames.Any(u => u.UserId == _userContext.CurrentUserId && u.GameRoleId == GameRoles.MasterRoleId));
+			return query.Where(i => i.Id == instanceId
+			&& i.Game.UserGames.Any(u => u.UserId == _userContext.CurrentUserId && u.GameRoleId == GameRoles.MasterRoleId));
 		}
 	}
 }

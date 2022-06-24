@@ -6,6 +6,7 @@ using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+using Sindie.ApiService.Core.Logic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,48 +56,44 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 		/// <returns>Результат атаки монстра</returns>
 		public async Task<MonsterAttackResponse> Handle(MonsterAttackCommand request, CancellationToken cancellationToken)
 		{
-			var game = await _authorizationService.InstanceMasterFilter(_appDbContext.Games, request.InstanceId)
-				.Include(g => g.BodyTemplates.Where(bt => bt.Id == request.TargetBodyTemplateId))
-					.ThenInclude(bt => bt.BodyTemplateParts)
-					.ThenInclude(btp => btp.BodyPartType)
-				.Include(g => g.Instances.Where(i => i.Id == request.InstanceId))
-					.ThenInclude(i => i.Creatures.Where(c => c.Id == request.Id))
-						.ThenInclude(c => c.CreatureParameters)
-						.ThenInclude(cp => cp.Parameter)
-				.Include(g => g.Instances.Where(i => i.Id == request.InstanceId))
-					.ThenInclude(i => i.Creatures.Where(c => c.Id == request.Id))
-						.ThenInclude(c => c.Abilities)
-						.ThenInclude(a => a.AppliedConditions)
-						.ThenInclude(ac => ac.Condition)
+			var instance = await _authorizationService.InstanceMasterFilter(_appDbContext.Instances, request.InstanceId)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.CreatureParameters)
+					.ThenInclude(cp => cp.Parameter)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.BodyTemplate)
+					.ThenInclude(bp => bp.BodyTemplateParts)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Abilities)
+					.ThenInclude(a => a.AppliedConditions)
+					.ThenInclude(ac => ac.Condition)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new ExceptionNoAccessToEntity<Instance>();
 
-			CheckRequest(request, game);
+			CheckRequest(request, instance);
 
-			var monster = game.Instances.Where(x => x.Id == request.InstanceId)
-				.SelectMany(x => x.Creatures)
-				.FirstOrDefault(x => x.Id == request.Id);
+			var monster = instance.Creatures.FirstOrDefault(x => x.Id == request.Id);
 
-			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.TargetBodyTemplateId);
+			var target = instance.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId);
 
-			var bodyTemplatePart = request.BodyTemplatePartId == null
-				? bodyTemplate.DefaultBodyTemplatePart()
-				: bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == request.BodyTemplatePartId);
-
-			var hitPenalty = request.BodyTemplatePartId == null
-				? 0
-				: bodyTemplatePart.HitPenalty;
+			var aimedPart = request.BodyTemplatePartId == null
+				? null
+				: target.BodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == request.BodyTemplatePartId);
 
 			var ability = request.AbilityId == null
-				? monster.DefaultAbility()
+				? null
 				: monster.Abilities.FirstOrDefault(x => x.Id == request.AbilityId);
 
-			var successValue = _rollService.RollAttack(
-				attackValue: monster.CreatureParameters
-				.FirstOrDefault(x => x.ParameterId == ability.AttackParameterId).ParameterValue + ability.Accuracy - hitPenalty,
-				defenseValue: request.DefenseValue);
-
-			var attackResult = monster.MonsterAttack(ability, bodyTemplatePart, successValue);
+			var attack = new Attack(_rollService);
+			
+			var attackResult = attack.MonsterAttack(
+				monster: monster,
+				target: target,
+				defenseValue: request.DefenseValue,
+				aimedPart: aimedPart,
+				ability: ability,
+				specialToHit: request.SpecialToHit.Value,
+				specialToDamage: request.SpecialToDamage.Value);
 
 			return new MonsterAttackResponse()
 			{ Message = attackResult};
@@ -106,20 +103,17 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 		/// Проверка запроса
 		/// </summary>
 		/// <param name="request">Запрос</param>
-		/// <param name="game">Игра</param>
-		private void CheckRequest(MonsterAttackCommand request, Game game)
+		/// <param name="instance">Инстанс</param>
+		private void CheckRequest(MonsterAttackCommand request, Instance instance)
 		{
-			var instance = game.Instances.FirstOrDefault(x => x.Id == request.InstanceId)
-				?? throw new ExceptionEntityNotFound<Instance>(request.InstanceId);
-
 			var monster = instance.Creatures.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<Creature>(request.Id);
 
-			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.TargetBodyTemplateId)
-				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.TargetBodyTemplateId);
+			var target = instance.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
+				?? throw new ExceptionEntityNotFound<Creature>(request.TargetCreatureId);
 
 			if (request.BodyTemplatePartId != null)
-				_ = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == request.BodyTemplatePartId)
+				_ = target.BodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == request.BodyTemplatePartId)
 					?? throw new ExceptionEntityNotFound<BodyTemplatePart>(request.BodyTemplatePartId.Value);
 
 			if (!monster.Abilities.Any())

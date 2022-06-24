@@ -51,10 +51,11 @@ namespace Sindie.ApiService.WebApi.Controllers
 					instanceId: request.InstanceId,
 					id: request.Id,
 					abilityId: request.AbilityId,
-					targetBodyTemplateId: request.TargetBodyTemplateId,
+					targetCreatureId: request.TargetCreatureId,
 					bodyTemplatePartId: request.BodyTemplatePartId,
-					defenseValue: request.DefenseValue
-					), cancellationToken);
+					defenseValue: request.DefenseValue,
+					specialToHit: request.SpecialToHit,
+					specialToDamage: request.SpecialToDamage), cancellationToken);
 		}
 	}
 }

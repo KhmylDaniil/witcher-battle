@@ -15,25 +15,31 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 		/// <param name="instanceId">Айди инстанса</param>
 		/// <param name="id">Айди монстра</param>
 		/// <param name="abilityId">Айди способности</param>
-		/// <param name="targetBodyTemplateId">Айди шаблона тела цели</param>
+		/// <param name="targetCreatureId">Айди цели</param>
 		/// <param name="bodyTemplatePartId">Айди части тела при прицеливании</param>
 		/// <param name="defenseValue">Защита</param>
+		/// <param name="specialToHit">Специальный бонус к попаданию</param>
+		/// <param name="specialToDamage">Специальный бонус к урону</param>
 		public MonsterAttackCommand(
 			Guid instanceId,
 			Guid id,
 			Guid? abilityId,
-			Guid targetBodyTemplateId,
+			Guid targetCreatureId,
 			Guid? bodyTemplatePartId,
-			int defenseValue)
+			int defenseValue,
+			int? specialToHit,
+			int? specialToDamage)
 		{
 			InstanceId = instanceId;
 			Id = id;
 			AbilityId = abilityId;
-			TargetBodyTemplateId = targetBodyTemplateId;
+			TargetCreatureId = targetCreatureId;
 			BodyTemplatePartId = bodyTemplatePartId;
 			DefenseValue = defenseValue < 1 
 				? throw new ExceptionRequestFieldIncorrectData<MonsterAttackRequest>(nameof(DefenseValue))
 				: defenseValue;
+			SpecialToHit = specialToHit ?? default;
+			SpecialToDamage = specialToDamage ?? default;
 		}
 	}
 }

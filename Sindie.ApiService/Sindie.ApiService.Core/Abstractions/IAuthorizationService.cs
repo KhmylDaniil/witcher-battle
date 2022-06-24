@@ -40,7 +40,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <param name="query">Запрос</param>
 		/// <param name="instanceId">Айди инстанса</param>
 		/// <returns>Отфильтрованный запрос</returns>
-		public IQueryable<Game> InstanceMasterFilter(
-			IQueryable<Game> query, Guid instanceId);
+		public IQueryable<Instance> InstanceMasterFilter(
+			IQueryable<Instance> query, Guid instanceId);
 	}
 }
