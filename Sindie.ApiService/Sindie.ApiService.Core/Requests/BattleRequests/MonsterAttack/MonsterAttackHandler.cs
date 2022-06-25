@@ -63,6 +63,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.BodyTemplate)
 					.ThenInclude(bp => bp.BodyTemplateParts)
+					.ThenInclude(btp => btp.BodyPartType)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
 					.ThenInclude(a => a.AppliedConditions)

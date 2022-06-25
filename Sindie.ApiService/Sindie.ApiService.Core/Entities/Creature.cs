@@ -433,9 +433,12 @@ namespace Sindie.ApiService.Core.Entities
 		public int ParameterBase(Guid parameterId)
 		{
 			var parameter = CreatureParameters.FirstOrDefault(x => x.ParameterId == parameterId);
+
+			var value = typeof(Creature).GetProperty(parameter.StatName).GetValue(this);
+
 			var statBase = String.IsNullOrEmpty(parameter.StatName)
 				? 0
-				: (int)this.GetType().GetField(parameter.StatName).GetValue(parameter.StatName);
+				: (int)value;
 			return statBase + parameter.ParameterValue;
 		}
 

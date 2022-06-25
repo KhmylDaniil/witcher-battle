@@ -2,6 +2,8 @@
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Sindie.ApiService.Core.Logic
@@ -121,7 +123,7 @@ namespace Sindie.ApiService.Core.Logic
 			}
 
 			var name = typeof(Crit).GetField(critName).GetValue(critName);
-			message.AppendLine($"Нанесено критическое повреждение {name}. Бонусный урон равен {bonusDamage}.");
+			message.AppendLine($"Нанесено критическое повреждение {name.ToString()}. Бонусный урон равен {bonusDamage}.");
 		}
 	}
 }
