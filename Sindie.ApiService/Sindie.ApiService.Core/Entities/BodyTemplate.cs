@@ -157,6 +157,8 @@ namespace Sindie.ApiService.Core.Entities
 			Game = game;
 			Name = name;
 			Description = description;
+			if (BodyTemplateParts.Any())
+				BodyTemplateParts.Clear();
 			BodyTemplateParts = CreateBodyTemplateParts(bodyTemplateParts);
 		}
 

@@ -55,20 +55,20 @@ namespace Sindie.ApiService.Core.Logic
 				attackValue: attackValue < 0 ? 0 : attackValue,
 				defenseValue: defenseValue);
 
-			var message = new StringBuilder($"{monster.Name} атакует способностью {ability.Name} в {aimedPart.Name}.");
+			var message = new StringBuilder($"{monster.Name} атакует существо {target.Name} способностью {ability.Name} в {aimedPart.Name}.");
 			if (successValue > 0)
 			{
 				message.AppendLine($"Попадание с превышением на {successValue}.");
-				message.AppendLine($"Нанеcено {ability.RollDamage(specialToDamage)}. Модификатор урона после поглощения броней составляет {aimedPart.DamageModifier}.");
+				message.Append($"Нанеcено {ability.RollDamage(specialToDamage)}. Модификатор урона после поглощения броней составляет {aimedPart.DamageModifier}.\n");
 				foreach (var condition in ability.RollConditions())
-					message.AppendLine($"Наложено состояние {condition.Name}.");
+					message.Append($"Наложено состояние {condition.Name}.\n");
 				if (successValue > 6)
 					CheckCrit(message, successValue, aimedPart, target.CreatureType);
 			}
 			else if (successValue < -5)
-				message.AppendLine($"Критический промах {successValue}.");
+				message.Append($"Критический промах {successValue}.");
 			else
-				message.AppendLine("Промах.");
+				message.Append("Промах.");
 
 			return message.ToString();
 		}

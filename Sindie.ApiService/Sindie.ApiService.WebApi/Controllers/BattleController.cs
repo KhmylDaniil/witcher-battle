@@ -42,7 +42,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		[HttpPost]
 		[SwaggerResponse(StatusCodes.Status200OK)]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task<MonsterAttackResponse> MonsterAttackAsync([FromBody] MonsterAttackRequest request, CancellationToken cancellationToken)
+		public async Task<MonsterAttackResponse> MonsterAttackAsync([FromQuery] MonsterAttackRequest request, CancellationToken cancellationToken)
 		{
 			return await _mediator.Send(
 				request == null

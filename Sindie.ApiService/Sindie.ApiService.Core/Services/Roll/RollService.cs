@@ -51,6 +51,9 @@ namespace Sindie.ApiService.Core.Services.Roll
 					while (roll == 10);
 				}
 			}
+			else
+				attackValue += roll;
+
 			return attackValue - defenseValue < 0 ? 0 : attackValue - defenseValue;
 		}
 	}
