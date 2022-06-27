@@ -16,7 +16,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 		/// <param name="id">Айди монстра</param>
 		/// <param name="abilityId">Айди способности</param>
 		/// <param name="targetCreatureId">Айди цели</param>
-		/// <param name="bodyTemplatePartId">Айди части тела при прицеливании</param>
+		/// <param name="creaturePartId">Айди части тела при прицеливании</param>
 		/// <param name="defenseValue">Защита</param>
 		/// <param name="specialToHit">Специальный бонус к попаданию</param>
 		/// <param name="specialToDamage">Специальный бонус к урону</param>
@@ -25,7 +25,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 			Guid id,
 			Guid? abilityId,
 			Guid targetCreatureId,
-			Guid? bodyTemplatePartId,
+			Guid? creaturePartId,
 			int defenseValue,
 			int? specialToHit,
 			int? specialToDamage)
@@ -34,7 +34,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 			Id = id;
 			AbilityId = abilityId;
 			TargetCreatureId = targetCreatureId;
-			BodyTemplatePartId = bodyTemplatePartId;
+			CreaturePartId = creaturePartId;
 			DefenseValue = defenseValue < 1 
 				? throw new ExceptionRequestFieldIncorrectData<MonsterAttackRequest>(nameof(DefenseValue))
 				: defenseValue;

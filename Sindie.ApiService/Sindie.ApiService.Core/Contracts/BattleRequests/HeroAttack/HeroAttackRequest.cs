@@ -1,20 +1,20 @@
 ﻿using MediatR;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.BattleRequests.MonsterAttack
+namespace Sindie.ApiService.Core.Contracts.BattleRequests.HeroAttack
 {
 	/// <summary>
-	/// Запрос атаки монстра
+	/// Запрос атаки героя
 	/// </summary>
-	public class MonsterAttackRequest: IRequest<MonsterAttackResponse>
+	public class HeroAttackRequest: IRequest<HeroAttackResponse>
 	{
 		/// <summary>
 		/// Айди инстанса
 		/// </summary>
 		public Guid InstanceId { get; set; }
-		
+
 		/// <summary>
-		/// Айди монстра
+		/// Айди героя
 		/// </summary>
 		public Guid Id { get; set; }
 
@@ -31,12 +31,17 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.MonsterAttack
 		/// <summary>
 		/// Айди части тела при прицельной атаке
 		/// </summary>
-		public Guid? CreaturePartId { get; set; }
+		public Guid? BodyTemplatePartId { get; set; }
 
 		/// <summary>
-		/// Значение защиты
+		/// Значение атаки
 		/// </summary>
-		public int DefenseValue { get; set; }
+		public int AttackValue { get; set; }
+
+		/// <summary>
+		/// Значение урона - опционально
+		/// </summary>
+		public int? DamageValue { get; set; }
 
 		/// <summary>
 		/// Специальный бонус к попаданию

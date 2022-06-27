@@ -37,7 +37,7 @@ namespace Sindie.ApiService.Core.Services.Roll
 			}
 			else if (roll == 1)
 			{
-				var critMiss = Random.Next(-1, -10);
+				var critMiss = Random.Next(-10, -1);
 				if (critMiss < -5)
 					return critMiss;
 				else
