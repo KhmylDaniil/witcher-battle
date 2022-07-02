@@ -6,6 +6,7 @@ using Sindie.ApiService.Core.Services.Authorization;
 using Sindie.ApiService.Core.Services.ChangeListService;
 using Sindie.ApiService.Core.Services.DateTimeProvider;
 using Sindie.ApiService.Core.Services.Hasher;
+using Sindie.ApiService.Core.Services.Roll;
 using Sindie.ApiService.Core.Services.Token;
 using System;
 using System.Linq;
@@ -47,6 +48,8 @@ namespace Sindie.ApiService.Core
 			services.AddScoped<IDateTimeProvider, DateTimeProvider>();
 
 			services.AddTransient<IChangeListService, ChangeListService>();
+
+			services.AddTransient<IRollService, RollService>();
 
 			services.AddScoped<UserAccount.HasUsersWithLogin>(
 				sp =>

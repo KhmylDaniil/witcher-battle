@@ -99,6 +99,25 @@ namespace Sindie.ApiService.UnitTest.Core.Services.Authorization
 			Assert.AreEqual(1, result.Count());
 			Assert.AreEqual(_game.Id, result.First().Id);
 		}
+
+		/// <summary>
+		/// Тест метода InstanceMasterFilter() - Проверить права доступа к инстансу
+		/// - должен возвращать игру
+		/// </summary>
+		/// <returns>-</returns>
+		[TestMethod]
+		public void Hash_InstanceMasterFilter_ShouldReturnGame()
+		{
+			//Arrange
+			var authorizationService = new AuthorizationService(UserContextAsUser.Object);
+
+			//Act
+			var result = authorizationService.InstanceMasterFilter(_dbContext.Instances, _instance.Id);
+
+			//Assert
+			Assert.AreEqual(1, result.Count());
+			Assert.AreEqual(_instance.Id, result.First().Id);
+		}
 	}
 }
 

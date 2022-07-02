@@ -18,6 +18,11 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateB
 		public string Name { get; set; }
 
 		/// <summary>
+		/// Тип части тела
+		/// </summary>
+		public string BodyPartTypeName { get; set; }
+
+		/// <summary>
 		/// Пенальти за прицеливание
 		/// </summary>
 		public int HitPenalty { get; set; }

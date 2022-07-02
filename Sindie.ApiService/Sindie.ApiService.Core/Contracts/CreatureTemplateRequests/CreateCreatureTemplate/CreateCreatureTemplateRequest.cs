@@ -25,6 +25,11 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 		public Guid BodyTemplateId { get; set; }
 
 		/// <summary>
+		/// Айди типа существа
+		/// </summary>
+		public Guid CreatureTypeId { get; set; }
+
+		/// <summary>
 		/// Название
 		/// </summary>
 		public string Name { get; set; }
@@ -33,11 +38,6 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 		/// Описание
 		/// </summary>
 		public string Description { get; set; }
-
-		/// <summary>
-		/// Тип существа
-		/// </summary>
-		public string Type { get; set; }
 
 		/// <summary>
 		/// Хиты

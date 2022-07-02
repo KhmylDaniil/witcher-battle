@@ -59,6 +59,7 @@ namespace Sindie.ApiService.Core.Requests.ParameterRequests.CreateParameter
 				game: game,
 				name: request.Name,
 				description: request.Description,
+				statName: request.StatName,
 				minValueParameter: request.MinValueParameter,
 				maxValueParameter: request.MaxValueParameter);
 

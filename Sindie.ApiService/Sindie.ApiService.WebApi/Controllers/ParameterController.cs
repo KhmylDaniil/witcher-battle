@@ -49,6 +49,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 					gameId: request.GameId,
 					name: request.Name,
 					description: request.Description,
+					statName: request.StatName,
 					minValueParameter: request.MinValueParameter,
 					maxValueParameter: request.MaxValueParameter), cancellationToken);
 		}
@@ -72,6 +73,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 					id: request.Id,
 					name: request.Name,
 					description: request.Description,
+					statName: request.StatName,
 					minValueParameter: request.MinValueParameter,
 					maxValueParameter: request.MaxValueParameter), cancellationToken);
 		}

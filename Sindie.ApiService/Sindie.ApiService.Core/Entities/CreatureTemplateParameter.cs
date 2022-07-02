@@ -54,6 +54,11 @@ namespace Sindie.ApiService.Core.Entities
 		public Guid ParameterId { get; protected set; }
 
 		/// <summary>
+		/// Название корреспондирующей характеристики
+		/// </summary>
+		public string StatName { get; protected set; }
+
+		/// <summary>
 		/// значение параметра у шаблона существа
 		/// </summary>
 		public int ParameterValue { get; set; }
@@ -83,6 +88,7 @@ namespace Sindie.ApiService.Core.Entities
 			{
 				_parameter = value ?? throw new ApplicationException("Необходимо передать параметр");
 				ParameterId = value.Id;
+				StatName = value.StatName;
 			}
 		}
 
@@ -101,9 +107,9 @@ namespace Sindie.ApiService.Core.Entities
 		/// Создать тестовую сущность
 		/// </summary>
 		/// <param name="id">Айди</param>
-		/// <param name="creatureTemplate">Параметр шаблона существа</param>
+		/// <param name="creatureTemplate">Шаблон существа</param>
 		/// <param name="parameter">Параметр</param>
-		/// <param name="value">ЗНачение параметра</param>
+		/// <param name="value">Значение параметра</param>
 		/// <param name="createdOn">Дата создания</param>
 		/// <param name="modifiedOn">Дата изменения</param>
 		/// <param name="createdByUserId">Создавший пользователь</param>
@@ -122,7 +128,7 @@ namespace Sindie.ApiService.Core.Entities
 			Id = id ?? Guid.NewGuid(),
 			CreatureTemplate = creatureTemplate,
 			Parameter = parameter,
-			ParameterValue = value,
+			ParameterValue = value == 0 ? 1 : value,
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId

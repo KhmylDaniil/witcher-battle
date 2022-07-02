@@ -2,7 +2,7 @@
 namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplateById
 {
 	/// <summary>
-	/// Элемент ответа на запрос шаблона существа по айди - часть шаблона тела
+	/// Элемент ответа на запрос шаблона существа по айди - часть шаблона существа
 	/// </summary>
 	public class GetCreatureTemplateByIdResponseBodyPart
 	{
@@ -15,6 +15,11 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// Пенальти за прицеливание
 		/// </summary>
 		public int HitPenalty { get; set; }
+
+		/// <summary>
+		/// Тип части тела
+		/// </summary>
+		public string BodyPartTypeName { get; set; }
 
 		/// <summary>
 		/// Модификатор урона

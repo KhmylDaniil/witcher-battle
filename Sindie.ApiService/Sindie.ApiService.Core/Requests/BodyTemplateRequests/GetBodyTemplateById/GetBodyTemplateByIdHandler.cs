@@ -51,16 +51,18 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplateBy
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
 				.Include(x => x.BodyTemplates.Where(x => x.Id == request.Id))
-				.ThenInclude(x => x.BodyTemplateParts)
+					.ThenInclude(x => x.BodyTemplateParts)
+					.ThenInclude(x => x.BodyPartType)
 				.SelectMany(x => x.BodyTemplates);
 
-			var bodyTemplate = filter.FirstOrDefault(x => x.Id == request.Id)
+			var bodyTemplate = await filter.FirstOrDefaultAsync(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.Id);
 
 			var bodyTemplateParts = bodyTemplate.BodyTemplateParts.Select(x => new GetBodyTemplateByIdResponseItem()
 			{
 				Id = x.Id,
 				Name = x.Name,
+				BodyPartTypeName = x.BodyPartType.Name,
 				HitPenalty = x.HitPenalty,
 				DamageModifier = x.DamageModifier,
 				MinToHit = x.MinToHit,

@@ -13,6 +13,11 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTempla
 		public string Name { get; set; }
 
 		/// <summary>
+		/// Айди типа части тела
+		/// </summary>
+		public Guid BodyPartTypeId { get; set; }
+
+		/// <summary>
 		/// Модификатор урона
 		/// </summary>
 		public double DamageModifier { get; set; }

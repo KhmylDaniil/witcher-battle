@@ -1,5 +1,4 @@
 ﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
 using System;
 using System.Collections.Generic;
@@ -27,9 +26,15 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public const string BodyTemplateField = nameof(_bodyTemplate);
 
+		/// <summary>
+		/// Поле для <see cref="_creatureType"/>
+		/// </summary>
+		public const string CreatureTypeField = nameof(_creatureType);
+
 		private Game _game;
 		private ImgFile _imgFile;
 		private BodyTemplate _bodyTemplate;
+		private CreatureType _creatureType;
 
 		private int _hp;
 		private int _sta;
@@ -56,6 +61,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="game">Игра</param>
 		/// <param name="imgFile">Графический файл</param>
 		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="creatureType">Тип существа</param>
 		/// <param name="hp">Хиты</param>
 		/// <param name="sta">Стамина</param>
 		/// <param name="int">Интеллект</param>
@@ -69,12 +75,12 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="luck">Удача</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
-		/// <param name="type">Тип существа</param>
-		/// <param name="armor">Броня существа</param>
+		/// <param name="armorList">Броня существа</param>
 		public CreatureTemplate(
 			Game game,
 			ImgFile imgFile,
 			BodyTemplate bodyTemplate,
+			CreatureType creatureType,
 			int hp,
 			int sta,
 			int @int,
@@ -88,12 +94,12 @@ namespace Sindie.ApiService.Core.Entities
 			int luck,
 			string name, 
 			string description, 
-			string type,
 			List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
 		{
 			Game = game;
 			ImgFile = imgFile;
 			BodyTemplate = bodyTemplate;
+			CreatureType = creatureType;
 			_hp = hp;
 			Sta = sta;
 			Int = @int;
@@ -107,11 +113,10 @@ namespace Sindie.ApiService.Core.Entities
 			Luck = luck;
 			Name = name;
 			Description = description;
-			Type = type;
 			Abilities = new List<Ability>();
 			CreatureTemplateParameters = new List<CreatureTemplateParameter>();
 			Creatures = new List<Creature>();
-			BodyParts = UpdateBody(armorList);
+			CreatureTemplateParts = UpdateBody(armorList);
 		}
 
 		/// <summary>
@@ -130,6 +135,11 @@ namespace Sindie.ApiService.Core.Entities
 		public Guid BodyTemplateId { get; protected set; }
 
 		/// <summary>
+		/// Айди типа существа
+		/// </summary>
+		public Guid CreatureTypeId { get; protected set; }
+
+		/// <summary>
 		/// Название шаблона
 		/// </summary>
 		public string Name { get; set; }
@@ -138,11 +148,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// Описание шаблона
 		/// </summary>
 		public string Description { get; set; }
-
-		/// <summary>
-		/// Тип существа
-		/// </summary>
-		public string Type { get; set; }
 
 		/// <summary>
 		/// Хиты
@@ -340,6 +345,19 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
+		/// Тип существа
+		/// </summary>
+		public CreatureType CreatureType
+		{
+			get => _creatureType;
+			set
+			{
+				_creatureType = value ?? throw new ApplicationException($"Необходимо передать {nameof(CreatureType)}");
+				CreatureTypeId = value.Id;
+			}
+		}
+
+		/// <summary>
 		/// Способности
 		/// </summary>
 		public List<Ability> Abilities { get; protected set; }
@@ -350,9 +368,9 @@ namespace Sindie.ApiService.Core.Entities
 		public List<CreatureTemplateParameter> CreatureTemplateParameters { get; protected set; }
 
 		/// <summary>
-		/// Части тела
+		/// Части шаблона существа
 		/// </summary>
-		public List<BodyPart> BodyParts { get; protected set; }
+		public List<CreatureTemplatePart> CreatureTemplateParts { get; protected set; }
 
 		/// <summary>
 		/// Существа
@@ -453,19 +471,20 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="bodyTemplate">Шаблон тела</param>
 		/// <param name="armorList">Броня</param>
 		/// <returns>Список частей шаблона тела</returns>
-		private static List<BodyPart> UpdateBody(List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
+		private List<CreatureTemplatePart> UpdateBody(List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
 		{
-			var bodyParts = new List<BodyPart>();
+			var bodyParts = new List<CreatureTemplatePart>();
 
 			foreach (var part in armorList)
-				bodyParts.Add(new BodyPart(
+				bodyParts.Add(new CreatureTemplatePart(
+					creatureTemplate: this,
+					bodyPartType: part.BodyTemplatePart.BodyPartType,
 					name: part.BodyTemplatePart.Name,
 					hitPenalty: part.BodyTemplatePart.HitPenalty,
 					damageModifier: part.BodyTemplatePart.DamageModifier,
 					minToHit: part.BodyTemplatePart.MinToHit,
 					maxToHit: part.BodyTemplatePart.MaxToHit,
-					startingArmor: part.Armor,
-					currentArmor: part.Armor));
+					armor: part.Armor));
 			return bodyParts;
 		}
 
@@ -475,6 +494,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="game">Игра</param>
 		/// <param name="imgFile">Графический файл</param>
 		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="creatureType">Тип существа</param>
 		/// <param name="hp">Хиты</param>
 		/// <param name="sta">Стамина</param>
 		/// <param name="int">Интеллект</param>
@@ -494,6 +514,7 @@ namespace Sindie.ApiService.Core.Entities
 			Game game,
 			ImgFile imgFile,
 			BodyTemplate bodyTemplate,
+			CreatureType creatureType,
 			int hp,
 			int sta,
 			int @int,
@@ -507,7 +528,6 @@ namespace Sindie.ApiService.Core.Entities
 			int luck,
 			string name,
 			string description,
-			string type,
 			List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
 		{
 			Game = game;
@@ -526,8 +546,8 @@ namespace Sindie.ApiService.Core.Entities
 			Luck = luck;
 			Name = name;
 			Description = description;
-			Type = type;
-			BodyParts = UpdateBody(armorList);
+			CreatureType = creatureType;
+			CreatureTemplateParts = UpdateBody(armorList);
 		}
 
 		/// <summary>
@@ -536,10 +556,10 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="id">Айди</param>
 		/// <param name="game">Игра</param>
 		/// <param name="bodyTemplate">Шаблон тела</param>
+		/// <param name="creatureType">Тип существа</param>
 		/// <param name="imgFile">Графический файл</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
-		/// <param name="type">Тип</param>
 		/// <param name="hp">Хиты</param>
 		/// <param name="sta">Стамина</param>
 		/// <param name="int">Интеллект</param>
@@ -554,17 +574,16 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="createdOn">Дата создания</param>
 		/// <param name="modifiedOn">Дата изменения</param>
 		/// <param name="createdByUserId">Создавший пользователь</param>
-		/// <param name="bodyParts">Список частей тела</param>
 		/// <returns></returns>
 		[Obsolete("Только для тестов")]
 		public static CreatureTemplate CreateForTest(
 			Guid? id = default,
 			Game game = default,
 			BodyTemplate bodyTemplate = default,
+			CreatureType creatureType = default,
 			ImgFile imgFile = default,
 			string name = default,
 			string description = default,
-			string type = default,
 			int hp = default,
 			int sta = default,
 			int @int = default,
@@ -578,66 +597,34 @@ namespace Sindie.ApiService.Core.Entities
 			int luck = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
-			Guid createdByUserId = default,
-			List<BodyPart> bodyParts = default,
-			List<Ability> abilities = default)
-		=> new CreatureTemplate()
-		{
-			Id = id ?? Guid.NewGuid(),
-			Game = game,
-			ImgFile = imgFile,
-			BodyTemplate = bodyTemplate,
-			Name = name ?? "CreatureTemplate",
-			Description = description,
-			Type = type ?? "human",
-			HP = hp == default ? 10 : hp,
-			Sta = sta == default ? 10 : sta,
-			Int = @int == default ? 1 : @int,
-			Ref = @ref == default ? 1 : @ref,
-			Dex = dex == default ? 1 : dex,
-			Body = body == default ? 1 : body,
-			Emp = emp == default ? 1 : emp,
-			Cra = cra == default ? 1 : cra,
-			Will = will == default ? 1 : will,
-			Speed = speed == default ? 1 : speed,
-			Luck = luck == default ? 1 : luck,
-			CreatedOn = createdOn,
-			ModifiedOn = modifiedOn,
-			CreatedByUserId = createdByUserId,
-			Creatures = new List<Creature>(),
-			CreatureTemplateParameters = new List<CreatureTemplateParameter>(),
-			Abilities = new List<Ability>(),
-			BodyParts = bodyParts == null
-			? new List<BodyPart>()
-			{ new BodyPart("torso", 1, 1, 1, 10, 5, 5)}
-			: bodyParts
-		};
-
-		//private int Roll(int parameter)
-		//{
-		//	Random random = new Random();
-		//	var roll = random.Next(1, 10);
-		//	if (roll == 10)
-		//		parameter += roll + AddRoll();
-		//	else if (roll == 1)
-		//		parameter -= AddRoll();
-		//	else
-		//		parameter += roll;
-		//	return parameter < 1 ? 1 : parameter;
-		//}
-
-		//private int AddRoll()
-		//{
-		//	var result = 0;
-		//	Random rand = new Random();
-		//	var roll = 0;
-		//	do
-		//	{
-		//		roll = rand.Next(1, 10);
-		//		result += roll;
-		//	}
-		//	while (roll == 10);
-		//	return result;
-		//}
+			Guid createdByUserId = default)
+			=> new CreatureTemplate
+			{
+				Id = id ?? Guid.NewGuid(),
+				Game = game,
+				ImgFile = imgFile,
+				BodyTemplate = bodyTemplate,
+				Name = name ?? "CreatureTemplate",
+				Description = description,
+				CreatureType = creatureType,
+				HP = hp == default ? 10 : hp,
+				Sta = sta == default ? 10 : sta,
+				Int = @int == default ? 1 : @int,
+				Ref = @ref == default ? 1 : @ref,
+				Dex = dex == default ? 1 : dex,
+				Body = body == default ? 1 : body,
+				Emp = emp == default ? 1 : emp,
+				Cra = cra == default ? 1 : cra,
+				Will = will == default ? 1 : will,
+				Speed = speed == default ? 1 : speed,
+				Luck = luck == default ? 1 : luck,
+				CreatedOn = createdOn,
+				ModifiedOn = modifiedOn,
+				CreatedByUserId = createdByUserId,
+				Creatures = new List<Creature>(),
+				CreatureTemplateParameters = new List<CreatureTemplateParameter>(),
+				Abilities = new List<Ability>(),
+				CreatureTemplateParts = new List<CreatureTemplatePart>()
+			};
 	}
 }

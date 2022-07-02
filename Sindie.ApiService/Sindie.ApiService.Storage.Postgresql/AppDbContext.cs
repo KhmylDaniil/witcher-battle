@@ -65,9 +65,24 @@ namespace Sindie.ApiService.Storage.Postgresql
 		public DbSet<Body> Bodies { get; set; }
 
 		/// <summary>
+		/// Части тела
+		/// </summary>
+		public DbSet<BodyPart> BodyParts { get; set; }
+
+		/// <summary>
+		/// Типы частей тела
+		/// </summary>
+		public DbSet<BodyPartType> BodyPartTypes { get; set; }
+
+		/// <summary>
 		/// Шаблоны тел
 		/// </summary>
 		public DbSet<BodyTemplate> BodyTemplates { get; set; }
+
+		/// <summary>
+		/// Части шаблона тела
+		/// </summary>
+		public DbSet<BodyTemplatePart> BodyTemplateParts { get; set; }
 
 		/// <summary>
 		/// Пресонажи
@@ -120,14 +135,29 @@ namespace Sindie.ApiService.Storage.Postgresql
 		public DbSet<CreatureParameter> CreatureParameters { get; set; }
 
 		/// <summary>
+		/// Части тел существ
+		/// </summary>
+		public DbSet<CreaturePart> CreatureParts { get; set; }
+
+		/// <summary>
 		/// Шаблоны существ
 		/// </summary>
 		public DbSet<CreatureTemplate> CreatureTemplates { get; set; }
 
 		/// <summary>
+		/// Части тел шаблонов существ
+		/// </summary>
+		public DbSet<CreatureTemplatePart> CreatureTemplateParts { get; set; }
+
+		/// <summary>
 		/// Параметры шаблонов существ
 		/// </summary>
 		public DbSet<CreatureTemplateParameter> CreatureTemplateParameters { get; set; }
+
+		/// <summary>
+		/// Типы существ
+		/// </summary>
+		public DbSet<CreatureType> CreatureTypes { get; set; }
 
 		/// <summary>
 		/// События

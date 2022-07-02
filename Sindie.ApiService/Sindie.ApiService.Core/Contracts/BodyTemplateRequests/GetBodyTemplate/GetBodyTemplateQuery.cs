@@ -48,9 +48,9 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate
 		public DateTime ModificationMaxTime { get; set; }
 
 		/// <summary>
-		/// Название части тела
+		/// Фильтр по типу части тела
 		/// </summary>
-		public string BodyPartName { get; set; }
+		public Guid? BodyPartTypeId { get; set; }
 
 		/// <summary>
 		/// Количество записей на одной странице 

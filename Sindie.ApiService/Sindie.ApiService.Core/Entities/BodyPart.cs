@@ -1,19 +1,22 @@
-﻿
-using System;
+﻿using System;
 
 namespace Sindie.ApiService.Core.Entities
 {
 	/// <summary>
-	/// Часть тела
+	/// Часть тела - базовая
 	/// </summary>
-	public class BodyPart
+	public class BodyPart: EntityBase
 	{
 		private int _maxToHit;
 		private int _minToHit;
 		private double _damageModifier;
 		private int _hitPenalty;
-		private int _startingArmor;
-		private int _currentArmor;
+		private BodyPartType _bodyPartType;
+
+		/// <summary>
+		/// Поле для <see cref="_bodyPartType"/>
+		/// </summary>
+		public const string BodyPartTypeField = nameof(_bodyPartType);
 
 		/// <summary>
 		/// Пустой конструктор
@@ -26,29 +29,32 @@ namespace Sindie.ApiService.Core.Entities
 		/// Конструктор части тела
 		/// </summary>
 		/// <param name="name">Название</param>
+		/// <param name="bodyPartType">Тип части тела</param>
 		/// <param name="damageModifier">Модификатор урона</param>
 		/// <param name="hitPenalty">Пенальти за прицеливание</param>
 		/// <param name="minToHit">Минимум на попадание</param>
 		/// <param name="maxToHit">Максимум на попадание</param>
-		/// <param name="startingArmor">Стартовая броня</param>
-		/// <param name="currentArmor">Текущая броня</param>
+
 		public BodyPart(
+			BodyPartType bodyPartType,
 			string name,
 			double damageModifier,
 			int hitPenalty,
 			int minToHit,
-			int maxToHit,
-			int startingArmor,
-			int currentArmor)
+			int maxToHit)
 		{
+			BodyPartType = bodyPartType;
 			Name = name;
 			DamageModifier = damageModifier;
 			HitPenalty = hitPenalty;
 			MinToHit = minToHit;
 			MaxToHit = maxToHit;
-			StartingArmor = startingArmor;
-			CurrentArmor = currentArmor;
 		}
+
+		/// <summary>
+		/// Айди типа части тела
+		/// </summary>
+		public Guid BodyPartTypeId { get; protected set; }
 
 		/// <summary>
 		/// Название
@@ -111,31 +117,20 @@ namespace Sindie.ApiService.Core.Entities
 			}
 		}
 
+		#region navigation properties
+
 		/// <summary>
-		/// Начальная броня
+		/// Тип части тела
 		/// </summary>
-		public int StartingArmor
+		public BodyPartType BodyPartType
 		{
-			get => _startingArmor;
+			get => _bodyPartType;
 			set
 			{
-				if (value < 0)
-					throw new ArgumentOutOfRangeException(nameof(StartingArmor));
-				_startingArmor = value;
+				_bodyPartType = value ?? throw new ApplicationException("Необходимо передать тип части тела");
+				BodyPartTypeId = value.Id;
 			}
 		}
-		/// <summary>
-		/// Текущая броня
-		/// </summary>
-		public int CurrentArmor
-		{
-			get => _currentArmor;
-			set
-			{
-				if (value < 0)
-					throw new ArgumentOutOfRangeException(nameof(CurrentArmor));
-				_currentArmor = value;
-			}
-		}
+		#endregion navigation properties
 	}
 }

@@ -22,7 +22,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// <summary>
 		/// Фильтр по типу
 		/// </summary>
-		public string Type { get; set; }
+		public Guid? CreatureTypeId { get; set; }
 
 		/// <summary>
 		/// Фильтр по автору
@@ -55,9 +55,9 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		public string BodyTemplateName { get; set; }
 
 		/// <summary>
-		/// Фильтр по названию части тела
+		/// Фильтр по типу части тела
 		/// </summary>
-		public string BodyPartName { get; set; }
+		public Guid? BodyPartTypeId { get; set; }
 
 		/// <summary>
 		/// фильтр по названию накладываемого состояния

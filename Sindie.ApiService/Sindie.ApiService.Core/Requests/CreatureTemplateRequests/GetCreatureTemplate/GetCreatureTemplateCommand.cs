@@ -17,28 +17,28 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 		/// </summary>
 		/// <param name="gameId">Айди игры</param>
 		/// <param name="name">Название</param>
-		/// <param name="type">Тип</param>
+		/// <param name="creatureTypeId">Айди типа существа</param>
 		/// <param name="userName">Автор</param>
 		/// <param name="creationMinTime">Минимальное время создания</param>
 		/// <param name="creationMaxTime">Максимальное время создания</param>
 		/// <param name="modificationMinTime">Минимальное время модификации</param>
 		/// <param name="modificationMaxTime">Максимальное время модификации</param>
 		/// <param name="bodyTemplateName">Название шаблона тела</param>
-		/// <param name="bodyPartName">Название части тела</param>
+		/// <param name="bodyPartTypeId">Айди типа части тела</param>
 		/// <param name="conditionName">Название накладываемого состояния</param>
 		/// <param name="pageSize">Размер страницы</param>
 		/// <param name="pageNumber">Номер страницы</param>
 		public GetCreatureTemplateCommand(
 			Guid gameId,
 			string name,
-			string type,
+			Guid? creatureTypeId,
 			string userName,
 			DateTime creationMinTime,
 			DateTime creationMaxTime,
 			DateTime modificationMinTime,
 			DateTime modificationMaxTime,
 			string bodyTemplateName,
-			string bodyPartName,
+			Guid? bodyPartTypeId,
 			string conditionName,
 			int pageSize,
 			int pageNumber,
@@ -47,14 +47,14 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 		{
 			GameId = gameId;
 			Name = name;
-			Type = type;
+			CreatureTypeId = creatureTypeId;
 			UserName = userName;
 			CreationMinTime = creationMinTime;
 			CreationMaxTime = creationMaxTime;
 			ModificationMinTime = modificationMinTime;
 			ModificationMaxTime = modificationMaxTime;
 			BodyTemplateName = bodyTemplateName;
-			BodyPartName = bodyPartName;
+			BodyPartTypeId = bodyPartTypeId;
 			ConditionName = conditionName;
 			PageSize = pageSize == default ? 10 : pageSize;
 			PageNumber = pageNumber == default ? 1 : pageNumber;

@@ -17,9 +17,9 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 		/// <param name="gameId">Айди игры</param>
 		/// <param name="imgFileId">Айди графического файла</param>
 		/// <param name="bodyTemplateId">Айди шаблона тела</param>
+		/// <param name="creatureTypeId">Айди типа существа</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
-		/// <param name="type">Тип</param>
 		/// <param name="hp">Хиты</param>
 		/// <param name="sta">Стамина</param>
 		/// <param name="int">Интеллект</param>
@@ -39,9 +39,9 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			Guid gameId,
 			Guid? imgFileId,
 			Guid bodyTemplateId,
+			Guid creatureTypeId,
 			string name,
 			string description,
-			string type,
 			int hp,
 			int sta,
 			int @int,
@@ -61,13 +61,11 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			GameId = gameId;
 			ImgFileId = imgFileId;
 			BodyTemplateId = bodyTemplateId;
+			CreatureTypeId = creatureTypeId;
 			Name = string.IsNullOrEmpty(name)
 				? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(Name))
 				: name;
 			Description = description;
-			Type = string.IsNullOrEmpty(type)
-				? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(Type))
-				: type;
 			HP = hp < 1 ? throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateRequest>(nameof(HP)) : hp;
 			Sta = sta < 1 ? throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateRequest>(nameof(Sta)) : sta;
 			Int = @int < 1 ? throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateRequest>(nameof(Int)) : @int;

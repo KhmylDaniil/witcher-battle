@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplateById;
@@ -36,19 +37,21 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 
 			_head = BodyTemplatePart.CreateForTest(
 				bodyTemplate: _bodyTemplate,
-					name: "head",
-					hitPenalty: 3,
-					damageModifier: 3,
-					minToHit: 1,
-					maxToHit: 3);
+				bodyPartType: BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName),
+				name: "head",
+				hitPenalty: 3,
+				damageModifier: 3,
+				minToHit: 1,
+				maxToHit: 3);
 
 			_torso = BodyTemplatePart.CreateForTest(
 				bodyTemplate: _bodyTemplate,
-					name: "torso",
-					hitPenalty: 1,
-					damageModifier: 1,
-					minToHit: 4,
-					maxToHit: 10);
+				bodyPartType: BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName),
+				name: "torso",
+				hitPenalty: 1,
+				damageModifier: 1,
+				minToHit: 4,
+				maxToHit: 10);
 
 			_bodyTemplate.BodyTemplateParts = new List<BodyTemplatePart> { _head, _torso};
 			_dbContext = CreateInMemoryContext(x => x.AddRange(

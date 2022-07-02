@@ -34,5 +34,13 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <returns>Отфильтрованный запрос</returns>
 		public IQueryable<Game> BagOwnerOrMasterFilter(
 				IQueryable<Game> query, Guid gameId, Guid bagId);
+
+		/// <summary>
+		/// Проверить права мастера на инстанс</summary>
+		/// <param name="query">Запрос</param>
+		/// <param name="instanceId">Айди инстанса</param>
+		/// <returns>Отфильтрованный запрос</returns>
+		public IQueryable<Instance> InstanceMasterFilter(
+			IQueryable<Instance> query, Guid instanceId);
 	}
 }

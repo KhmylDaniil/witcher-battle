@@ -4,8 +4,10 @@ using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
+using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,13 +53,15 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
-			CheckRequest(request, game);
+			var bodyPartTypes = await _appDbContext.BodyPartTypes.ToListAsync(cancellationToken);
+
+			CheckRequest(request, game, bodyPartTypes);
 
 			var newBodyTemplate = new BodyTemplate(
 				game: game,
 				name: request.Name,
 				description: request.Description,
-				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request));
+				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request, bodyPartTypes));
 
 			_appDbContext.BodyTemplates.Add(newBodyTemplate);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
@@ -68,7 +72,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 		/// Проверка запроса
 		/// </summary>
 		/// <param name="request">Запрос</param>
-		private void CheckRequest(CreateBodyTemplateCommand request, Game game)
+		private void CheckRequest(CreateBodyTemplateCommand request, Game game, List<BodyPartType> bodyPartTypes)
 		{
 			if (game.BodyTemplates.Any(x => x.Name == request.Name))
 				throw new ExceptionRequestNameNotUniq<CreateBodyTemplateCommand>(nameof(request.Name));
@@ -81,6 +85,9 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 					throw new ExceptionRequestFieldNull<CreateBodyTemplateCommand>(nameof(CreateBodyTemplateRequestItem.Name));
 				if (request.BodyTemplateParts.Where(x => x.Name == part.Name).Count() != 1)
 					throw new ApplicationException($"Значения в поле {nameof(part.Name)} повторяются");
+
+				_= bodyPartTypes.FirstOrDefault(x => x.Id == part.BodyPartTypeId)
+					?? throw new ExceptionEntityNotFound<BodyPartType>(nameof(CreateBodyTemplateRequestItem.BodyPartTypeId));					
 
 				if (part.DamageModifier <= 0)
 					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateCommand>(nameof(CreateBodyTemplateRequestItem.DamageModifier));

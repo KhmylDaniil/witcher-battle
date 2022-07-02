@@ -39,32 +39,21 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		/// <param name="game">Игра</param>
 		/// <param name="imgFile">Графический файл</param>
-		/// <param name="userGameActivated">Активировавший игру пользователь</param>
-		/// <param name="activationTime">Время активации экземпляра</param>
 		/// <param name="name">Название экземпляра</param>
 		/// <param name="description">Описание экземпляра</param>
-		/// <param name="dateOfGame">Дата проведения игры</param>
-		/// <param name="storyAboutRules">Описание правил игры</param>
 		public Instance(
 			Game game,
 			ImgFile imgFile,
-			UserGame userGameActivated,
-			DateTime activationTime,
 			string name,
-			string description,
-			DateTime dateOfGame,
-			string storyAboutRules)
+			string description)
 		{
 			Game = game;
 			ImgFile = imgFile;
-			UserGameActivated = userGameActivated;
-			ActivationTime = activationTime;
 			Name = name;
 			Description = description;
-			DateOfGame = dateOfGame;
-			StoryAboutRules = storyAboutRules;
 			Bags = new List<Bag>();
 			Characters = new List<Character>();
+			Creatures = new List<Creature>();
 		}
 
 		/// <summary>

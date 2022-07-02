@@ -50,8 +50,11 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.BodyTemplates.Where(bt => bt.Id == request.BodyTemplateId))
 					.ThenInclude(x => x.BodyTemplateParts)
+					.ThenInclude(x => x.BodyPartType)
 				.Include(x => x.Conditions)
 				.Include(x => x.Parameters)
+				.Include(x => x.CreatureTemplates)
+					.ThenInclude(x => x.CreatureType)
 				.Include(x => x.CreatureTemplates)
 					.ThenInclude(x => x.CreatureTemplateParameters)
 				.Include(x => x.CreatureTemplates)
@@ -65,7 +68,9 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 				: await _appDbContext.ImgFiles.FirstOrDefaultAsync(x => x.Id == request.ImgFileId, cancellationToken)
 				?? throw new ExceptionEntityNotFound<ImgFile>(request.ImgFileId.Value);
 
-			CheckRequest(request, game);
+			var creatureTypes = await _appDbContext.CreatureTypes.ToListAsync(cancellationToken);
+
+			CheckRequest(request, game, creatureTypes);
 
 			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId);
 			var creatureTemplate = game.CreatureTemplates.FirstOrDefault(x => x.Id == request.Id);
@@ -74,6 +79,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 				game: game,
 				imgFile: imgFile,
 				bodyTemplate: bodyTemplate,
+				creatureType: creatureTypes.FirstOrDefault(x => x.Id == request.CreatureTypeId),
 				hp: request.HP,
 				sta: request.Sta,
 				@int: request.Int,
@@ -87,7 +93,6 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 				luck: request.Luck,
 				name: request.Name,
 				description: request.Description,
-				type: request.Type,
 				armorList: CreateArmorList(bodyTemplate, request.ArmorList));
 
 			creatureTemplate.UpdateAlibilities(AbilityData.CreateAbilityData(request, game));
@@ -104,7 +109,8 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="game">Игра</param>
-		private void CheckRequest(ChangeCreatureTemplateCommand request, Game game)
+		/// <param name="creatureTypes">Типы существ</param>
+		private void CheckRequest(ChangeCreatureTemplateCommand request, Game game, List<CreatureType> creatureTypes)
 		{
 			var creatureTemplate = game.CreatureTemplates.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<CreatureTemplate>(request.Id);
@@ -115,10 +121,13 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId)
 				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.BodyTemplateId);
 
+			_ = creatureTypes.FirstOrDefault(x => x.Id == request.CreatureTypeId)
+				?? throw new ExceptionEntityNotFound<CreatureType>(request.CreatureTypeId);
+
 			foreach (var item in request.ArmorList)
 			{
 				_ = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == item.BodyTemplatePartId)
-					?? throw new ExceptionEntityNotFound<BodyTemplatePart>(item.BodyTemplatePartId);
+					?? throw new ExceptionEntityNotFound<BodyPartType>(item.BodyTemplatePartId);
 
 				if (item.Armor < 0)
 					throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateCommand>(nameof(item.Armor));
