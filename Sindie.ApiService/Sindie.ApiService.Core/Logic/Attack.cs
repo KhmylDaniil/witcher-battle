@@ -161,7 +161,7 @@ namespace Sindie.ApiService.Core.Logic
 			{
 				if (aimedPart.CurrentArmor < damageValue)
 				{
-					damageValue = -aimedPart.CurrentArmor--;
+					damageValue -= aimedPart.CurrentArmor--;
 					message.AppendLine("Броня повреждена");
 				}
 				else
@@ -206,11 +206,9 @@ namespace Sindie.ApiService.Core.Logic
 
 
 
-		//public string HeroAttack(
-		//	Creature hero,
+		//public string CreatureAttack(
+		//	Creature attacker,
 		//	Creature target,
-		//	int attackValue,
-		//	int damageValue = default,
 		//	BodyTemplatePart aimedPart = default,
 		//	Ability ability = default,
 		//	int specialToHit = default,
@@ -220,8 +218,9 @@ namespace Sindie.ApiService.Core.Logic
 
 		//	aimedPart = aimedPart ?? target.BodyTemplate.DefaultBodyTemplatePart();
 
-		//	ability = ability ?? hero.DefaultAbility();
-		//	var attackValue = monster.ParameterBase(ability.AttackParameterId) + ability.Accuracy - hitPenalty + specialToHit;
+		//	ability = ability ?? attacker.DefaultAbility();
+		//	var attackValue = attacker.ParameterBase(ability.AttackParameterId) + ability.Accuracy - hitPenalty + specialToHit;
+
 
 		//	var successValue = _rollService.RollAttack(
 		//		attackValue: attackValue < 0 ? 0 : attackValue,

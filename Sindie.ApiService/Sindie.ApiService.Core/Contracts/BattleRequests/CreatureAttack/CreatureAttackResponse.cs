@@ -1,10 +1,10 @@
 ﻿
-namespace Sindie.ApiService.Core.Contracts.BattleRequests.HeroAttack
+namespace Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack
 {
 	/// <summary>
-	/// Ответ на атаку героя
+	/// Ответ на атаку существа
 	/// </summary>
-	public class HeroAttackResponse
+	public class CreatureAttackResponse
 	{
 		/// <summary>
 		/// Сообщение о результате атаки

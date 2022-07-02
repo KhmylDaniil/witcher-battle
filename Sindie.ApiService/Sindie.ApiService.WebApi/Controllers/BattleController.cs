@@ -95,7 +95,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		[HttpPut]
 		[SwaggerResponse(StatusCodes.Status200OK)]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task<HeroAttackResponse> HeroAttackAsync([FromQuery] HeroAttackRequest request, CancellationToken cancellationToken)
+		public async Task<CreatureAttackResponse> HeroAttackAsync([FromQuery] CreatureAttackRequest request, CancellationToken cancellationToken)
 		{
 			return await _mediator.Send(
 				request == null

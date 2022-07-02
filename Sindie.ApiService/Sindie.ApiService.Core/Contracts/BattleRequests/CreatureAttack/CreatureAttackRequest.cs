@@ -1,12 +1,12 @@
 ﻿using MediatR;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.BattleRequests.HeroAttack
+namespace Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack
 {
 	/// <summary>
-	/// Запрос атаки героя
+	/// Запрос атаки существа
 	/// </summary>
-	public class HeroAttackRequest: IRequest<HeroAttackResponse>
+	public class CreatureAttackRequest: IRequest<CreatureAttackResponse>
 	{
 		/// <summary>
 		/// Айди инстанса
@@ -14,9 +14,9 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.HeroAttack
 		public Guid InstanceId { get; set; }
 
 		/// <summary>
-		/// Айди героя
+		/// Айди атакующего существа
 		/// </summary>
-		public Guid Id { get; set; }
+		public Guid AttackerId { get; set; }
 
 		/// <summary>
 		/// Айди способности атаки
@@ -31,17 +31,8 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.HeroAttack
 		/// <summary>
 		/// Айди части тела при прицельной атаке
 		/// </summary>
-		public Guid? BodyTemplatePartId { get; set; }
+		public Guid?CreaturePartId { get; set; }
 
-		/// <summary>
-		/// Значение атаки
-		/// </summary>
-		public int AttackValue { get; set; }
-
-		/// <summary>
-		/// Значение урона - опционально
-		/// </summary>
-		public int? DamageValue { get; set; }
 
 		/// <summary>
 		/// Специальный бонус к попаданию

@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BattleRequests.HeroAttack;
+using Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
@@ -13,12 +13,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.BattleRequests.HeroAttack
+namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 {
 	/// <summary>
-	/// Обрпботчик атаки героя
+	/// Обрпботчик атаки существа
 	/// </summary>
-	public class HeroAttackHandler : IRequestHandler<HeroAttackCommand, HeroAttackResponse>
+	public class CreatureAttackHandler : IRequestHandler<CreatureAttackCommand, CreatureAttackResponse>
 	{
 		/// <summary>
 		/// Контекст базы данных
@@ -36,11 +36,11 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.HeroAttack
 		private readonly IRollService _rollService;
 
 		/// <summary>
-		/// Конструктор обработчика атаки героя
+		/// Конструктор обработчика атаки существа
 		/// </summary>
 		/// <param name="appDbContext"></param>
 		/// <param name="authorizationService"></param>
-		public HeroAttackHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IRollService rollService)
+		public CreatureAttackHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IRollService rollService)
 		{
 			_appDbContext = appDbContext;
 			_authorizationService = authorizationService;
@@ -48,21 +48,20 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.HeroAttack
 		}
 
 		/// <summary>
-		/// Обработчик атаки героя
+		/// Обработчик атаки существа
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
-		/// <returns>Результат атаки героя</returns>
-		public async Task<HeroAttackResponse> Handle(HeroAttackCommand request, CancellationToken cancellationToken)
+		/// <returns>Результат атаки существа</returns>
+		public async Task<CreatureAttackResponse> Handle(CreatureAttackCommand request, CancellationToken cancellationToken)
 		{
 			var instance = await _authorizationService.InstanceMasterFilter(_appDbContext.Instances, request.InstanceId)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureParameters)
 					.ThenInclude(cp => cp.Parameter)
 				.Include(i => i.Creatures)
-					.ThenInclude(c => c.BodyTemplate)
-					.ThenInclude(bp => bp.BodyTemplateParts)
-					.ThenInclude(btp => btp.BodyPartType)
+					.ThenInclude(c => c.CreatureParts)
+					.ThenInclude(cp => cp.BodyPartType)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
 					.ThenInclude(a => a.AppliedConditions)
@@ -72,13 +71,13 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.HeroAttack
 
 			CheckRequest(request, instance);
 
-			var hero = instance.Creatures.FirstOrDefault(x => x.Id == request.Id);
+			var hero = instance.Creatures.FirstOrDefault(x => x.Id == request.AttackerId);
 
 			var target = instance.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId);
 
-			var aimedPart = request.BodyTemplatePartId == null
+			var aimedPart = request.CreaturePartId == null
 				? null
-				: target.BodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == request.BodyTemplatePartId);
+				: target.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId);
 
 			var ability = request.AbilityId == null
 				? null
@@ -106,20 +105,20 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.HeroAttack
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="instance">Инстанс</param>
-		private void CheckRequest(HeroAttackCommand request, Instance instance)
+		private void CheckRequest(CreatureAttackCommand request, Instance instance)
 		{
-			var hero = instance.Creatures.FirstOrDefault(x => x.Id == request.Id)
-				?? throw new ExceptionEntityNotFound<Creature>(request.Id);
+			var hero = instance.Creatures.FirstOrDefault(x => x.Id == request.AttackerId)
+				?? throw new ExceptionEntityNotFound<Creature>(request.AttackerId);
 
 			var target = instance.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
 				?? throw new ExceptionEntityNotFound<Creature>(request.TargetCreatureId);
 
-			if (request.BodyTemplatePartId != null)
-				_ = target.BodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == request.BodyTemplatePartId)
-					?? throw new ExceptionEntityNotFound<BodyTemplatePart>(request.BodyTemplatePartId.Value);
+			if (request.CreaturePartId != null)
+				_ = target.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId)
+					?? throw new ExceptionEntityNotFound<BodyTemplatePart>(request.CreaturePartId.Value);
 
 			if (!hero.Abilities.Any())
-				throw new ApplicationException($"У существа с айди {request.Id} отсутствуют способности, атака невозможна.");
+				throw new ApplicationException($"У существа с айди {request.AttackerId} отсутствуют способности, атака невозможна.");
 
 			if (request.AbilityId != null)
 				_ = hero.Abilities.FirstOrDefault(x => x.Id == request.AbilityId)
