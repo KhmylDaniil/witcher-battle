@@ -93,7 +93,7 @@ namespace Sindie.ApiService.Core.Entities
 			int speed,
 			int luck,
 			string name, 
-			string description, 
+			string description,
 			List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
 		{
 			Game = game;
@@ -377,56 +377,50 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public List<Creature> Creatures { get; set; }
 
+		/// <summary>
+		/// Сопротивления
+		/// </summary>
+		public List<DamageType> Resistances { get; protected set; }
+
+		/// <summary>
+		/// Уязвимости
+		/// </summary>
+		public List<DamageType> Vulnerables { get; protected set; }
+
+		/// <summary>
+		/// Иммунитеты
+		/// </summary>
+		public List<DamageType> Immunities { get; protected set; }
+
 		#endregion navigation properties
 
 		/// <summary>
 		/// Обновление списка способностей
 		/// </summary>
 		/// <param name="data">Данные</param>
-		internal void UpdateAlibilities(List<AbilityData> data)
+		internal void UpdateAlibilities(List<Ability> request)
 		{
-			if (data == null)
-				throw new ExceptionEntityNotFound<AbilityData>(nameof(data));
+			if (request == null)
+				throw new ApplicationException("Необходимо передать данные для обновления способностей");
 
 			if (Abilities == null)
-				throw new ExceptionEntityNotFound<List<Ability>>(nameof(Abilities));
+				throw new ExceptionFieldOutOfRange<CreatureTemplate>(nameof(Abilities));
 
-			var entitiesToDelete = Abilities.Where(x => !data
+			var entitiesToDelete = Abilities.Where(x => !request
 				.Any(y => y.Id == x.Id)).ToList();
 
 			if (entitiesToDelete.Any())
 				foreach (var entity in entitiesToDelete)
 					Abilities.Remove(entity);
 
-			if (!data.Any())
+			if (!request.Any())
 				return;
 
-			foreach (var dataItem in data)
-			{
-				var ability = Abilities.FirstOrDefault(x => x.Id == dataItem.Id);
-				if (ability == null)
-					Abilities.Add(
-						Ability.CreateAbility(
-						creatureTemplate: this,
-						name: dataItem.Name,
-						description: dataItem.Description,
-						attackParameter: dataItem.AttackParameter,
-						attackDiceQuantity: dataItem.AttackDiceQuantity,
-						damageModifier: dataItem.DamageModifier,
-						attackSpeed: dataItem.AttackSpeed,
-						accuracy: dataItem.Accuracy,
-						appliedConditions: dataItem.AppliedConditions));
-				else
-					ability.ChangeAbility(
-						name: dataItem.Name,
-						description: dataItem.Description,
-						attackParameter: dataItem.AttackParameter,
-						attackDiceQuantity: dataItem.AttackDiceQuantity,
-						damageModifier: dataItem.DamageModifier,
-						attackSpeed: dataItem.AttackSpeed,
-						accuracy: dataItem.Accuracy,
-						appliedConditions: dataItem.AppliedConditions);
-			}
+			var entitiesToAdd = request.Where(x => !Abilities
+				.Any(y => y.Id == x.Id)).ToList();
+
+			foreach (var entity in entitiesToAdd)
+				Abilities.Add(entity);
 		}
 
 		/// <summary>

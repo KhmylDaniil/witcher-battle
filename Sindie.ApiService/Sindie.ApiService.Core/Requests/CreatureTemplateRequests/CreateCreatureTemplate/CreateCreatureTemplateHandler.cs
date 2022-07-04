@@ -52,9 +52,9 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 				.Include(x => x.BodyTemplates.Where(bt => bt.Id == request.BodyTemplateId))
 					.ThenInclude(x => x.BodyTemplateParts)
 					.ThenInclude(x => x.BodyPartType)
-				.Include(x => x.Conditions)
 				.Include(x => x.Parameters)
 				.Include(x => x.CreatureTemplates)
+				.Include(x => x.Abilities)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
@@ -89,7 +89,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 				description: request.Description,
 				armorList: CreateArmorList(bodyTemplate, request.ArmorList));
 
-			newCreatureTemplate.UpdateAlibilities(AbilityData.CreateAbilityData(request, game));
+			newCreatureTemplate.UpdateAlibilities(CreateAbilityList(request, game));
 			newCreatureTemplate.UpdateCreatureTemplateParameters(
 				CreatureTemplateParameterData.CreateCreatureTemplateParameterData(request, game));
 
@@ -133,33 +133,13 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateCommand>(nameof(parameter.Value));
 			}
 
-			foreach (var ability in request.Abilities)
-			{
-				if (string.IsNullOrEmpty(ability.Name))
-					throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequestAbility>(nameof(ability.Name));
-
-				_ = game.Parameters.FirstOrDefault(x => x.Id == ability.AttackParameterId)
-					?? throw new ExceptionEntityNotFound<Parameter>(ability.AttackParameterId);
-
-				if (ability.AttackDiceQuantity < 0)
-					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequestAbility>(nameof(ability.AttackDiceQuantity));
-
-				if (ability.AttackSpeed < 0)
-					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequestAbility>(nameof(ability.AttackSpeed));
-
-				foreach (var appliedCondition in ability.AppliedConditions)
-				{
-					_ = game.Conditions.FirstOrDefault(x => x.Id == appliedCondition.ConditionId)
-						?? throw new ExceptionEntityNotFound<Condition>(appliedCondition.ConditionId);
-
-					if (appliedCondition.ApplyChance < 0 || appliedCondition.ApplyChance > 100)
-						throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateCommand>(nameof(appliedCondition.ApplyChance));
-				}
-			}
+			foreach (var id in request.Abilities)
+				_ = game.Abilities.FirstOrDefault(x => x.Id == id)
+					?? throw new ExceptionEntityNotFound<Ability>(id);
 		}
 
 		/// <summary>
-		/// Созадние списка частей шаблона тела
+		/// Создание списка частей шаблона тела
 		/// </summary>
 		/// <param name="bodyTemplate">Шаблон тела</param>
 		/// <param name="data">Данные</param>
@@ -171,6 +151,21 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 				result.Add((
 					bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == item.BodyTemplatePartId),
 					item.Armor));
+			return result;
+		}
+
+		/// <summary>
+		/// Создать список способностей
+		/// </summary>
+		/// <param name="request">Запрос</param>
+		/// <param name="game">Игра</param>
+		/// <returns>Список способностей</returns>
+		private List<Ability> CreateAbilityList(CreateCreatureTemplateCommand request, Game game)
+		{
+			var result = new List<Ability>();
+
+			foreach (var id in request.Abilities)
+				result.Add(game.Abilities.FirstOrDefault(x => x.Id == id));
 			return result;
 		}
 	}

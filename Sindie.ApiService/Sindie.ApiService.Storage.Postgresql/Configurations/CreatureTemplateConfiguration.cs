@@ -132,10 +132,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasMany(x => x.Abilities)
-				.WithOne(x => x.CreatureTemplate)
-				.HasForeignKey(x => x.CreatureTemplateId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
+				.WithMany(x => x.CreatureTemplates)
+				.UsingEntity(x => x.ToTable("CreatureTemplateAbilities", "GameRules"));
 
 			builder.HasMany(x => x.Creatures)
 				.WithOne(x => x.CreatureTemplate)
@@ -148,6 +146,18 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasForeignKey(x => x.CreatureTemplateId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.Vulnerables)
+				.WithMany(x => x.VulnerableCreatureTemplates)
+				.UsingEntity(x => x.ToTable("CreatureTemplateVulnerables", "GameRules"));
+
+			builder.HasMany(x => x.Resistances)
+				.WithMany(x => x.ResistantCreatureTemplates)
+				.UsingEntity(x => x.ToTable("CreatureTemplateResistances", "GameRules"));
+
+			builder.HasMany(x => x.Immunities)
+				.WithMany(x => x.ImmuneCreatureCreatureTemplates)
+				.UsingEntity(x => x.ToTable("CreatureTemplateImmunities", "GameRules"));
 
 			var gameNavigation = builder.Metadata.FindNavigation(nameof(CreatureTemplate.Game));
 			gameNavigation.SetField(CreatureTemplate.GameField);

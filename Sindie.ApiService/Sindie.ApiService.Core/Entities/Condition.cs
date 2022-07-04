@@ -1,45 +1,58 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Sindie.ApiService.Core.Entities
 {
 	/// <summary>
-	/// Состояние
+	/// Состояние справочник
 	/// </summary>
 	public class Condition : EntityBase
 	{
-		/// <summary>
-		/// Поле для <see cref="_game"/>
-		/// </summary>
-		public const string GameField = nameof(_game);
-
-		private Game _game;
-
 		/// <summary>
 		/// Название
 		/// </summary>
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Айди игры
+		/// Пустой конструктор
 		/// </summary>
-		public Guid GameId { get; protected set; }
-
-		#region navigation properties
+		protected Condition()
+		{
+		}
 
 		/// <summary>
-		/// Игра
+		/// Конструктор только для конфигурации
 		/// </summary>
-		public Game Game
+		/// <param name="id">Ид</param>
+		/// <param name="createdOn">Дата создания</param>
+		/// <param name="modifiedOn">Дата изменения</param>
+		/// <param name="createdByUserId">Айди создавшего пользователя</param>
+		/// <param name="modifiedByUserId">Айди изменившего пользователя</param>
+		/// <param name="roleCreatedUser">Роль создавшего пользователя</param>
+		/// <param name="roleModifiedUser">Роль изменившего пользователя</param>
+		/// <param name="name">Название роли</param>
+		public Condition(
+			string name,
+			Guid id,
+			DateTime createdOn,
+			DateTime modifiedOn,
+			Guid createdByUserId,
+			Guid modifiedByUserId,
+			string roleCreatedUser = "Default",
+			string roleModifiedUser = "Default")
+			: base(
+				  id,
+				  createdOn,
+				  modifiedOn,
+				  createdByUserId,
+				  modifiedByUserId,
+				  roleCreatedUser,
+				  roleModifiedUser)
 		{
-			get => _game;
-			protected set
-			{
-				_game = value ?? throw new ApplicationException("Необходимо передать игру");
-				GameId = value.Id;
-			}
+			Name = name;
 		}
+
+		#region navigation properties
 
 		/// <summary>
 		/// Применяемые условия
@@ -58,7 +71,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		/// <param name="id">Айди</param>
 		/// <param name="name">Название</param>
-		/// <param name="game">Игра</param>
 		/// <param name="createdOn">Дата создания</param>
 		/// <param name="modifiedOn">Дата изменения</param>
 		/// <param name="createdByUserId">Создавший пользователь</param>
@@ -67,7 +79,6 @@ namespace Sindie.ApiService.Core.Entities
 		public static Condition CreateForTest(
 			Guid? id = default,
 			string name = default,
-			Game game = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
@@ -75,7 +86,6 @@ namespace Sindie.ApiService.Core.Entities
 		{
 			Id = id ?? Guid.NewGuid(),
 			Name = name ?? "Condition",
-			Game = game,
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId,

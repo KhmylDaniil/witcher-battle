@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Sindie.ApiService.Core.Contracts.BattleRequests.HeroAttack;
 using Sindie.ApiService.Core.Contracts.BattleRequests.MonsterAttack;
 using Sindie.ApiService.Core.Contracts.BattleRequests.MonsterSuffer;
-using Sindie.ApiService.Core.Requests.BattleRequests.HeroAttack;
 using Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack;
 using Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer;
 using Sindie.ApiService.WebApi.Versioning;
@@ -29,7 +27,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		private readonly IMediator _mediator;
 
 		/// <summary>
-		/// Конструктор контроллера шаблона тела
+		/// Конструктор контроллера боя
 		/// </summary>
 		/// <param name="mediator">Медиатор</param>
 		public BattleController(IMediator mediator)
@@ -86,30 +84,31 @@ namespace Sindie.ApiService.WebApi.Controllers
 					isVulnerable: request.IsVulnerable), cancellationToken);
 		}
 
-		/// <summary>
-		/// Атака героя
-		/// </summary>
-		/// <param name="request">Запрос на атаку героя</param>
-		/// <param name="cancellationToken">Токен отмены</param>
-		/// <returns></returns>
-		[HttpPut]
-		[SwaggerResponse(StatusCodes.Status200OK)]
-		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task<CreatureAttackResponse> HeroAttackAsync([FromQuery] CreatureAttackRequest request, CancellationToken cancellationToken)
-		{
-			return await _mediator.Send(
-				request == null
-				? throw new ArgumentNullException(nameof(request))
-				: new HeroAttackCommand(
-					instanceId: request.InstanceId,
-					id: request.Id,
-					abilityId: request.AbilityId,
-					targetCreatureId: request.TargetCreatureId,
-					bodyTemplatePartId: request.BodyTemplatePartId,
-					attackValue: request.AttackValue,
-					damageValue: request.DamageValue,
-					specialToHit: request.SpecialToHit,
-					specialToDamage: request.SpecialToDamage), cancellationToken);
-		}
+		///// <summary>
+		///// Атака героя
+		///// </summary>
+		///// <param name="request">Запрос на атаку героя</param>
+		///// <param name="cancellationToken">Токен отмены</param>
+		///// <returns></returns>
+		//[HttpPut]
+		//[SwaggerResponse(StatusCodes.Status200OK)]
+		//[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
+		//public async Task<CreatureAttackResponse> HeroAttackAsync([FromQuery] CreatureAttackRequest request, CancellationToken cancellationToken)
+		//{
+		//	return await _mediator.Send(
+		//		request == null
+		//		? throw new ArgumentNullException(nameof(request))
+		//		: new HeroAttackCommand(
+		//			instanceId: request.InstanceId,
+		//			id: request.Id,
+		//			abilityId: request.AbilityId,
+		//			targetCreatureId: request.TargetCreatureId,
+		//			bodyTemplatePartId: request.BodyTemplatePartId,
+		//			attackValue: request.AttackValue,
+		//			damageValue: request.DamageValue,
+		//			specialToHit: request.SpecialToHit,
+		//			specialToDamage: request.SpecialToDamage), cancellationToken);
+		//}
 	}
 }
+

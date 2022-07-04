@@ -160,6 +160,11 @@ namespace Sindie.ApiService.Storage.Postgresql
 		public DbSet<CreatureType> CreatureTypes { get; set; }
 
 		/// <summary>
+		/// Типы урона
+		/// </summary>
+		public DbSet<DamageType> DamageTypes { get; set; }
+
+		/// <summary>
 		/// События
 		/// </summary>
 		public DbSet<Event> Events { get; set; }

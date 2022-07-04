@@ -22,9 +22,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			builder.ToTable("Abilities", "GameRules").
 				HasComment("Способности");
 
-			builder.Property(r => r.CreatureTemplateId)
-				.HasColumnName("CreatureTemplateId")
-				.HasComment("Айди шаблона существа")
+			builder.Property(r => r.GameId)
+				.HasColumnName("GameId")
+				.HasComment("Айди игры")
 				.IsRequired();
 
 			builder.Property(r => r.Name)
@@ -56,15 +56,19 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Точность атаки")
 				.IsRequired();
 
-			builder.HasOne(x => x.CreatureTemplate)
+			builder.HasOne(x => x.Game)
 				.WithMany(x => x.Abilities)
-				.HasForeignKey(x => x.CreatureTemplateId)
+				.HasForeignKey(x => x.GameId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasMany(x => x.Creatures)
 				.WithMany(x => x.Abilities)
 				.UsingEntity(x => x.ToTable("CreatureAbilities", "GameInstance"));
+
+			builder.HasMany(x => x.DamageTypes)
+				.WithMany(x => x.Abilities)
+				.UsingEntity(x => x.ToTable("AbilityDamageTypes", "GameRules"));
 
 			builder.HasMany(x => x.AppliedConditions)
 				.WithOne(x => x.Ability)
@@ -78,9 +82,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			var creatureTemplateNavigation = builder.Metadata.FindNavigation(nameof(Ability.CreatureTemplate));
-			creatureTemplateNavigation.SetField(Ability.CreatureTemplateField);
-			creatureTemplateNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+			var gameNavigation = builder.Metadata.FindNavigation(nameof(Ability.Game));
+			gameNavigation.SetField(Ability.GameField);
+			gameNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
 			var parameterNavigation = builder.Metadata.FindNavigation(nameof(Ability.AttackParameter));
 			parameterNavigation.SetField(Ability.ParameterField);

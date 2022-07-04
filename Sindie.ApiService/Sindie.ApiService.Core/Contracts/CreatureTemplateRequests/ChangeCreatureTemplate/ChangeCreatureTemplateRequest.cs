@@ -107,7 +107,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatu
 		/// <summary>
 		/// Способности
 		/// </summary>
-		public List<ChangeCreatureTemplateRequestAbility> Abilities { get; set; }
+		public List<Guid> Abilities { get; set; }
 
 		/// <summary>
 		/// Параметры шаблона существа

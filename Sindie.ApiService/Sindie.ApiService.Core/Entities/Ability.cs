@@ -1,5 +1,6 @@
 ﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+using Sindie.ApiService.Core.Requests.AbilityRequests;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
 using System;
 using System.Collections.Generic;
@@ -13,16 +14,16 @@ namespace Sindie.ApiService.Core.Entities
 	public class Ability : EntityBase
 	{
 		/// <summary>
-		/// Поле для <see cref="_creatureTemplate"/>
+		/// Поле для <see cref="_game"/>
 		/// </summary>
-		public const string CreatureTemplateField = nameof(_creatureTemplate);
+		public const string GameField = nameof(_game);
 
 		/// <summary>
 		/// Поле для <see cref="_attackParameter"/>
 		/// </summary>
 		public const string ParameterField = nameof(_attackParameter);
 
-		private CreatureTemplate _creatureTemplate;
+		private Game _game;
 		private Parameter _attackParameter;
 		private int _attackDiceQuantity;
 		private int _attackSpeed;
@@ -37,7 +38,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Конструктор
 		/// </summary>
-		/// <param name="creatureTemplate">Шаблон существа</param>
+		/// <param name="game">Игра</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
 		/// <param name="attackDiceQuantity">Количество кубиков атаки</param>
@@ -45,17 +46,21 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="attackSpeed">Скорость атаки</param>
 		/// <param name="accuracy">Точность атаки</param>
 		/// <param name="attackParameter">Параметр атаки</param>
+		/// <param name="defensiveParameters">Параметры для защиты</param>
+		/// <param name="damageTypes">Типы урона</param>
 		public Ability(
-			CreatureTemplate creatureTemplate,
+			Game game,
 			string name,
 			string description,
 			int attackDiceQuantity,
 			int damageModifier,
 			int attackSpeed,
 			int accuracy,
-			Parameter attackParameter)
+			Parameter attackParameter,
+			List<Parameter> defensiveParameters,
+			List<DamageType> damageTypes)
 		{
-			CreatureTemplate = creatureTemplate;
+			Game = game;
 			Name = name;
 			Description = description;
 			AttackDiceQuantity = attackDiceQuantity;
@@ -65,12 +70,14 @@ namespace Sindie.ApiService.Core.Entities
 			AttackParameter = attackParameter;
 			AppliedConditions = new List<AppliedCondition>();
 			Creatures = new List<Creature>();
+			DefensiveParameters = defensiveParameters;
+			DamageTypes = damageTypes;
 		}
 
 		/// <summary>
 		/// Айди игры
 		/// </summary>
-		public Guid CreatureTemplateId { get; protected set; }
+		public Guid GameId { get; protected set; }
 
 		/// <summary>
 		/// Наазвание способности
@@ -128,15 +135,15 @@ namespace Sindie.ApiService.Core.Entities
 		#region navigation properties
 
 		/// <summary>
-		/// Шаблон персонажа
+		/// Игра
 		/// </summary>
-		public CreatureTemplate CreatureTemplate
+		public Game Game
 		{
-			get => _creatureTemplate;
+			get => _game;
 			protected set
 			{
-				_creatureTemplate = value ?? throw new ApplicationException("Необходимо передать шаблон существа");
-				CreatureTemplateId = value.Id;
+				_game = value ?? throw new ApplicationException("Необходимо передать игру");
+				GameId = value.Id;
 			}
 		}
 
@@ -154,6 +161,21 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
+		/// Параметры для защиты
+		/// </summary>
+		public List<Parameter> DefensiveParameters { get; protected set; }
+
+		/// <summary>
+		/// Типы урона
+		/// </summary>
+		public List<DamageType> DamageTypes { get; protected set; }
+
+		/// <summary>
+		/// Шаблоны существ
+		/// </summary>
+		public List<CreatureTemplate> CreatureTemplates { get; protected set; }
+		
+		/// <summary>
 		/// Существа
 		/// </summary>
 		public List<Creature> Creatures { get; set; }
@@ -168,36 +190,42 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Создание способности
 		/// </summary>
-		/// <param name="creatureTemplate">Шаблон существа</param>
+		/// <param name="game">Игра</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
-		/// <param name="attackParameter">Параметр атаки</param>
-		/// <param name="attackDiceQuantity">Количество кубов атаки</param>
-		/// <param name="damageModifier">Модификатор атаки</param>
-		/// <param name="attackSpeed">Скорость атааки</param>
+		/// <param name="attackDiceQuantity">Количество кубиков атаки</param>
+		/// <param name="damageModifier">Модификатор урона</param>
+		/// <param name="attackSpeed">Скорость атаки</param>
 		/// <param name="accuracy">Точность атаки</param>
+		/// <param name="attackParameter">Параметр атаки</param>
+		/// <param name="defensiveParameters">Параметры для защиты</param>
+		/// <param name="damageTypes">Типы урона</param>
 		/// <param name="appliedConditions">Накладываемые состояния</param>
 		/// <returns>Способность</returns>
 		public static Ability CreateAbility(
-			CreatureTemplate creatureTemplate,
+			Game game,
 			string name,
 			string description,
-			Parameter attackParameter,
 			int attackDiceQuantity,
 			int damageModifier,
 			int attackSpeed,
 			int accuracy,
-			List<(Guid? Id, Condition Condition, int ApplyChance)> appliedConditions)
+			Parameter attackParameter,
+			List<Parameter> defensiveParameters,
+			List<DamageType> damageTypes,
+			List<AppliedConditionData> appliedConditions)
 		{
 			var ability = new Ability(
-				creatureTemplate: creatureTemplate,
+				game: game,
 				name: name,
 				description: description,
 				attackParameter: attackParameter,
 				attackDiceQuantity: attackDiceQuantity,
 				damageModifier: damageModifier,
 				attackSpeed: attackSpeed,
-				accuracy: accuracy);
+				accuracy: accuracy,
+				defensiveParameters: defensiveParameters,
+				damageTypes: damageTypes);
 
 			ability.UpdateAplliedConditions(appliedConditions);
 
@@ -223,7 +251,9 @@ namespace Sindie.ApiService.Core.Entities
 			int damageModifier,
 			int attackSpeed,
 			int accuracy,
-			List<(Guid? Id, Condition Condition, int ApplyChance)> appliedConditions)
+			List<Parameter> defensiveParameters,
+			List<DamageType> damageTypes,
+			List<AppliedConditionData> appliedConditions)
 		{
 			Name = name;
 			Description = description;
@@ -232,6 +262,8 @@ namespace Sindie.ApiService.Core.Entities
 			DamageModifier = damageModifier;
 			AttackSpeed = attackSpeed;
 			Accuracy = accuracy;
+			DefensiveParameters = defensiveParameters;
+			DamageTypes = damageTypes;
 			UpdateAplliedConditions(appliedConditions);
 		}
 
@@ -239,16 +271,16 @@ namespace Sindie.ApiService.Core.Entities
 		/// Обновление списка применяемых состояний
 		/// </summary>
 		/// <param name="data">Данные</param>
-		public void UpdateAplliedConditions(List<(Guid? Id, Condition Condition, int ApplyChance)> data)
+		private void UpdateAplliedConditions(List<AppliedConditionData> data)
 		{
 			if (data == null)
-				throw new ExceptionRequestFieldNull<AbilityData>(nameof(AbilityData.AppliedConditions));
+				throw new ApplicationException("Не переданы данные для обновления накладываемых состояний");
 
 			if (AppliedConditions == null)
-				throw new ExceptionEntityNotIncluded<AppliedCondition>(nameof(Ability));
+				throw new ExceptionFieldOutOfRange<Ability>(nameof(AppliedConditions));
 
 			var entitiesToDelete = AppliedConditions.Where(x => !data
-				.Any(y => y.Id == x.Id)).ToList();
+				.Any(y => y.AppliedConditionId == x.Id)).ToList();
 
 			if (entitiesToDelete.Any())
 				foreach (var entity in entitiesToDelete)
@@ -259,7 +291,7 @@ namespace Sindie.ApiService.Core.Entities
 
 			foreach (var dataItem in data)
 			{
-				var appliedCondition = AppliedConditions.FirstOrDefault(x => x.Id == dataItem.Id);
+				var appliedCondition = AppliedConditions.FirstOrDefault(x => x.Id == dataItem.AppliedConditionId);
 				if (appliedCondition == null)
 					AppliedConditions.Add(
 						AppliedCondition.CreateAppliedCondition(
@@ -309,7 +341,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// Создать тестовую сущность
 		/// </summary>
 		/// <param name="id">Айди</param>
-		/// <param name="creatureTemplate">Шабблон существа</param>
+		/// <param name="game">Игра</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
 		/// <param name="attackParameter">Параметр атаки</param>
@@ -325,7 +357,7 @@ namespace Sindie.ApiService.Core.Entities
 		[Obsolete("Только для тестов")]
 		public static Ability CreateForTest(
 			Guid? id = default,
-			CreatureTemplate creatureTemplate = default,
+			Game game = default,
 			string name = default,
 			string description = default,
 			int attackDiceQuantity = default,
@@ -333,13 +365,15 @@ namespace Sindie.ApiService.Core.Entities
 			int attackSpeed = default,
 			int accuracy = default,
 			Parameter attackParameter = default,
+			List<Parameter> defensiveParameters = default,
+			List<DamageType> damageTypes = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
 		=> new Ability()
 		{
 			Id = id ?? Guid.NewGuid(),
-			CreatureTemplate = creatureTemplate,
+			Game = game,
 			Name = name ?? "name",
 			Description = description,
 			AttackDiceQuantity = attackDiceQuantity,
@@ -347,6 +381,8 @@ namespace Sindie.ApiService.Core.Entities
 			AttackSpeed = attackSpeed,
 			Accuracy = accuracy,
 			AttackParameter = attackParameter,
+			DefensiveParameters = defensiveParameters ?? new List<Parameter>(),
+			DamageTypes = damageTypes ?? new List<DamageType>(),
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId,

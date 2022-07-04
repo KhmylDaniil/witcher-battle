@@ -366,6 +366,21 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public List<CreaturePart> CreatureParts { get; protected set; }
 
+		/// <summary>
+		/// Сопротивления
+		/// </summary>
+		public List<DamageType> Resistances { get; protected set; }
+
+		/// <summary>
+		/// Уязвимости
+		/// </summary>
+		public List<DamageType> Vulnerables { get; protected set; }
+
+		/// <summary>
+		/// Иммунитеты
+		/// </summary>
+		public List<DamageType> Immunities { get; protected set; }
+
 		#endregion navigation properties
 
 		/// <summary>
@@ -441,86 +456,6 @@ namespace Sindie.ApiService.Core.Entities
 				: (int)value;
 			return statBase + parameter.ParameterValue;
 		}
-
-		///// <summary>
-		///// Расчет атаки монстра
-		///// </summary>
-		///// <param name="ability">Способность</param>
-		///// <param name="bodyTemplatePart">Шабон тела цели</param>
-		///// <param name="successValue">Значение успеха</param>
-		///// <param name="creatureType">Тип существа-цели</param>
-		///// <returns>Результат атаки</returns>
-		//internal string MonsterAttack(Ability ability, BodyTemplatePart bodyTemplatePart, int successValue, CreatureType creatureType = default)
-		//{
-		//	var message = new StringBuilder($"{Name} атакует способностью {ability.Name} в {bodyTemplatePart.Name}.");
-		//	if (successValue > 0)
-		//	{
-		//		message.AppendLine($"Попадание с превышением на {successValue}.");
-		//		message.AppendLine($"Нанеcено {ability.RollDamage()}. Модификатор урона после поглощения броней составляет {bodyTemplatePart.DamageModifier}.");
-		//		foreach (var condition in ability.RollConditions())
-		//			message.AppendLine($"Наложено состояние {condition.Name}.");
-		//		if (successValue > 6)
-		//			CheckCrit(message, successValue, bodyTemplatePart, creatureType);
-		//	}
-		//	else if (successValue < -5)
-		//		message.AppendLine($"Критический промах {successValue}.");
-		//	else
-		//		message.AppendLine("Промах.");
-
-		//	return message.ToString();
-		//}
-
-		//private void CheckCrit(StringBuilder message, int successValue, BodyTemplatePart bodyTemplatePart, CreatureType creatureType = default)
-		//{
-		//	int bonusDamage;
-		//	string critSeverity;
-		//	if (successValue < 10)
-		//	{
-		//		critSeverity = "Simple";
-		//		bonusDamage = 3;
-		//	}
-		//	else if (successValue < 13)
-		//	{
-		//		critSeverity = "Complex";
-		//		bonusDamage = 5;
-		//	}
-		//	else if (successValue < 15)
-		//	{
-		//		critSeverity = "Difficult";
-		//		bonusDamage = 8;
-		//	}
-		//	else
-		//	{
-		//		critSeverity = "Deadly";
-		//		bonusDamage = 10;
-		//	}
-
-		//	string critName = critSeverity + bodyTemplatePart.BodyPartType.Name;
-		//	if (bodyTemplatePart.BodyPartType.Name == BodyPartTypes.HeadName || bodyTemplatePart.BodyPartType.Name == BodyPartTypes.TorsoName)
-		//	{
-		//		Random random = new Random();
-		//		var suffix = random.Next(1, 6) < 5 ? 1 : 2;
-		//		critName += suffix;
-		//	}
-
-		//	//Призраки и элементали не могут получать некоторые криты
-		//	if ((creatureType?.Id == CreatureTypes.SpecterId || creatureType?.Id == CreatureTypes.ElementaId) && critName.Contains("Torso"))
-		//	{
-		//		if (critName.Contains("SimpleTorso1"))
-		//			bonusDamage += 5;
-		//		else if (critName.Contains("ComplexTorso2"))
-		//			bonusDamage += 10;
-		//		else if (critName.Contains("DifficultTorso"))
-		//			bonusDamage += 15;
-		//		else if (critName.Contains("DeadlyTorso1"))
-		//			bonusDamage += 20;
-
-		//		message.AppendLine($"Критическое повреждение не может быть нанесено из-за особенностей существа. Бонусный урон равен {bonusDamage}.");
-		//	}
-
-		//	var name = typeof(Crit).GetField(critName).GetValue(critName);
-		//	message.AppendLine($"Нанесено критическое повреждение {name}. Бонусный урон равен {bonusDamage}.");
-		//}
 
 		/// <summary>
 		/// Выбор места попадания

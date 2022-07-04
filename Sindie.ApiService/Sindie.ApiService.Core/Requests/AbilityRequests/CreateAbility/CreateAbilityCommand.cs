@@ -1,0 +1,63 @@
+﻿using Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+using System;
+using System.Collections.Generic;
+
+namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
+{
+	/// <summary>
+	/// Команда создания способности
+	/// </summary>
+	public class CreateAbilityCommand: CreateAbilityRequest
+	{
+		/// <summary>
+		/// Конструктор команды создания способности
+		/// </summary>
+		/// <param name="gameId">Айди игры</param>
+		/// <param name="name">Название</param>
+		/// <param name="description">Описание</param>
+		/// <param name="attackParameterId">Айди параметра атаки</param>
+		/// <param name="attackDiceQuantity">Количество кубов атаки</param>
+		/// <param name="damageModifier">Модификатор атаки</param>
+		/// <param name="attackSpeed">Скорость атаки</param>
+		/// <param name="accuracy">Точность атаки</param>
+		/// <param name="defensiveParameters">Параметры для защиты</param>
+		/// <param name="damageTypes">Типы урона</param>
+		/// <param name="appliedConditions">Накладываемые состояния</param>
+		public CreateAbilityCommand(
+			Guid gameId,
+			string name,
+			string description,
+			Guid attackParameterId,
+			int attackDiceQuantity,
+			int damageModifier,
+			int attackSpeed,
+			int accuracy,
+			List<Guid> defensiveParameters,
+			List<Guid> damageTypes,
+			List<CreateAbilityRequestAppliedCondition> appliedConditions
+			)
+		{
+			GameId = gameId;
+			Name = string.IsNullOrEmpty(name)
+				? throw new ExceptionRequestFieldNull<CreateAbilityRequest>(nameof(Name))
+				: name;
+			Description = description;
+			AttackParameterId = attackParameterId;
+			AttackDiceQuantity = attackDiceQuantity < 0 ? throw new ExceptionRequestFieldIncorrectData<CreateAbilityRequest>(nameof(AttackDiceQuantity)) : attackDiceQuantity;
+			DamageModifier = damageModifier;
+			AttackSpeed = attackSpeed < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateAbilityRequest>(nameof(AttackSpeed)) : attackSpeed;
+			Accuracy = accuracy;
+			DefensiveParameters = defensiveParameters == null
+				? throw new ExceptionRequestFieldIncorrectData<CreateAbilityRequest>(nameof(DefensiveParameters))
+				: defensiveParameters;
+			DamageTypes = damageTypes == null
+				? throw new ExceptionRequestFieldIncorrectData<CreateAbilityRequest>(nameof(DamageTypes))
+				: damageTypes;
+			AppliedConditions = appliedConditions == null
+				? throw new ExceptionRequestFieldIncorrectData<CreateAbilityRequest>(nameof(AppliedConditions))
+				: appliedConditions;
+		}
+	}
+}
+

@@ -1,13 +1,19 @@
-﻿using System;
+﻿using MediatR;
+using System;
 using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatureTemplate
+namespace Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility
 {
 	/// <summary>
-	/// Элемент запроса создания шаблона существа - способность
+	/// Запрос создания способности
 	/// </summary>
-	public class CreateCreatureTemplateRequestAbility
+	public class CreateAbilityRequest: IRequest
 	{
+		/// <summary>
+		/// Ацди игры
+		/// </summary>
+		public Guid GameId { get; set; }
+		
 		/// <summary>
 		/// Наазвание способности
 		/// </summary>
@@ -44,8 +50,18 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 		public int Accuracy { get; set; }
 
 		/// <summary>
+		/// Параметры для защиты
+		/// </summary>
+		public List<Guid> DefensiveParameters { get; set; }
+
+		/// <summary>
+		/// Типы урона
+		/// </summary>
+		public List<Guid> DamageTypes { get; set; }
+
+		/// <summary>
 		/// Накладываемые состояния
 		/// </summary>
-		public List<CreateCreatureTemplateRequestAppliedCondition> AppliedConditions { get; set; }
+		public List<CreateAbilityRequestAppliedCondition> AppliedConditions { get; set; }
 	}
 }

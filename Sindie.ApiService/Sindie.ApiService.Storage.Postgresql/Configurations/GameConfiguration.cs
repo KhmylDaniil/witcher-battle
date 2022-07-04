@@ -124,7 +124,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasMany(x => x.Conditions)
+			builder.HasMany(x => x.Abilities)
 				.WithOne(x => x.Game)
 				.HasForeignKey(x => x.GameId)
 				.HasPrincipalKey(x => x.Id)

@@ -39,7 +39,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_instance = Instance.CreateForTest(game: _game);
 			_torso = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
 			_head = BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName);
-			_condition = Condition.CreateForTest(game: _game);
+			_condition = Condition.CreateForTest();
 			_parameter = Parameter.CreateForTest(game: _game);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
@@ -49,7 +49,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				creatureType: _creatureType);
 
 			_ability = Ability.CreateForTest(
-				creatureTemplate: _creatureTemplate,
+				game: _game,
 				name: "attack",
 				attackDiceQuantity: 1,
 				damageModifier: 1,

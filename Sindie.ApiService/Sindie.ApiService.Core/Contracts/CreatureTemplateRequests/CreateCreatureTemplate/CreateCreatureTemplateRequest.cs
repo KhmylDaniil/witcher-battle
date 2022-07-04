@@ -102,7 +102,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 		/// <summary>
 		/// Способности
 		/// </summary>
-		public List<CreateCreatureTemplateRequestAbility> Abilities { get; set; }
+		public List<Guid> Abilities { get; set; }
 
 		/// <summary>
 		/// Параметры шаблона существа

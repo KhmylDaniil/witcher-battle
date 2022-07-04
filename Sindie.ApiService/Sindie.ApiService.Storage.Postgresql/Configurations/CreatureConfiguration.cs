@@ -143,6 +143,18 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.WithMany(x => x.Creatures)
 				.UsingEntity(x => x.ToTable("CurrentConditions", "GameInstance"));
 
+			builder.HasMany(x => x.Vulnerables)
+				.WithMany(x => x.VulnerableCreatures)
+				.UsingEntity(x => x.ToTable("CreatureVulnerables", "GameInstance"));
+
+			builder.HasMany(x => x.Resistances)
+				.WithMany(x => x.ResistantCreatures)
+				.UsingEntity(x => x.ToTable("CreatureResistances", "GameInstance"));
+
+			builder.HasMany(x => x.Immunities)
+				.WithMany(x => x.ImmuneCreatures)
+				.UsingEntity(x => x.ToTable("CreatureImmunities", "GameInstance"));
+
 			builder.HasMany(x => x.CreatureParts)
 				.WithOne(x => x.Creature)
 				.HasForeignKey(x => x.CreatureId)

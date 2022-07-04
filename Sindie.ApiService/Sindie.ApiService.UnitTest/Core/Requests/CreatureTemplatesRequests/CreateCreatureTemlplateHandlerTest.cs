@@ -24,6 +24,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly Condition _condition;
 		private readonly Parameter _parameter;
 		private readonly CreatureType _creatureType;
+		private readonly Ability _ability;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="CreateCreatureTemlplateHandler"/>
@@ -44,9 +45,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				maxToHit: 10);
 			_bodyTemplate.BodyTemplateParts = new List<BodyTemplatePart> { _bodyTemplatePart};
 
-			_condition = Condition.CreateForTest(game: _game);
 			_parameter = Parameter.CreateForTest(game: _game);
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _parameter, _bodyTemplate, _bodyTemplatePart, _condition, _creatureType));
+			_ability = Ability.CreateForTest(game: _game, attackParameter: _parameter);
+			_condition = Condition.CreateForTest();
+			
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _parameter, _bodyTemplate, _bodyTemplatePart, _condition, _creatureType, _ability));
 		}
 
 		/// <summary>
@@ -82,27 +85,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 						Armor = 4
 					}
 				},
-				abilities: new List<CreateCreatureTemplateRequestAbility>
-				{
-					new CreateCreatureTemplateRequestAbility()
-					{
-						Name = "attack",
-						Description = "bite",
-						AttackParameterId = _parameter.Id,
-						AttackDiceQuantity = 2,
-						DamageModifier = 4,
-						AttackSpeed = 1,
-						Accuracy = -1,
-						AppliedConditions = new List<CreateCreatureTemplateRequestAppliedCondition>
-						{
-							new CreateCreatureTemplateRequestAppliedCondition()
-							{
-								ConditionId = _condition.Id,
-								ApplyChance = 50
-							}
-						}
-					}
-				},
+				abilities: new List<Guid> { _ability.Id },
 				creatureTemplateParameters: new List<CreateCreatureTemplateRequestParameter>
 				{
 					new CreateCreatureTemplateRequestParameter()
@@ -154,21 +137,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsNotNull(creatureTemplate.Abilities);
 			Assert.AreEqual(creatureTemplate.Abilities.Count(), 1);
 			var ability = _dbContext.Abilities.FirstOrDefault();
-
-			Assert.AreEqual(ability.Name, "attack");
-			Assert.AreEqual(ability.Description, "bite");
-			Assert.AreEqual(ability.Accuracy, -1);
-			Assert.AreEqual(ability.AttackSpeed, 1);
-			Assert.AreEqual(ability.AttackDiceQuantity, 2);
-			Assert.AreEqual(ability.AttackParameterId, _parameter.Id);
-			Assert.AreEqual(ability.DamageModifier, 4);
-
-			Assert.IsNotNull(ability.AppliedConditions);
-			Assert.AreEqual(ability.AppliedConditions.Count(), 1);
-			var appliedCondition = ability.AppliedConditions.FirstOrDefault();
-
-			Assert.AreEqual(appliedCondition.ApplyChance, 50);
-			Assert.AreEqual(appliedCondition.ConditionId, _condition.Id);
+			Assert.AreEqual(ability.Id, _ability.Id);
 
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateParameters);
 			Assert.AreEqual(creatureTemplate.CreatureTemplateParameters.Count(), 1);

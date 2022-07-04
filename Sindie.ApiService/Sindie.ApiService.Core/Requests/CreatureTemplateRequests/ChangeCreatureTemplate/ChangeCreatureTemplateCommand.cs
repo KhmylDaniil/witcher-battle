@@ -54,7 +54,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			int speed,
 			int luck,
 			List<ChangeCreatureTemplateRequestArmorList> armorList,
-			List<ChangeCreatureTemplateRequestAbility> abilities,
+			List<Guid> abilities,
 			List<ChangeCreatureTemplateRequestParameter> creatureTemplateParameters)
 		{
 			Id = id;

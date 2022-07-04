@@ -50,9 +50,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			_parameter = Parameter.CreateForTest(game: _game);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
-			_condition = Condition.CreateForTest(
-				game: _game,
-				name: Conditions.BleedName);
+			_condition = Condition.CreateForTest(name: Conditions.BleedName);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				name: "testName",
@@ -75,12 +73,13 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_creatureTemplate.CreatureTemplateParts.Add(_creatureTemplatePart);
 
 			_ability = Ability.CreateForTest(
-				creatureTemplate: _creatureTemplate,
+				game: _game,
 				attackParameter: _parameter);
 			_ability.AppliedConditions.Add(new AppliedCondition(
 				ability: _ability,
 				condition: _condition,
 				applyChance: 100));
+			_creatureTemplate.Abilities.Add(_ability);
 				
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_user,

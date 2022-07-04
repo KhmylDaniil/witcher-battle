@@ -39,7 +39,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.InstanceRequests
 			_imgFile = ImgFile.CreateForTest();
 			_bodyPartType = BodyPartType.CreateForTest();
 			_creatureType = CreatureType.CreateForTest();
-			_condition = Condition.CreateForTest(game: _game);
+			_condition = Condition.CreateForTest();
 			_parameter = Parameter.CreateForTest(game: _game);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 			_creatureTemplate = CreatureTemplate.CreateForTest(game: _game, bodyTemplate: _bodyTemplate, creatureType: _creatureType);
@@ -56,7 +56,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.InstanceRequests
 					parameter: _parameter,
 					value: 5));
 			_ability = Ability.CreateForTest(
-				creatureTemplate: _creatureTemplate,
+				game: _game,
 				name: "attack",
 				description: "bite",
 				attackDiceQuantity: 2,
@@ -65,6 +65,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.InstanceRequests
 				attackSpeed: 1,
 				attackParameter: _parameter);
 			_ability.AppliedConditions.Add(new AppliedCondition(_ability, _condition, 50));
+			_creatureTemplate.Abilities.Add(_ability);
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,

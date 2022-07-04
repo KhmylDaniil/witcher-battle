@@ -1,18 +1,24 @@
-﻿using System;
+﻿using MediatR;
+using System;
 using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate
+namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 {
 	/// <summary>
-	/// Элемент запроса изменения шаблона существа - способность
+	/// Запрос изменения способности
 	/// </summary>
-	public class ChangeCreatureTemplateRequestAbility
+	public class ChangeAbilityRequest: IRequest
 	{
 		/// <summary>
-		/// Айди способности
+		/// Айди
 		/// </summary>
-		public Guid? Id { get; set; }
+		public Guid Id { get; set; }
 		
+		/// <summary>
+		/// Ацди игры
+		/// </summary>
+		public Guid GameId { get; set; }
+
 		/// <summary>
 		/// Наазвание способности
 		/// </summary>
@@ -49,8 +55,18 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatu
 		public int Accuracy { get; set; }
 
 		/// <summary>
+		/// Параметры для защиты
+		/// </summary>
+		public List<Guid> DefensiveParameters { get; set; }
+
+		/// <summary>
+		/// Типы урона
+		/// </summary>
+		public List<Guid> DamageTypes { get; set; }
+
+		/// <summary>
 		/// Накладываемые состояния
 		/// </summary>
-		public List<ChangeCreatureTemplateRequestAppliedCondition> AppliedConditions { get; set; }
+		public List<ChangeAbilityRequestAppliedCondition> AppliedConditions { get; set; }
 	}
 }

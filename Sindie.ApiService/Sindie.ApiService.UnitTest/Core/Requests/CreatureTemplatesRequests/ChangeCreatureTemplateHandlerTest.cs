@@ -4,6 +4,7 @@ using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatureTemplate;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,7 +28,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly CreatureTemplatePart _creatureTemplatePart;
 		private readonly CreatureTemplateParameter _creatureTemplateParameter;
-		private readonly Ability _ability;
+		private readonly Ability _ability1;
+		private readonly Ability _ability2;
 		private readonly BodyPartType _torsoType;
 		private readonly CreatureType _creatureType1;
 		private readonly CreatureType _creatureType2;
@@ -54,7 +56,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				maxToHit: 10);
 			_bodyTemplate.BodyTemplateParts = new List<BodyTemplatePart> { _torso };
 
-			_condition = Condition.CreateForTest(game: _game);
+			_condition = Condition.CreateForTest();
 			_parameter1 = Parameter.CreateForTest(game: _game);
 			_parameter2 = Parameter.CreateForTest(game: _game);
 
@@ -74,14 +76,10 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				armor: 0);
 			_creatureTemplate.CreatureTemplateParts.Add(_creatureTemplatePart);
 
-			_ability = Ability.CreateForTest(
-				creatureTemplate: _creatureTemplate,
-				name: "attack",
-				attackDiceQuantity: 1,
-				damageModifier: 1,
-				attackSpeed: 1,
-				accuracy: 1,
-				attackParameter: _parameter1);
+			_ability1 = Ability.CreateForTest(game: _game, attackParameter: _parameter1);
+			_creatureTemplate.Abilities.Add(_ability1);
+
+			_ability2 = Ability.CreateForTest(game: _game, attackParameter: _parameter2);
 
 			_creatureTemplateParameter = CreatureTemplateParameter.CreateForTest(
 				creatureTemplate: _creatureTemplate,
@@ -96,7 +94,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				_bodyTemplate,
 				_torso,
 				_torsoType,
-				_ability,
+				_ability1,
+				_ability2,
 				_creatureTemplate,
 				_creatureTemplateParameter,
 				_creatureType1,
@@ -138,28 +137,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 						Armor = 4
 					}
 				},
-				abilities: new List<ChangeCreatureTemplateRequestAbility>
-				{
-					new ChangeCreatureTemplateRequestAbility()
-					{
-						Id = _ability.Id,
-						Name = "attack2",
-						Description = "bite",
-						AttackParameterId = _parameter2.Id,
-						AttackDiceQuantity = 2,
-						DamageModifier = 4,
-						AttackSpeed = 1,
-						Accuracy = -1,
-						AppliedConditions = new List<ChangeCreatureTemplateRequestAppliedCondition>
-						{
-							new ChangeCreatureTemplateRequestAppliedCondition()
-							{
-								ConditionId = _condition.Id,
-								ApplyChance = 50
-							}
-						}
-					}
-				},
+				abilities: new List<Guid> { _ability2.Id },
 				creatureTemplateParameters: new List<ChangeCreatureTemplateRequestParameter>
 				{
 					new ChangeCreatureTemplateRequestParameter()
@@ -217,23 +195,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			Assert.IsNotNull(creatureTemplate.Abilities);
 			Assert.AreEqual(creatureTemplate.Abilities.Count(), 1);
-			var ability = creatureTemplate.Abilities.FirstOrDefault(x => x.Id == _ability.Id);
+			var ability = creatureTemplate.Abilities.FirstOrDefault(x => x.Id == _ability2.Id);
 			Assert.IsNotNull(ability);
-
-			Assert.AreEqual(ability.Name, "attack2");
-			Assert.AreEqual(ability.Description, "bite");
-			Assert.AreEqual(ability.Accuracy, -1);
-			Assert.AreEqual(ability.AttackSpeed, 1);
-			Assert.AreEqual(ability.AttackDiceQuantity, 2);
-			Assert.AreEqual(ability.AttackParameterId, _parameter2.Id);
-			Assert.AreEqual(ability.DamageModifier, 4);
-
-			Assert.IsNotNull(ability.AppliedConditions);
-			Assert.AreEqual(ability.AppliedConditions.Count(), 1);
-			var appliedCondition = ability.AppliedConditions.FirstOrDefault();
-
-			Assert.AreEqual(appliedCondition.ApplyChance, 50);
-			Assert.AreEqual(appliedCondition.ConditionId, _condition.Id);
 
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateParameters);
 			Assert.AreEqual(creatureTemplate.CreatureTemplateParameters.Count(), 2);

@@ -52,7 +52,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 			int speed,
 			int luck,
 			List<CreateCreatureTemplateRequestArmorList> armorList,
-			List<CreateCreatureTemplateRequestAbility> abilities,
+			List<Guid> abilities,
 			List<CreateCreatureTemplateRequestParameter> creatureTemplateParameters)
 		{
 			GameId = gameId;

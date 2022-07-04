@@ -151,9 +151,9 @@ namespace Sindie.ApiService.Core.Entities
 		public List<BodyTemplate> BodyTemplates { get; set; }
 
 		/// <summary>
-		/// Состояния
+		/// Способности
 		/// </summary>
-		public List<Condition> Conditions { get; set; }
+		public List<Ability> Abilities { get; set; }
 
 		#endregion navigation properties
 
