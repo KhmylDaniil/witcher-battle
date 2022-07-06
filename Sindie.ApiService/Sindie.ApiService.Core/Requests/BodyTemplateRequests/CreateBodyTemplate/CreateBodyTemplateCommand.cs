@@ -27,7 +27,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 			List<CreateBodyTemplateRequestItem> bodyTemplateParts)
 		{
 			GameId = gameId;
-			Name = string.IsNullOrEmpty(name)
+			Name = string.IsNullOrWhiteSpace(name)
 				? throw new ExceptionRequestFieldNull<CreateBodyTemplateRequest>(nameof(Name))
 				: name;
 			Description = description;

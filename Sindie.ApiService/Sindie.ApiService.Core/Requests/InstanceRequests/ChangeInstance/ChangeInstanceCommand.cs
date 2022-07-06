@@ -30,7 +30,7 @@ namespace Sindie.ApiService.Core.Requests.InstanceRequests.ChangeInstance
 			GameId = gameId;
 			Id = id;
 			ImgFileId = imgFileId;
-			Name = string.IsNullOrEmpty(name)
+			Name = string.IsNullOrWhiteSpace(name)
 				? throw new ExceptionRequestFieldNull<ChangeInstanceRequest>(nameof(Name))
 				: name;
 			Description = description;

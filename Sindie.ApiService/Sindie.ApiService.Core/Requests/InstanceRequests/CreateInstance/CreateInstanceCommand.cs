@@ -19,7 +19,7 @@ namespace Sindie.ApiService.Core.Requests.InstanceRequests.CreateInstance
 		{
 			GameId = gameId;
 			ImgFileId = imgFileId;
-			Name = string.IsNullOrEmpty(name)
+			Name = string.IsNullOrWhiteSpace(name)
 				? throw new ExceptionRequestFieldNull<CreateInstanceRequest>(nameof(Name))
 				: name;
 			Description = description;

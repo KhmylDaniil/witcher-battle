@@ -31,7 +31,7 @@ namespace Sindie.ApiService.Core.Requests.ParameterRequests.ChangeParameter
 		{
 			GameId = gameId;
 			Id = id;
-			Name = string.IsNullOrEmpty(name)
+			Name = string.IsNullOrWhiteSpace(name)
 				? throw new ExceptionRequestFieldNull<ChangeParameterRequest>(nameof(Name))
 				: name;
 			Description = description;

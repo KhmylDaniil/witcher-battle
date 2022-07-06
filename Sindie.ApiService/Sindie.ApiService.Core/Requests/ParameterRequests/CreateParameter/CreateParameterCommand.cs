@@ -27,7 +27,7 @@ namespace Sindie.ApiService.Core.Requests.ParameterRequests.CreateParameter
 			int maxValueParameter)
 		{
 			GameId = gameId;
-			Name = string.IsNullOrEmpty(name)
+			Name = string.IsNullOrWhiteSpace(name)
 				? throw new ExceptionRequestFieldNull<CreateParameterRequest>(nameof(Name))
 				: name;
 			Description = description;

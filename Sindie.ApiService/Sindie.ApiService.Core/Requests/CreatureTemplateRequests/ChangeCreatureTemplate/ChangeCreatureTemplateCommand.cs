@@ -62,7 +62,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			ImgFileId = imgFileId;
 			BodyTemplateId = bodyTemplateId;
 			CreatureTypeId = creatureTypeId;
-			Name = string.IsNullOrEmpty(name)
+			Name = string.IsNullOrWhiteSpace(name)
 				? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(Name))
 				: name;
 			Description = description;
