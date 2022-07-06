@@ -46,9 +46,6 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.DeleteCreatur
 		/// <returns></returns>
 		public async Task<Unit> Handle(DeleteCreatureTemplateByIdCommand request, CancellationToken cancellationToken)
 		{
-			if (request == null)
-				throw new ExceptionRequestNull<DeleteCreatureTemplateByIdCommand>();
-
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 				.FirstOrDefaultAsync(cancellationToken)

@@ -3,10 +3,7 @@ using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.DeleteCreatureTemplateById;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.DeleteCreatureTemplateById;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests

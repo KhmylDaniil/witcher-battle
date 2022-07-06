@@ -14,7 +14,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 	/// Тест для <see cref="ChangeAbilityHandler"/>
 	/// </summary>
 	[TestClass]
-	public class ChangeAbilityHandleerTest: UnitTestBase
+	public class ChangeAbilityHandlerTest: UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly DamageType _damageType;
@@ -27,7 +27,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		/// <summary>
 		/// Конструктор для теста <see cref="ChangeAbilityHandler"/>
 		/// </summary>
-		public ChangeAbilityHandleerTest() : base()
+		public ChangeAbilityHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
 			_condition = Condition.CreateForTest();
