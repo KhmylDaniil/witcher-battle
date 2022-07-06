@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -49,7 +48,8 @@ namespace Sindie.ApiService.Core.Entities
 				maxValueParameter);
 			CreatureParameters = new List<CreatureParameter>();
 			CreatureTemplateParameters = new List<CreatureTemplateParameter>();
-			Abilities = new List<Ability>();
+			AbilitiesForAttack = new List<Ability>();
+			AbilitiesForDefense = new List<Ability>();
 			StatName = statName;
 		}
 
@@ -113,9 +113,14 @@ namespace Sindie.ApiService.Core.Entities
 		public List<CreatureParameter> CreatureParameters { get; set; }
 
 		/// <summary>
-		/// Способности
+		/// Способности, в которых используется для атаки
 		/// </summary>
-		public List<Ability> Abilities { get; set; }
+		public List<Ability> AbilitiesForAttack { get; set; }
+
+		/// <summary>
+		/// Способности, в которых используется для защиты
+		/// </summary>
+		public List<Ability> AbilitiesForDefense { get; set; }
 
 		#endregion navigation properties
 
@@ -185,7 +190,9 @@ namespace Sindie.ApiService.Core.Entities
 			? new ParameterBound(1, 10)
 			: new ParameterBound(
 				minValueParameter,
-				maxValueParameter)
+				maxValueParameter),
+			AbilitiesForAttack = new List<Ability>(),
+			AbilitiesForDefense = new List<Ability>()
 		};
 	}
 }

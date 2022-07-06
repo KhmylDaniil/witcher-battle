@@ -71,11 +71,15 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasMany(x => x.Abilities)
+			builder.HasMany(x => x.AbilitiesForAttack)
 				.WithOne(x => x.AttackParameter)
 				.HasForeignKey(x => x.AttackParameterId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.AbilitiesForDefense)
+				.WithMany(x => x.DefensiveParameters)
+				.UsingEntity(x => x.ToTable("DefensiveParameters", "GameRules"));
 
 			var gameNavigationGame = builder.Metadata.FindNavigation(nameof(Parameter.Game));
 			gameNavigationGame.SetField(Parameter.GameField);

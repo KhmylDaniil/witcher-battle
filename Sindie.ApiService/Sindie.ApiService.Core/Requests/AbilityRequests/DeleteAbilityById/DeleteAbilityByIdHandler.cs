@@ -61,7 +61,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.DeleteAbilityById
 				?? throw new ExceptionEntityNotFound<Ability>(request.Id);
 
 			game.Abilities.Remove(ability);
-			await _appDbContext.SaveChangesAsync();
+			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
 		}
 	}

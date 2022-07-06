@@ -104,9 +104,9 @@ namespace Sindie.ApiService.WebApi.Controllers
 		[HttpGet("GetAbilities")]
 		[SwaggerResponse(StatusCodes.Status200OK)]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task GetAbilityAsync([FromQuery] GetAbilityQuery request, CancellationToken cancellationToken)
+		public async Task<GetAbilityResponse> GetAbilityAsync([FromQuery] GetAbilityQuery request, CancellationToken cancellationToken)
 		{
-			await _mediator.Send(
+			return await _mediator.Send(
 				request == null
 				? throw new ArgumentNullException(nameof(request))
 				: new GetAbilityCommand(

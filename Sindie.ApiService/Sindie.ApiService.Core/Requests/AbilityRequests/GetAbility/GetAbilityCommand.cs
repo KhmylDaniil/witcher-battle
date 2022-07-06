@@ -55,12 +55,13 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 			AttackParameterId = attackParameterId;
 			DamageTypeId = damageTypeId;
 			ConditionId = conditionId;
-			MinAttackDiceQuantity = minAttackDiceQuantity < 1 
+			MinAttackDiceQuantity = minAttackDiceQuantity < 0 
 				? throw new ExceptionRequestFieldIncorrectData<GetAbilityQuery>(nameof(MinAttackDiceQuantity))
 				: minAttackDiceQuantity;
 			MaxAttackDiceQuantity = maxAttackDiceQuantity < minAttackDiceQuantity
 				? throw new ExceptionRequestFieldIncorrectData<GetAbilityQuery>(nameof(MaxAttackDiceQuantity))
 				: maxAttackDiceQuantity;
+			MaxAttackDiceQuantity = MaxAttackDiceQuantity == 0 ? 10 : MaxAttackDiceQuantity;
 			UserName = userName;
 			CreationMinTime = creationMinTime;
 			CreationMaxTime = creationMaxTime;

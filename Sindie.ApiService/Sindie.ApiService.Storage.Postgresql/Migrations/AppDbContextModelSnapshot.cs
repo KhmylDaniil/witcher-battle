@@ -67,6 +67,21 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.ToTable("AbilityDamageTypes", "GameRules");
                 });
 
+            modelBuilder.Entity("AbilityParameter", b =>
+                {
+                    b.Property<Guid>("AbilitiesForDefenseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DefensiveParametersId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("AbilitiesForDefenseId", "DefensiveParametersId");
+
+                    b.HasIndex("DefensiveParametersId");
+
+                    b.ToTable("DefensiveParameters", "GameRules");
+                });
+
             modelBuilder.Entity("ConditionCreature", b =>
                 {
                     b.Property<Guid>("ConditionsId")
@@ -250,7 +265,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasComment("Количество кубов атаки");
 
                     b.Property<Guid>("AttackParameterId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("AttackParameterId")
+                        .HasComment("Параметр атаки");
 
                     b.Property<int>("AttackSpeed")
                         .HasColumnType("integer")
@@ -3169,9 +3186,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
 
-                    b.Property<Guid?>("AbilityId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
 
@@ -3214,8 +3228,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasComment("Название корреспондирующей характеристики");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AbilityId");
 
                     b.HasIndex("GameId");
 
@@ -4264,6 +4276,21 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("AbilityParameter", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Ability", null)
+                        .WithMany()
+                        .HasForeignKey("AbilitiesForDefenseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Sindie.ApiService.Core.Entities.Parameter", null)
+                        .WithMany()
+                        .HasForeignKey("DefensiveParametersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ConditionCreature", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.Condition", null)
@@ -4432,7 +4459,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Ability", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.Parameter", "AttackParameter")
-                        .WithMany("Abilities")
+                        .WithMany("AbilitiesForAttack")
                         .HasForeignKey("AttackParameterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -5166,10 +5193,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Parameter", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Ability", null)
-                        .WithMany("DefensiveParameters")
-                        .HasForeignKey("AbilityId");
-
                     b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
                         .WithMany("Parameters")
                         .HasForeignKey("GameId")
@@ -5680,8 +5703,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Ability", b =>
                 {
                     b.Navigation("AppliedConditions");
-
-                    b.Navigation("DefensiveParameters");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Action", b =>
@@ -5903,7 +5924,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Parameter", b =>
                 {
-                    b.Navigation("Abilities");
+                    b.Navigation("AbilitiesForAttack");
 
                     b.Navigation("CharacterParameters");
 

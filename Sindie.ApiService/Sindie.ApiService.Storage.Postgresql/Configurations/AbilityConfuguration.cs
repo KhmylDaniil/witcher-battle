@@ -36,9 +36,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasColumnName("Description")
 				.HasComment("Описание способности");
 
-			builder.Property(r => r.AttackSpeed)
-				.HasColumnName("AttackSpeed")
-				.HasComment("Скорость атаки")
+			builder.Property(r => r.AttackParameterId)
+				.HasColumnName("AttackParameterId")
+				.HasComment("Параметр атаки")
 				.IsRequired();
 
 			builder.Property(r => r.AttackDiceQuantity)
@@ -49,6 +49,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			builder.Property(r => r.DamageModifier)
 				.HasColumnName("DamageModifier")
 				.HasComment("Модификатор атаки")
+				.IsRequired();
+
+			builder.Property(r => r.AttackSpeed)
+				.HasColumnName("AttackSpeed")
+				.HasComment("Скорость атаки")
 				.IsRequired();
 
 			builder.Property(r => r.Accuracy)
@@ -77,10 +82,14 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasOne(x => x.AttackParameter)
-				.WithMany(x => x.Abilities)
+				.WithMany(x => x.AbilitiesForAttack)
 				.HasForeignKey(x => x.AttackParameterId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.DefensiveParameters)
+				.WithMany(x => x.AbilitiesForDefense)
+				.UsingEntity(x => x.ToTable("DefensiveParameters", "GameRules"));
 
 			var gameNavigation = builder.Metadata.FindNavigation(nameof(Ability.Game));
 			gameNavigation.SetField(Ability.GameField);

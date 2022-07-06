@@ -104,7 +104,7 @@ namespace Sindie.ApiService.Core.Entities
 		public void ChangeAppliedCondition(Condition condition, int applyChance)
 		{
 			Condition = condition;
-			ApplyChance -= applyChance;
+			ApplyChance = applyChance;
 		}
 	}
 }
