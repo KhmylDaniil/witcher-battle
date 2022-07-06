@@ -41,7 +41,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		/// <param name="request">Запрос на атаку монстра</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		[HttpPut]
+		[HttpPut("MonsterAttack")]
 		[SwaggerResponse(StatusCodes.Status200OK)]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
 		public async Task<MonsterAttackResponse> MonsterAttackAsync([FromQuery] MonsterAttackRequest request, CancellationToken cancellationToken)
@@ -66,7 +66,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		/// <param name="request">Запрос на получение монстром урона</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		[HttpPut]
+		[HttpPut("monsterSuffer")]
 		[SwaggerResponse(StatusCodes.Status200OK)]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
 		public async Task<MonsterSufferResponse> MonsterSufferAsync([FromQuery] MonsterSufferRequest request, CancellationToken cancellationToken)
