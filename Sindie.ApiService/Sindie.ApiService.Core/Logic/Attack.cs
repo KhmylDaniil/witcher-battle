@@ -37,10 +37,10 @@ namespace Sindie.ApiService.Core.Logic
 			Creature monster,
 			Creature target,
 			int defenseValue,
-			CreaturePart aimedPart = default,
-			Ability ability = default,
-			int specialToHit = default,
-			int specialToDamage = default)
+			CreaturePart aimedPart,
+			Ability ability,
+			int specialToHit,
+			int specialToDamage)
 		{
 			var hitPenalty = aimedPart == default ? 0 : aimedPart.HitPenalty;
 
@@ -49,7 +49,7 @@ namespace Sindie.ApiService.Core.Logic
 			ability = ability ?? monster.DefaultAbility();
 
 			var successValue = _rollService.RollAttack(
-				attackValue: AttackValue(monster, ability, specialToHit, hitPenalty),
+				attackValue: AttackValue(monster, ability, specialToHit),
 				defenseValue: defenseValue);
 
 			var message = new StringBuilder($"{monster.Name} атакует существо {target.Name} способностью {ability.Name} в {aimedPart.Name}.");
@@ -68,12 +68,20 @@ namespace Sindie.ApiService.Core.Logic
 				message.Append("Промах.");
 
 			return message.ToString();
+		}
 
-			static int AttackValue(Creature monster, Ability ability, int specialToHit, int hitPenalty)
-			{
-				var result = monster.ParameterBase(ability.AttackParameterId) + ability.Accuracy - hitPenalty + specialToHit;
-				return result < 0 ? 0 : result;
-			}
+		/// <summary>
+		/// Расчет базы атаки
+		/// </summary>
+		/// <param name="monster">Атакующий</param>
+		/// <param name="ability">Способность</param>
+		/// <param name="specialToHit">Специальный бонус к попаданию</param>
+		/// <param name="hitPenalty">Пенальти к попаданию</param>
+		/// <returns>База атаки</returns>
+		private static int AttackValue(Creature attacker, Ability ability, int toHit)
+		{
+			var result = attacker.ParameterBase(ability.AttackParameterId) + ability.Accuracy + toHit;
+			return result < 0 ? 0 : result;
 		}
 
 		/// <summary>
@@ -85,59 +93,79 @@ namespace Sindie.ApiService.Core.Logic
 		/// <param name="creatureType">Тип существа</param>
 		private void CheckCrit(StringBuilder message, int successValue, CreaturePart creaturePart, out int bonusDamage, CreatureType creatureType = default)
 		{
-			string critSeverity;
+			bonusDamage = 0;
 			if (successValue < 7)
-			{
-				bonusDamage = 0;
 				return;
-			}
-			else if (successValue < 10)
-			{
-				critSeverity = "Simple";
-				bonusDamage = 3;
-			}
-			else if (successValue < 13)
-			{
-				critSeverity = "Complex";
-				bonusDamage = 5;
-			}
-			else if (successValue < 15)
-			{
-				critSeverity = "Difficult";
-				bonusDamage = 8;
-			}
+
+			SetCritSeverity(successValue, out bonusDamage, out string critSeverity);
+
+			string critName = CritName(creaturePart, critSeverity);
+
+			if (isCritImmune(creatureType, creaturePart))
+				message.AppendLine($"Критическое повреждение не может быть нанесено из-за особенностей существа. " +
+					$"Бонусный урон равен {AddBonusDamage(bonusDamage, critName)}.");
 			else
 			{
-				critSeverity = "Deadly";
-				bonusDamage = 10;
+				var name = typeof(Crit).GetField(critName).GetValue(critName);
+				message.AppendLine($"Нанесено критическое повреждение {name.ToString()}. Бонусный урон равен {bonusDamage}.");
+
 			}
 
-			string critName = critSeverity + creaturePart.BodyPartType.Name;
-			if (creaturePart.BodyPartType.Name == BodyPartTypes.HeadName || creaturePart.BodyPartType.Name == BodyPartTypes.TorsoName)
+			static void SetCritSeverity(int successValue, out int bonusDamage, out string critSeverity)
 			{
-				Random random = new Random();
-				var suffix = random.Next(1, 6) < 5 ? 1 : 2;
-				critName += suffix;
+				if (successValue < 10)
+				{
+					critSeverity = "Simple";
+					bonusDamage = 3;
+				}
+				else if (successValue < 13)
+				{
+					critSeverity = "Complex";
+					bonusDamage = 5;
+				}
+				else if (successValue < 15)
+				{
+					critSeverity = "Difficult";
+					bonusDamage = 8;
+				}
+				else
+				{
+					critSeverity = "Deadly";
+					bonusDamage = 10;
+				}
 			}
 
-			//Призраки и элементали не могут получать некоторые криты
-			if ((creatureType?.Id == CreatureTypes.SpecterId || creatureType?.Id == CreatureTypes.ElementaId) && critName.Contains("Torso"))
+			static string CritName(CreaturePart creaturePart, string critSeverity)
 			{
-				if (critName.Contains("SimpleTorso1"))
+				string critName = critSeverity + creaturePart.BodyPartType.Name;
+				if (creaturePart.BodyPartType.Name == BodyPartTypes.HeadName || creaturePart.BodyPartType.Name == BodyPartTypes.TorsoName)
+				{
+					Random random = new Random();
+					var suffix = random.Next(1, 6) < 5 ? 1 : 2;
+					critName += suffix;
+				}
+
+				return critName;
+			}
+
+			static bool isCritImmune(CreatureType creatureType, CreaturePart aimedPart)
+			{
+				return (creatureType?.Id == CreatureTypes.SpecterId || creatureType?.Id == CreatureTypes.ElementaId)
+					&& aimedPart.BodyPartTypeId == BodyPartTypes.TorsoId;
+			}
+
+			static int AddBonusDamage(int bonusDamage, string critName)
+			{
+				if (critName.Equals("SimpleTorso1", StringComparison.OrdinalIgnoreCase))
 					bonusDamage += 5;
-				else if (critName.Contains("ComplexTorso2"))
+				else if (critName.Equals("ComplexTorso2", StringComparison.OrdinalIgnoreCase))
 					bonusDamage += 10;
-				else if (critName.Contains("DifficultTorso"))
+				else if (critName.Equals("DifficultTorso", StringComparison.OrdinalIgnoreCase))
 					bonusDamage += 15;
-				else if (critName.Contains("DeadlyTorso1"))
+				else if (critName.Equals("DeadlyTorso1", StringComparison.OrdinalIgnoreCase))
 					bonusDamage += 20;
-
-				message.AppendLine($"Критическое повреждение не может быть нанесено из-за особенностей существа. Бонусный урон равен {bonusDamage}.");
-				return;
+				return bonusDamage;
 			}
-
-			var name = typeof(Crit).GetField(critName).GetValue(critName);
-			message.AppendLine($"Нанесено критическое повреждение {name.ToString()}. Бонусный урон равен {bonusDamage}.");
 		}
 
 		/// <summary>
@@ -211,30 +239,36 @@ namespace Sindie.ApiService.Core.Logic
 
 
 
-		//public string CreatureAttack(
-		//	Creature attacker,
-		//	Creature target,
-		//	BodyTemplatePart aimedPart = default,
-		//	Ability ability = default,
-		//	int specialToHit = default,
-		//	int specialToDamage = default)
-		//{
-		//	var hitPenalty = aimedPart == default ? 0 : aimedPart.HitPenalty;
+		public string CreatureAttack(
+			Creature attacker,
+			Creature target,
+			CreaturePart aimedPart,
+			Ability ability,
+			int toHit,
+			int specialToDamage = default)
+		{
 
-		//	aimedPart = aimedPart ?? target.BodyTemplate.DefaultBodyTemplatePart();
-
-		//	ability = ability ?? attacker.DefaultAbility();
-		//	var attackValue = attacker.ParameterBase(ability.AttackParameterId) + ability.Accuracy - hitPenalty + specialToHit;
-
-
-		//	var successValue = _rollService.RollAttack(
-		//		attackValue: attackValue < 0 ? 0 : attackValue,
-		//		defenseValue: defenseValue);
+			var successValue = _rollService.RollAttack(
+				attackValue: AttackValue(attacker, ability, specialToHit, hitPenalty),
+				defenseValue: DefenseValue(target, ability, ));
 
 
 
 
-		//}
+		}
 
+		/// <summary>
+		/// Определение базы защиты
+		/// </summary>
+		/// <param name="defender">Защищающееся существо</param>
+		/// <param name="ability">Способность атаки</param>
+		/// <param name="defensiveParameter">Защитный параметр</param>
+		/// <returns>База защиты</returns>
+		private static int DefenseValue(Creature defender, Ability ability, Parameter defensiveParameter = default)
+		{
+			defensiveParameter = defensiveParameter == default ? defender.DefaultDefensiveParameter(ability) : defensiveParameter;
+			var result = defender.ParameterBase(defensiveParameter.Id);
+			return result < 0 ? 0 : result;
+		}
 	}
 }

@@ -16,6 +16,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 		/// <param name="abilityId">Айди способности</param>
 		/// <param name="targetCreatureId">Айди существа цели</param>
 		/// <param name="creaturePartId">Айди части тела при прицеливании</param>
+		/// <param name="defensiveParameter">Способ защиты</param>
 		/// <param name="specialToHit">Специальный бонус к попаданию</param>
 		/// <param name="specialToDamage">Специальный бонус к урону</param>
 		public CreatureAttackCommand(
@@ -24,6 +25,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 			Guid? abilityId,
 			Guid targetCreatureId,
 			Guid? creaturePartId,
+			Guid? defensiveParameter,
 			int? specialToHit,
 			int? specialToDamage)
 		{
@@ -32,6 +34,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 			AbilityId = abilityId;
 			TargetCreatureId = targetCreatureId;
 			CreaturePartId = creaturePartId;
+			DefensiveParameter = defensiveParameter;
 			SpecialToHit = specialToHit ?? default;
 			SpecialToDamage = specialToDamage ?? default;
 		}
