@@ -47,10 +47,9 @@ namespace Sindie.ApiService.Core.Logic
 			aimedPart = aimedPart ?? target.DefaultCreaturePart();
 
 			ability = ability ?? monster.DefaultAbility();
-			var attackValue = monster.ParameterBase(ability.AttackParameterId) + ability.Accuracy - hitPenalty + specialToHit;
 
 			var successValue = _rollService.RollAttack(
-				attackValue: attackValue < 0 ? 0 : attackValue,
+				attackValue: AttackValue(monster, ability, specialToHit, hitPenalty),
 				defenseValue: defenseValue);
 
 			var message = new StringBuilder($"{monster.Name} атакует существо {target.Name} способностью {ability.Name} в {aimedPart.Name}.");
@@ -60,7 +59,7 @@ namespace Sindie.ApiService.Core.Logic
 				message.Append($"Нанеcено {ability.RollDamage(specialToDamage)}. Модификатор урона после поглощения броней составляет {aimedPart.DamageModifier}.\n");
 				foreach (var condition in ability.RollConditions())
 					message.Append($"Наложено состояние {condition.Name}.\n");
-				
+
 				CheckCrit(message, successValue, aimedPart, out int bonusDamage, target.CreatureType);
 			}
 			else if (successValue < -5)
@@ -69,6 +68,12 @@ namespace Sindie.ApiService.Core.Logic
 				message.Append("Промах.");
 
 			return message.ToString();
+
+			static int AttackValue(Creature monster, Ability ability, int specialToHit, int hitPenalty)
+			{
+				var result = monster.ParameterBase(ability.AttackParameterId) + ability.Accuracy - hitPenalty + specialToHit;
+				return result < 0 ? 0 : result;
+			}
 		}
 
 		/// <summary>

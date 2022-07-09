@@ -7,7 +7,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 	/// <summary>
 	/// Запрос на получение списка шаблонов существа
 	/// </summary>
-	public class GetCreatureTemplateQuery : IRequest<GetCreatureTemplateResponse>
+	public class GetCreatureTemplateQuery : GetBaseQuery, IRequest<GetCreatureTemplateResponse>
 	{
 		/// <summary>
 		/// Айди игры
@@ -63,25 +63,5 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// фильтр по названию накладываемого состояния
 		/// </summary>
 		public string ConditionName { get; set; }
-
-		/// <summary>
-		/// Количество записей на одной странице 
-		/// </summary>
-		public int PageSize { get; set; }
-
-		/// <summary>
-		/// Номер страницы, с которой вывести записи
-		/// </summary>
-		public int PageNumber { get; set; }
-
-		/// <summary>
-		/// Сортировка по полю
-		/// </summary>
-		public string OrderBy { get; set; }
-
-		/// <summary>
-		/// Сортировка по возрастанию
-		/// </summary>
-		public bool IsAscending { get; set; }
 	}
 }

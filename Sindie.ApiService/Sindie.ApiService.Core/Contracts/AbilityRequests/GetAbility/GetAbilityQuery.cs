@@ -7,7 +7,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 	/// <summary>
 	/// Запрос на получение списка способностей
 	/// </summary>
-	public class GetAbilityQuery : IRequest<GetAbilityResponse>
+	public class GetAbilityQuery : GetBaseQuery, IRequest<GetAbilityResponse>
 	{
 		// <summary>
 		/// Айди игры
@@ -68,25 +68,5 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 		/// Конечное значение фильтра модификации
 		/// </summary>
 		public DateTime ModificationMaxTime { get; set; }
-
-		/// <summary>
-		/// Количество записей на одной странице 
-		/// </summary>
-		public int PageSize { get; set; }
-
-		/// <summary>
-		/// Номер страницы, с которой вывести записи
-		/// </summary>
-		public int PageNumber { get; set; }
-
-		/// <summary>
-		/// Сортировка по полю
-		/// </summary>
-		public string OrderBy { get; set; }
-
-		/// <summary>
-		/// Сортировка по возрастанию
-		/// </summary>
-		public bool IsAscending { get; set; }
 	}
 }
