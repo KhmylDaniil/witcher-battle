@@ -94,7 +94,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		{
 			var request = new MonsterSufferCommand(
 				instanceId: _instance.Id,
-				monsterId: _creature.Id,
+				attackerId: _creature.Id,
+				targetId: _creature.Id,
+
 				damageValue: 10,
 				successValue: 1,
 				creaturePartId: _torsoPart.Id,
@@ -130,12 +132,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		{
 			var request = new MonsterSufferCommand(
 				instanceId: _instance.Id,
-				monsterId: _creature.Id,
+				attackerId: _creature.Id,
+				d
 				damageValue: 10,
 				successValue: 1,
-				creaturePartId: _headPart.Id,
-				isResistant: false,
-				isVulnerable: false);
+				creaturePartId: _headPart.Id);
 
 			var newHandler = new MonsterSufferHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 

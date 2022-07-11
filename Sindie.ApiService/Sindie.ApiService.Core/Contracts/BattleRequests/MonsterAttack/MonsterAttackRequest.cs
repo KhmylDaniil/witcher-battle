@@ -41,11 +41,11 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.MonsterAttack
 		/// <summary>
 		/// Специальный бонус к попаданию
 		/// </summary>
-		public int? SpecialToHit { get; set; }
+		public int SpecialToHit { get; set; }
 
 		/// <summary>
 		/// Специальный бонус к урону
 		/// </summary>
-		public int? SpecialToDamage { get; set; }
+		public int SpecialToDamage { get; set; }
 	}
 }

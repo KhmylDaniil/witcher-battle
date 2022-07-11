@@ -13,23 +13,26 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 		/// Конструктор команды получения монстром урона
 		/// </summary>
 		/// <param name="instanceId">Айди инстанса</param>
-		/// <param name="monsterId">Айди монстра</param>
+		/// <param name="attackerId">Айди атакующего существа</param>
+		/// <param name="targetId">Айди существа цели</param>
+		/// <param name="abilityId">Айди способности</param>
 		/// <param name="damageValue">Значение урона</param>
 		/// <param name="successValue">Значение успешности атаки</param>
 		/// <param name="creaturePartId">Айди части тела цели</param>
-		/// <param name="isResistant">Сопротивление урону</param>
-		/// <param name="isVulnerable">Уязвимость урону</param>
+
 		public MonsterSufferCommand(
 			Guid instanceId,
-			Guid monsterId,
+			Guid attackerId,
+			Guid targetId,
+			Guid abilityId,
 			int damageValue,
 			int successValue,
-			Guid? creaturePartId,
-			bool isResistant,
-			bool isVulnerable)
+			Guid? creaturePartId)
 		{
 			InstanceId = instanceId;
-			MonsterId = monsterId;
+			AttackerId = attackerId;
+			TargetId = targetId;
+			AbilityId = abilityId;
 			DamageValue = damageValue < 0
 				? throw new ExceptionRequestFieldIncorrectData<MonsterSufferRequest>(nameof(DamageValue))
 				: damageValue;
@@ -37,8 +40,6 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 				? throw new ExceptionRequestFieldIncorrectData<MonsterSufferRequest>(nameof(SuccessValue))
 				: successValue;
 			CreaturePartId = creaturePartId;
-			IsResistant = isResistant;
-			IsVulnerable = isVulnerable;
 		}
 	}
 }

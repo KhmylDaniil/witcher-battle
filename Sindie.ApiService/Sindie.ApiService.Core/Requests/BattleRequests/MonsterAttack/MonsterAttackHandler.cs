@@ -5,12 +5,9 @@ using Sindie.ApiService.Core.Contracts.BattleRequests.MonsterAttack;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using Sindie.ApiService.Core.Logic;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -62,49 +59,42 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 					.ThenInclude(cp => cp.Parameter)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureParts)
-					.ThenInclude(btp => btp.BodyPartType)
+					.ThenInclude(cp => cp.BodyPartType)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
 					.ThenInclude(a => a.AppliedConditions)
 					.ThenInclude(ac => ac.Condition)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Abilities)
+					.ThenInclude(a => a.DamageTypes)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Immunities)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Vulnerables)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Resistances)
+				.AsNoTracking()
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Instance>();
 
-			CheckRequest(request, instance);
-
-			var monster = instance.Creatures.FirstOrDefault(x => x.Id == request.Id);
-
-			var target = instance.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId);
-
-			var aimedPart = request.CreaturePartId == null
-				? null
-				: target.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId);
-
-			var ability = request.AbilityId == null
-				? null
-				: monster.Abilities.FirstOrDefault(x => x.Id == request.AbilityId);
+			var data = CheckAndFormData(request, instance);
 
 			var attack = new Attack(_rollService);
 			
 			var attackResult = attack.MonsterAttack(
-				monster: monster,
-				target: target,
-				defenseValue: request.DefenseValue,
-				aimedPart: aimedPart,
-				ability: ability,
-				specialToHit: request.SpecialToHit.Value,
-				specialToDamage: request.SpecialToDamage.Value);
+				data: data,
+				defenseValue: request.DefenseValue);
 
 			return new MonsterAttackResponse()
 			{ Message = attackResult};
 		}
 
 		/// <summary>
-		/// Проверка запроса
+		/// Проверка запроса и формирование данных для расчета атаки
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="instance">Инстанс</param>
-		private void CheckRequest(MonsterAttackCommand request, Instance instance)
+		private AttackData CheckAndFormData(MonsterAttackCommand request, Instance instance)
 		{
 			var monster = instance.Creatures.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<Creature>(request.Id);
@@ -112,16 +102,20 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 			var target = instance.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
 				?? throw new ExceptionEntityNotFound<Creature>(request.TargetCreatureId);
 
-			if (request.CreaturePartId != null)
-				_ = target.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId)
-					?? throw new ExceptionEntityNotFound<BodyTemplatePart>(request.CreaturePartId.Value);
+			var aimedPart = request.CreaturePartId == null
+				? null
+				: target.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId)
+					?? throw new ExceptionEntityNotFound<CreaturePart>(request.CreaturePartId.Value);
 
 			if (!monster.Abilities.Any())
 				throw new ApplicationException($"У существа с айди {request.Id} отсутствуют способности, атака невозможна.");
 
-			if (request.AbilityId != null)
-				_ = monster.Abilities.FirstOrDefault(x => x.Id == request.AbilityId)
+			var ability = request.AbilityId == null
+				? null
+				: monster.Abilities.FirstOrDefault(x => x.Id == request.AbilityId)
 					?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId.Value);
+
+			return AttackData.CreateData(monster, target, aimedPart, ability, null, request.SpecialToHit, request.SpecialToDamage);
 		}
 	}
 }

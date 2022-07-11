@@ -11,22 +11,22 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
 	/// <summary>
 	/// Данные для обновления параетров шаблона существа
 	/// </summary>
-	internal class CreatureTemplateParameterData
+	public class CreatureTemplateParameterData
 	{
 		/// <summary>
 		/// Айди
 		/// </summary>
-		public Guid? Id { get; set; }
+		internal Guid? Id { get; set; }
 
 		/// <summary>
 		/// Параметр
 		/// </summary>
-		public Parameter Parameter { get; set; }
+		internal Parameter Parameter { get; set; }
 
 		/// <summary>
 		/// Значение параметра
 		/// </summary>
-		public int Value { get; set; }
+		internal int Value { get; set; }
 
 		/// <summary>
 		/// Создание данных для <see cref="CreatureTemplateParameter"/>

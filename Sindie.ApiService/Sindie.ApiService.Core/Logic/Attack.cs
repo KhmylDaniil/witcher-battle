@@ -1,7 +1,9 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
+using Sindie.ApiService.Core.Requests.BattleRequests;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace Sindie.ApiService.Core.Logic
@@ -25,47 +27,118 @@ namespace Sindie.ApiService.Core.Logic
 		/// <summary>
 		/// Атака монсстра
 		/// </summary>
-		/// <param name="monster">Монстр</param>
-		/// <param name="target">Цель</param>
+		/// <param name="data">Данные для расчета атаки</param>
 		/// <param name="defenseValue">Значение защиты</param>
-		/// <param name="aimedPart">Прицел в часть тела</param>
-		/// <param name="ability">Способность</param>
-		/// <param name="specialToHit">Специальный бонус к попаданию</param>
-		/// <param name="specialToDamage">Специальный бонус к урону</param>
 		/// <returns></returns>
-		public string MonsterAttack(
-			Creature monster,
-			Creature target,
-			int defenseValue,
-			CreaturePart aimedPart,
-			Ability ability,
-			int specialToHit,
-			int specialToDamage)
+		internal string MonsterAttack(
+			AttackData data,
+			int defenseValue)
 		{
-			var hitPenalty = aimedPart == default ? 0 : aimedPart.HitPenalty;
-
-			aimedPart = aimedPart ?? target.DefaultCreaturePart();
-
-			ability = ability ?? monster.DefaultAbility();
+			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
 
 			var successValue = _rollService.RollAttack(
-				attackValue: AttackValue(monster, ability, specialToHit),
-				defenseValue: defenseValue);
+				attackBase: AttackValue(data.Attacker, data.Ability, data.ToHit),
+				defenseValue: defenseValue,
+				out int attackerFumble);
 
-			var message = new StringBuilder($"{monster.Name} атакует существо {target.Name} способностью {ability.Name} в {aimedPart.Name}.");
-			if (successValue > 0)
+			if (attackerFumble != 0)
 			{
-				message.AppendLine($"Попадание с превышением на {successValue}.");
-				message.Append($"Нанеcено {ability.RollDamage(specialToDamage)}. Модификатор урона после поглощения броней составляет {aimedPart.DamageModifier}.\n");
-				foreach (var condition in ability.RollConditions())
-					message.Append($"Наложено состояние {condition.Name}.\n");
-
-				CheckCrit(message, successValue, aimedPart, out int bonusDamage, target.CreatureType);
+				message.AppendLine(CritMissMessage(attackerFumble)); //TODO
+				return message.ToString();
 			}
-			else if (successValue < -5)
-				message.Append($"Критический промах {successValue}.");
-			else
-				message.Append("Промах.");
+			if (successValue == 0)
+			{
+				message.AppendLine("Промах.");
+				return message.ToString();
+			}
+
+			ApplyDamage(ref data, ref message, successValue);
+
+			if (data.Target.HP == 0)
+			{
+				message.AppendLine($"Существо {data.Target.Name} мертво.");
+				return message.ToString();
+			}
+
+			ApplyConditions(ref data, ref message);
+
+			return message.ToString();
+		}
+
+		/// <summary>
+		/// Получение монстром урона
+		/// </summary>
+		/// <param name="monster">Монстр</param>
+		/// <param name="aimedPart">Часть тела существа</param>
+		/// <param name="damageValue">Значение урона</param>
+		/// <param name="successValue">Успешность атаки</param>
+		/// <param name="isResistant">Сопротивление урону</param>
+		/// <param name="isVulnerable">Уязвимость к урону</param>
+		/// <returns>Сообщение о результате атаки</returns>
+		internal string MonsterSuffer(
+			ref AttackData data,
+			int damage,
+			int successValue)
+		{
+			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
+
+			ArmorMutigation(ref data, ref damage, ref message);
+
+			CheckModifiers(data, ref damage);
+
+			CheckCrit(data, ref message, successValue, ref damage);
+
+			message.AppendLine($"Нанеcено {damage} урона.");
+
+			CheckDead(ref data, damage);
+
+			return message.ToString();
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+		internal string CreatureAttack(ref AttackData data)
+		{
+			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
+
+			var successValue = _rollService.ContestRoll(
+				attackBase: AttackValue(data.Attacker, data.Ability, data.ToHit),
+				defenseBase: DefenseValue(data.Target, data.DefensiveParameter),
+				out int attackerFumble,
+				out int defenderFumble);
+
+			//ApplyFumble(attackerFumble); TODO
+
+			if (attackerFumble != 0)
+			{
+				message.AppendLine(CritMissMessage(attackerFumble)); //TODO
+				return message.ToString();
+			} 
+			if (successValue == 0)
+			{
+				message.AppendLine("Промах.");
+				return message.ToString();
+			}
+
+			ApplyDamage(ref data, ref message, successValue);
+
+			if (data.Target.HP == 0)
+			{
+				message.AppendLine($"Существо {data.Target.Name} мертво.");
+				return message.ToString();
+			}
+
+			ApplyConditions(ref data, ref message);
 
 			return message.ToString();
 		}
@@ -73,14 +146,25 @@ namespace Sindie.ApiService.Core.Logic
 		/// <summary>
 		/// Расчет базы атаки
 		/// </summary>
-		/// <param name="monster">Атакующий</param>
+		/// <param name="attacker">Атакующий</param>
 		/// <param name="ability">Способность</param>
-		/// <param name="specialToHit">Специальный бонус к попаданию</param>
-		/// <param name="hitPenalty">Пенальти к попаданию</param>
+		/// <param name="toHit">Vjlbabrfnjh к попаданию</param>
 		/// <returns>База атаки</returns>
 		private static int AttackValue(Creature attacker, Ability ability, int toHit)
 		{
 			var result = attacker.ParameterBase(ability.AttackParameterId) + ability.Accuracy + toHit;
+			return result < 0 ? 0 : result;
+		}
+
+		/// <summary>
+		/// Определение базы защиты
+		/// </summary>
+		/// <param name="defender">Защищающееся существо</param>
+		/// <param name="defensiveParameter">Защитный параметр</param>
+		/// <returns>База защиты</returns>
+		private static int DefenseValue(Creature defender, CreatureParameter defensiveParameter)
+		{
+			var result = defender.ParameterBase(defensiveParameter.ParameterId);
 			return result < 0 ? 0 : result;
 		}
 
@@ -91,47 +175,48 @@ namespace Sindie.ApiService.Core.Logic
 		/// <param name="successValue">Успешность атаки</param>
 		/// <param name="creaturePart">Часть тела существа</param>
 		/// <param name="creatureType">Тип существа</param>
-		private void CheckCrit(StringBuilder message, int successValue, CreaturePart creaturePart, out int bonusDamage, CreatureType creatureType = default)
+		private static void CheckCrit(AttackData data, ref StringBuilder message, int successValue, ref int damage)
 		{
-			bonusDamage = 0;
 			if (successValue < 7)
 				return;
 
-			SetCritSeverity(successValue, out bonusDamage, out string critSeverity);
+			SetCritSeverity(successValue, ref damage, out string critSeverity);
 
-			string critName = CritName(creaturePart, critSeverity);
+			string critName = CritName(data.AimedPart, critSeverity);
 
-			if (isCritImmune(creatureType, creaturePart))
-				message.AppendLine($"Критическое повреждение не может быть нанесено из-за особенностей существа. " +
-					$"Бонусный урон равен {AddBonusDamage(bonusDamage, critName)}.");
+			if (isCritImmune(data.Target.CreatureType, data.AimedPart))
+			{
+				message.AppendLine($"Критическое повреждение не может быть нанесено из-за особенностей существа.");
+				AddBonusDamage(ref damage, critName);
+			}
+				
 			else
 			{
 				var name = typeof(Crit).GetField(critName).GetValue(critName);
-				message.AppendLine($"Нанесено критическое повреждение {name.ToString()}. Бонусный урон равен {bonusDamage}.");
-
+				message.AppendLine($"Нанесено критическое повреждение {name.ToString()}.");
 			}
 
-			static void SetCritSeverity(int successValue, out int bonusDamage, out string critSeverity)
+			static void SetCritSeverity(int successValue, ref int bonusDamage, out string critSeverity)
 			{
 				if (successValue < 10)
 				{
 					critSeverity = "Simple";
-					bonusDamage = 3;
+					bonusDamage += 3;
 				}
 				else if (successValue < 13)
 				{
 					critSeverity = "Complex";
-					bonusDamage = 5;
+					bonusDamage += 5;
 				}
 				else if (successValue < 15)
 				{
 					critSeverity = "Difficult";
-					bonusDamage = 8;
+					bonusDamage += 8;
 				}
 				else
 				{
 					critSeverity = "Deadly";
-					bonusDamage = 10;
+					bonusDamage += 10;
 				}
 			}
 
@@ -154,7 +239,7 @@ namespace Sindie.ApiService.Core.Logic
 					&& aimedPart.BodyPartTypeId == BodyPartTypes.TorsoId;
 			}
 
-			static int AddBonusDamage(int bonusDamage, string critName)
+			static void AddBonusDamage(ref int bonusDamage, string critName)
 			{
 				if (critName.Equals("SimpleTorso1", StringComparison.OrdinalIgnoreCase))
 					bonusDamage += 5;
@@ -164,111 +249,90 @@ namespace Sindie.ApiService.Core.Logic
 					bonusDamage += 15;
 				else if (critName.Equals("DeadlyTorso1", StringComparison.OrdinalIgnoreCase))
 					bonusDamage += 20;
-				return bonusDamage;
 			}
 		}
 
 		/// <summary>
-		/// Получение монстром урона
+		/// Удаление мертвых существ
 		/// </summary>
-		/// <param name="monster">Монстр</param>
-		/// <param name="aimedPart">Часть тела существа</param>
-		/// <param name="damageValue">Значение урона</param>
-		/// <param name="successValue">Успешность атаки</param>
-		/// <param name="isResistant">Сопротивление урону</param>
-		/// <param name="isVulnerable">Уязвимость к урону</param>
-		/// <returns>Сообщение о результате атаки</returns>
-		public string MonsterSuffer(
-			ref Creature monster,
-			CreaturePart aimedPart,
-			int damageValue,
-			int successValue,
-			bool isResistant,
-			bool isVulnerable)
+		/// <param name="instance"></param>
+		internal static void DisposeCorpses(ref Instance instance)
 		{
-			aimedPart = aimedPart ?? monster.DefaultCreaturePart();
+			instance.Creatures.RemoveAll(x => x.HP == 0);
+		}
 
-			var message = new StringBuilder($"{monster.Name} атакован на {damageValue} в {aimedPart.Name}.");
-
-			if (aimedPart.CurrentArmor > 0)
-			{
-				if (aimedPart.CurrentArmor < damageValue)
-				{
-					damageValue -= aimedPart.CurrentArmor--;
-					message.AppendLine("Броня повреждена");
-				}
-				else
-				{
-					damageValue = 0;
-					message.AppendLine("Броня поглотила урон");
-				}
-			}
 		
-			if (isResistant)
-				damageValue /= 2;
-			if (isVulnerable)
-				damageValue *= 2;
-
-			CheckCrit(message, successValue, aimedPart, out int bonusDamage);
-
-			damageValue += bonusDamage;
-			
-			message.Append($"{monster.Name} получает {damageValue} урона.");
-
-			monster.HP = monster.HP > damageValue
-				? monster.HP - damageValue
-				: 0;
-
-			if (monster.HP == 0)
-				message.Append($"{monster.Name} погибает.");
-			else
-				message.Append($"{monster.Name} остается с {monster.HP} хитов.");
-
-			return message.ToString();
-		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-		public string CreatureAttack(
-			Creature attacker,
-			Creature target,
-			CreaturePart aimedPart,
-			Ability ability,
-			int toHit,
-			int specialToDamage = default)
+		private string CritMissMessage(int attackerFumble)
 		{
-
-			var successValue = _rollService.RollAttack(
-				attackValue: AttackValue(attacker, ability, specialToHit, hitPenalty),
-				defenseValue: DefenseValue(target, ability, ));
-
-
-
-
+			return $"Критический промах {attackerFumble}.";
 		}
 
 		/// <summary>
-		/// Определение базы защиты
+		/// Применить урон
 		/// </summary>
-		/// <param name="defender">Защищающееся существо</param>
-		/// <param name="ability">Способность атаки</param>
-		/// <param name="defensiveParameter">Защитный параметр</param>
-		/// <returns>База защиты</returns>
-		private static int DefenseValue(Creature defender, Ability ability, Parameter defensiveParameter = default)
+		/// <param name="data">Данные для расчета атаки</param>
+		/// <param name="message">Сообщение</param>
+		/// <param name="successValue">Успешность атаки</param>
+		private static void ApplyDamage(ref AttackData data, ref StringBuilder message, int successValue)
 		{
-			defensiveParameter = defensiveParameter == default ? defender.DefaultDefensiveParameter(ability) : defensiveParameter;
-			var result = defender.ParameterBase(defensiveParameter.Id);
-			return result < 0 ? 0 : result;
+			message.AppendLine($"Попадание с превышением на {successValue}.");
+
+			int damage = data.Ability.RollDamage(data.ToDamage);
+
+			ArmorMutigation(ref data, ref damage, ref message);
+
+			CheckModifiers(data, ref damage);
+
+			CheckCrit(data, ref message, successValue, ref damage);
+
+			message.AppendLine($"Нанеcено {damage} урона.");
+			CheckDead(ref data, damage);
 		}
+
+		private static void CheckDead(ref AttackData data, int damage)
+			=> data.Target.HP = data.Target.HP - damage > 0
+							? data.Target.HP - damage
+							: 0;
+
+		private static void ApplyConditions(ref AttackData data, ref StringBuilder message)
+		{
+			foreach (var condition in data.Ability.RollConditions())
+			{
+				data.Target.Conditions.Add(condition);
+				message.AppendLine($"Наложено состояние {condition.Name}.");
+			}
+		}
+
+		private static void ArmorMutigation(ref AttackData data, ref int damage, ref StringBuilder message)
+		{
+			if (data.AimedPart.CurrentArmor == 0)
+				return;
+
+			if (data.AimedPart.CurrentArmor > damage)
+			{
+				damage = 0;
+				message.AppendLine("Броня поглотила урон");
+				return;
+			}
+
+			damage -= data.AimedPart.CurrentArmor--;
+			message.AppendLine($"Броня повреждена. Осталось {data.AimedPart.CurrentArmor} брони");
+			return;
+		}
+
+		private static void CheckModifiers(AttackData data, ref int damage)
+		{
+			if (data.Target.Immunities.Any(x => data.Ability.DamageTypes.All(y => x.Id == y.Id)))
+				damage = 0;
+
+			if (data.Target.Resistances.Any(x => data.Ability.DamageTypes.All(y => x.Id == y.Id)))
+				damage /= 2;
+
+			if (data.Target.Vulnerables.Any(x => data.Ability.DamageTypes.All(y => x.Id == y.Id)))
+				damage *= 2;
+
+			damage = (int)Math.Truncate(damage * data.AimedPart.DamageModifier);
+		}
+
 	}
 }

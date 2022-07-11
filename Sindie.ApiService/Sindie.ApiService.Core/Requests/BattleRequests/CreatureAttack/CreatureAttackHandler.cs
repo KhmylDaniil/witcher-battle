@@ -83,9 +83,12 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 
 			var attack = new Attack(_rollService);
 
+			var attackResult = attack.CreatureAttack(ref attackData);
 
+			Attack.DisposeCorpses(ref instance);
+			await _appDbContext.SaveChangesAsync(cancellationToken);
 
-			throw new NotImplementedException();
+			return new CreatureAttackResponse { Message = attackResult };
 		}
 
 		/// <summary>

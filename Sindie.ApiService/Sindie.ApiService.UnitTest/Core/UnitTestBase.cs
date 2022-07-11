@@ -120,7 +120,8 @@ namespace Sindie.ApiService.UnitTest.Core
 				.Returns<IQueryable<Game>, Guid, Guid>((x, y, z) => x.Where(a => a.Id == y));
 
 			RollService = new Mock<IRollService>();
-			RollService.Setup(x => x.RollAttack(It.IsAny<int>(), It.IsAny<int>()))
+			int z = 0;
+			RollService.Setup(x => x.RollAttack(It.IsAny<int>(), It.IsAny<int>(), out z))
 				.Returns<int, int>((x, y) => x-y);
 		}
 

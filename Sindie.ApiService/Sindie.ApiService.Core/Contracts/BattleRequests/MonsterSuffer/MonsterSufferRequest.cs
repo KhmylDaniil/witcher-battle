@@ -14,9 +14,19 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.MonsterSuffer
 		public Guid InstanceId { get; set; }
 
 		/// <summary>
-		/// Айди существа
+		/// Айди атакующего существа
 		/// </summary>
-		public Guid MonsterId { get; set; }
+		public Guid AttackerId { get; set; }
+
+		/// <summary>
+		/// Айди существа цели
+		/// </summary>
+		public Guid TargetId { get; set; }
+
+		/// <summary>
+		/// Айди способности
+		/// </summary>
+		public Guid AbilityId { get; set; }
 		
 		/// <summary>
 		/// Значение урона
@@ -32,15 +42,5 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.MonsterSuffer
 		/// Превышение попадания
 		/// </summary>
 		public int SuccessValue { get; set; }
-
-		/// <summary>
-		/// Сопротивляемость урону
-		/// </summary>
-		public bool IsResistant { get; set; }
-
-		/// <summary>
-		/// Уязвимость урону
-		/// </summary>
-		public bool IsVulnerable { get; set; }
 	}
 }

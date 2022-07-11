@@ -76,12 +76,12 @@ namespace Sindie.ApiService.WebApi.Controllers
 				? throw new ArgumentNullException(nameof(request))
 				: new MonsterSufferCommand(
 					instanceId: request.InstanceId,
-					monsterId: request.MonsterId,
+					attackerId: request.AttackerId,
+					targetId: request.TargetId,
+					abilityId: request.AbilityId,
 					damageValue: request.DamageValue,
 					successValue: request.SuccessValue,
-					creaturePartId: request.CreaturePartId,
-					isResistant: request.IsResistant,
-					isVulnerable: request.IsVulnerable), cancellationToken);
+					creaturePartId: request.CreaturePartId), cancellationToken);
 		}
 
 		///// <summary>

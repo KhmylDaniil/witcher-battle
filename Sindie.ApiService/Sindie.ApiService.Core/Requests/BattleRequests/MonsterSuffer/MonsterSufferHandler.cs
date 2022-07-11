@@ -55,35 +55,38 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 		public async Task<MonsterSufferResponse> Handle(MonsterSufferCommand request, CancellationToken cancellationToken)
 		{
 			var instance = await _authorizationService.InstanceMasterFilter(_appDbContext.Instances, request.InstanceId)
-				.Include(i => i.Creatures.Where(c => c.Id == request.MonsterId))
+				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureParameters)
 					.ThenInclude(cp => cp.Parameter)
-				.Include(i => i.Creatures.Where(c => c.Id == request.MonsterId))
+				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureParts)
-					.ThenInclude(btp => btp.BodyPartType)
+					.ThenInclude(cp => cp.BodyPartType)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Abilities)
+					.ThenInclude(a => a.AppliedConditions)
+					.ThenInclude(ac => ac.Condition)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Abilities)
+					.ThenInclude(a => a.DamageTypes)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Immunities)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Vulnerables)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Resistances)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Instance>();
 
-			CheckRequest(request, instance);
-
-			var monster = instance.Creatures.FirstOrDefault(x => x.Id == request.MonsterId);
-
-			var aimedPart = request.CreaturePartId == null
-				? null
-				: monster.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId);
+			var data = CheckAndFormData(request, instance);
 
 			var attack = new Attack(_rollService);
 
 			var attackResult = attack.MonsterSuffer(
-				monster: ref monster,
-				aimedPart: aimedPart,
-				damageValue: request.DamageValue,
-				successValue: request.SuccessValue,
-				isResistant: request.IsResistant,
-				isVulnerable: request.IsVulnerable);
+				data: ref data,
+				damage: request.DamageValue,
+				successValue: request.SuccessValue);
 
-			if (monster.HP == 0)
-				instance.Creatures.Remove(monster);
+			Attack.DisposeCorpses(ref instance);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
@@ -96,17 +99,26 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="instance">Инстанс</param>
-		private void CheckRequest(MonsterSufferCommand request, Instance instance)
+		private AttackData CheckAndFormData(MonsterSufferCommand request, Instance instance)
 		{
-			var monster = instance.Creatures.FirstOrDefault(x => x.Id == request.MonsterId)
-				?? throw new ExceptionEntityNotFound<Creature>(request.MonsterId);
+			var attacker = instance.Creatures.FirstOrDefault(x => x.Id == request.AttackerId)
+				?? throw new ExceptionEntityNotFound<Creature>(request.AttackerId);
 
-			if (request.CreaturePartId != null)
-				_ = monster.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId)
-					?? throw new ExceptionEntityNotFound<BodyTemplatePart>(request.CreaturePartId.Value);
+			var target = instance.Creatures.FirstOrDefault(x => x.Id == request.TargetId)
+				?? throw new ExceptionEntityNotFound<Creature>(request.TargetId);
 
-			if (request.IsResistant && request.IsVulnerable)
-				throw new ApplicationException("Одновременные уязвимость и сопротивление урону невозможны");
+			var aimedPart = request.CreaturePartId == null
+				? null
+				: target.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId)
+					?? throw new ExceptionEntityNotFound<CreaturePart>(request.CreaturePartId.Value);
+
+			if (!attacker.Abilities.Any())
+				throw new ApplicationException($"У существа с айди {request.AttackerId} отсутствуют способности, атака невозможна.");
+
+			var ability = attacker.Abilities.FirstOrDefault(x => x.Id == request.AbilityId)
+					?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId);
+
+			return AttackData.CreateData(attacker, target, aimedPart, ability, null, 0, 0);
 		}
 	}
 }
