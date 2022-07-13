@@ -447,7 +447,7 @@ namespace Sindie.ApiService.Core.Entities
 			if (!ability.DefensiveParameters.Any())
 				throw new ApplicationException($"От способности {ability.Name} c айди {ability.Id} нет защиты.");
 
-			var creatureDefensiveParameters = CreatureParameters.Where(x => ability.DefensiveParameters.Any(a => a.Id == x.ParameterId));
+			var creatureDefensiveParameters = CreatureParameters.Where(x => ability.DefensiveParameters.Any(a => a.Id == x.ParameterId)).ToList();
 
 			var sortedList = from x in creatureDefensiveParameters
 							 orderby ParameterBase(x.ParameterId)
@@ -562,7 +562,10 @@ namespace Sindie.ApiService.Core.Entities
 				Conditions = new List<Condition>(),
 				CreatureParameters = new List<CreatureParameter>(),
 				Abilities = new List<Ability>(),
-				CreatureParts = new List<CreaturePart>()
+				CreatureParts = new List<CreaturePart>(),
+				Vulnerables = new List<DamageType>(),
+				Resistances = new List<DamageType>(),
+				Immunities = new List<DamageType>()
 			};
 	}
 }

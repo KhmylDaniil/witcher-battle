@@ -55,10 +55,7 @@ namespace Sindie.ApiService.Core.Logic
 			ApplyDamage(ref data, ref message, successValue);
 
 			if (data.Target.HP == 0)
-			{
-				message.AppendLine($"Существо {data.Target.Name} мертво.");
 				return message.ToString();
-			}
 
 			ApplyConditions(ref data, ref message);
 
@@ -90,7 +87,7 @@ namespace Sindie.ApiService.Core.Logic
 
 			message.AppendLine($"Нанеcено {damage} урона.");
 
-			CheckDead(ref data, damage);
+			CheckDead(ref data, ref message, damage);
 
 			return message.ToString();
 		}
@@ -133,10 +130,7 @@ namespace Sindie.ApiService.Core.Logic
 			ApplyDamage(ref data, ref message, successValue);
 
 			if (data.Target.HP == 0)
-			{
-				message.AppendLine($"Существо {data.Target.Name} мертво.");
 				return message.ToString();
-			}
 
 			ApplyConditions(ref data, ref message);
 
@@ -261,7 +255,6 @@ namespace Sindie.ApiService.Core.Logic
 			instance.Creatures.RemoveAll(x => x.HP == 0);
 		}
 
-		
 		private string CritMissMessage(int attackerFumble)
 		{
 			return $"Критический промах {attackerFumble}.";
@@ -286,13 +279,24 @@ namespace Sindie.ApiService.Core.Logic
 			CheckCrit(data, ref message, successValue, ref damage);
 
 			message.AppendLine($"Нанеcено {damage} урона.");
-			CheckDead(ref data, damage);
+			CheckDead(ref data, ref message, damage);
 		}
 
-		private static void CheckDead(ref AttackData data, int damage)
-			=> data.Target.HP = data.Target.HP - damage > 0
+		/// <summary>
+		/// Проверка смерти
+		/// </summary>
+		/// <param name="data">Данные</param>
+		/// <param name="message">Сообщение</param>
+		/// <param name="damage">Урон</param>
+		private static void CheckDead(ref AttackData data, ref StringBuilder message, int damage)
+		{
+			data.Target.HP = data.Target.HP - damage > 0
 							? data.Target.HP - damage
 							: 0;
+
+			if (data.Target.HP == 0)
+				message.AppendLine($"Существо {data.Target.Name} погибает");
+		}
 
 		private static void ApplyConditions(ref AttackData data, ref StringBuilder message)
 		{
@@ -302,7 +306,6 @@ namespace Sindie.ApiService.Core.Logic
 				message.AppendLine($"Наложено состояние {condition.Name}.");
 			}
 		}
-
 		private static void ArmorMutigation(ref AttackData data, ref int damage, ref StringBuilder message)
 		{
 			if (data.AimedPart.CurrentArmor == 0)
@@ -333,6 +336,5 @@ namespace Sindie.ApiService.Core.Logic
 
 			damage = (int)Math.Truncate(damage * data.AimedPart.DamageModifier);
 		}
-
 	}
 }

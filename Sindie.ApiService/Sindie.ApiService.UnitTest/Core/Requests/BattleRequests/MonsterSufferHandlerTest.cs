@@ -3,10 +3,8 @@ using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
@@ -25,9 +23,13 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly CreaturePart _headPart;
 		private readonly CreaturePart _torsoPart;
+		private readonly Condition _condition;
+		private readonly Parameter _parameter;
 		private readonly CreatureTemplate _creatureTemplate;
+		private readonly Ability _ability;
 		private readonly Creature _creature;
 		private readonly CreatureType _creatureType;
+		private readonly DamageType _damageType;
 
 		/// <summary>
 		/// Тест для <see cref="MonsterSufferHandler"/>
@@ -39,20 +41,39 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_instance = Instance.CreateForTest(game: _game);
 			_torso = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
 			_head = BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName);
-			
+			_condition = Condition.CreateForTest();
+			_damageType = DamageType.CreateForTest();
+
+			_parameter = Parameter.CreateForTest(game: _game);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
 				bodyTemplate: _bodyTemplate,
 				creatureType: _creatureType);
-			
+
+			_ability = Ability.CreateForTest(
+				game: _game,
+				name: "attack",
+				attackDiceQuantity: 1,
+				damageModifier: 1,
+				attackSpeed: 1,
+				accuracy: 1,
+				attackParameter: _parameter,
+				damageTypes: new List<DamageType> { _damageType },
+				defensiveParameters: new List<Parameter> { _parameter });
+			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 50));
+
 			_creature = Creature.CreateForTest(
 				instance: _instance,
 				creatureTemlpate: _creatureTemplate,
 				bodyTemplate: _bodyTemplate,
-				creatureType: _creatureType,
-				hp: 10);
+				creatureType: _creatureType);
+			_creature.Abilities.Add(_ability);
+			_creature.CreatureParameters.Add(CreatureParameter.CreateForTest(
+				creature: _creature,
+				parameter: _parameter,
+				value: 10));
 
 			_headPart = CreaturePart.CreateForTest(
 				creature: _creature,
@@ -70,8 +91,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				hitPenalty: 1,
 				minToHit: 4,
 				maxToHit: 10,
-				startingArmor: 4,
-				currentArmor: 4);
+				currentArmor: 3,
+				startingArmor: 3);
 			_creature.CreatureParts.AddRange(new List<CreaturePart> { _headPart, _torsoPart });
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
@@ -80,9 +101,13 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_bodyTemplate,
 				_torso,
 				_head,
+				_condition,
+				_parameter,
 				_creatureTemplate,
+				_ability,
 				_creature,
-				_creatureType));
+				_creatureType,
+				_damageType));
 		}
 
 		/// <summary>
@@ -96,12 +121,10 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				instanceId: _instance.Id,
 				attackerId: _creature.Id,
 				targetId: _creature.Id,
-
+				abilityId: _ability.Id,
 				damageValue: 10,
 				successValue: 1,
-				creaturePartId: _torsoPart.Id,
-				isResistant: true,
-				isVulnerable: false);
+				creaturePartId: _torsoPart.Id);
 
 			var newHandler = new MonsterSufferHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 
@@ -112,16 +135,15 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			var message = result.Message;
 			Assert.IsNotNull(message);
 			Assert.IsTrue(message.Contains("повреждена"));
-			Assert.IsTrue(message.Contains("7 хитов"));
+			Assert.IsTrue(message.Contains("7 урона"));
 
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
-			Assert.AreEqual(monster.HP, 7);
+			Assert.AreEqual(monster.HP, 3);
 			var torsoPart = monster.CreatureParts.FirstOrDefault(x => x.BodyPartTypeId == _torso.Id);
 			Assert.IsNotNull(torsoPart);
-			Assert.AreEqual(torsoPart.CurrentArmor, 3);
+			Assert.AreEqual(torsoPart.CurrentArmor, 2);
 		}
-
 
 		/// <summary>
 		/// Тест метода Handle - атака монстра
@@ -133,7 +155,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			var request = new MonsterSufferCommand(
 				instanceId: _instance.Id,
 				attackerId: _creature.Id,
-				d
+				targetId: _creature.Id,
+				abilityId: _ability.Id,
 				damageValue: 10,
 				successValue: 1,
 				creaturePartId: _headPart.Id);
