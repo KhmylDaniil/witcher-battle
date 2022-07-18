@@ -6,6 +6,7 @@ using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Infrastructure;
+using Sindie.ApiService.Core.Services.Roll;
 using Sindie.ApiService.Storage.Postgresql;
 using System;
 using System.Collections.Generic;
@@ -70,6 +71,23 @@ namespace Sindie.ApiService.UnitTest.Core
 		protected Mock<IRollService> RollService { get; private set; }
 
 		/// <summary>
+		/// Делегат для мока провала атакующего в броске атаки
+		/// </summary>
+		/// <param name="attackBase">База атаки</param>
+		/// <param name="defenseBase">База защиты</param>
+		/// <param name="fumble">Значение провала</param>
+		private delegate void AttackerFumble(int attackBase, int defenseBase, out int fumble);
+
+		/// <summary>
+		/// Делегат для мока провала в контестном броске
+		/// </summary>
+		/// <param name="attackBase">База атаки</param>
+		/// <param name="defenseBase">База защиты</param>
+		/// <param name="attackerFumble">Провал атакующего</param>
+		/// <param name="defenderFumble">Провал защитника</param>
+		private delegate void ContestedFumble(int attackBase, int defenseBase, out int attackerFumble, out int defenderFumble);
+
+		/// <summary>
 		/// Проверить, есть ли пользак с таким же логином
 		/// </summary>
 		protected HasUsersWithLogin HasUsersWithLogin => (x, y) => false;
@@ -118,10 +136,23 @@ namespace Sindie.ApiService.UnitTest.Core
 			AuthorizationServiceWithGameId
 				.Setup(x => x.RoleGameFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
 				.Returns<IQueryable<Game>, Guid, Guid>((x, y, z) => x.Where(a => a.Id == y));
-
+	
 			RollService = new Mock<IRollService>();
-			RollService.Setup(x => x.RollAttack(It.IsAny<int>(), It.IsAny<int>()))
-				.Returns<int, int>((x, y) => x-y);
+			int attackerFumble = 0;
+			int defenderFumble = 0;
+			RollService.Setup(x => x.RollAttack(It.IsAny<int>(), It.IsAny<int>(), out attackerFumble))
+				.Callback(new AttackerFumble((int a, int d, out int attackerFumble)
+					=> attackerFumble = 0 ))
+				.Returns<int, int, int>((attackBase, defenseBase, attackerFumble) => attackBase - defenseBase);
+
+			RollService.Setup(x => x.ContestRoll(It.IsAny<int>(), It.IsAny<int>(), out attackerFumble, out defenderFumble))
+				.Callback(new ContestedFumble((int a, int d, out int attackerFumble, out int defenderFumble)
+				=>
+				{
+					attackerFumble = 0;
+					defenderFumble = 0;
+				}))
+				.Returns<int, int, int, int>((attackBase, defenseBase, attackerFumble, defenderFumble) => attackBase - defenseBase);
 		}
 
 		/// <summary>

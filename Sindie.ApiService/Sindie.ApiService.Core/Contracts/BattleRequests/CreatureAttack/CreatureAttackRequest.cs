@@ -19,29 +19,33 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack
 		public Guid AttackerId { get; set; }
 
 		/// <summary>
-		/// Айди способности атаки
-		/// </summary>
-		public Guid? AbilityId { get; set; }
-
-		/// <summary>
 		/// Айди цели
 		/// </summary>
 		public Guid TargetCreatureId { get; set; }
 
 		/// <summary>
+		/// Айди способности атаки
+		/// </summary>
+		public Guid? AbilityId { get; set; }
+
+		/// <summary>
 		/// Айди части тела при прицельной атаке
 		/// </summary>
-		public Guid?CreaturePartId { get; set; }
+		public Guid? CreaturePartId { get; set; }
 
+		/// <summary>
+		/// Способ защиты
+		/// </summary>
+		public Guid? DefensiveParameter { get; set; }
 
 		/// <summary>
 		/// Специальный бонус к попаданию
 		/// </summary>
-		public int? SpecialToHit { get; set; }
+		public int SpecialToHit { get; set; }
 
 		/// <summary>
 		/// Специальный бонус к урону
 		/// </summary>
-		public int? SpecialToDamage { get; set; }
+		public int SpecialToDamage { get; set; }
 	}
 }

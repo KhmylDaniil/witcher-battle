@@ -28,6 +28,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly Ability _ability;
 		private readonly Creature _creature;
 		private readonly CreatureType _creatureType;
+		private readonly DamageType _damageType;
 
 		/// <summary>
 		/// Тест для <see cref="MonsterAttackHandler"/>
@@ -40,6 +41,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_torso = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
 			_head = BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName);
 			_condition = Condition.CreateForTest();
+			_damageType = DamageType.CreateForTest();
+
 			_parameter = Parameter.CreateForTest(game: _game);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
@@ -55,7 +58,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				damageModifier: 1,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackParameter: _parameter);
+				attackParameter: _parameter,
+				damageTypes: new List<DamageType> { _damageType },
+				defensiveParameters: new List<Parameter> { _parameter });
 			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 50));
 
 			_creature = Creature.CreateForTest(
@@ -98,7 +103,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_creatureTemplate,
 				_ability,
 				_creature,
-				_creatureType));
+				_creatureType,
+				_damageType));
 		}
 
 		/// <summary>
@@ -115,8 +121,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				targetCreatureId: _creature.Id,
 				creaturePartId: _headPart.Id,
 				defenseValue: 1,
-				specialToHit: null,
-				specialToDamage: null);
+				specialToHit: 0,
+				specialToDamage: 0);
 
 			var newHandler = new MonsterAttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 
@@ -144,8 +150,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				targetCreatureId: _creature.Id,
 				creaturePartId: null,
 				defenseValue: 1,
-				specialToHit: null,
-				specialToDamage: null);
+				specialToHit: 0,
+				specialToDamage: 0);
 
 			var newHandler = new MonsterAttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 

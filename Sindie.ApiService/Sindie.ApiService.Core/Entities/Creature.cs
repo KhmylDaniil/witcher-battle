@@ -431,13 +431,29 @@ namespace Sindie.ApiService.Core.Entities
 			if (!Abilities.Any())
 				throw new ApplicationException($"У существа с айди {Id} отсутствуют способности.");
 
-			if (Abilities.Count == 1)
-				return Abilities[0];
-
 			var sortedAbilities = from a in Abilities
 								orderby a.Accuracy, a.AttackSpeed, a.AttackDiceQuantity, a.DamageModifier
 								select a;
-			return sortedAbilities.FirstOrDefault();
+			return sortedAbilities.First();
+		}
+
+		/// <summary>
+		/// Защитный параметр по умолчанию
+		/// </summary>
+		/// <param name="ability">Способность</param>
+		/// <returns>Защитный параметр существа</returns>
+		internal CreatureParameter DefaultDefensiveParameter(Ability ability)
+		{
+			if (!ability.DefensiveParameters.Any())
+				throw new ApplicationException($"От способности {ability.Name} c айди {ability.Id} нет защиты.");
+
+			var creatureDefensiveParameters = CreatureParameters.Where(x => ability.DefensiveParameters.Any(a => a.Id == x.ParameterId)).ToList();
+
+			var sortedList = from x in creatureDefensiveParameters
+							 orderby ParameterBase(x.ParameterId)
+							 select x;
+
+			return sortedList.First();
 		}
 
 		/// <summary>
@@ -546,7 +562,10 @@ namespace Sindie.ApiService.Core.Entities
 				Conditions = new List<Condition>(),
 				CreatureParameters = new List<CreatureParameter>(),
 				Abilities = new List<Ability>(),
-				CreatureParts = new List<CreaturePart>()
+				CreatureParts = new List<CreaturePart>(),
+				Vulnerables = new List<DamageType>(),
+				Resistances = new List<DamageType>(),
+				Immunities = new List<DamageType>()
 			};
 	}
 }
