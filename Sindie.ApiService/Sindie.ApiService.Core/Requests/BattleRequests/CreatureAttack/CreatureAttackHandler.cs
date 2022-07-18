@@ -8,9 +8,7 @@ using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using Sindie.ApiService.Core.Logic;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -71,11 +69,16 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 					.ThenInclude(c => c.Abilities)
 					.ThenInclude(a => a.DamageTypes)
 				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Abilities)
+					.ThenInclude(a => a.DefensiveParameters)
+				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Immunities)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Vulnerables)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Resistances)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Conditions)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Instance>();
 

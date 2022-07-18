@@ -54,7 +54,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 		/// <param name="target">Существо цель</param>
 		/// <param name="aimedPart">Часть тела цель</param>
 		/// <param name="ability">Атакующая способность</param>
-		/// <param name="defenseParameter">Параметр защиты</param>
+		/// <param name="defensiveParameter">Параметр защиты</param>
 		/// <param name="specialToHit">Специальный бонус к попаданию</param>
 		/// <param name="specialToDamage">Специальный бонус к урону</param>
 		/// <returns>Данные для расчета атаки</returns>
@@ -63,18 +63,28 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 			Creature target,
 			CreaturePart aimedPart,
 			Ability ability,
-			CreatureParameter defenseParameter,
+			CreatureParameter defensiveParameter,
 			int specialToHit,
 			int specialToDamage)
-			=> new AttackData()
+		{
+			ability = ability is null ? attacker.DefaultAbility() : ability;
+			
+			defensiveParameter = defensiveParameter is null ? target.DefaultDefensiveParameter(ability) : defensiveParameter;
+
+			specialToHit = aimedPart is null ? specialToHit : specialToHit - aimedPart.HitPenalty;
+			
+			aimedPart = aimedPart is null ? target.DefaultCreaturePart() : aimedPart;
+			
+			return new AttackData()
 			{
 				Attacker = attacker,
 				Target = target,
-				Ability = ability is null ? attacker.DefaultAbility() : ability,
-				AimedPart = aimedPart is null ? target.DefaultCreaturePart() : aimedPart,
-				DefensiveParameter = defenseParameter is null ? target.DefaultDefensiveParameter(ability) : defenseParameter,
-				ToHit = aimedPart is null ? specialToHit : specialToHit - aimedPart.HitPenalty,
+				Ability = ability,
+				AimedPart = aimedPart,
+				DefensiveParameter = defensiveParameter,
+				ToHit = specialToHit,
 				ToDamage = specialToDamage
 			};
+		}
 	}
 }

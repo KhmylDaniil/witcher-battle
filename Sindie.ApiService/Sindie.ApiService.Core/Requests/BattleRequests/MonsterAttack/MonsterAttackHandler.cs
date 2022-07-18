@@ -76,7 +76,8 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 					.ThenInclude(c => c.Vulnerables)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Resistances)
-				.AsNoTracking()
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Conditions)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Instance>();
 
@@ -87,6 +88,9 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 			var attackResult = attack.MonsterAttack(
 				data: data,
 				defenseValue: request.DefenseValue);
+
+			Attack.DisposeCorpses(ref instance);
+			await _appDbContext.SaveChangesAsync(cancellationToken);
 
 			return new MonsterAttackResponse()
 			{ Message = attackResult};

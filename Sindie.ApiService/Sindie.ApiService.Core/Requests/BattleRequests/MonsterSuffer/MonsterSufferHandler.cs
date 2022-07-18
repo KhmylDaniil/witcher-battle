@@ -77,6 +77,8 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 					.ThenInclude(c => c.Vulnerables)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Resistances)
+				.Include(i => i.Creatures)
+					.ThenInclude(c => c.Conditions)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Instance>();
 
@@ -90,7 +92,6 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 				successValue: request.SuccessValue);
 
 			Attack.DisposeCorpses(ref instance);
-
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
 			return new MonsterSufferResponse()

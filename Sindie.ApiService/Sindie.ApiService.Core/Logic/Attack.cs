@@ -79,30 +79,15 @@ namespace Sindie.ApiService.Core.Logic
 		{
 			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
 
-			ArmorMutigation(ref data, ref damage, ref message);
+			ApplyDamage(ref data, ref message, successValue, damage);
 
-			CheckModifiers(data, ref damage);
+			if (data.Target.HP == 0)
+				return message.ToString();
 
-			CheckCrit(data, ref message, successValue, ref damage);
-
-			message.AppendLine($"Нанеcено {damage} урона.");
-
-			CheckDead(ref data, ref message, damage);
+			ApplyConditions(ref data, ref message);
 
 			return message.ToString();
 		}
-
-
-
-
-
-
-
-
-
-
-
-
 
 		internal string CreatureAttack(ref AttackData data)
 		{
@@ -283,6 +268,28 @@ namespace Sindie.ApiService.Core.Logic
 		}
 
 		/// <summary>
+		/// Применить урон
+		/// </summary>
+		/// <param name="data">Данные для расчета атаки</param>
+		/// <param name="message">Сообщение</param>
+		/// <param name="successValue">Успешность атаки</param>
+		/// <param name="damage">Урон</param>
+		private static void ApplyDamage(ref AttackData data, ref StringBuilder message, int successValue, int damage)
+		{
+			message.AppendLine($"Попадание с превышением на {successValue}.");
+
+			ArmorMutigation(ref data, ref damage, ref message);
+
+			CheckModifiers(data, ref damage);
+
+			CheckCrit(data, ref message, successValue, ref damage);
+
+			message.AppendLine($"Нанеcено {damage} урона.");
+			CheckDead(ref data, ref message, damage);
+		}
+
+
+		/// <summary>
 		/// Проверка смерти
 		/// </summary>
 		/// <param name="data">Данные</param>
@@ -325,9 +332,6 @@ namespace Sindie.ApiService.Core.Logic
 
 		private static void CheckModifiers(AttackData data, ref int damage)
 		{
-			if (data.Target.Immunities.Any(x => data.Ability.DamageTypes.All(y => x.Id == y.Id)))
-				damage = 0;
-
 			if (data.Target.Resistances.Any(x => data.Ability.DamageTypes.All(y => x.Id == y.Id)))
 				damage /= 2;
 
