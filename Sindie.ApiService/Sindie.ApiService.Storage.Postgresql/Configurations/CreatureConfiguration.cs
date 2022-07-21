@@ -14,12 +14,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 		/// </summary>
 		public override void ConfigureChild(EntityTypeBuilder<Creature> builder)
 		{
-			builder.ToTable("Creatures", "GameInstance").
+			builder.ToTable("Creatures", "Battles").
 				HasComment("Существа");
 
-			builder.Property(r => r.InstanceId)
-				.HasColumnName("InstanceId")
-				.HasComment("Айди экземпляра")
+			builder.Property(r => r.BattleId)
+				.HasColumnName("BattleId")
+				.HasComment("Айди боя")
 				.IsRequired();
 
 			builder.Property(r => r.ImgFileId)
@@ -29,11 +29,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			builder.Property(r => r.CreatureTemplateId)
 				.HasColumnName("CreatureTemplateId")
 				.HasComment("Айди шаблона существа")
-				.IsRequired();
-
-			builder.Property(r => r.BodyTemplateId)
-				.HasColumnName("BodyTemplateId")
-				.HasComment("Айди шаблона тела")
 				.IsRequired();
 
 			builder.Property(r => r.Name)
@@ -105,9 +100,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			.HasComment("Удача")
 			.IsRequired();
 
-			builder.HasOne(x => x.Instance)
+			builder.HasOne(x => x.Battle)
 				.WithMany(x => x.Creatures)
-				.HasForeignKey(x => x.InstanceId)
+				.HasForeignKey(x => x.BattleId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
@@ -129,7 +124,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasMany(x => x.CreatureParameters)
+			builder.HasMany(x => x.CreatureSkills)
 				.WithOne(x => x.Creature)
 				.HasForeignKey(x => x.CreatureId)
 				.HasPrincipalKey(x => x.Id)
@@ -137,23 +132,19 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.HasMany(x => x.Abilities)
 				.WithMany(x => x.Creatures)
-				.UsingEntity(x => x.ToTable("CreatureAbilities", "GameInstance"));
+				.UsingEntity(x => x.ToTable("CreatureAbilities", "Battles"));
 
 			builder.HasMany(x => x.Conditions)
 				.WithMany(x => x.Creatures)
-				.UsingEntity(x => x.ToTable("CurrentConditions", "GameInstance"));
+				.UsingEntity(x => x.ToTable("CurrentConditions", "Battles"));
 
 			builder.HasMany(x => x.Vulnerables)
 				.WithMany(x => x.VulnerableCreatures)
-				.UsingEntity(x => x.ToTable("CreatureVulnerables", "GameInstance"));
+				.UsingEntity(x => x.ToTable("CreatureVulnerables", "Battles"));
 
 			builder.HasMany(x => x.Resistances)
 				.WithMany(x => x.ResistantCreatures)
-				.UsingEntity(x => x.ToTable("CreatureResistances", "GameInstance"));
-
-			builder.HasMany(x => x.Immunities)
-				.WithMany(x => x.ImmuneCreatures)
-				.UsingEntity(x => x.ToTable("CreatureImmunities", "GameInstance"));
+				.UsingEntity(x => x.ToTable("CreatureResistances", "Battles"));
 
 			builder.HasMany(x => x.CreatureParts)
 				.WithOne(x => x.Creature)
@@ -161,9 +152,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			var instanceNavigation = builder.Metadata.FindNavigation(nameof(Creature.Instance));
-			instanceNavigation.SetField(Creature.InstanceField);
-			instanceNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+			var battleNavigation = builder.Metadata.FindNavigation(nameof(Creature.Battle));
+			battleNavigation.SetField(Creature.BattleField);
+			battleNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
 			var imgFileNavigation = builder.Metadata.FindNavigation(nameof(Creature.ImgFile));
 			imgFileNavigation.SetField(Creature.ImgFileField);
@@ -172,10 +163,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			var creatureTemplateNavigation = builder.Metadata.FindNavigation(nameof(Creature.CreatureTemplate));
 			creatureTemplateNavigation.SetField(Creature.CreatureTemplateField);
 			creatureTemplateNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
-
-			var bodyTemplateNavigation = builder.Metadata.FindNavigation(nameof(Creature.BodyTemplate));
-			bodyTemplateNavigation.SetField(Creature.BodyTemplateField);
-			bodyTemplateNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
 			var creatureTypeNavigation = builder.Metadata.FindNavigation(nameof(Creature.CreatureType));
 			creatureTypeNavigation.SetField(Creature.CreatureTypeField);

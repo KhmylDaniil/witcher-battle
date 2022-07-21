@@ -34,7 +34,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.HasIndex("CreaturesId");
 
-                    b.ToTable("CreatureAbilities", "GameInstance");
+                    b.ToTable("CreatureAbilities", "Battles");
                 });
 
             modelBuilder.Entity("AbilityCreatureTemplate", b =>
@@ -67,19 +67,19 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.ToTable("AbilityDamageTypes", "GameRules");
                 });
 
-            modelBuilder.Entity("AbilityParameter", b =>
+            modelBuilder.Entity("AbilitySkill", b =>
                 {
                     b.Property<Guid>("AbilitiesForDefenseId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("DefensiveParametersId")
+                    b.Property<Guid>("DefensiveSkillsId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("AbilitiesForDefenseId", "DefensiveParametersId");
+                    b.HasKey("AbilitiesForDefenseId", "DefensiveSkillsId");
 
-                    b.HasIndex("DefensiveParametersId");
+                    b.HasIndex("DefensiveSkillsId");
 
-                    b.ToTable("DefensiveParameters", "GameRules");
+                    b.ToTable("DefensiveSkills", "GameRules");
                 });
 
             modelBuilder.Entity("ConditionCreature", b =>
@@ -94,7 +94,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.HasIndex("CreaturesId");
 
-                    b.ToTable("CurrentConditions", "GameInstance");
+                    b.ToTable("CurrentConditions", "Battles");
                 });
 
             modelBuilder.Entity("CreatureDamageType", b =>
@@ -109,7 +109,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.HasIndex("VulnerablesId");
 
-                    b.ToTable("CreatureVulnerables", "GameInstance");
+                    b.ToTable("CreatureVulnerables", "Battles");
                 });
 
             modelBuilder.Entity("CreatureDamageType1", b =>
@@ -124,22 +124,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.HasIndex("ResistantCreaturesId");
 
-                    b.ToTable("CreatureResistances", "GameInstance");
-                });
-
-            modelBuilder.Entity("CreatureDamageType2", b =>
-                {
-                    b.Property<Guid>("ImmuneCreaturesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ImmunitiesId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ImmuneCreaturesId", "ImmunitiesId");
-
-                    b.HasIndex("ImmunitiesId");
-
-                    b.ToTable("CreatureImmunities", "GameInstance");
+                    b.ToTable("CreatureResistances", "Battles");
                 });
 
             modelBuilder.Entity("CreatureTemplateDamageType", b =>
@@ -170,21 +155,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasIndex("ResistantCreatureTemplatesId");
 
                     b.ToTable("CreatureTemplateResistances", "GameRules");
-                });
-
-            modelBuilder.Entity("CreatureTemplateDamageType2", b =>
-                {
-                    b.Property<Guid>("ImmuneCreatureCreatureTemplatesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ImmunitiesId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ImmuneCreatureCreatureTemplatesId", "ImmunitiesId");
-
-                    b.HasIndex("ImmunitiesId");
-
-                    b.ToTable("CreatureTemplateImmunities", "GameRules");
                 });
 
             modelBuilder.Entity("GameImgFile", b =>
@@ -232,21 +202,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.ToTable("ImgFileUser", "System");
                 });
 
-            modelBuilder.Entity("NotificationUser", b =>
-                {
-                    b.Property<Guid>("NotificationsId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ReceiversId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("NotificationsId", "ReceiversId");
-
-                    b.HasIndex("ReceiversId");
-
-                    b.ToTable("UserNotications", "Notifications");
-                });
-
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Ability", b =>
                 {
                     b.Property<Guid>("Id")
@@ -264,10 +219,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("AttackDiceQuantity")
                         .HasComment("Количество кубов атаки");
 
-                    b.Property<Guid>("AttackParameterId")
+                    b.Property<Guid>("AttackSkillId")
                         .HasColumnType("uuid")
-                        .HasColumnName("AttackParameterId")
-                        .HasComment("Параметр атаки");
+                        .HasColumnName("AttackSkillId")
+                        .HasComment("Навык атаки");
 
                     b.Property<int>("AttackSpeed")
                         .HasColumnType("integer")
@@ -317,289 +272,13 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AttackParameterId");
+                    b.HasIndex("AttackSkillId");
 
                     b.HasIndex("GameId");
 
                     b.ToTable("Abilities", "GameRules");
 
                     b.HasComment("Способности");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Action", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("Description")
-                        .HasComment("Описание действия");
-
-                    b.Property<Guid>("InteractionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("InteractionId")
-                        .HasComment("Айди взаимодействия для деятельности");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название действия");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ScenarioActionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScenarioActionId")
-                        .HasComment("Айди сценария действия во взаимодействии");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InteractionId");
-
-                    b.HasIndex("ScenarioActionId")
-                        .IsUnique();
-
-                    b.ToTable("Actions", "InteractionRules");
-
-                    b.HasComment("Действия");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ActiveCycle", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<DateTime>("ActivationBeginning")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ActivationBeginning")
-                        .HasComment("Начало цикла активности");
-
-                    b.Property<DateTime>("ActivationEnd")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ActivationEnd")
-                        .HasComment("Конец цикла активности");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ModifierScriptId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ModifierScriptId")
-                        .HasComment("Айди скрипта модификатора");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ModifierScriptId");
-
-                    b.ToTable("ActiveCycles", "GameRules");
-
-                    b.HasComment("Скрипты модифкатора");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Activity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("ApplicationAreaId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ApplicationAreaId")
-                        .HasComment("Айди области применения для деятельности");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("Description")
-                        .HasComment("Описание деятельности");
-
-                    b.Property<Guid?>("ImgFileId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ImgFileId")
-                        .HasComment("Айди графического файла для деятельности");
-
-                    b.Property<Guid>("InteractionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("InteractionId")
-                        .HasComment("Айди взаимодействия для деятельности");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название деятельности");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationAreaId");
-
-                    b.HasIndex("ImgFileId")
-                        .IsUnique();
-
-                    b.HasIndex("InteractionId");
-
-                    b.ToTable("Activities", "InteractionRules");
-
-                    b.HasComment("Деятельности");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ActivityAction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("ActionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ActionId")
-                        .HasComment("Айди действия");
-
-                    b.Property<Guid>("ActivityId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ActivityId")
-                        .HasComment("Айди деятельности");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer")
-                        .HasColumnName("Order")
-                        .HasComment("Порядок действий");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActionId");
-
-                    b.HasIndex("ActivityId");
-
-                    b.ToTable("ActivityActions", "InteractionRules");
-
-                    b.HasComment("Действия деятельности");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ApplicationArea", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("Description")
-                        .HasComment("Описание описание области применения");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название области применения");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ApplicationAreas", "InteractionRules");
-
-                    b.HasComment("Области применения");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.AppliedCondition", b =>
@@ -655,70 +334,17 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasComment("Применяемые состояния");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Article", b =>
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Battle", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
 
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
+                    b.Property<DateTime?>("ActivationTime")
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("GameId")
-                        .HasComment("Айди игры");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Text")
-                        .HasComment("Текст");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("Articles", "System");
-
-                    b.HasComment("Статьи");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Bag", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid?>("CharacterId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("CharacterId")
-                        .HasComment("Айди персонажа");
+                        .HasColumnName("ActivationTime")
+                        .HasComment("Время активации боя");
 
                     b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
@@ -731,25 +357,17 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text")
                         .HasColumnName("Description")
-                        .HasComment("Описание сумки");
+                        .HasComment("Описание боя");
+
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("GameId")
+                        .HasComment("Айди игры");
 
                     b.Property<Guid?>("ImgFileId")
                         .HasColumnType("uuid")
                         .HasColumnName("ImgFileId")
                         .HasComment("Айди графического файла");
-
-                    b.Property<Guid>("InstanceId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("InstanceId")
-                        .HasComment("Айди экземпляра игры");
-
-                    b.Property<int?>("MaxBagSize")
-                        .HasColumnType("integer")
-                        .HasColumnName("MaxBagSize")
-                        .HasComment("Максимальный размер сумки");
-
-                    b.Property<double?>("MaxWeight")
-                        .HasColumnType("double precision");
 
                     b.Property<Guid>("ModifiedByUserId")
                         .HasColumnType("uuid");
@@ -761,7 +379,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("Name")
-                        .HasComment("Название сумки");
+                        .HasComment("Название боя");
 
                     b.Property<string>("RoleCreatedUser")
                         .HasColumnType("text");
@@ -769,147 +387,23 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Property<string>("RoleModifiedUser")
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("UserGameActivatedId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("UserGameActivatedId")
+                        .HasComment("Айди активировавшего игру пользователя");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CharacterId")
-                        .IsUnique();
+                    b.HasIndex("GameId");
 
                     b.HasIndex("ImgFileId")
                         .IsUnique();
 
-                    b.HasIndex("InstanceId");
+                    b.HasIndex("UserGameActivatedId");
 
-                    b.ToTable("Bags", "GameInstance");
+                    b.ToTable("Battles", "Battles");
 
-                    b.HasComment("Сумки");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BagItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("BagId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("BagId")
-                        .HasComment("Айди сумки");
-
-                    b.Property<int>("Blocked")
-                        .HasColumnType("integer")
-                        .HasColumnName("Blocked")
-                        .HasComment("Заблокировано");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ItemId")
-                        .HasComment("Айди предмета");
-
-                    b.Property<int>("MaxQuantityItem")
-                        .HasColumnType("integer")
-                        .HasColumnName("MaxQuantityItem")
-                        .HasComment("Максимальное количество в стаке");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("QuantityItem")
-                        .HasColumnType("integer")
-                        .HasColumnName("QuantityItem")
-                        .HasComment("Количество предметов в стеке");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Stack")
-                        .HasColumnType("integer")
-                        .HasColumnName("Stack")
-                        .HasComment("Стек");
-
-                    b.Property<double>("Weight")
-                        .HasColumnType("double precision")
-                        .HasColumnName("Weight")
-                        .HasComment("Вес");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BagId");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("BagItems", "GameInstance");
-
-                    b.HasComment("Предметы в сумке");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Body", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CharacterId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("CharacterId")
-                        .HasComment("Айди персонажа");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid?>("ItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ItemId")
-                        .HasComment("Айди предмета");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("SlotId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("SlotId")
-                        .HasComment("Айди слота");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CharacterId");
-
-                    b.HasIndex("ItemId");
-
-                    b.HasIndex("SlotId");
-
-                    b.ToTable("Bodies", "GameInstance");
-
-                    b.HasComment("Тела");
+                    b.HasComment("Экземпляры");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyPart", b =>
@@ -1150,366 +644,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasComment("Шаблоны тел");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Character", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<DateTime?>("ActivationTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ActivationTime")
-                        .HasComment("Время активации персонажа");
-
-                    b.Property<Guid?>("BagId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("BagId")
-                        .HasComment("Айди сумки");
-
-                    b.Property<Guid?>("CharacterTemplateId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("CharacterTemplateId")
-                        .HasComment("Айди шаблона персонажа");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("Description")
-                        .HasComment("Описание персонажа");
-
-                    b.Property<Guid?>("ImgFileId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ImgFileId")
-                        .HasComment("Айди графического файла");
-
-                    b.Property<Guid>("InstanceId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("InstanceId")
-                        .HasComment("Айди экземпляра игры");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Имя персонажа");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("TextFileId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("TextFileId")
-                        .HasComment("Айди текстового файла");
-
-                    b.Property<Guid?>("UserGameActivatedId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("UserGameActivatedId")
-                        .HasComment("Айди активировашего персонажа пользователя");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BagId")
-                        .IsUnique();
-
-                    b.HasIndex("CharacterTemplateId");
-
-                    b.HasIndex("ImgFileId")
-                        .IsUnique();
-
-                    b.HasIndex("InstanceId");
-
-                    b.HasIndex("TextFileId")
-                        .IsUnique();
-
-                    b.HasIndex("UserGameActivatedId")
-                        .IsUnique();
-
-                    b.ToTable("Characters", "GameInstance");
-
-                    b.HasComment("Персонажи");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CharacterModifier", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CharacterId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("CharacterId")
-                        .HasComment("Айди персонажа");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ModifierId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ModifierId")
-                        .HasComment("Айди модификатора");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CharacterId");
-
-                    b.HasIndex("ModifierId");
-
-                    b.ToTable("CharacterModifiers", "GameInstance");
-
-                    b.HasComment("Модификаторы персонажа");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CharacterParameter", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CharacterId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("CharacterId")
-                        .HasComment("Айди персонажа");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ParameterId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ParameterId")
-                        .HasComment("Айди параметра");
-
-                    b.Property<double>("ParameterValue")
-                        .HasColumnType("double precision")
-                        .HasColumnName("ParametrValue")
-                        .HasComment("Значение параметра");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CharacterId");
-
-                    b.HasIndex("ParameterId");
-
-                    b.ToTable("CharacterParameters", "GameInstance");
-
-                    b.HasComment("Параметры персонажа");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CharacterTemplate", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("Description")
-                        .HasComment("Описание шаблона");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("GameId")
-                        .HasComment("Айди игры");
-
-                    b.Property<Guid?>("ImgFileId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ImgFileId")
-                        .HasComment("Айди графического файла");
-
-                    b.Property<Guid?>("InterfaceId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("InterfaceId")
-                        .HasComment("Айди интерфейса");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название шаблона");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("ImgFileId")
-                        .IsUnique();
-
-                    b.HasIndex("InterfaceId");
-
-                    b.ToTable("CharacterTemplates", "GameRules");
-
-                    b.HasComment("Шаблоны персонажей");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CharacterTemplateModifier", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CharacterTemplateId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("CharacterTemplateId")
-                        .HasComment("Айди шаблона персонажа");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ModifierId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ModifierId")
-                        .HasComment("Айди модификатора");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CharacterTemplateId");
-
-                    b.HasIndex("ModifierId");
-
-                    b.ToTable("CharacterTemplateModifiers", "GameRules");
-
-                    b.HasComment("Модификаторы шаблонов персонажей");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CharacterTemplateSlot", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CharacterTemplateId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("CharacterTemplateId")
-                        .HasComment("Айди шаблона персонажа");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("SlotId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("SlotId")
-                        .HasComment("Айди слота");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CharacterTemplateId");
-
-                    b.HasIndex("SlotId");
-
-                    b.ToTable("CharacterTemplateSlots", "GameRules");
-
-                    b.HasComment("Слоты шаблона персонажа");
-                });
-
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Condition", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1581,15 +715,15 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
 
+                    b.Property<Guid>("BattleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("BattleId")
+                        .HasComment("Айди боя");
+
                     b.Property<int>("Body")
                         .HasColumnType("integer")
                         .HasColumnName("Body")
                         .HasComment("Телосложение");
-
-                    b.Property<Guid>("BodyTemplateId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("BodyTemplateId")
-                        .HasComment("Айди шаблона тела");
 
                     b.Property<int>("Cra")
                         .HasColumnType("integer")
@@ -1638,11 +772,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("ImgFileId")
                         .HasComment("Айди графического файла");
-
-                    b.Property<Guid>("InstanceId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("InstanceId")
-                        .HasComment("Айди экземпляра");
 
                     b.Property<int>("Int")
                         .HasColumnType("integer")
@@ -1694,7 +823,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BodyTemplateId");
+                    b.HasIndex("BattleId");
 
                     b.HasIndex("CreatureTemplateId");
 
@@ -1703,14 +832,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasIndex("ImgFileId")
                         .IsUnique();
 
-                    b.HasIndex("InstanceId");
-
-                    b.ToTable("Creatures", "GameInstance");
+                    b.ToTable("Creatures", "Battles");
 
                     b.HasComment("Существа");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureParameter", b =>
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureSkill", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1736,21 +863,21 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("ParameterId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ParameterId")
-                        .HasComment("Айди параметра");
-
-                    b.Property<int>("ParameterValue")
-                        .HasColumnType("integer")
-                        .HasColumnName("ParametrValue")
-                        .HasComment("Значение параметра");
-
                     b.Property<string>("RoleCreatedUser")
                         .HasColumnType("text");
 
                     b.Property<string>("RoleModifiedUser")
                         .HasColumnType("text");
+
+                    b.Property<Guid>("SkillId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("SkillId")
+                        .HasComment("Айди навыка");
+
+                    b.Property<int>("SkillValue")
+                        .HasColumnType("integer")
+                        .HasColumnName("SkillValue")
+                        .HasComment("Значение навыка");
 
                     b.Property<string>("StatName")
                         .HasColumnType("text")
@@ -1761,9 +888,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.HasIndex("CreatureId");
 
-                    b.HasIndex("ParameterId");
+                    b.HasIndex("SkillId");
 
-                    b.ToTable("CreatureParameters", "GameInstance");
+                    b.ToTable("CreatureParameters", "Battles");
 
                     b.HasComment("Параметры существа");
                 });
@@ -1897,7 +1024,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasComment("Шаблоны существ");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplateParameter", b =>
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplateSkill", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1923,21 +1050,21 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("ParameterId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ParameterId")
-                        .HasComment("Айди параметра");
-
-                    b.Property<int>("ParameterValue")
-                        .HasColumnType("integer")
-                        .HasColumnName("ParametrValue")
-                        .HasComment("Значение параметра");
-
                     b.Property<string>("RoleCreatedUser")
                         .HasColumnType("text");
 
                     b.Property<string>("RoleModifiedUser")
                         .HasColumnType("text");
+
+                    b.Property<Guid>("SkillId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("SkillId")
+                        .HasComment("Айди навыка");
+
+                    b.Property<int>("SkillValue")
+                        .HasColumnType("integer")
+                        .HasColumnName("SkillValue")
+                        .HasComment("Значение навыка");
 
                     b.Property<string>("StatName")
                         .HasColumnType("text")
@@ -1948,9 +1075,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.HasIndex("CreatureTemplateId");
 
-                    b.HasIndex("ParameterId");
+                    b.HasIndex("SkillId");
 
-                    b.ToTable("CreatureTemplateParameters", "GameInstance");
+                    b.ToTable("CreatureTemplateParameters", "GameRules");
 
                     b.HasComment("Параметры шаблона существа");
                 });
@@ -2340,9 +1467,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         {
                             Id = new Guid("8094e0d0-3147-4791-9053-9667cbe127d7"),
                             CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = "MainMaster",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default"
@@ -2351,9 +1478,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         {
                             Id = new Guid("8094e0d0-3147-4791-9053-9667cbe117d7"),
                             CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = "Master",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default"
@@ -2362,9 +1489,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         {
                             Id = new Guid("8094e0d0-3148-4791-9053-9667cbe137d8"),
                             CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = "Player",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default"
@@ -2422,416 +1549,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasComment("Графические файлы");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Instance", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<DateTime?>("ActivationTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ActivationTime")
-                        .HasComment("Время активации экземпляра");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<DateTime?>("DateOfGame")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("DateOfGame")
-                        .HasComment("Дата проведения игры");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("Description")
-                        .HasComment("Описание экземпляра");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("GameId")
-                        .HasComment("Айди игры");
-
-                    b.Property<Guid?>("ImgFileId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ImgFileId")
-                        .HasComment("Айди графического файла");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название экземпляра");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("StoryAboutRules")
-                        .HasColumnType("text")
-                        .HasColumnName("StoryAboutRules")
-                        .HasComment("Описание правил игры");
-
-                    b.Property<Guid?>("UserGameActivatedId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("UserGameActivatedId")
-                        .HasComment("Айди активировавшего игру пользователя");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("ImgFileId")
-                        .IsUnique();
-
-                    b.HasIndex("UserGameActivatedId");
-
-                    b.ToTable("Instances", "GameInstance");
-
-                    b.HasComment("Экземпляры");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Interaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<bool>("CanGiveUp")
-                        .HasColumnType("boolean")
-                        .HasColumnName("CanGiveUp")
-                        .HasComment("Можно ли выйти из взаимодействия");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("Description")
-                        .HasComment("Описание описание взаимодействия");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("GameId")
-                        .HasComment("Айди игры");
-
-                    b.Property<Guid?>("ImgFileId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ImgFileId")
-                        .HasComment("Айди графического файла");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название взаимодействия");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<int>("RoundLimit")
-                        .HasColumnType("integer")
-                        .HasColumnName("RoundLimit")
-                        .HasComment("Максимальное количество раундов взаимодействия");
-
-                    b.Property<Guid?>("ScenarioLootId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScenarioLootId")
-                        .HasComment("Айди сценария лута во взаимодействии");
-
-                    b.Property<Guid?>("ScenarioReturnId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScenarioReturnId")
-                        .HasComment("Айди сценария завершения взаимодействия");
-
-                    b.Property<Guid?>("ScenarioVictoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScenarioVictoryId")
-                        .HasComment("Айди сценария победы во взаимодействии");
-
-                    b.Property<Guid?>("TextFileId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("TextFileId")
-                        .HasComment("Айди текстового файла");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("ImgFileId")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.HasIndex("ScenarioLootId");
-
-                    b.HasIndex("ScenarioReturnId");
-
-                    b.HasIndex("ScenarioVictoryId");
-
-                    b.HasIndex("TextFileId")
-                        .IsUnique();
-
-                    b.ToTable("Interactions", "InteractionRules");
-
-                    b.HasComment("Взаимодействия");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.InteractionItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("ActivityId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ActivityId")
-                        .HasComment("Айди деятельности во взаимодействии");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<int>("ExpendQuantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("ExpendQuantity")
-                        .HasComment("Максимальное количество применений");
-
-                    b.Property<Guid>("InteractionsRoleId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("InteractionsRoleId")
-                        .HasComment("Айди роли взаимодействия");
-
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ItemId")
-                        .HasComment("Айди предмета во взаимодействии");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActivityId");
-
-                    b.HasIndex("InteractionsRoleId");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("InteractionItems", "InteractionRules");
-
-                    b.HasComment("Предметы во взаимодействии");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.InteractionsRole", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("Description")
-                        .HasComment("Описание роли");
-
-                    b.Property<Guid?>("ImgFileId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ImgFileId")
-                        .HasComment("Айди графического файла для роли");
-
-                    b.Property<Guid>("InteractionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("InteractionId")
-                        .HasComment("Айди взаимодействия для роли");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название роли");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ScenarioCharacteristicsId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScenarioCharacteristicsId")
-                        .HasComment("Сценарий характеристик роли");
-
-                    b.Property<Guid>("ScenarioInitiativeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScenarioInitiativeId")
-                        .HasComment("Сценарий инициативы роли");
-
-                    b.Property<Guid>("ScenarioLootId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScenarioLootId")
-                        .HasComment("Айди сценария лута во взаимодействии для роли");
-
-                    b.Property<Guid>("ScenarioPrerequisitesId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScenarioPrerequisites")
-                        .HasComment("Сценарий пререквизитов к роли");
-
-                    b.Property<Guid?>("ScenarioReturnId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScenarioReturnId")
-                        .HasComment("Айди сценария завершения взаимодействия для роли");
-
-                    b.Property<Guid>("ScenarioVictoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScenarioVictoryId")
-                        .HasComment("Айди сценария победы во взаимодействии для роли");
-
-                    b.Property<Guid?>("TextFileId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("TextFileId")
-                        .HasComment("Айди текстового файла для роли");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ImgFileId")
-                        .IsUnique();
-
-                    b.HasIndex("InteractionId");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.HasIndex("ScenarioCharacteristicsId");
-
-                    b.HasIndex("ScenarioInitiativeId");
-
-                    b.HasIndex("ScenarioLootId");
-
-                    b.HasIndex("ScenarioPrerequisitesId");
-
-                    b.HasIndex("ScenarioReturnId");
-
-                    b.HasIndex("ScenarioVictoryId");
-
-                    b.HasIndex("TextFileId")
-                        .IsUnique();
-
-                    b.ToTable("InteractionsRoles", "InteractionRules");
-
-                    b.HasComment("Роли во взаимодействии");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.InteractionsRoleActivity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("ActivityId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ActivityId")
-                        .HasComment("Айди деятельности");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid>("InteractionsRoleId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("InteractionsRoleId")
-                        .HasComment("Айди роли взаимодействия");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("Order")
-                        .HasColumnType("integer")
-                        .HasColumnName("Order")
-                        .HasComment("Порядок деятельности");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActivityId");
-
-                    b.HasIndex("InteractionsRoleId");
-
-                    b.ToTable("InteractionsRoleActivities", "InteractionRules");
-
-                    b.HasComment("Деятельности роли взаимодействия");
-                });
-
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Interface", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2885,9 +1602,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         {
                             Id = new Guid("8094e0d0-3137-4791-9053-9667cbe107d7"),
                             CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = "SystemDarkTheme",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
@@ -2897,9 +1614,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         {
                             Id = new Guid("8094e0d0-3137-4791-9053-9667cbe107d8"),
                             CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = " SystemLightTheme",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
@@ -2909,9 +1626,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         {
                             Id = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
                             CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = "GameDarkTheme",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
@@ -2921,9 +1638,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         {
                             Id = new Guid("8094e0d0-3137-4791-9053-9667cbe107d9"),
                             CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = "GameLightTheme",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
@@ -2933,9 +1650,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         {
                             Id = new Guid("8094e0d0-3137-4791-9053-9667cbe107d5"),
                             CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = "CharacterDarkTheme",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
@@ -2945,9 +1662,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         {
                             Id = new Guid("8094e0d0-3137-4791-9053-9667cbe107d0"),
                             CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = "CharacterLightTheme",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
@@ -2955,7 +1672,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ItemTemplate", b =>
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Skill", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -2973,231 +1690,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text")
                         .HasColumnName("Description")
-                        .HasComment("Описание");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("GameId")
-                        .HasComment("Айди игры");
-
-                    b.Property<Guid?>("ImgFileId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ImgFileId")
-                        .HasComment("Айди графического файла");
-
-                    b.Property<int>("MaxQuantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("MaxQuantity")
-                        .HasComment("Максимальное количество в стаке");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<double>("Weight")
-                        .HasColumnType("double precision")
-                        .HasColumnName("Weight")
-                        .HasComment("Вес");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("ImgFileId")
-                        .IsUnique();
-
-                    b.ToTable("ItemTemplates", "GameRules");
-
-                    b.HasComment("Шаблоны предметов");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ItemTemplateModifier", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid>("ItemTemplateId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ItemTemplateId")
-                        .HasComment("Айди шаблона предмета");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ModifierId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ModifierId")
-                        .HasComment("Айди модификатора");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemTemplateId");
-
-                    b.HasIndex("ModifierId");
-
-                    b.ToTable("ItemTemplateModifiers", "GameRules");
-
-                    b.HasComment("Модификаторы шаблонов предметов");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ModifierScript", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid?>("EventId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("EventId")
-                        .HasComment("Айди события");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ModifierId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ModifierId")
-                        .HasComment("Айди модификатора");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ScriptId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScriptId")
-                        .HasComment("Айди скрипта");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventId");
-
-                    b.HasIndex("ModifierId");
-
-                    b.HasIndex("ScriptId");
-
-                    b.ToTable("ModifierScripts", "GameRules");
-
-                    b.HasComment("Скрипты модифкатора");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Notification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<int>("Duration")
-                        .HasColumnType("integer")
-                        .HasColumnName("Duration")
-                        .HasComment("Длительность существования в минутах");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Message")
-                        .HasComment("Сообщение");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Notifications", "Notifications");
-
-                    b.HasComment("Уведомления");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Parameter", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("Description")
-                        .HasComment("Описание параметра");
+                        .HasComment("Описание навыка");
 
                     b.Property<Guid>("GameId")
                         .HasColumnType("uuid")
@@ -3214,7 +1707,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("Name")
-                        .HasComment("Название параметра");
+                        .HasComment("Название навыка");
 
                     b.Property<string>("RoleCreatedUser")
                         .HasColumnType("text");
@@ -3231,345 +1724,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("Parameters", "GameRules");
+                    b.ToTable("Skills", "GameRules");
 
-                    b.HasComment("Параметры");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Party", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("Description")
-                        .HasComment("Описание стороны");
-
-                    b.Property<Guid?>("ImgFileId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ImgFileId")
-                        .HasComment("Айди графического файла для стороны");
-
-                    b.Property<Guid>("InteractionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("InteractionId")
-                        .HasComment("Айди взаимодействия для стороны");
-
-                    b.Property<int>("MaxQuantityCharacters")
-                        .HasColumnType("integer")
-                        .HasColumnName("MaxQuantityCharacters")
-                        .HasComment("Максимальное количество персонажей");
-
-                    b.Property<int>("MinQuantityCharacters")
-                        .HasColumnType("integer")
-                        .HasColumnName("MinQuantityCharacters")
-                        .HasComment("Минимальное количество персонажей");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название стороны");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("ScenarioLootId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScenarioLootId")
-                        .HasComment("Айди сценария лута во взаимодействии для стороны");
-
-                    b.Property<Guid?>("ScenarioReturnId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScenarioReturnId")
-                        .HasComment("Айди сценария завершения взаимодействия для стороны");
-
-                    b.Property<Guid?>("ScenarioVictoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScenarioVictoryId")
-                        .HasComment("Айди сценария победы во взаимодействии для стороны");
-
-                    b.Property<Guid?>("TextFileId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("TextFileId")
-                        .HasComment("Айди текстового файла для стороны");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ImgFileId")
-                        .IsUnique();
-
-                    b.HasIndex("InteractionId");
-
-                    b.HasIndex("ScenarioLootId");
-
-                    b.HasIndex("ScenarioReturnId");
-
-                    b.HasIndex("ScenarioVictoryId");
-
-                    b.HasIndex("TextFileId")
-                        .IsUnique();
-
-                    b.ToTable("Parties", "InteractionRules");
-
-                    b.HasComment("Стороны");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.PartyInteractionsRole", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid>("InteractionsRoleId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("InteractionsRoleId")
-                        .HasComment("Айди роли взаимодействия");
-
-                    b.Property<int?>("MaxQuantityCharacters")
-                        .HasColumnType("integer")
-                        .HasColumnName("MaxQuantityCharacters")
-                        .HasComment("Максимальное количество персонажей");
-
-                    b.Property<int?>("MinQuantityCharacters")
-                        .HasColumnType("integer")
-                        .HasColumnName("MinQuantityCharacters")
-                        .HasComment("Минимальное количество персонажей");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("PartyId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("PartyId")
-                        .HasComment("Айди стороны");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InteractionsRoleId");
-
-                    b.HasIndex("PartyId");
-
-                    b.ToTable("PartyInteractionsRoles", "InteractionRules");
-
-                    b.HasComment("Роли стороны");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Prerequisite", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("Description")
-                        .HasComment("Описание");
-
-                    b.Property<Guid?>("ImgFileId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ImgFileId")
-                        .HasComment("Айди графического файла пререквизита");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ImgFileId")
-                        .IsUnique();
-
-                    b.ToTable("Prerequisites", "GameRules");
-
-                    b.HasComment("Пререквизиты");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Script", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<string>("BodyScript")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("BodyScript")
-                        .HasComment("Тело скрипта");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("Description")
-                        .HasComment("Описание");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("GameId")
-                        .HasComment("Айди игры");
-
-                    b.Property<bool>("IsValid")
-                        .HasColumnType("boolean")
-                        .HasColumnName("IsValid")
-                        .HasComment("Валидность скрипта");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Name")
-                        .HasComment("Название");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ValidationText")
-                        .HasColumnType("text")
-                        .HasColumnName("ValidationText")
-                        .HasComment("Валидационный текст");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("Scripts", "GameRules");
-
-                    b.HasComment("Скрипты");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ScriptPrerequisites", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<bool>("IsValid")
-                        .HasColumnType("boolean")
-                        .HasColumnName("IsValid")
-                        .HasComment("Валидность скрипта");
-
-                    b.Property<Guid>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("PrerequisiteId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("PrerequisiteId")
-                        .HasComment("Айди пререквизита");
-
-                    b.Property<string>("RoleCreatedUser")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleModifiedUser")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ScriptId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScriptId")
-                        .HasComment("Айди скрипта");
-
-                    b.Property<string>("ValidationText")
-                        .HasColumnType("text")
-                        .HasColumnName("ValidationText")
-                        .HasComment("Валидационный текст");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PrerequisiteId");
-
-                    b.HasIndex("ScriptId");
-
-                    b.ToTable("ScriptPrerequisites", "GameRules");
-
-                    b.HasComment("Пререквизиты скрипта");
+                    b.HasComment("Навыки");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.SystemRole", b =>
@@ -3619,9 +1776,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         {
                             Id = new Guid("8094e0d0-3147-4791-9053-9667cbe107d7"),
                             CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = "AndminRole",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default"
@@ -3630,9 +1787,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         {
                             Id = new Guid("8094e0d0-3148-4791-9053-9667cbe107d8"),
                             CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = "UserRole",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default"
@@ -3762,11 +1919,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         {
                             Id = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
                             CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "andmin@email.ru",
                             InterfaceId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d7"),
                             ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
-                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = "Системный пользователь",
                             Phone = "Нет",
                             RoleCreatedUser = "Default",
@@ -3943,7 +2100,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.HasIndex("UserGameId");
 
-                    b.ToTable("UserGameCharacters", "GameInstance");
+                    b.ToTable("UserGameCharacters", "Characters");
 
                     b.HasComment("Персонажи пользователя игры");
                 });
@@ -4023,30 +2180,26 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasComment("Части шаблона тела");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Characteristic", b =>
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Character", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Prerequisite");
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.Creature");
 
-                    b.Property<Guid>("InteractionId")
+                    b.Property<DateTime?>("ActivationTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ActivationTime")
+                        .HasComment("Время активации персонажа");
+
+                    b.Property<Guid?>("UserGameActivatedId")
                         .HasColumnType("uuid")
-                        .HasColumnName("InteractionId")
-                        .HasComment("Айди взаимодействия");
+                        .HasColumnName("UserGameActivatedId")
+                        .HasComment("Айди активировашего персонажа пользователя");
 
-                    b.Property<int>("MaxCondition")
-                        .HasColumnType("integer")
-                        .HasColumnName("MaxCondition")
-                        .HasComment("Максимальное значение");
+                    b.HasIndex("UserGameActivatedId")
+                        .IsUnique();
 
-                    b.Property<int>("MinCondition")
-                        .HasColumnType("integer")
-                        .HasColumnName("MinCondition")
-                        .HasComment("Минимальное значение");
+                    b.ToTable("Characters", "Characters");
 
-                    b.HasIndex("InteractionId");
-
-                    b.ToTable("Characteristics", "InteractionRules");
-
-                    b.HasComment("Характеристики");
+                    b.HasComment("Персонажи");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreaturePart", b =>
@@ -4070,7 +2223,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.HasIndex("CreatureId");
 
-                    b.ToTable("CreatureParts", "GameInstance");
+                    b.ToTable("CreatureParts", "Battles");
 
                     b.HasComment("Части существа");
                 });
@@ -4094,141 +2247,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.ToTable("CreatureTemplateParts", "GameRules");
 
                     b.HasComment("Части шаблона существа");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Event", b =>
-                {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Prerequisite");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("GameId")
-                        .HasComment("Айди игры");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
-                        .HasColumnName("IsActive")
-                        .HasComment("Событие активно");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("Events", "GameRules");
-
-                    b.HasComment("События");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Item", b =>
-                {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Prerequisite");
-
-                    b.Property<Guid>("ItemTemplateId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ItemTemplateId")
-                        .HasComment("Айди шаблона предмета");
-
-                    b.Property<int>("MaxQuantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("MaxQuantity")
-                        .HasComment("Максимальное количество в стаке");
-
-                    b.Property<Guid?>("ScriptId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ScriptId")
-                        .HasComment("Айди скрипта");
-
-                    b.Property<Guid>("SlotId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("SlotId")
-                        .HasComment("Айди слота");
-
-                    b.Property<double>("Weight")
-                        .HasColumnType("double precision")
-                        .HasColumnName("Weight")
-                        .HasComment("Вес");
-
-                    b.HasIndex("ItemTemplateId");
-
-                    b.HasIndex("ScriptId");
-
-                    b.HasIndex("SlotId");
-
-                    b.ToTable("Items", "GameRules");
-
-                    b.HasComment("Предметы");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Modifier", b =>
-                {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Prerequisite");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("GameId")
-                        .HasComment("Айди игры");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("Modifiers", "GameRules");
-
-                    b.HasComment("Модификаторы");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.NotificationDeletedItem", b =>
-                {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Notification");
-
-                    b.Property<Guid>("BagId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("BagId")
-                        .HasComment("Айди сумки");
-
-                    b.HasIndex("BagId");
-
-                    b.ToTable("NotificationsDeletedItems", "Notifications");
-
-                    b.HasComment("Модификаторы");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.NotificationTradeRequest", b =>
-                {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Notification");
-
-                    b.Property<Guid>("ReceiveBagId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ReceiveBagId")
-                        .HasComment("Айди сумки-получателя");
-
-                    b.Property<Guid?>("ReceiveCharacterId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("SourceBagId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("SourceBagId")
-                        .HasComment("Айди сумки-отправителя");
-
-                    b.HasIndex("ReceiveCharacterId");
-
-                    b.HasIndex("SourceBagId");
-
-                    b.ToTable("NotificationTradeRequests", "Notifications");
-
-                    b.HasComment("Уведомления о намерении передать предметы");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Slot", b =>
-                {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Prerequisite");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("GameId")
-                        .HasComment("Айди игры");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("Slots", "GameRules");
-
-                    b.HasComment("Слоты");
                 });
 
             modelBuilder.Entity("AbilityCreature", b =>
@@ -4276,7 +2294,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AbilityParameter", b =>
+            modelBuilder.Entity("AbilitySkill", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.Ability", null)
                         .WithMany()
@@ -4284,9 +2302,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.Parameter", null)
+                    b.HasOne("Sindie.ApiService.Core.Entities.Skill", null)
                         .WithMany()
-                        .HasForeignKey("DefensiveParametersId")
+                        .HasForeignKey("DefensiveSkillsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -4336,21 +2354,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CreatureDamageType2", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Creature", null)
-                        .WithMany()
-                        .HasForeignKey("ImmuneCreaturesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.DamageType", null)
-                        .WithMany()
-                        .HasForeignKey("ImmunitiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("CreatureTemplateDamageType", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.CreatureTemplate", null)
@@ -4377,21 +2380,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasOne("Sindie.ApiService.Core.Entities.CreatureTemplate", null)
                         .WithMany()
                         .HasForeignKey("ResistantCreatureTemplatesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CreatureTemplateDamageType2", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CreatureTemplate", null)
-                        .WithMany()
-                        .HasForeignKey("ImmuneCreatureCreatureTemplatesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.DamageType", null)
-                        .WithMany()
-                        .HasForeignKey("ImmunitiesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -4441,26 +2429,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("NotificationUser", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Notification", null)
-                        .WithMany()
-                        .HasForeignKey("NotificationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("ReceiversId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Ability", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Parameter", "AttackParameter")
+                    b.HasOne("Sindie.ApiService.Core.Entities.Skill", "AttackSkill")
                         .WithMany("AbilitiesForAttack")
-                        .HasForeignKey("AttackParameterId")
+                        .HasForeignKey("AttackSkillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -4470,84 +2443,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AttackParameter");
+                    b.Navigation("AttackSkill");
 
                     b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Action", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Interaction", "Interaction")
-                        .WithMany("Actions")
-                        .HasForeignKey("InteractionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "ScenarioAction")
-                        .WithOne("Action")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Action", "ScenarioActionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Interaction");
-
-                    b.Navigation("ScenarioAction");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ActiveCycle", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.ModifierScript", "ModifierScript")
-                        .WithMany("ActiveCycles")
-                        .HasForeignKey("ModifierScriptId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ModifierScript");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Activity", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.ApplicationArea", "ApplicationArea")
-                        .WithMany("Activities")
-                        .HasForeignKey("ApplicationAreaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
-                        .WithOne("Activity")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Activity", "ImgFileId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Interaction", "Interaction")
-                        .WithMany("Activities")
-                        .HasForeignKey("InteractionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ApplicationArea");
-
-                    b.Navigation("ImgFile");
-
-                    b.Navigation("Interaction");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ActivityAction", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Action", "Action")
-                        .WithMany("ActivityActions")
-                        .HasForeignKey("ActionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Activity", "Activity")
-                        .WithMany("ActivityActions")
-                        .HasForeignKey("ActivityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Action");
-
-                    b.Navigation("Activity");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.AppliedCondition", b =>
@@ -4569,83 +2467,29 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("Condition");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Article", b =>
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Battle", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
-                        .WithMany("Articles")
+                        .WithMany("Battles")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Bag", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Character", null)
-                        .WithOne("Bag")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Bag", "CharacterId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
-                        .WithOne("Bag")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Bag", "ImgFileId")
+                        .WithOne("Battle")
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Battle", "ImgFileId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.Instance", "Instance")
-                        .WithMany("Bags")
-                        .HasForeignKey("InstanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Sindie.ApiService.Core.Entities.UserGame", "UserGameActivated")
+                        .WithMany("Instances")
+                        .HasForeignKey("UserGameActivatedId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Game");
 
                     b.Navigation("ImgFile");
 
-                    b.Navigation("Instance");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BagItem", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Bag", "Bag")
-                        .WithMany("BagItems")
-                        .HasForeignKey("BagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Item", "Item")
-                        .WithMany("BagItems")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Bag");
-
-                    b.Navigation("Item");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Body", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Character", "Character")
-                        .WithMany("Bodies")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Item", "Item")
-                        .WithMany("Bodies")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Slot", "Slot")
-                        .WithMany("Bodies")
-                        .HasForeignKey("SlotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Character");
-
-                    b.Navigation("Item");
-
-                    b.Navigation("Slot");
+                    b.Navigation("UserGameActivated");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyPart", b =>
@@ -4670,156 +2514,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("Game");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Character", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Bag", null)
-                        .WithOne("Character")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Character", "BagId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.CharacterTemplate", "CharacterTemplate")
-                        .WithMany("Characters")
-                        .HasForeignKey("CharacterTemplateId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
-                        .WithOne("Character")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Character", "ImgFileId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Instance", "Instance")
-                        .WithMany("Characters")
-                        .HasForeignKey("InstanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.TextFile", "TextFile")
-                        .WithOne("Character")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Character", "TextFileId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.UserGameCharacter", "UserGameActivated")
-                        .WithOne("ActivateCharacter")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Character", "UserGameActivatedId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("CharacterTemplate");
-
-                    b.Navigation("ImgFile");
-
-                    b.Navigation("Instance");
-
-                    b.Navigation("TextFile");
-
-                    b.Navigation("UserGameActivated");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CharacterModifier", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Character", "Character")
-                        .WithMany("CharacterModifiers")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Modifier", "Modifier")
-                        .WithMany("CharacterModifiers")
-                        .HasForeignKey("ModifierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Character");
-
-                    b.Navigation("Modifier");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CharacterParameter", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Character", "Character")
-                        .WithMany("CharacterParameters")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Parameter", "Parameter")
-                        .WithMany("CharacterParameters")
-                        .HasForeignKey("ParameterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Character");
-
-                    b.Navigation("Parameter");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CharacterTemplate", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
-                        .WithMany("CharacterTemplates")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
-                        .WithOne("CharacterTemplate")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.CharacterTemplate", "ImgFileId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Interface", "Interface")
-                        .WithMany("CharacterTemplates")
-                        .HasForeignKey("InterfaceId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Game");
-
-                    b.Navigation("ImgFile");
-
-                    b.Navigation("Interface");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CharacterTemplateModifier", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CharacterTemplate", "CharacterTemplate")
-                        .WithMany("CharacterTemplateModifiers")
-                        .HasForeignKey("CharacterTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Modifier", "Modifier")
-                        .WithMany("CharacterTemplateModifiers")
-                        .HasForeignKey("ModifierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CharacterTemplate");
-
-                    b.Navigation("Modifier");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CharacterTemplateSlot", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CharacterTemplate", "CharacterTemplate")
-                        .WithMany("CharacterTemplateSlots")
-                        .HasForeignKey("CharacterTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Slot", "Slot")
-                        .WithMany("CharacterTemplateSlots")
-                        .HasForeignKey("SlotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CharacterTemplate");
-
-                    b.Navigation("Slot");
-                });
-
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Creature", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.BodyTemplate", "BodyTemplate")
+                    b.HasOne("Sindie.ApiService.Core.Entities.Battle", "Battle")
                         .WithMany("Creatures")
-                        .HasForeignKey("BodyTemplateId")
+                        .HasForeignKey("BattleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -4840,40 +2539,32 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasForeignKey("Sindie.ApiService.Core.Entities.Creature", "ImgFileId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.Instance", "Instance")
-                        .WithMany("Creatures")
-                        .HasForeignKey("InstanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BodyTemplate");
+                    b.Navigation("Battle");
 
                     b.Navigation("CreatureTemplate");
 
                     b.Navigation("CreatureType");
 
                     b.Navigation("ImgFile");
-
-                    b.Navigation("Instance");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureParameter", b =>
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureSkill", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.Creature", "Creature")
-                        .WithMany("CreatureParameters")
+                        .WithMany("CreatureSkills")
                         .HasForeignKey("CreatureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.Parameter", "Parameter")
-                        .WithMany("CreatureParameters")
-                        .HasForeignKey("ParameterId")
+                    b.HasOne("Sindie.ApiService.Core.Entities.Skill", "Skill")
+                        .WithMany("CreatureSkills")
+                        .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Creature");
 
-                    b.Navigation("Parameter");
+                    b.Navigation("Skill");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplate", b =>
@@ -4910,23 +2601,23 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("ImgFile");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplateParameter", b =>
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplateSkill", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.CreatureTemplate", "CreatureTemplate")
-                        .WithMany("CreatureTemplateParameters")
+                        .WithMany("CreatureTemplateSkills")
                         .HasForeignKey("CreatureTemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.Parameter", "Parameter")
-                        .WithMany("CreatureTemplateParameters")
-                        .HasForeignKey("ParameterId")
+                    b.HasOne("Sindie.ApiService.Core.Entities.Skill", "Skill")
+                        .WithMany("CreatureTemplateSkills")
+                        .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CreatureTemplate");
 
-                    b.Navigation("Parameter");
+                    b.Navigation("Skill");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Game", b =>
@@ -4939,397 +2630,41 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("Avatar");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Instance", b =>
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Skill", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
-                        .WithMany("Instances")
+                        .WithMany("Skills")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
-                        .WithOne("Instance")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Instance", "ImgFileId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.UserGame", "UserGameActivated")
-                        .WithMany("Instances")
-                        .HasForeignKey("UserGameActivatedId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Game");
-
-                    b.Navigation("ImgFile");
-
-                    b.Navigation("UserGameActivated");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Interaction", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
-                        .WithMany("Interactions")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
-                        .WithOne("Interaction")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Interaction", "ImgFileId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "ScenarioLoot")
-                        .WithMany("ScenarioLootInteractions")
-                        .HasForeignKey("ScenarioLootId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "ScenarioReturn")
-                        .WithMany("ScenarioReturnInteractions")
-                        .HasForeignKey("ScenarioReturnId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "ScenarioVictory")
-                        .WithMany("ScenarioVictoryInteractions")
-                        .HasForeignKey("ScenarioVictoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.TextFile", "TextFile")
-                        .WithOne("Interaction")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Interaction", "TextFileId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Game");
-
-                    b.Navigation("ImgFile");
-
-                    b.Navigation("ScenarioLoot");
-
-                    b.Navigation("ScenarioReturn");
-
-                    b.Navigation("ScenarioVictory");
-
-                    b.Navigation("TextFile");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.InteractionItem", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Activity", "Activity")
-                        .WithMany("InteractionItems")
-                        .HasForeignKey("ActivityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.InteractionsRole", "InteractionsRole")
-                        .WithMany("InteractionItems")
-                        .HasForeignKey("InteractionsRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Item", "Item")
-                        .WithMany("InteractionItems")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Activity");
-
-                    b.Navigation("InteractionsRole");
-
-                    b.Navigation("Item");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.InteractionsRole", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
-                        .WithOne("InteractionsRole")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.InteractionsRole", "ImgFileId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Interaction", "Interaction")
-                        .WithMany("InteractionsRoles")
-                        .HasForeignKey("InteractionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "ScenarioCharacteristics")
-                        .WithMany("ScenarioCharacteristicsRoles")
-                        .HasForeignKey("ScenarioCharacteristicsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "ScenarioInitiative")
-                        .WithMany("ScenarioInitiativeRoles")
-                        .HasForeignKey("ScenarioInitiativeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "ScenarioLoot")
-                        .WithMany("ScenarioLootRoles")
-                        .HasForeignKey("ScenarioLootId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "ScenarioPrerequisites")
-                        .WithMany("ScenarioPrerequisitesRoles")
-                        .HasForeignKey("ScenarioPrerequisitesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "ScenarioReturn")
-                        .WithMany("ScenarioReturnRoles")
-                        .HasForeignKey("ScenarioReturnId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "ScenarioVictory")
-                        .WithMany("ScenarioVictoryRoles")
-                        .HasForeignKey("ScenarioVictoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.TextFile", "TextFile")
-                        .WithOne("InteractionsRole")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.InteractionsRole", "TextFileId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("ImgFile");
-
-                    b.Navigation("Interaction");
-
-                    b.Navigation("ScenarioCharacteristics");
-
-                    b.Navigation("ScenarioInitiative");
-
-                    b.Navigation("ScenarioLoot");
-
-                    b.Navigation("ScenarioPrerequisites");
-
-                    b.Navigation("ScenarioReturn");
-
-                    b.Navigation("ScenarioVictory");
-
-                    b.Navigation("TextFile");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.InteractionsRoleActivity", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Activity", "Activity")
-                        .WithMany("InteractionsRoleActivities")
-                        .HasForeignKey("ActivityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.InteractionsRole", "InteractionsRole")
-                        .WithMany("InteractionsRoleActivities")
-                        .HasForeignKey("InteractionsRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Activity");
-
-                    b.Navigation("InteractionsRole");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ItemTemplate", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
-                        .WithMany("ItemTemplates")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
-                        .WithOne("ItemTemplate")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.ItemTemplate", "ImgFileId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Game");
-
-                    b.Navigation("ImgFile");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ItemTemplateModifier", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.ItemTemplate", "ItemTemplate")
-                        .WithMany("ItemTemplateModifiers")
-                        .HasForeignKey("ItemTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Modifier", "Modifier")
-                        .WithMany("ItemTemplateModifiers")
-                        .HasForeignKey("ModifierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ItemTemplate");
-
-                    b.Navigation("Modifier");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ModifierScript", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Event", "Event")
-                        .WithMany("ModifierScripts")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Modifier", "Modifier")
-                        .WithMany("ModifierScripts")
-                        .HasForeignKey("ModifierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "Script")
-                        .WithMany("ModifierScripts")
-                        .HasForeignKey("ScriptId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-
-                    b.Navigation("Modifier");
-
-                    b.Navigation("Script");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Parameter", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
-                        .WithMany("Parameters")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("Sindie.ApiService.Core.Entities.ParameterBound", "ParameterBounds", b1 =>
+                    b.OwnsOne("Sindie.ApiService.Core.Entities.Skill+SkillBound", "SkillBounds", b1 =>
                         {
-                            b1.Property<Guid>("ParameterId")
+                            b1.Property<Guid>("SkillId")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("uuid");
 
-                            b1.Property<int>("MaxValueParameter")
+                            b1.Property<int>("MaxValueSkill")
                                 .HasColumnType("integer")
-                                .HasColumnName("MaxValueParameters")
-                                .HasComment("Максимальные значения параметра");
+                                .HasColumnName("MaxValueSkills")
+                                .HasComment("Максимальное значение навыка");
 
-                            b1.Property<int>("MinValueParameter")
+                            b1.Property<int>("MinValueSkill")
                                 .HasColumnType("integer")
-                                .HasColumnName("MinValueParameters")
-                                .HasComment("Минимальные значения параметра");
+                                .HasColumnName("MinValueSkills")
+                                .HasComment("Минимальное значение навыка");
 
-                            b1.HasKey("ParameterId");
+                            b1.HasKey("SkillId");
 
-                            b1.ToTable("Parameters", "GameRules");
+                            b1.ToTable("Skills", "GameRules");
 
                             b1.WithOwner()
-                                .HasForeignKey("ParameterId");
+                                .HasForeignKey("SkillId");
                         });
 
                     b.Navigation("Game");
 
-                    b.Navigation("ParameterBounds");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Party", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
-                        .WithOne("Party")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Party", "ImgFileId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Interaction", "Interaction")
-                        .WithMany("Parties")
-                        .HasForeignKey("InteractionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "ScenarioLoot")
-                        .WithMany("ScenarioLootParties")
-                        .HasForeignKey("ScenarioLootId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "ScenarioReturn")
-                        .WithMany("ScenarioReturnParties")
-                        .HasForeignKey("ScenarioReturnId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "ScenarioVictory")
-                        .WithMany("ScenarioVictoryParties")
-                        .HasForeignKey("ScenarioVictoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.TextFile", "TextFile")
-                        .WithOne("Party")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Party", "TextFileId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("ImgFile");
-
-                    b.Navigation("Interaction");
-
-                    b.Navigation("ScenarioLoot");
-
-                    b.Navigation("ScenarioReturn");
-
-                    b.Navigation("ScenarioVictory");
-
-                    b.Navigation("TextFile");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.PartyInteractionsRole", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.InteractionsRole", "InteractionsRole")
-                        .WithMany("PartyInteractionsRoles")
-                        .HasForeignKey("InteractionsRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Party", "Party")
-                        .WithMany("PartyInteractionsRoles")
-                        .HasForeignKey("PartyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("InteractionsRole");
-
-                    b.Navigation("Party");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Prerequisite", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
-                        .WithOne("Prerequisite")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Prerequisite", "ImgFileId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("ImgFile");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Script", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
-                        .WithMany("Scripts")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ScriptPrerequisites", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Prerequisite", "Prerequisite")
-                        .WithMany("ScriptPrerequisites")
-                        .HasForeignKey("PrerequisiteId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "Script")
-                        .WithMany("ScriptPrerequisites")
-                        .HasForeignKey("ScriptId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Prerequisite");
-
-                    b.Navigation("Script");
+                    b.Navigation("SkillBounds");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.User", b =>
@@ -5474,21 +2809,20 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("BodyTemplate");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Characteristic", b =>
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Character", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Prerequisite", null)
+                    b.HasOne("Sindie.ApiService.Core.Entities.Creature", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Characteristic", "Id")
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Character", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.Interaction", "Interaction")
-                        .WithMany("Characteristics")
-                        .HasForeignKey("InteractionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Sindie.ApiService.Core.Entities.UserGameCharacter", "UserGameActivated")
+                        .WithOne("ActivateCharacter")
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Character", "UserGameActivatedId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("Interaction");
+                    b.Navigation("UserGameActivated");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreaturePart", b =>
@@ -5525,214 +2859,14 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("CreatureTemplate");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Event", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
-                        .WithMany("Events")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Prerequisite", null)
-                        .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Event", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Item", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Prerequisite", null)
-                        .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Item", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.ItemTemplate", "ItemTemplate")
-                        .WithMany("Items")
-                        .HasForeignKey("ItemTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Script", "Script")
-                        .WithMany("Items")
-                        .HasForeignKey("ScriptId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Slot", "Slot")
-                        .WithMany("Items")
-                        .HasForeignKey("SlotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ItemTemplate");
-
-                    b.Navigation("Script");
-
-                    b.Navigation("Slot");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Modifier", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
-                        .WithMany("Modifiers")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Prerequisite", null)
-                        .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Modifier", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.NotificationDeletedItem", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Bag", "Bag")
-                        .WithMany("NotificationDeletedItems")
-                        .HasForeignKey("BagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Notification", null)
-                        .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.NotificationDeletedItem", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Bag");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.NotificationTradeRequest", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Notification", null)
-                        .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.NotificationTradeRequest", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Character", "ReceiveCharacter")
-                        .WithMany("NotificationTradeRequests")
-                        .HasForeignKey("ReceiveCharacterId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Bag", "SourceBag")
-                        .WithMany("NotificationsTradeRequestSource")
-                        .HasForeignKey("SourceBagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsMany("Sindie.ApiService.Core.Entities.NotificationTradeRequestItem", "BagItems", b1 =>
-                        {
-                            b1.Property<Guid>("NotificationTradeRequestId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("integer");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
-
-                            b1.Property<Guid>("ItemId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("ItemId")
-                                .HasComment("Айди предмета");
-
-                            b1.Property<string>("ItemName")
-                                .HasColumnType("text")
-                                .HasColumnName("ItemName")
-                                .HasComment("Название предмета");
-
-                            b1.Property<int>("MaxQuantity")
-                                .HasColumnType("integer")
-                                .HasColumnName("MaxQuantityItem")
-                                .HasComment("Максимальное количество предметов");
-
-                            b1.Property<int>("Quantity")
-                                .HasColumnType("integer")
-                                .HasColumnName("QuantityItem")
-                                .HasComment("Количество предметов");
-
-                            b1.Property<int>("Stack")
-                                .HasColumnType("integer")
-                                .HasColumnName("Stack")
-                                .HasComment("Стак");
-
-                            b1.Property<double>("TotalWeight")
-                                .HasColumnType("double precision")
-                                .HasColumnName("TotalWeight")
-                                .HasComment("Общий вес стака");
-
-                            b1.HasKey("NotificationTradeRequestId", "Id");
-
-                            b1.ToTable("NotificationTradeRequestItem", "Notifications");
-
-                            b1.WithOwner()
-                                .HasForeignKey("NotificationTradeRequestId");
-                        });
-
-                    b.Navigation("BagItems");
-
-                    b.Navigation("ReceiveCharacter");
-
-                    b.Navigation("SourceBag");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Slot", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
-                        .WithMany("Slots")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Prerequisite", null)
-                        .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Slot", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-                });
-
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Ability", b =>
                 {
                     b.Navigation("AppliedConditions");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Action", b =>
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Battle", b =>
                 {
-                    b.Navigation("ActivityActions");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Activity", b =>
-                {
-                    b.Navigation("ActivityActions");
-
-                    b.Navigation("InteractionItems");
-
-                    b.Navigation("InteractionsRoleActivities");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ApplicationArea", b =>
-                {
-                    b.Navigation("Activities");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Bag", b =>
-                {
-                    b.Navigation("BagItems");
-
-                    b.Navigation("Character");
-
-                    b.Navigation("NotificationDeletedItems");
-
-                    b.Navigation("NotificationsTradeRequestSource");
+                    b.Navigation("Creatures");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyPartType", b =>
@@ -5745,32 +2879,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("BodyTemplateParts");
 
                     b.Navigation("CreatureTemplates");
-
-                    b.Navigation("Creatures");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Character", b =>
-                {
-                    b.Navigation("Bag");
-
-                    b.Navigation("Bodies");
-
-                    b.Navigation("CharacterModifiers");
-
-                    b.Navigation("CharacterParameters");
-
-                    b.Navigation("NotificationTradeRequests");
-
-                    b.Navigation("UserGameCharacters");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CharacterTemplate", b =>
-                {
-                    b.Navigation("CharacterTemplateModifiers");
-
-                    b.Navigation("CharacterTemplateSlots");
-
-                    b.Navigation("Characters");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Condition", b =>
@@ -5780,16 +2888,16 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Creature", b =>
                 {
-                    b.Navigation("CreatureParameters");
-
                     b.Navigation("CreatureParts");
+
+                    b.Navigation("CreatureSkills");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplate", b =>
                 {
-                    b.Navigation("CreatureTemplateParameters");
-
                     b.Navigation("CreatureTemplateParts");
+
+                    b.Navigation("CreatureTemplateSkills");
 
                     b.Navigation("Creatures");
                 });
@@ -5805,29 +2913,13 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 {
                     b.Navigation("Abilities");
 
-                    b.Navigation("Articles");
+                    b.Navigation("Battles");
 
                     b.Navigation("BodyTemplates");
 
-                    b.Navigation("CharacterTemplates");
-
                     b.Navigation("CreatureTemplates");
 
-                    b.Navigation("Events");
-
-                    b.Navigation("Instances");
-
-                    b.Navigation("Interactions");
-
-                    b.Navigation("ItemTemplates");
-
-                    b.Navigation("Modifiers");
-
-                    b.Navigation("Parameters");
-
-                    b.Navigation("Scripts");
-
-                    b.Navigation("Slots");
+                    b.Navigation("Skills");
 
                     b.Navigation("UserGames");
                 });
@@ -5839,13 +2931,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.ImgFile", b =>
                 {
-                    b.Navigation("Activity");
-
-                    b.Navigation("Bag");
-
-                    b.Navigation("Character");
-
-                    b.Navigation("CharacterTemplate");
+                    b.Navigation("Battle");
 
                     b.Navigation("Creature");
 
@@ -5853,56 +2939,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.Navigation("Game");
 
-                    b.Navigation("Instance");
-
-                    b.Navigation("Interaction");
-
-                    b.Navigation("InteractionsRole");
-
-                    b.Navigation("ItemTemplate");
-
-                    b.Navigation("Party");
-
-                    b.Navigation("Prerequisite");
-
                     b.Navigation("UserAvatar");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Instance", b =>
-                {
-                    b.Navigation("Bags");
-
-                    b.Navigation("Characters");
-
-                    b.Navigation("Creatures");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Interaction", b =>
-                {
-                    b.Navigation("Actions");
-
-                    b.Navigation("Activities");
-
-                    b.Navigation("Characteristics");
-
-                    b.Navigation("InteractionsRoles");
-
-                    b.Navigation("Parties");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.InteractionsRole", b =>
-                {
-                    b.Navigation("InteractionItems");
-
-                    b.Navigation("InteractionsRoleActivities");
-
-                    b.Navigation("PartyInteractionsRoles");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Interface", b =>
                 {
-                    b.Navigation("CharacterTemplates");
-
                     b.Navigation("UserGameCharacters");
 
                     b.Navigation("UserGames");
@@ -5910,88 +2951,18 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ItemTemplate", b =>
-                {
-                    b.Navigation("ItemTemplateModifiers");
-
-                    b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ModifierScript", b =>
-                {
-                    b.Navigation("ActiveCycles");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Parameter", b =>
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Skill", b =>
                 {
                     b.Navigation("AbilitiesForAttack");
 
-                    b.Navigation("CharacterParameters");
+                    b.Navigation("CreatureSkills");
 
-                    b.Navigation("CreatureParameters");
-
-                    b.Navigation("CreatureTemplateParameters");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Party", b =>
-                {
-                    b.Navigation("PartyInteractionsRoles");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Prerequisite", b =>
-                {
-                    b.Navigation("ScriptPrerequisites");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Script", b =>
-                {
-                    b.Navigation("Action");
-
-                    b.Navigation("Items");
-
-                    b.Navigation("ModifierScripts");
-
-                    b.Navigation("ScenarioCharacteristicsRoles");
-
-                    b.Navigation("ScenarioInitiativeRoles");
-
-                    b.Navigation("ScenarioLootInteractions");
-
-                    b.Navigation("ScenarioLootParties");
-
-                    b.Navigation("ScenarioLootRoles");
-
-                    b.Navigation("ScenarioPrerequisitesRoles");
-
-                    b.Navigation("ScenarioReturnInteractions");
-
-                    b.Navigation("ScenarioReturnParties");
-
-                    b.Navigation("ScenarioReturnRoles");
-
-                    b.Navigation("ScenarioVictoryInteractions");
-
-                    b.Navigation("ScenarioVictoryParties");
-
-                    b.Navigation("ScenarioVictoryRoles");
-
-                    b.Navigation("ScriptPrerequisites");
+                    b.Navigation("CreatureTemplateSkills");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.SystemRole", b =>
                 {
                     b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.TextFile", b =>
-                {
-                    b.Navigation("Character");
-
-                    b.Navigation("Interaction");
-
-                    b.Navigation("InteractionsRole");
-
-                    b.Navigation("Party");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.User", b =>
@@ -6015,38 +2986,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("ActivateCharacter");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Event", b =>
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Character", b =>
                 {
-                    b.Navigation("ModifierScripts");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Item", b =>
-                {
-                    b.Navigation("BagItems");
-
-                    b.Navigation("Bodies");
-
-                    b.Navigation("InteractionItems");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Modifier", b =>
-                {
-                    b.Navigation("CharacterModifiers");
-
-                    b.Navigation("CharacterTemplateModifiers");
-
-                    b.Navigation("ItemTemplateModifiers");
-
-                    b.Navigation("ModifierScripts");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Slot", b =>
-                {
-                    b.Navigation("Bodies");
-
-                    b.Navigation("CharacterTemplateSlots");
-
-                    b.Navigation("Items");
+                    b.Navigation("UserGameCharacters");
                 });
 #pragma warning restore 612, 618
         }

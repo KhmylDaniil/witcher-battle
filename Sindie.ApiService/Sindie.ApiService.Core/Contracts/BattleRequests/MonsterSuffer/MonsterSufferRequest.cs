@@ -9,9 +9,9 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.MonsterSuffer
 	public class MonsterSufferRequest: IRequest<MonsterSufferResponse>
 	{
 		/// <summary>
-		/// Айди инстанса
+		/// Айди боя
 		/// </summary>
-		public Guid InstanceId { get; set; }
+		public Guid BattleId { get; set; }
 
 		/// <summary>
 		/// Айди атакующего существа

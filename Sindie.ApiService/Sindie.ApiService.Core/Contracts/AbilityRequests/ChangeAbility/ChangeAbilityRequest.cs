@@ -30,9 +30,9 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Айди параметра атаки
+		/// Айди навыка атаки
 		/// </summary>
-		public Guid AttackParameterId { get; set; }
+		public Guid AttackSkillId { get; set; }
 
 		/// <summary>
 		/// Количество кубов атаки
@@ -55,9 +55,9 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		public int Accuracy { get; set; }
 
 		/// <summary>
-		/// Параметры для защиты
+		/// Навыки для защиты
 		/// </summary>
-		public List<Guid> DefensiveParameters { get; set; }
+		public List<Guid> DefensiveSkills { get; set; }
 
 		/// <summary>
 		/// Типы урона

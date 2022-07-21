@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -36,9 +31,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasColumnName("Description")
 				.HasComment("Описание способности");
 
-			builder.Property(r => r.AttackParameterId)
-				.HasColumnName("AttackParameterId")
-				.HasComment("Параметр атаки")
+			builder.Property(r => r.AttackSkillId)
+				.HasColumnName("AttackSkillId")
+				.HasComment("Навык атаки")
 				.IsRequired();
 
 			builder.Property(r => r.AttackDiceQuantity)
@@ -69,7 +64,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.HasMany(x => x.Creatures)
 				.WithMany(x => x.Abilities)
-				.UsingEntity(x => x.ToTable("CreatureAbilities", "GameInstance"));
+				.UsingEntity(x => x.ToTable("CreatureAbilities", "Battles"));
 
 			builder.HasMany(x => x.DamageTypes)
 				.WithMany(x => x.Abilities)
@@ -81,22 +76,22 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasOne(x => x.AttackParameter)
+			builder.HasOne(x => x.AttackSkill)
 				.WithMany(x => x.AbilitiesForAttack)
-				.HasForeignKey(x => x.AttackParameterId)
+				.HasForeignKey(x => x.AttackSkillId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasMany(x => x.DefensiveParameters)
+			builder.HasMany(x => x.DefensiveSkills)
 				.WithMany(x => x.AbilitiesForDefense)
-				.UsingEntity(x => x.ToTable("DefensiveParameters", "GameRules"));
+				.UsingEntity(x => x.ToTable("DefensiveSkills", "GameRules"));
 
 			var gameNavigation = builder.Metadata.FindNavigation(nameof(Ability.Game));
 			gameNavigation.SetField(Ability.GameField);
 			gameNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
-			var parameterNavigation = builder.Metadata.FindNavigation(nameof(Ability.AttackParameter));
-			parameterNavigation.SetField(Ability.ParameterField);
+			var parameterNavigation = builder.Metadata.FindNavigation(nameof(Ability.AttackSkill));
+			parameterNavigation.SetField(Ability.SkillField);
 			parameterNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}

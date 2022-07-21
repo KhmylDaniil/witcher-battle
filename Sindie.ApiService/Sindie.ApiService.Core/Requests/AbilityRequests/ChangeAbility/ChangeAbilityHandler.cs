@@ -52,7 +52,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
 				.Include(g => g.Abilities)
 					.ThenInclude(a => a.AppliedConditions)
-				.Include(x => x.Parameters)
+				.Include(x => x.Skills)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
@@ -70,8 +70,8 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 				damageModifier: request.DamageModifier,
 				attackSpeed: request.AttackSpeed,
 				accuracy: request.Accuracy,
-				attackParameter: game.Parameters.First(x => x.Id == request.AttackParameterId),
-				defensiveParameters: CreateDefensiveParameters(request, game),
+				attackSkill: game.Skills.First(x => x.Id == request.AttackSkillId),
+				defensiveSkills: CreateDefensiveSkills(request, game),
 				damageTypes: CreateDamageTypes(request, damageTypes),
 				appliedConditions: AppliedConditionData.CreateAbilityData(request, conditions));
 
@@ -94,12 +94,12 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 			if (game.Abilities.Any(x => x.Name == request.Name && x.Id != ability.Id))
 				throw new ExceptionRequestNameNotUniq<ChangeAbilityCommand>(nameof(request.Name));
 
-			_ = game.Parameters.FirstOrDefault(x => x.Id == request.AttackParameterId)
-				?? throw new ExceptionEntityNotFound<Parameter>(request.AttackParameterId);
+			_ = game.Skills.FirstOrDefault(x => x.Id == request.AttackSkillId)
+				?? throw new ExceptionEntityNotFound<Skill>(request.AttackSkillId);
 
-			foreach (var id in request.DefensiveParameters)
-				_ = game.Parameters.FirstOrDefault(x => x.Id == id)
-					?? throw new ExceptionEntityNotFound<Parameter>(id);
+			foreach (var id in request.DefensiveSkills)
+				_ = game.Skills.FirstOrDefault(x => x.Id == id)
+					?? throw new ExceptionEntityNotFound<Skill>(id);
 
 			foreach (var id in request.DamageTypes)
 				_ = damageTypes.FirstOrDefault(x => x.Id == id)
@@ -120,19 +120,19 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 		}
 
 		/// <summary>
-		/// Создание списка защитных параметров
+		/// Создание списка защитных навыков
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="game">Игра</param>
-		/// <returns>Список защитных параметров</returns>
-		private List<Parameter> CreateDefensiveParameters(ChangeAbilityCommand request, Game game)
+		/// <returns>Список защитных навыков</returns>
+		private List<Skill> CreateDefensiveSkills(ChangeAbilityCommand request, Game game)
 		{
-			var defensiveParameters = new List<Parameter>();
+			var defensiveSkills = new List<Skill>();
 
-			foreach (var id in request.DefensiveParameters)
-				defensiveParameters.Add(game.Parameters.FirstOrDefault(x => x.Id == id));
+			foreach (var id in request.DefensiveSkills)
+				defensiveSkills.Add(game.Skills.FirstOrDefault(x => x.Id == id));
 
-			return defensiveParameters;
+			return defensiveSkills;
 		}
 
 		/// <summary>

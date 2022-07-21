@@ -9,9 +9,9 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack
 	public class CreatureAttackRequest: IRequest<CreatureAttackResponse>
 	{
 		/// <summary>
-		/// Айди инстанса
+		/// Айди боя
 		/// </summary>
-		public Guid InstanceId { get; set; }
+		public Guid BattleId { get; set; }
 
 		/// <summary>
 		/// Айди атакующего существа
@@ -36,7 +36,7 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack
 		/// <summary>
 		/// Способ защиты
 		/// </summary>
-		public Guid? DefensiveParameter { get; set; }
+		public Guid? DefensiveSkillId { get; set; }
 
 		/// <summary>
 		/// Специальный бонус к попаданию

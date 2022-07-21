@@ -137,7 +137,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Экземпляры игры
 		/// </summary>
-		public List<Instance> Instances { get; set; }
+		public List<Battle> Instances { get; set; }
 
 		/// <summary>
 		/// Персонажи пользователя игры

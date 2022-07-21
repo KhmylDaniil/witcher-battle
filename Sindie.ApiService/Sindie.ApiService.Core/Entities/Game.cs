@@ -39,10 +39,9 @@ namespace Sindie.ApiService.Core.Entities
 			Description = description;
 			Avatar = avatar;
 			UserGames = new List<UserGame>();
-			Articles = new List<Article>();
 			ImgFiles = new List<ImgFile>();
 			TextFiles = new List<TextFile>();
-			Instances = new List<Instance>();
+			Battles = new List<Battle>();
 		}
 
 		/// <summary>
@@ -68,11 +67,6 @@ namespace Sindie.ApiService.Core.Entities
 		public List<UserGame> UserGames { get; set; }
 
 		/// <summary>
-		/// Статьи
-		/// </summary>
-		public List<Article> Articles { get; set; }
-
-		/// <summary>
 		/// Текстовые файлы
 		/// </summary>
 		public List<TextFile> TextFiles { get; set; }
@@ -96,49 +90,14 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Параметры
+		/// Навыки
 		/// </summary>
-		public List<Parameter> Parameters { get; set; }
+		public List<Skill> Skills { get; set; }
 
 		/// <summary>
-		/// Слоты
+		/// Бои
 		/// </summary>
-		public List<Slot> Slots { get; set; }
-
-		/// <summary>
-		/// Модификатор
-		/// </summary>
-		public List<Modifier> Modifiers { get; set; }
-		
-		/// <summary>
-		/// Скрипты игры
-		/// </summary>
-		public List<Script> Scripts { get; set; }
-
-		/// <summary>
-		/// События игры
-		/// </summary>
-		public List<Event> Events { get; set; }
-
-		/// <summary>
-		/// Шаблоны персонажей игры
-		/// </summary>
-		public List<CharacterTemplate> CharacterTemplates { get; set; }
-
-		/// <summary>
-		/// Шаблоны предметов в игре
-		/// </summary>
-		public List<ItemTemplate> ItemTemplates { get; set; }
-
-		/// <summary>
-		/// Взаимодействия
-		/// </summary>
-		public List<Interaction> Interactions { get; set; }
-
-		/// <summary>
-		/// Экземпляры
-		/// </summary>
-		public List<Instance> Instances { get; set; }
+		public List<Battle> Battles { get; set; }
 
 		/// <summary>
 		/// Шаблоны существ
@@ -181,7 +140,7 @@ namespace Sindie.ApiService.Core.Entities
 			UserGames = new List<UserGame>(),
 			ImgFiles = new List<ImgFile>(),
 			TextFiles = new List<TextFile>(),
-			Instances = new List<Instance>(),
+			Battles = new List<Battle>(),
 		};
 
 		/// <summary>

@@ -26,21 +26,11 @@ namespace Sindie.ApiService.Core.Abstractions
 			IQueryable<Game> query, Guid gameId);
 
 		/// <summary>
-		/// Проверить права на доступ к сумке (владелец или мастер)
-		/// </summary>
-		/// <param name="query">Запрос</param>
-		/// <param name="gameId">Айди игры</param>
-		/// <param name="bagId">Айди сумки</param>
-		/// <returns>Отфильтрованный запрос</returns>
-		public IQueryable<Game> BagOwnerOrMasterFilter(
-				IQueryable<Game> query, Guid gameId, Guid bagId);
-
-		/// <summary>
-		/// Проверить права мастера на инстанс</summary>
+		/// Проверить права мастера боя</summary>
 		/// <param name="query">Запрос</param>
 		/// <param name="instanceId">Айди инстанса</param>
 		/// <returns>Отфильтрованный запрос</returns>
-		public IQueryable<Instance> InstanceMasterFilter(
-			IQueryable<Instance> query, Guid instanceId);
+		public IQueryable<Battle> BattleMasterFilter(
+			IQueryable<Battle> query, Guid battleId);
 	}
 }

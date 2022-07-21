@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
+using System;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -37,8 +38,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: SystemRoles.AndminRoleName,
 				id: SystemRoles.AndminRoleId,
-				createdOn: new System.DateTime(2020, 1, 1),
-				modifiedOn: new System.DateTime(2020, 1, 1),
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
 				modifiedByUserId: SystemUsers.SystemUserId));
 
@@ -46,8 +47,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: SystemRoles.UserRoleName,
 				id: SystemRoles.UserRoleId,
-				createdOn: new System.DateTime(2020, 1, 1),
-				modifiedOn: new System.DateTime(2020, 1, 1),
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
 				modifiedByUserId: SystemUsers.SystemUserId));
 		}

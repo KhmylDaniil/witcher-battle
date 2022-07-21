@@ -32,7 +32,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 		/// <param name="luck">Удача</param>
 		/// <param name="armorList">Броня</param>
 		/// <param name="abilities">Способности</param>
-		/// <param name="creatureTemplateParameters">Параметры шаблона существа</param>
+		/// <param name="creatureTemplateSkills">Навыки шаблона существа</param>
 		public CreateCreatureTemplateCommand(
 			Guid gameId,
 			Guid? imgFileId,
@@ -53,7 +53,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 			int luck,
 			List<CreateCreatureTemplateRequestArmorList> armorList,
 			List<Guid> abilities,
-			List<CreateCreatureTemplateRequestParameter> creatureTemplateParameters)
+			List<CreateCreatureTemplateRequestSkill> creatureTemplateSkills)
 		{
 			GameId = gameId;
 			ImgFileId = imgFileId;
@@ -80,9 +80,9 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 			Abilities = abilities == null
 				? throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequest>(nameof(Abilities))
 				: abilities;
-			CreatureTemplateParameters = creatureTemplateParameters == null
-				? throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequest>(nameof(CreatureTemplateParameters))
-				: creatureTemplateParameters;
+			CreatureTemplateSkills = creatureTemplateSkills == null
+				? throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequest>(nameof(CreatureTemplateSkills))
+				: creatureTemplateSkills;
 		}
 	}
 }

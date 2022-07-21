@@ -22,8 +22,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly Condition _condition;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
-		private readonly Parameter _parameter;
-		private readonly CreatureTemplateParameter _creatureTemplateParameter;
+		private readonly Skill _parameter;
+		private readonly CreatureTemplateSkill _creatureTemplateParameter;
 		private readonly CreatureTemplatePart _creatureTemplatePart;
 		private readonly BodyPartType _bodyPartType;
 		private readonly CreatureType _creatureType;
@@ -38,7 +38,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_bodyPartType = BodyPartType.CreateForTest();
 			_creatureType = CreatureType.CreateForTest();
 
-			_parameter = Parameter.CreateForTest(game: _game);
+			_parameter = Skill.CreateForTest(game: _game);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
 			_condition = Condition.CreateForTest(name: Conditions.BleedName);
 
@@ -58,20 +58,20 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				maxToHit: 10,
 				armor: 5);
 
-			_creatureTemplateParameter = CreatureTemplateParameter.CreateForTest(
+			_creatureTemplateParameter = CreatureTemplateSkill.CreateForTest(
 				creatureTemplate: _creatureTemplate,
-				parameter: _parameter,
+				skill: _parameter,
 				value: 5);
 
 			_ability = Ability.CreateForTest(
 				game: _game,
-				attackParameter: _parameter);
+				attackSkill: _parameter);
 			_ability.AppliedConditions.Add(new AppliedCondition(
 				ability: _ability,
 				condition: _condition,
 				applyChance: 100));
 
-			_creatureTemplate.CreatureTemplateParameters.Add(_creatureTemplateParameter);
+			_creatureTemplate.CreatureTemplateSkills.Add(_creatureTemplateParameter);
 			_creatureTemplate.CreatureTemplateParts.Add(_creatureTemplatePart);
 			_creatureTemplate.Abilities.Add(_ability);
 
@@ -133,13 +133,13 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(creatureTemplatePart.MaxToHit, 10);
 			Assert.AreEqual(creatureTemplatePart.Armor, 5);
 
-			Assert.IsNotNull(result.CreatureTemplateParameters);
-			var creatureTemplateParameter = result.CreatureTemplateParameters.First();
+			Assert.IsNotNull(result.CreatureTemplateSkills);
+			var creatureTemplateParameter = result.CreatureTemplateSkills.First();
 			Assert.IsNotNull(creatureTemplateParameter);
 			Assert.AreEqual(creatureTemplateParameter.Id, _creatureTemplateParameter.Id);
-			Assert.AreEqual(creatureTemplateParameter.ParameterName, _parameter.Name);
-			Assert.AreEqual(creatureTemplateParameter.ParameterId, _parameter.Id);
-			Assert.AreEqual(creatureTemplateParameter.ParameterValue, 5);
+			Assert.AreEqual(creatureTemplateParameter.SkillName, _parameter.Name);
+			Assert.AreEqual(creatureTemplateParameter.SkillId, _parameter.Id);
+			Assert.AreEqual(creatureTemplateParameter.SkillValue, 5);
 
 			Assert.IsNotNull(result.Abilities);
 			var ability = result.Abilities.First();

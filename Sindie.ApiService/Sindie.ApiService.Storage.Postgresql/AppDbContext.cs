@@ -18,51 +18,11 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// Способности
 		/// </summary>
 		public DbSet<Ability> Abilities { get; set; }
-		
-		/// <summary>
-		/// Действия
-		/// </summary>
-		public DbSet<Core.Entities.Action> Actions { get; set; }
-
-		/// <summary>
-		/// Деятельности
-		/// </summary>
-		public DbSet<Activity> Activities { get; set; }
-
-		/// <summary>
-		/// Действия деятельности
-		/// </summary>
-		public DbSet<ActivityAction> ActivityActions { get; set; }
-
-		/// <summary>
-		/// Области применения
-		/// </summary>
-		public DbSet<ApplicationArea> ApplicationAreas { get; set; }
 
 		/// <summary>
 		/// Применяемые состояния
 		/// </summary>
 		public DbSet<AppliedCondition> AppliedConditions { get; set; }
-
-		/// <summary>
-		/// Статьи
-		/// </summary>
-		public DbSet<Article> Articles { get; set; }
-
-		/// <summary>
-		/// Сумки
-		/// </summary>
-		public DbSet<Bag> Bags { get; set; }
-
-		/// <summary>
-		/// Предметы в сумках
-		/// </summary>
-		public DbSet<BagItem> BagItems { get; set; }
-
-		/// <summary>
-		/// Тела
-		/// </summary>
-		public DbSet<Body> Bodies { get; set; }
 
 		/// <summary>
 		/// Части тела
@@ -90,36 +50,6 @@ namespace Sindie.ApiService.Storage.Postgresql
 		public DbSet<Character> Characters { get; set; }
 
 		/// <summary>
-		/// Характеристики
-		/// </summary>
-		public DbSet<Characteristic> Characteristics { get; set; }
-
-		/// <summary>
-		/// Модификаторы персонажа
-		/// </summary>
-		public DbSet<CharacterModifier> CharacterModifiers { get; set; }
-
-		/// <summary>
-		/// Параметры персонажей
-		/// </summary>
-		public DbSet<CharacterParameter> CharacterParameters { get; set; }
-
-		/// <summary>
-		/// Шаблоны персонажа
-		/// </summary>
-		public DbSet<CharacterTemplate> CharacterTemplates { get; set; }
-
-		/// <summary>
-		/// Модификаторы шаблона персонажа
-		/// </summary>
-		public DbSet<CharacterTemplateModifier> CharacterTemplateModifiers { get; set; }
-
-		/// <summary>
-		/// Слоты шаблона пресонажа
-		/// </summary>
-		public DbSet<CharacterTemplateSlot> CharacterTemplateSlots { get; set; }
-
-		/// <summary>
 		/// Состояния
 		/// </summary>
 		public DbSet<Condition> Conditions { get; set; }
@@ -132,7 +62,7 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// <summary>
 		/// Параметры существ
 		/// </summary>
-		public DbSet<CreatureParameter> CreatureParameters { get; set; }
+		public DbSet<CreatureSkill> CreatureParameters { get; set; }
 
 		/// <summary>
 		/// Части тел существ
@@ -152,7 +82,7 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// <summary>
 		/// Параметры шаблонов существ
 		/// </summary>
-		public DbSet<CreatureTemplateParameter> CreatureTemplateParameters { get; set; }
+		public DbSet<CreatureTemplateSkill> CreatureTemplateParameters { get; set; }
 
 		/// <summary>
 		/// Типы существ
@@ -163,11 +93,6 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// Типы урона
 		/// </summary>
 		public DbSet<DamageType> DamageTypes { get; set; }
-
-		/// <summary>
-		/// События
-		/// </summary>
-		public DbSet<Event> Events { get; set; }
 
 		/// <summary>
 		/// Игры
@@ -187,27 +112,7 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// <summary>
 		/// Экземпляры
 		/// </summary>
-		public DbSet<Instance> Instances { get; set; }
-
-		/// <summary>
-		/// Взаимодействия
-		/// </summary>
-		public DbSet<Interaction> Interactions { get; set; }
-
-		/// <summary>
-		/// Предметы во взаимодействии
-		/// </summary>
-		public DbSet<InteractionItem> InteractionItems { get; set; }
-
-		/// <summary>
-		/// Роли во взаимодействии
-		/// </summary>
-		public DbSet<InteractionsRole> InteractionsRoles { get; set; }
-
-		/// <summary>
-		/// Деятельности роли во взаимодействии
-		/// </summary>
-		public DbSet<InteractionsRoleActivity> InteractionsRoleActivities { get; set; }
+		public DbSet<Battle> Instances { get; set; }
 
 		/// <summary>
 		/// Интерфейсы
@@ -215,79 +120,9 @@ namespace Sindie.ApiService.Storage.Postgresql
 		public DbSet<Interface> Interfaces { get; set; }
 
 		/// <summary>
-		/// Предметы
+		/// Навыки
 		/// </summary>
-		public DbSet<Item> Items { get; set; }
-
-		/// <summary>
-		/// Шаблоны предметов
-		/// </summary>
-		public DbSet<ItemTemplate> ItemTemplates { get; set; }
-
-		/// <summary>
-		/// Модификаторы шаблона предмета
-		/// </summary>
-		public DbSet<ItemTemplateModifier> ItemTemplateModifiers { get; set; }
-
-		/// <summary>
-		/// Модификаторы игры
-		/// </summary>
-		public DbSet<Modifier> Modifiers { get; set; }
-
-		/// <summary>
-		/// Скрипты модификатора
-		/// </summary>
-		public DbSet<ModifierScript> ModifierScripts { get; set; }
-
-		/// <summary>
-		/// Уведомления
-		/// </summary>
-		public DbSet<Notification> Notifications { get; set; }
-
-		/// <summary>
-		/// Уведомления об удалении предметов
-		/// </summary>
-		public DbSet<NotificationDeletedItem> NotificationsDeletedItems { get; set; }
-
-		/// <summary>
-		/// Уведомления о предложении передать предметы
-		/// </summary>
-		public DbSet<NotificationTradeRequest> NotificationsTradeRequest { get; set; }
-
-		/// <summary>
-		/// Параметры
-		/// </summary>
-		public DbSet<Parameter> Parameters { get; set; }
-
-		/// <summary>
-		/// Стороны
-		/// </summary>
-		public DbSet<Party> Parties { get; set; }
-
-		/// <summary>
-		/// Роли стороны во взаимодействии
-		/// </summary>
-		public DbSet<PartyInteractionsRole> PartyInteractionsRoles { get; set; }
-
-		/// <summary>
-		/// Пререквизиты
-		/// </summary>
-		public DbSet<Prerequisite> Prerequisites { get; set; }
-
-		/// <summary>
-		/// Cкрипты
-		/// </summary>
-		public DbSet<Script> Scripts { get; set; }
-
-		/// <summary>
-		/// Пререквезиты скрипта
-		/// </summary>
-		public DbSet<ScriptPrerequisites> ScriptPrerequisites { get; set; }
-
-		/// <summary>
-		/// Слоты
-		/// </summary>
-		public DbSet<Slot> Slots { get; set; }
+		public DbSet<Skill> Skills { get; set; }
 
 		/// <summary>
 		/// Роли в системе

@@ -46,67 +46,19 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			builder.HasMany(x => x.TextFiles)
 				.WithMany(x => x.Games);
 
-			builder.HasMany(x => x.Articles)
-				.WithOne(x => x.Game)
-				.HasForeignKey(x => x.GameId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
 			builder.HasOne(x => x.Avatar)
 				.WithOne(x => x.Game)
 				.HasForeignKey<Game>(x => x.AvatarId)
 				.HasPrincipalKey<ImgFile>(x => x.Id)
 				.OnDelete(DeleteBehavior.SetNull);
 
-			builder.HasMany(x => x.Scripts)
+			builder.HasMany(x => x.Skills)
 				.WithOne(x => x.Game)
 				.HasForeignKey(x => x.GameId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasMany(x => x.Events)
-				.WithOne(x => x.Game)
-				.HasForeignKey(x => x.GameId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			builder.HasMany(x => x.Modifiers)
-				.WithOne(x => x.Game)
-				.HasForeignKey(x => x.GameId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			builder.HasMany(x => x.Parameters)
-				.WithOne(x => x.Game)
-				.HasForeignKey(x => x.GameId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			builder.HasMany(x => x.CharacterTemplates)
-				.WithOne(x => x.Game)
-				.HasForeignKey(x => x.GameId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			builder.HasMany(x => x.Slots)
-				.WithOne(x => x.Game)
-				.HasForeignKey(x => x.GameId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			builder.HasMany(x => x.ItemTemplates)
-				.WithOne(x => x.Game)
-				.HasForeignKey(x => x.GameId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			builder.HasMany(x => x.Interactions)
-				.WithOne(x => x.Game)
-				.HasForeignKey(x => x.GameId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			builder.HasMany(x => x.Instances)
+			builder.HasMany(x => x.Battles)
 				.WithOne(x => x.Game)
 				.HasForeignKey(x => x.GameId)
 				.HasPrincipalKey(x => x.Id)

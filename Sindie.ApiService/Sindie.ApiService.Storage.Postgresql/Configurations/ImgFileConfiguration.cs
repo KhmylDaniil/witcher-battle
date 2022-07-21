@@ -45,69 +45,15 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey<ImgFile>(x => x.Id)
 				.OnDelete(DeleteBehavior.SetNull);
 
-			builder.HasOne(x => x.Prerequisite)
-				.WithOne(x => x.ImgFile)
-				.HasForeignKey<Prerequisite>(x => x.ImgFileId)
-				.HasPrincipalKey<ImgFile>(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
-
-			builder.HasOne(x => x.CharacterTemplate)
-				.WithOne(x => x.ImgFile)
-				.HasForeignKey<CharacterTemplate>(x => x.ImgFileId)
-				.HasPrincipalKey<ImgFile>(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
-
-			builder.HasOne(x => x.ItemTemplate)
-				.WithOne(x => x.ImgFile)
-				.HasForeignKey<ItemTemplate>(x => x.ImgFileId)
-				.HasPrincipalKey<ImgFile>(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
-
 			builder.HasOne(x => x.Game)
 				.WithOne(x => x.Avatar)
 				.HasForeignKey<Game>(x => x.AvatarId)
 				.HasPrincipalKey<ImgFile>(x => x.Id)
 				.OnDelete(DeleteBehavior.SetNull);
 
-			builder.HasOne(x => x.Interaction)
+			builder.HasOne(x => x.Battle)
 				.WithOne(x => x.ImgFile)
-				.HasForeignKey<Interaction>(x => x.ImgFileId)
-				.HasPrincipalKey<ImgFile>(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
-
-			builder.HasOne(x => x.Party)
-				.WithOne(x => x.ImgFile)
-				.HasForeignKey<Party>(x => x.ImgFileId)
-				.HasPrincipalKey<ImgFile>(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
-
-			builder.HasOne(x => x.InteractionsRole)
-				.WithOne(x => x.ImgFile)
-				.HasForeignKey<InteractionsRole>(x => x.ImgFileId)
-				.HasPrincipalKey<ImgFile>(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
-
-			builder.HasOne(x => x.Activity)
-				.WithOne(x => x.ImgFile)
-				.HasForeignKey<Activity>(x => x.ImgFileId)
-				.HasPrincipalKey<ImgFile>(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
-
-			builder.HasOne(x => x.Instance)
-				.WithOne(x => x.ImgFile)
-				.HasForeignKey<Instance>(x => x.ImgFileId)
-				.HasPrincipalKey<ImgFile>(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
-
-			builder.HasOne(x => x.Character)
-				.WithOne(x => x.ImgFile)
-				.HasForeignKey<Character>(x => x.ImgFileId)
-				.HasPrincipalKey<ImgFile>(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
-
-			builder.HasOne(x => x.Bag)
-				.WithOne(x => x.ImgFile)
-				.HasForeignKey<Bag>(x => x.ImgFileId)
+				.HasForeignKey<Battle>(x => x.ImgFileId)
 				.HasPrincipalKey<ImgFile>(x => x.Id)
 				.OnDelete(DeleteBehavior.SetNull);
 

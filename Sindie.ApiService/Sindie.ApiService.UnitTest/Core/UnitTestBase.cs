@@ -1,12 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Infrastructure;
-using Sindie.ApiService.Core.Services.Roll;
 using Sindie.ApiService.Storage.Postgresql;
 using System;
 using System.Collections.Generic;
@@ -126,11 +123,8 @@ namespace Sindie.ApiService.UnitTest.Core
 				.Setup(x => x.UserGameFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>()))
 				.Returns<IQueryable<Game>, Guid>((x, y) => x);
 			AuthorizationService
-				.Setup(x => x.BagOwnerOrMasterFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
-				.Returns<IQueryable<Game>, Guid, Guid>((x, y, z) => x);
-			AuthorizationService
-				.Setup(x => x.InstanceMasterFilter(It.IsAny<IQueryable<Instance>>(), It.IsAny<Guid>()))
-				.Returns<IQueryable<Instance>, Guid>((x, y) => x);
+				.Setup(x => x.BattleMasterFilter(It.IsAny<IQueryable<Battle>>(), It.IsAny<Guid>()))
+				.Returns<IQueryable<Battle>, Guid>((x, y) => x);
 
 			AuthorizationServiceWithGameId = new Mock<IAuthorizationService>();
 			AuthorizationServiceWithGameId
@@ -154,12 +148,6 @@ namespace Sindie.ApiService.UnitTest.Core
 				}))
 				.Returns<int, int, int, int>((attackBase, defenseBase, attackerFumble, defenderFumble) => attackBase - defenseBase);
 		}
-
-		/// <summary>
-		/// АвтоМаппер
-		/// </summary>
-		protected IMapper Mapper => new Mapper(new MapperConfiguration
-			(cfd => cfd.AddProfile(new MappingProfile())));
 
 		/// <summary>
 		/// Создать контекст с БД в памяти

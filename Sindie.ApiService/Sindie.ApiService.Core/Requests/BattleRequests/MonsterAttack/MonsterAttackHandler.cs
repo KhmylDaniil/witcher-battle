@@ -53,10 +53,10 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 		/// <returns>Результат атаки монстра</returns>
 		public async Task<MonsterAttackResponse> Handle(MonsterAttackCommand request, CancellationToken cancellationToken)
 		{
-			var instance = await _authorizationService.InstanceMasterFilter(_appDbContext.Instances, request.InstanceId)
+			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Instances, request.BattleId)
 				.Include(i => i.Creatures)
-					.ThenInclude(c => c.CreatureParameters)
-					.ThenInclude(cp => cp.Parameter)
+					.ThenInclude(c => c.CreatureSkills)
+					.ThenInclude(cp => cp.Skill)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureParts)
 					.ThenInclude(cp => cp.BodyPartType)
@@ -69,9 +69,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 					.ThenInclude(a => a.DamageTypes)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
-					.ThenInclude(a => a.DefensiveParameters)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.Immunities)
+					.ThenInclude(a => a.DefensiveSkills)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Vulnerables)
 				.Include(i => i.Creatures)
@@ -79,9 +77,9 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Conditions)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Instance>();
+					?? throw new ExceptionNoAccessToEntity<Battle>();
 
-			var data = CheckAndFormData(request, instance);
+			var data = CheckAndFormData(request, battle);
 
 			var attack = new Attack(_rollService);
 			
@@ -89,7 +87,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 				data: data,
 				defenseValue: request.DefenseValue);
 
-			Attack.DisposeCorpses(ref instance);
+			Attack.DisposeCorpses(ref battle);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
 			return new MonsterAttackResponse()
@@ -100,13 +98,13 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 		/// Проверка запроса и формирование данных для расчета атаки
 		/// </summary>
 		/// <param name="request">Запрос</param>
-		/// <param name="instance">Инстанс</param>
-		private AttackData CheckAndFormData(MonsterAttackCommand request, Instance instance)
+		/// <param name="battle">Бой</param>
+		private AttackData CheckAndFormData(MonsterAttackCommand request, Battle battle)
 		{
-			var monster = instance.Creatures.FirstOrDefault(x => x.Id == request.Id)
+			var monster = battle.Creatures.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<Creature>(request.Id);
 
-			var target = instance.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
+			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
 				?? throw new ExceptionEntityNotFound<Creature>(request.TargetCreatureId);
 
 			var aimedPart = request.CreaturePartId == null

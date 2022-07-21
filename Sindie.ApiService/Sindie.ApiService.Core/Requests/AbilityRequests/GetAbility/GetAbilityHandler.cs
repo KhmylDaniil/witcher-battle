@@ -61,7 +61,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(g => g.Abilities)
-					.ThenInclude(a => a.AttackParameter)
+					.ThenInclude(a => a.AttackSkill)
 				.Include(g => g.Abilities)
 					.ThenInclude(a => a.AppliedConditions)
 					.SelectMany(g => g.Abilities
@@ -75,7 +75,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 						.Where(x => x.ModifiedOn >= request.ModificationMinTime)
 						.Where(x => (request.ModificationMaxTime == default && x.ModifiedOn <= _dateTimeProvider.TimeProvider)
 						|| x.ModifiedOn <= request.ModificationMaxTime))
-						.Where(x => request.AttackParameterId == null || x.AttackParameterId == request.AttackParameterId)
+						.Where(x => request.AttackSkillId == null || x.AttackSkillId == request.AttackSkillId)
 						.Where(x => request.DamageTypeId == null || x.DamageTypes.Select(dt => dt.Id).Contains(request.DamageTypeId.Value))
 						.Where(x => request.ConditionId == null || x.AppliedConditions.Select(ac => ac.ConditionId).Contains(request.ConditionId.Value));
 
@@ -88,8 +88,8 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 					Id = x.Id,
 					Name = x.Name,
 					Description = x.Description,
-					AttackParameterId = x.AttackParameterId,
-					AttackParameterName = x.AttackParameter.Name,
+					AttackSkillId = x.AttackSkillId,
+					AttackSkillName = x.AttackSkill.Name,
 					AttackDiceQuantity = x.AttackDiceQuantity,
 					DamageModifier = x.DamageModifier,
 					CreatedByUserId = x.CreatedByUserId,

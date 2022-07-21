@@ -16,8 +16,7 @@ namespace Sindie.ApiService.UnitTest.Core.Services.Authorization
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
 		private readonly UserGame _userGame;
-		private readonly Instance _instance;
-		private readonly Character _character;
+		private readonly Battle _instance;
 
 		/// <summary>
 		/// Конструктор
@@ -29,37 +28,10 @@ namespace Sindie.ApiService.UnitTest.Core.Services.Authorization
 				game: _game,
 				user: User.CreateForTest(UserContextAsUser.Object.CurrentUserId),
 				gameRole: GameRole.CreateForTest(GameRoles.MasterRoleId));
-			_instance = Instance.CreateForTest(game: _game);
-
-			_character = Character.CreateForTest(
-				instance: _instance, 
-				bag: Bag.CreateForTest(instance: _instance));
-			
-			_character.UserGameActivated = UserGameCharacter.CreateForTest(
-					userGame: _userGame,
-					character: _character);
+			_instance = Battle.CreateForTest(game: _game);
 
 			_dbContext = CreateInMemoryContext(
-				x => x.AddRange(_game, _instance, _character, _userGame));
-		}
-
-		/// <summary>
-		/// Тест метода BagOwnerOrMasterFilterFilter() - Проверить права доступа, мастер игры 
-		/// или пользователь, активировавший персонажа - владельца сумки
-		/// </summary>
-		/// <returns>Игра</returns>
-		[TestMethod]
-		public void Hash_BagOwnerOrMasterFilter1_ShouldReturnGame()
-		{
-			//Arrange
-			var authorizationService = new AuthorizationService(UserContextAsUser.Object);
-
-			//Act
-			var result = authorizationService.BagOwnerOrMasterFilter(_dbContext.Games, _game.Id, _character.Bag.Id);
-
-			//Assert
-			Assert.AreEqual(1, result.Count());
-			Assert.AreEqual(_game.Id, result.First().Id);
+				x => x.AddRange(_game, _instance, _userGame));
 		}
 
 		/// <summary>
@@ -112,7 +84,7 @@ namespace Sindie.ApiService.UnitTest.Core.Services.Authorization
 			var authorizationService = new AuthorizationService(UserContextAsUser.Object);
 
 			//Act
-			var result = authorizationService.InstanceMasterFilter(_dbContext.Instances, _instance.Id);
+			var result = authorizationService.BattleMasterFilter(_dbContext.Instances, _instance.Id);
 
 			//Assert
 			Assert.AreEqual(1, result.Count());

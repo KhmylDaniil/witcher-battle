@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Sindie.ApiService.Core.Contracts.BattleRequests.CreateBattle;
 using Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack;
 using Sindie.ApiService.Core.Contracts.BattleRequests.MonsterAttack;
 using Sindie.ApiService.Core.Contracts.BattleRequests.MonsterSuffer;
+using Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle;
 using Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack;
 using Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack;
 using Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer;
@@ -38,6 +40,28 @@ namespace Sindie.ApiService.WebApi.Controllers
 		}
 
 		/// <summary>
+		/// Создать бой
+		/// </summary>
+		/// <param name="request">Запрос на создание боя</param>
+		/// <param name="cancellationToken">Токен отмены</param>
+		/// <returns></returns>
+		[HttpPost]
+		[SwaggerResponse(StatusCodes.Status200OK)]
+		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
+		public async Task CreateBattleAsync([FromBody] CreateBattleRequest request, CancellationToken cancellationToken)
+		{
+			await _mediator.Send(
+				request == null
+				? throw new ArgumentNullException(nameof(request))
+				: new CreateBattleCommand(
+					gameId: request.GameId,
+					imgFileId: request.ImgFileId,
+					name: request.Name,
+					description: request.Description,
+					creatures: request.Creatures), cancellationToken);
+		}
+
+		/// <summary>
 		/// Атака монстра
 		/// </summary>
 		/// <param name="request">Запрос на атаку монстра</param>
@@ -52,7 +76,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 				request == null
 				? throw new ArgumentNullException(nameof(request))
 				: new MonsterAttackCommand(
-					instanceId: request.InstanceId,
+					battleId: request.BattleId,
 					id: request.Id,
 					abilityId: request.AbilityId,
 					targetCreatureId: request.TargetCreatureId,
@@ -68,7 +92,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		/// <param name="request">Запрос на получение монстром урона</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		[HttpPut("monsterSuffer")]
+		[HttpPut("MonsterSuffer")]
 		[SwaggerResponse(StatusCodes.Status200OK)]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
 		public async Task<MonsterSufferResponse> MonsterSufferAsync([FromQuery] MonsterSufferRequest request, CancellationToken cancellationToken)
@@ -77,7 +101,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 				request == null
 				? throw new ArgumentNullException(nameof(request))
 				: new MonsterSufferCommand(
-					instanceId: request.InstanceId,
+					battleId: request.BattleId,
 					attackerId: request.AttackerId,
 					targetId: request.TargetId,
 					abilityId: request.AbilityId,
@@ -101,12 +125,12 @@ namespace Sindie.ApiService.WebApi.Controllers
 				request == null
 				? throw new ArgumentNullException(nameof(request))
 				: new CreatureAttackCommand(
-					instanceId: request.InstanceId,
+					battleId: request.BattleId,
 					attackerId: request.AttackerId,
 					abilityId: request.AbilityId,
 					targetCreatureId: request.TargetCreatureId,
 					creaturePartId: request.CreaturePartId,
-					defensiveParameter: request.DefensiveParameter,
+					defensiveSkillId: request.DefensiveSkillId,
 					specialToHit: request.SpecialToHit,
 					specialToDamage: request.SpecialToDamage), cancellationToken);
 		}

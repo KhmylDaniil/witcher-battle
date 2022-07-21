@@ -1,10 +1,7 @@
-﻿using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -14,9 +11,9 @@ namespace Sindie.ApiService.Core.Entities
 	public class Creature: EntityBase
 	{
 		/// <summary>
-		/// Поле для <see cref="_instance"/>
+		/// Поле для <see cref="_battle"/>
 		/// </summary>
-		public const string InstanceField = nameof(_instance);
+		public const string BattleField = nameof(_battle);
 
 		/// <summary>
 		/// Поле для <see cref="_imgFile"/>
@@ -29,19 +26,13 @@ namespace Sindie.ApiService.Core.Entities
 		public const string CreatureTemplateField = nameof(_creatureTemplate);
 
 		/// <summary>
-		/// Поле для <see cref="_bodyTemplate"/>
-		/// </summary>
-		public const string BodyTemplateField = nameof(_bodyTemplate);
-
-		/// <summary>
 		/// Поле для <see cref="_creatureType"/>
 		/// </summary>
 		public const string CreatureTypeField = nameof(_creatureType);
 
-		private Instance _instance;
+		private Battle _battle;
 		private ImgFile _imgFile;
 		private CreatureTemplate _creatureTemplate;
-		private BodyTemplate _bodyTemplate;
 		private CreatureType _creatureType;
 
 		private int _sta;
@@ -63,22 +54,21 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Конструктор инстанса
+		/// Конструктор существа
 		/// </summary>
 		/// <param name="creatureTemplate">Шаблон существа</param>
-		/// <param name="instance">интанс</param>
+		/// <param name="battle">Бой</param>
 		/// <param name="name">Название существа</param>
 		/// <param name="description">Описание существа</param>
 		public Creature(
 			CreatureTemplate creatureTemplate,
-			Instance instance,
+			Battle battle,
 			string name,
 			string description)
 		{
-			Instance = instance;
+			Battle = battle;
 			ImgFile = creatureTemplate.ImgFile;
 			CreatureTemplate = creatureTemplate;
-			BodyTemplate = creatureTemplate.BodyTemplate;
 			CreatureTypeId = creatureTemplate.CreatureTypeId;
 			HP = creatureTemplate.HP;
 			Sta = creatureTemplate.Sta;
@@ -96,13 +86,13 @@ namespace Sindie.ApiService.Core.Entities
 			CreatureParts = CreateParts(creatureTemplate.CreatureTemplateParts);
 			Abilities = creatureTemplate.Abilities;
 			Conditions = new List<Condition>();
-			CreatureParameters = CreateParameters(creatureTemplate.CreatureTemplateParameters);
+			CreatureSkills = CreateSkills(creatureTemplate.CreatureTemplateSkills);
 		}
 
 		/// <summary>
-		/// Айди экземпляра
+		/// Айди боя
 		/// </summary>
-		public Guid InstanceId { get; protected set; }
+		public Guid BattleId { get; protected set; }
 
 		/// <summary>
 		/// Айди графического файла
@@ -113,11 +103,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// Айди шаблона существа
 		/// </summary>
 		public Guid CreatureTemplateId { get; protected set; }
-
-		/// <summary>
-		/// Айди шаблона тела
-		/// </summary>
-		public Guid BodyTemplateId { get; protected set; }
 
 		/// <summary>
 		/// Название существа
@@ -282,15 +267,15 @@ namespace Sindie.ApiService.Core.Entities
 		#region navigation properties
 
 		/// <summary>
-		/// Экземпляр
+		/// Бой
 		/// </summary>
-		public Instance Instance
+		public Battle Battle
 		{
-			get => _instance;
+			get => _battle;
 			protected set
 			{
-				_instance = value ?? throw new ApplicationException("Необходимо передать экземпляр");
-				InstanceId = value.Id;
+				_battle = value ?? throw new ApplicationException("Необходимо передать бой");
+				BattleId = value.Id;
 			}
 		}
 
@@ -321,19 +306,6 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Шаблон тела
-		/// </summary>
-		public BodyTemplate BodyTemplate
-		{
-			get => _bodyTemplate;
-			set
-			{
-				_bodyTemplate = value ?? throw new ApplicationException("Необходимо передать шаблон тела");
-				BodyTemplateId = value.Id;
-			}
-		}
-
-		/// <summary>
 		/// Тип существа
 		/// </summary>
 		public CreatureType CreatureType
@@ -352,9 +324,9 @@ namespace Sindie.ApiService.Core.Entities
 		public List<Ability> Abilities { get; protected set; }
 
 		/// <summary>
-		/// Параметры шаблона существа
+		/// Навыки существа
 		/// </summary>
-		public List<CreatureParameter> CreatureParameters { get; protected set; }
+		public List<CreatureSkill> CreatureSkills { get; protected set; }
 
 		/// <summary>
 		/// Наложенные состояния
@@ -376,27 +348,22 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public List<DamageType> Vulnerables { get; protected set; }
 
-		/// <summary>
-		/// Иммунитеты
-		/// </summary>
-		public List<DamageType> Immunities { get; protected set; }
-
 		#endregion navigation properties
 
 		/// <summary>
-		/// Создание списка параметров существа
+		/// Создание списка навыков существа
 		/// </summary>
-		/// <param name="parameters">Параметры шаблона существа</param>
-		/// <returns>Список параметров существа</returns>
-		private List<CreatureParameter> CreateParameters(List<CreatureTemplateParameter> parameters)
+		/// <param name="skills">Навыки шаблона существа</param>
+		/// <returns>Список навыков существа</returns>
+		private List<CreatureSkill> CreateSkills(List<CreatureTemplateSkill> skills)
 		{
-			var result = new List<CreatureParameter>();
+			var result = new List<CreatureSkill>();
 
-			foreach (var parameter in parameters)
-				result.Add(new CreatureParameter(
+			foreach (var skill in skills)
+				result.Add(new CreatureSkill(
 					creature: this,
-					parameter: parameter.Parameter,
-					parameterValue: parameter.ParameterValue));
+					skill: skill.Skill,
+					skillValue: skill.SkillValue));
 			return result;
 		}
 
@@ -438,45 +405,44 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Защитный параметр по умолчанию
+		/// Защитный навык по умолчанию
 		/// </summary>
 		/// <param name="ability">Способность</param>
-		/// <returns>Защитный параметр существа</returns>
-		internal CreatureParameter DefaultDefensiveParameter(Ability ability)
+		/// <returns>Защитный навык существа</returns>
+		internal CreatureSkill DefaultDefensiveSkill(Ability ability)
 		{
-			if (!ability.DefensiveParameters.Any())
+			if (!ability.DefensiveSkills.Any())
 				throw new ApplicationException($"От способности {ability.Name} c айди {ability.Id} нет защиты.");
 
-			var creatureDefensiveParameters = CreatureParameters.Where(x => ability.DefensiveParameters.Any(a => a.Id == x.ParameterId)).ToList();
+			var creatureDefensiveSkills = CreatureSkills.Where(x => ability.DefensiveSkills.Any(a => a.Id == x.SkillId)).ToList();
 
-			var sortedList = from x in creatureDefensiveParameters
-							 orderby ParameterBase(x.ParameterId)
+			var sortedList = from x in creatureDefensiveSkills
+							 orderby SkillBase(x.SkillId)
 							 select x;
 
 			return sortedList.First();
 		}
 
 		/// <summary>
-		/// Расчет базы параметра
+		/// Расчет базы навыка
 		/// </summary>
-		/// <param name="parameterId">Айди параметра</param>
+		/// <param name="skillId">Айди навыка</param>
 		/// <returns></returns>
-		public int ParameterBase(Guid parameterId)
+		public int SkillBase(Guid skillId)
 		{
-			var parameter = CreatureParameters.FirstOrDefault(x => x.ParameterId == parameterId);
+			var skill = CreatureSkills.FirstOrDefault(x => x.SkillId == skillId);
 
-			var value = typeof(Creature).GetProperty(parameter.StatName).GetValue(this);
+			var value = typeof(Creature).GetProperty(skill.StatName).GetValue(this);
 
-			var statBase = String.IsNullOrEmpty(parameter.StatName)
+			var statBase = String.IsNullOrEmpty(skill.StatName)
 				? 0
 				: (int)value;
-			return statBase + parameter.ParameterValue;
+			return statBase + skill.SkillValue;
 		}
 
 		/// <summary>
 		/// Выбор места попадания
 		/// </summary>
-		/// <param name="id">Айди части тела существа</param>
 		/// <returns>Часть шаблона тела</returns>
 		internal CreaturePart DefaultCreaturePart()
 		{
@@ -489,9 +455,8 @@ namespace Sindie.ApiService.Core.Entities
 		/// Создать тестовую сущность с заполненными полями
 		/// </summary>
 		/// <param name="id">Айди</param>
-		/// <param name="instance">Инстанс</param>
+		/// <param name="battle">Бой</param>
 		/// <param name="creatureTemlpate">Шаблон существа</param>
-		/// <param name="bodyTemplate">Шаблон тела</param>
 		/// <param name="imgFile">Графический файл</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
@@ -514,9 +479,8 @@ namespace Sindie.ApiService.Core.Entities
 		[Obsolete("Только для тестов")]
 		public static Creature CreateForTest(
 			Guid? id = default,
-			Instance instance = default,
+			Battle battle = default,
 			CreatureTemplate creatureTemlpate = default,
-			BodyTemplate bodyTemplate = default,
 			ImgFile imgFile = default,
 			CreatureType creatureType = default, 
 			string name = default,
@@ -538,10 +502,9 @@ namespace Sindie.ApiService.Core.Entities
 			=> new Creature
 			{
 				Id = id ?? Guid.NewGuid(),
-				Instance = instance,
+				Battle = battle,
 				CreatureTemplate = creatureTemlpate,
 				ImgFile = imgFile,
-				BodyTemplate = bodyTemplate,
 				CreatureType = creatureType,
 				Name = name ?? creatureType.Name,
 				Description = description,
@@ -560,12 +523,11 @@ namespace Sindie.ApiService.Core.Entities
 				ModifiedOn = modifiedOn,
 				CreatedByUserId = createdByUserId,
 				Conditions = new List<Condition>(),
-				CreatureParameters = new List<CreatureParameter>(),
+				CreatureSkills = new List<CreatureSkill>(),
 				Abilities = new List<Ability>(),
 				CreatureParts = new List<CreaturePart>(),
 				Vulnerables = new List<DamageType>(),
-				Resistances = new List<DamageType>(),
-				Immunities = new List<DamageType>()
+				Resistances = new List<DamageType>()
 			};
 	}
 }

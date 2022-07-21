@@ -16,49 +16,9 @@ namespace Sindie.ApiService.Core.Abstractions
 		DbSet<Ability> Abilities { get; }
 
 		/// <summary>
-		/// Действия
-		/// </summary>
-		DbSet<Core.Entities.Action> Actions { get; }
-
-		/// <summary>
-		/// Деятельности
-		/// </summary>
-		DbSet<Activity> Activities { get; }
-
-		/// <summary>
-		/// Действия деятельности
-		/// </summary>
-		DbSet<ActivityAction> ActivityActions { get; }
-
-		/// <summary>
-		/// Области применения
-		/// </summary>
-		DbSet<ApplicationArea> ApplicationAreas { get; }
-
-		/// <summary>
 		/// Применяемые состояния
 		/// </summary>
 		DbSet<AppliedCondition> AppliedConditions { get; }
-
-		/// <summary>
-		/// Статьи
-		/// </summary>
-		DbSet<Article> Articles { get; }
-
-		/// <summary>
-		/// Сумки
-		/// </summary>
-		DbSet<Bag> Bags { get; }
-
-		/// <summary>
-		/// Предметы в сумках
-		/// </summary>
-		DbSet<BagItem> BagItems { get; }
-
-		/// <summary>
-		/// Тела
-		/// </summary>
-		DbSet<Body> Bodies { get; }
 
 		/// <summary>
 		/// Части тела
@@ -86,36 +46,6 @@ namespace Sindie.ApiService.Core.Abstractions
 		DbSet<Character> Characters { get; }
 
 		/// <summary>
-		/// Характеристики
-		/// </summary>
-		DbSet<Characteristic> Characteristics { get; }
-
-		/// <summary>
-		/// Модификаторы персонажа
-		/// </summary>
-		DbSet<CharacterModifier> CharacterModifiers { get; }
-
-		/// <summary>
-		/// Параметры персонажей
-		/// </summary>
-		DbSet<CharacterParameter> CharacterParameters { get; }
-
-		/// <summary>
-		/// Шаблоны персонажа
-		/// </summary>
-		DbSet<CharacterTemplate> CharacterTemplates { get; }
-
-		/// <summary>
-		/// Модификаторы шаблона персонажа
-		/// </summary>
-		DbSet<CharacterTemplateModifier> CharacterTemplateModifiers { get; }
-
-		/// <summary>
-		/// Слоты шаблона пресонажа
-		/// </summary>
-		DbSet<CharacterTemplateSlot> CharacterTemplateSlots { get; }
-
-		/// <summary>
 		/// Состояния
 		/// </summary>
 		DbSet<Condition> Conditions { get; }
@@ -128,7 +58,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <summary>
 		/// Параметры существ
 		/// </summary>
-		DbSet<CreatureParameter> CreatureParameters { get; }
+		DbSet<CreatureSkill> CreatureParameters { get; }
 
 		/// <summary>
 		/// Части тел существ
@@ -148,7 +78,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <summary>
 		/// Параметры шаблонов существ
 		/// </summary>
-		DbSet<CreatureTemplateParameter> CreatureTemplateParameters { get; }
+		DbSet<CreatureTemplateSkill> CreatureTemplateParameters { get; }
 
 		/// <summary>
 		/// Типы существ
@@ -159,11 +89,6 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// Типы урона
 		/// </summary>
 		DbSet<DamageType> DamageTypes { get; }
-
-		/// <summary>
-		/// События
-		/// </summary>
-		DbSet<Event> Events { get; }
 
 		/// <summary>
 		/// Игры
@@ -183,27 +108,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <summary>
 		/// Экземпляры
 		/// </summary>
-		DbSet<Instance> Instances { get; }
-
-		/// <summary>
-		/// Взаимодействия
-		/// </summary>
-		DbSet<Interaction> Interactions { get; }
-
-		/// <summary>
-		/// Предметы во взаимодействии
-		/// </summary>
-		DbSet<InteractionItem> InteractionItems { get; }
-
-		/// <summary>
-		/// Роли во взаимодействии
-		/// </summary>
-		DbSet<InteractionsRole> InteractionsRoles { get; }
-
-		/// <summary>
-		/// Деятельности роли во взаимодействии
-		/// </summary>
-		DbSet<InteractionsRoleActivity> InteractionsRoleActivities { get; }
+		DbSet<Battle> Instances { get; }
 
 		/// <summary>
 		/// Интерфейсы
@@ -211,78 +116,9 @@ namespace Sindie.ApiService.Core.Abstractions
 		DbSet<Interface> Interfaces { get; }
 
 		/// <summary>
-		/// Предметы
+		/// Навыки
 		/// </summary>
-		DbSet<Item> Items { get; }
-
-		/// <summary>
-		/// Шаблоны предметов
-		/// </summary>
-		DbSet<ItemTemplate> ItemTemplates { get; }
-
-		/// <summary>
-		/// Модификаторы шаблона предмета
-		/// </summary>
-		DbSet<ItemTemplateModifier> ItemTemplateModifiers { get; }
-
-		/// <summary>
-		/// Модификаторы игры
-		/// </summary>
-		DbSet<Modifier> Modifiers { get; }
-
-		/// <summary>
-		/// Скрипты модификатора
-		/// </summary>
-		DbSet<ModifierScript> ModifierScripts { get; }
-
-		/// <summary>
-		/// Уведомления
-		/// </summary>
-		DbSet<Notification> Notifications { get; }
-
-		/// <summary>
-		/// Уведомления об удалении предметов
-		/// </summary>
-		DbSet<NotificationDeletedItem> NotificationsDeletedItems { get; }
-
-		/// <summary>
-		/// Уведомления о предложении передать предметы
-		/// </summary>
-		DbSet<NotificationTradeRequest> NotificationsTradeRequest { get; }
-		/// <summary>
-		/// Параметры
-		/// </summary>
-		DbSet<Parameter> Parameters { get; }
-
-		/// <summary>
-		/// Стороны
-		/// </summary>
-		DbSet<Party> Parties { get; }
-
-		/// <summary>
-		/// Роли стороны во взаимодействии
-		/// </summary>
-		DbSet<PartyInteractionsRole> PartyInteractionsRoles { get; }
-
-		/// <summary>
-		/// Пререквизиты
-		/// </summary>
-		DbSet<Prerequisite> Prerequisites { get; }
-
-		/// <summary>
-		/// Cкрипты
-		/// </summary>
-		DbSet<Script> Scripts { get; }
-
-		/// <summary>
-		/// Пререквезиты скрипта
-		/// </summary>
-		DbSet<ScriptPrerequisites> ScriptPrerequisites { get; }
-
-		/// <summary>
-		/// Слоты
-		/// </summary>
-		DbSet<Slot> Slots { get; }
+		DbSet<Skill> Skills { get; }
 
 		/// <summary>
 		/// Роли в системе

@@ -63,7 +63,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="name">Имя</param>
 		/// <param name="email">Емайл</param>
 		/// <param name="phone">Телефон</param>
-		/// <param name="avatarId">Айди аватара</param>
 		public User(
 			string name,
 			Interface @interface,
@@ -107,11 +106,6 @@ namespace Sindie.ApiService.Core.Entities
 		public Guid? AvatarId { get; set; }
 
 		#region navigation properties
-
-		/// <summary>
-		/// уведомления
-		/// </summary>
-		public List<Notification> Notifications { get; set; }
 
 		/// <summary>
 		/// Аккаунты пользователей

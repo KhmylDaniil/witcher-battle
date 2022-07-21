@@ -70,7 +70,7 @@ namespace Sindie.ApiService.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ArgumentOutOfRangeException(nameof(DamageModifier));
+					throw new ArgumentOutOfRangeException(nameof(HitPenalty));
 				_hitPenalty = value;
 			}
 		}

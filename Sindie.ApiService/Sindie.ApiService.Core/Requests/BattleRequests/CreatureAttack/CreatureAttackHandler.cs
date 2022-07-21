@@ -54,10 +54,10 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 		/// <returns>Результат атаки существа</returns>
 		public async Task<CreatureAttackResponse> Handle(CreatureAttackCommand request, CancellationToken cancellationToken)
 		{
-			var instance = await _authorizationService.InstanceMasterFilter(_appDbContext.Instances, request.InstanceId)
+			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Instances, request.BattleId)
 				.Include(i => i.Creatures)
-					.ThenInclude(c => c.CreatureParameters)
-					.ThenInclude(cp => cp.Parameter)
+					.ThenInclude(c => c.CreatureSkills)
+					.ThenInclude(cp => cp.Skill)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureParts)
 					.ThenInclude(cp => cp.BodyPartType)
@@ -70,9 +70,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 					.ThenInclude(a => a.DamageTypes)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
-					.ThenInclude(a => a.DefensiveParameters)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.Immunities)
+					.ThenInclude(a => a.DefensiveSkills)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Vulnerables)
 				.Include(i => i.Creatures)
@@ -80,15 +78,15 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Conditions)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Instance>();
+					?? throw new ExceptionNoAccessToEntity<Battle>();
 
-			var attackData = CheckAndFormData(request, instance);
+			var attackData = CheckAndFormData(request, battle);
 
 			var attack = new Attack(_rollService);
 
 			var attackResult = attack.CreatureAttack(ref attackData);
 
-			Attack.DisposeCorpses(ref instance);
+			Attack.DisposeCorpses(ref battle);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
 			return new CreatureAttackResponse { Message = attackResult };
@@ -98,14 +96,14 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 		/// Проверка запроса и формирование данных
 		/// </summary>
 		/// <param name="request">Запрос</param>
-		/// <param name="instance">Инстанс</param>
+		/// <param name="battle">Бой</param>
 		/// <returns>Данные для расчета атаки</returns>
-		private AttackData CheckAndFormData(CreatureAttackCommand request, Instance instance)
+		private AttackData CheckAndFormData(CreatureAttackCommand request, Battle battle)
 		{
-			var attacker = instance.Creatures.FirstOrDefault(x => x.Id == request.AttackerId)
+			var attacker = battle.Creatures.FirstOrDefault(x => x.Id == request.AttackerId)
 				?? throw new ExceptionEntityNotFound<Creature>(request.AttackerId);
 
-			var target = instance.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
+			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
 				?? throw new ExceptionEntityNotFound<Creature>(request.TargetCreatureId);
 
 			var aimedPart = request.CreaturePartId == null
@@ -121,13 +119,13 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 				: attacker.Abilities.FirstOrDefault(x => x.Id == request.AbilityId)
 					?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId.Value);
 
-			if (ability == null && request.DefensiveParameter != null)
-				throw new ExceptionRequestFieldIncorrectData<CreatureAttackCommand>(nameof(request.DefensiveParameter), null);
+			if (ability == null && request.DefensiveSkillId != null)
+				throw new ExceptionRequestFieldIncorrectData<CreatureAttackCommand>(nameof(request.DefensiveSkillId), null);
 
-			var defensiveParameter = request.DefensiveParameter == null
+			var defensiveParameter = request.DefensiveSkillId == null
 				? null
-				: target.CreatureParameters.FirstOrDefault(x => x.ParameterId == ability.DefensiveParameters.First(a => a.Id == request.DefensiveParameter).Id)
-					?? throw new ExceptionRequestFieldIncorrectData<CreatureAttackCommand>(nameof(request.DefensiveParameter));
+				: target.CreatureSkills.FirstOrDefault(x => x.SkillId == ability.DefensiveSkills.First(a => a.Id == request.DefensiveSkillId).Id)
+					?? throw new ExceptionRequestFieldIncorrectData<CreatureAttackCommand>(nameof(request.DefensiveSkillId));
 
 			return AttackData.CreateData(attacker, target, aimedPart, ability, defensiveParameter, request.SpecialToHit, request.SpecialToDamage);
 		}

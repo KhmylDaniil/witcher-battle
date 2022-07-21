@@ -53,11 +53,11 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.CreatureType)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
-					.ThenInclude(x => x.CreatureTemplateParameters)
-					.ThenInclude(x => x.Parameter)
+					.ThenInclude(x => x.CreatureTemplateSkills)
+					.ThenInclude(x => x.Skill)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.Abilities)
-					.ThenInclude(x => x.AttackParameter)
+					.ThenInclude(x => x.AttackSkill)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.Abilities)
 					.ThenInclude(x => x.AppliedConditions)
@@ -105,13 +105,13 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 						MaxToHit = x.MaxToHit,
 						Armor = x.Armor
 					}).ToList(),
-				CreatureTemplateParameters = creatureTemplate.CreatureTemplateParameters
-					.Select(x => new GetCreatureTemplateByIdResponseParameter()
+				CreatureTemplateSkills = creatureTemplate.CreatureTemplateSkills
+					.Select(x => new GetCreatureTemplateByIdResponseSkill()
 					{
 						Id = x.Id,
-						ParameterId = x.ParameterId,
-						ParameterName = x.Parameter.Name,
-						ParameterValue = x.ParameterValue
+						SkillId = x.SkillId,
+						SkillName = x.Skill.Name,
+						SkillValue = x.SkillValue
 					}).ToList(),
 				Abilities = creatureTemplate.Abilities
 				.Select(x => new GetCreatureTemplateByIdResponseAbility()
@@ -119,8 +119,8 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 					Id = x.Id,
 					Name = x.Name,
 					Description = x.Description,
-					AttackParameterId = x.AttackParameterId,
-					AttackParameterName = x.AttackParameter.Name,
+					AttackParameterId = x.AttackSkillId,
+					AttackParameterName = x.AttackSkill.Name,
 					AttackDiceQuantity = x.AttackDiceQuantity,
 					DamageModifier = x.DamageModifier,
 					Accuracy = x.Accuracy,

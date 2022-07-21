@@ -35,8 +35,8 @@ namespace Sindie.ApiService.Core.Entities
 			string roleModifiedUser = "Default")
 		{
 			Id = id;
-			CreatedOn = createdOn;
-			ModifiedOn = modifiedOn;
+			CreatedOn = DateTime.SpecifyKind(createdOn, DateTimeKind.Utc);
+			ModifiedOn = DateTime.SpecifyKind(modifiedOn, DateTimeKind.Utc);
 			CreatedByUserId = сreatedByUserId;
 			ModifiedByUserId = modifiedByUserId;
 			RoleCreatedUser = roleCreatedUser;

@@ -51,11 +51,11 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 				.Include(x => x.BodyTemplates.Where(bt => bt.Id == request.BodyTemplateId))
 					.ThenInclude(x => x.BodyTemplateParts)
 					.ThenInclude(x => x.BodyPartType)
-				.Include(x => x.Parameters)
+				.Include(x => x.Skills)
 				.Include(x => x.CreatureTemplates)
 					.ThenInclude(x => x.CreatureType)
 				.Include(x => x.CreatureTemplates)
-					.ThenInclude(x => x.CreatureTemplateParameters)
+					.ThenInclude(x => x.CreatureTemplateSkills)
 				.Include(x => x.CreatureTemplates)
 					.ThenInclude(x => x.Abilities)
 				.Include(x => x.Abilities)
@@ -97,8 +97,8 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 
 			creatureTemplate.UpdateAlibilities(CreateAbilityList(request, game));
 
-			creatureTemplate.UpdateCreatureTemplateParameters(
-				CreatureTemplateParameterData.CreateCreatureTemplateParameterData(request, game));
+			creatureTemplate.UpdateCreatureTemplateSkills(
+				CreatureTemplateSkillData.CreateCreatureTemplateSkillData(request, game));
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
@@ -133,21 +133,21 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 					throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateCommand>(nameof(item.Armor));
 			}
 
-			foreach (var parameter in request.CreatureTemplateParameters)
+			foreach (var skill in request.CreatureTemplateSkills)
 			{
-				_ = game.Parameters.FirstOrDefault(x => x.Id == parameter.ParameterId)
-					?? throw new ExceptionEntityNotFound<Parameter>(parameter.ParameterId);
+				_ = game.Skills.FirstOrDefault(x => x.Id == skill.SkillId)
+					?? throw new ExceptionEntityNotFound<Skill>(skill.SkillId);
 
-				if (parameter.Id != default)
-					_ = creatureTemplate.CreatureTemplateParameters
-						.FirstOrDefault(x => x.Id == parameter.Id && x.ParameterId == parameter.ParameterId)
-						?? throw new ExceptionEntityNotFound<CreatureTemplateParameter>(parameter.Id.Value);
+				if (skill.Id != default)
+					_ = creatureTemplate.CreatureTemplateSkills
+						.FirstOrDefault(x => x.Id == skill.Id && x.SkillId == skill.SkillId)
+						?? throw new ExceptionEntityNotFound<CreatureTemplateSkill>(skill.Id.Value);
 				else
-					if (creatureTemplate.CreatureTemplateParameters.Any(x => x.ParameterId == parameter.ParameterId))
-						throw new ExceptionRequestNotUniq<CreatureTemplateParameter>(parameter.ParameterId);
+					if (creatureTemplate.CreatureTemplateSkills.Any(x => x.SkillId == skill.SkillId))
+						throw new ExceptionRequestNotUniq<CreatureTemplateSkill>(skill.SkillId);
 
-				if (parameter.Value < 1)
-					throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateCommand>(nameof(parameter.Value));
+				if (skill.Value < 1)
+					throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateCommand>(nameof(skill.Value));
 			}
 
 			foreach (var id in request.Abilities)

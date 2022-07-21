@@ -44,12 +44,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasMany(x => x.Creatures)
-				.WithOne(x => x.BodyTemplate)
-				.HasForeignKey(x => x.BodyTemplateId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
 			builder.HasMany(x => x.BodyTemplateParts)
 				.WithOne(x => x.BodyTemplate)
 				.HasForeignKey(x => x.BodyTemplateId)

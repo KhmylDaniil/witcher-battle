@@ -75,11 +75,6 @@ namespace Sindie.ApiService.Core.Entities
 		public List<UserGame> UserGames { get; set; }
 
 		/// <summary>
-		/// Шаблоны персонажей
-		/// </summary>
-		public List<CharacterTemplate> CharacterTemplates { get; set; }
-
-		/// <summary>
 		/// Персонажи пользователя игры
 		/// </summary>
 		public List<UserGameCharacter> UserGameCharacters { get; set; }

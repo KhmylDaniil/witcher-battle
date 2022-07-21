@@ -9,10 +9,10 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.MonsterAttack
 	public class MonsterAttackRequest: IRequest<MonsterAttackResponse>
 	{
 		/// <summary>
-		/// Айди инстанса
+		/// Айди боя
 		/// </summary>
-		public Guid InstanceId { get; set; }
-		
+		public Guid BattleId { get; set; }
+
 		/// <summary>
 		/// Айди монстра
 		/// </summary>

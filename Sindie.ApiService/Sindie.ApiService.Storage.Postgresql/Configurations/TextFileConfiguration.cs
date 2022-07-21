@@ -38,30 +38,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.HasMany(x => x.Users)
 			.WithMany(x => x.TextFiles);
-
-			builder.HasOne(x => x.Interaction)
-				.WithOne(x => x.TextFile)
-				.HasForeignKey<Interaction>(x => x.TextFileId)
-				.HasPrincipalKey<TextFile>(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
-
-			builder.HasOne(x => x.Party)
-				.WithOne(x => x.TextFile)
-				.HasForeignKey<Party>(x => x.TextFileId)
-				.HasPrincipalKey<TextFile>(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
-
-			builder.HasOne(x => x.InteractionsRole)
-				.WithOne(x => x.TextFile)
-				.HasForeignKey<InteractionsRole>(x => x.TextFileId)
-				.HasPrincipalKey<TextFile>(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
-
-			builder.HasOne(x => x.Character)
-				.WithOne(x => x.TextFile)
-				.HasForeignKey<Character>(x => x.TextFileId)
-				.HasPrincipalKey<TextFile>(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
 		}
 	}
 }

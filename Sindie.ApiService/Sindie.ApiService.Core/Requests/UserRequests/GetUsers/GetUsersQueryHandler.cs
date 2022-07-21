@@ -53,16 +53,22 @@ namespace Sindie.ApiService.Core.Requests.UserRequests.GetUsers
 				.OrderBy(request.OrderBy, request.IsAscending)
 				.Skip(request.PageSize * (request.PageNumber - 1))
 				.Take(request.PageSize)
-				.ProjectTo<GetUsersQueryResponseItem>(_mapper.ConfigurationProvider)
-				.ToListAsync(cancellationToken);
-
-			var recordsCount = await searchFilter
-				.CountAsync(cancellationToken);
+				.Select(x => new GetUsersQueryResponseItem()
+				{
+					Id = x.Id,
+					Name = x.Name,
+					Email = x.Email,
+					Phone = x.Phone,
+					CreatedByUserId = x.CreatedByUserId,
+					ModifiedByUserId = x.ModifiedByUserId,
+					CreatedOn = x.CreatedOn,
+					ModifiedOn = x.ModifiedOn,
+				}).ToListAsync(cancellationToken);
 
 			return new GetUsersQueryResponse
 			{
 				UsersList = list,
-				TotalCount = recordsCount
+				TotalCount = list.Count
 			};
 		}
 	}
