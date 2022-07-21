@@ -26,11 +26,6 @@ namespace Sindie.ApiService.Core.Entities
 		public const string CreatureTemplateField = nameof(_creatureTemplate);
 
 		/// <summary>
-		/// Поле для <see cref="_bodyTemplate"/>
-		/// </summary>
-		public const string BodyTemplateField = nameof(_bodyTemplate);
-
-		/// <summary>
 		/// Поле для <see cref="_creatureType"/>
 		/// </summary>
 		public const string CreatureTypeField = nameof(_creatureType);
@@ -38,7 +33,6 @@ namespace Sindie.ApiService.Core.Entities
 		private Battle _battle;
 		private ImgFile _imgFile;
 		private CreatureTemplate _creatureTemplate;
-		private BodyTemplate _bodyTemplate;
 		private CreatureType _creatureType;
 
 		private int _sta;
@@ -75,7 +69,6 @@ namespace Sindie.ApiService.Core.Entities
 			Battle = battle;
 			ImgFile = creatureTemplate.ImgFile;
 			CreatureTemplate = creatureTemplate;
-			BodyTemplate = creatureTemplate.BodyTemplate;
 			CreatureTypeId = creatureTemplate.CreatureTypeId;
 			HP = creatureTemplate.HP;
 			Sta = creatureTemplate.Sta;
@@ -110,11 +103,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// Айди шаблона существа
 		/// </summary>
 		public Guid CreatureTemplateId { get; protected set; }
-
-		/// <summary>
-		/// Айди шаблона тела
-		/// </summary>
-		public Guid BodyTemplateId { get; protected set; }
 
 		/// <summary>
 		/// Название существа
@@ -318,19 +306,6 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Шаблон тела
-		/// </summary>
-		public BodyTemplate BodyTemplate
-		{
-			get => _bodyTemplate;
-			set
-			{
-				_bodyTemplate = value ?? throw new ApplicationException("Необходимо передать шаблон тела");
-				BodyTemplateId = value.Id;
-			}
-		}
-
-		/// <summary>
 		/// Тип существа
 		/// </summary>
 		public CreatureType CreatureType
@@ -482,7 +457,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="id">Айди</param>
 		/// <param name="battle">Бой</param>
 		/// <param name="creatureTemlpate">Шаблон существа</param>
-		/// <param name="bodyTemplate">Шаблон тела</param>
 		/// <param name="imgFile">Графический файл</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
@@ -507,7 +481,6 @@ namespace Sindie.ApiService.Core.Entities
 			Guid? id = default,
 			Battle battle = default,
 			CreatureTemplate creatureTemlpate = default,
-			BodyTemplate bodyTemplate = default,
 			ImgFile imgFile = default,
 			CreatureType creatureType = default, 
 			string name = default,
@@ -532,7 +505,6 @@ namespace Sindie.ApiService.Core.Entities
 				Battle = battle,
 				CreatureTemplate = creatureTemlpate,
 				ImgFile = imgFile,
-				BodyTemplate = bodyTemplate,
 				CreatureType = creatureType,
 				Name = name ?? creatureType.Name,
 				Description = description,

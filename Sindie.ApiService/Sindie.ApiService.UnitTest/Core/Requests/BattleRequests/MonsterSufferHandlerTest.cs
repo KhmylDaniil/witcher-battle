@@ -67,7 +67,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_creature = Creature.CreateForTest(
 				battle: _instance,
 				creatureTemlpate: _creatureTemplate,
-				bodyTemplate: _bodyTemplate,
 				creatureType: _creatureType);
 			_creature.Abilities.Add(_ability);
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(

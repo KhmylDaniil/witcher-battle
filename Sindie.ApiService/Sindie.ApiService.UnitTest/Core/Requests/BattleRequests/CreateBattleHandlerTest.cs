@@ -122,7 +122,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			Assert.AreEqual(creature.Name, "monster1");
 			Assert.AreEqual(creature.Description, "newMonster");
 			Assert.AreEqual(_creatureTemplate.ImgFileId, creature.ImgFileId);
-			Assert.AreEqual(_creatureTemplate.BodyTemplateId, creature.BodyTemplateId);
 			Assert.AreEqual(_creatureTemplate.CreatureTypeId, creature.CreatureTypeId);
 			Assert.AreEqual(_creatureTemplate.HP, creature.HP);
 			Assert.AreEqual(_creatureTemplate.Sta, creature.Sta);

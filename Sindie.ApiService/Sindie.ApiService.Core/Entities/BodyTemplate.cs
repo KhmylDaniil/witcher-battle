@@ -80,11 +80,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public List<CreatureTemplate> CreatureTemplates { get; set; }
 
-		/// <summary>
-		/// Существа
-		/// </summary>
-		public List<Creature> Creatures { get; set; }
-
 		#endregion navigation properties
 
 		/// <summary>
@@ -114,7 +109,6 @@ namespace Sindie.ApiService.Core.Entities
 				ModifiedOn = modifiedOn,
 				CreatedByUserId = createdByUserId,
 				CreatureTemplates = new List<CreatureTemplate>(),
-				Creatures = new List<Creature>(),
 				BodyTemplateParts = new List<BodyTemplatePart>()
 			};
 

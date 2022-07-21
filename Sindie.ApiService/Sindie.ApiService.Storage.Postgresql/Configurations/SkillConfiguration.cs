@@ -14,8 +14,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 		/// </summary>
 		public override void ConfigureChild(EntityTypeBuilder<Skill> builder)
 		{
-			builder.ToTable("Parameters", "GameRules").
-				HasComment("Параметры");
+			builder.ToTable("Skills", "GameRules").
+				HasComment("Навыки");
 
 			builder.Property(r => r.GameId)
 				.HasColumnName("GameId")

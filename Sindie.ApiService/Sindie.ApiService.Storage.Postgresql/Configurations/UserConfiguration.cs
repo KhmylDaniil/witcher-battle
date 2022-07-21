@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
+using System;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -83,8 +84,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			builder.HasData(new User
 			(
 				id: SystemUsers.SystemUserId,
-				createdOn: new System.DateTime(2020, 1, 1),
-				modifiedOn: new System.DateTime(2020, 1, 1),
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
 				modifiedByUserId: SystemUsers.SystemUserId,
 				name: "Системный пользователь",
