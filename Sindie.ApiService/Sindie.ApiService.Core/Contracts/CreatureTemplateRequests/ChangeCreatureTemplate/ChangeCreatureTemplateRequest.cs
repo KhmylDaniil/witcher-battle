@@ -110,8 +110,8 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatu
 		public List<Guid> Abilities { get; set; }
 
 		/// <summary>
-		/// Параметры шаблона существа
+		/// Навыки шаблона существа
 		/// </summary>
-		public List<ChangeCreatureTemplateRequestParameter> CreatureTemplateParameters { get; set; }
+		public List<ChangeCreatureTemplateRequestSkill> CreatureTemplateSkills { get; set; }
 	}
 }

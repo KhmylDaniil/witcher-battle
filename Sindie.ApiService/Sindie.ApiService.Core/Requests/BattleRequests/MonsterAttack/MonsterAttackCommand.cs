@@ -12,7 +12,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 		/// <summary>
 		/// Конструктор команды атаки монстра
 		/// </summary>
-		/// <param name="instanceId">Айди инстанса</param>
+		/// <param name="battleId">Айди боя</param>
 		/// <param name="id">Айди монстра</param>
 		/// <param name="abilityId">Айди способности</param>
 		/// <param name="targetCreatureId">Айди цели</param>
@@ -21,7 +21,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 		/// <param name="specialToHit">Специальный бонус к попаданию</param>
 		/// <param name="specialToDamage">Специальный бонус к урону</param>
 		public MonsterAttackCommand(
-			Guid instanceId,
+			Guid battleId,
 			Guid id,
 			Guid? abilityId,
 			Guid targetCreatureId,
@@ -30,7 +30,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 			int specialToHit,
 			int specialToDamage)
 		{
-			InstanceId = instanceId;
+			BattleId = battleId;
 			Id = id;
 			AbilityId = abilityId;
 			TargetCreatureId = targetCreatureId;

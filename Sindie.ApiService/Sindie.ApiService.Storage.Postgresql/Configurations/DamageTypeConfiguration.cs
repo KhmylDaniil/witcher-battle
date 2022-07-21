@@ -34,15 +34,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.HasMany(x => x.VulnerableCreatures)
 				.WithMany(x => x.Vulnerables)
-				.UsingEntity(x => x.ToTable("CreatureVulnerables", "GameInstance"));
+				.UsingEntity(x => x.ToTable("CreatureVulnerables", "Battles"));
 
 			builder.HasMany(x => x.ResistantCreatures)
 				.WithMany(x => x.Resistances)
-				.UsingEntity(x => x.ToTable("CreatureResistances", "GameInstance"));
-
-			builder.HasMany(x => x.ImmuneCreatures)
-				.WithMany(x => x.Immunities)
-				.UsingEntity(x => x.ToTable("CreatureImmunities", "GameInstance"));
+				.UsingEntity(x => x.ToTable("CreatureResistances", "Battles"));
 
 			builder.HasMany(x => x.VulnerableCreatureTemplates)
 				.WithMany(x => x.Vulnerables)
@@ -52,9 +48,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.WithMany(x => x.Resistances)
 				.UsingEntity(x => x.ToTable("CreatureTemplateResistances", "GameRules"));
 
-			builder.HasMany(x => x.ImmuneCreatureCreatureTemplates)
-				.WithMany(x => x.Immunities)
-				.UsingEntity(x => x.ToTable("CreatureTemplateImmunities", "GameRules"));
 
 			builder.HasData(new DamageType
 			(

@@ -21,7 +21,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		private readonly DamageType _damageType;
 		private readonly Condition _condition;
 		private readonly Game _game;
-		private readonly Parameter _parameter;
+		private readonly Skill _parameter;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="CreateAbilityHandler"/>
@@ -31,7 +31,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			_game = Game.CreateForTest();
 			_condition = Condition.CreateForTest();
 			_damageType = DamageType.CreateForTest();
-			_parameter = Parameter.CreateForTest(game: _game);
+			_parameter = Skill.CreateForTest(game: _game);
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _condition, _damageType, _parameter));
 		}
@@ -51,8 +51,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 				damageModifier: 4,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackParameterId: _parameter.Id,
-				defensiveParameters: new List<Guid> { _parameter.Id },
+				attackSkillId: _parameter.Id,
+				defensiveSkills: new List<Guid> { _parameter.Id },
 				damageTypes: new List<Guid> { _damageType.Id },
 				appliedConditions: new List<CreateAbilityRequestAppliedCondition>
 				{
@@ -79,11 +79,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			Assert.AreEqual(ability.DamageModifier, 4);
 			Assert.AreEqual(ability.AttackSpeed, 1);
 			Assert.AreEqual(ability.Accuracy, 1);
-			Assert.AreEqual(ability.AttackParameterId, _parameter.Id);
+			Assert.AreEqual(ability.AttackSkillId, _parameter.Id);
 
-			Assert.IsNotNull(ability.DefensiveParameters);
-			Assert.AreEqual(ability.DefensiveParameters.Count, 1);
-			var defensiveParameter = ability.DefensiveParameters.First();
+			Assert.IsNotNull(ability.DefensiveSkills);
+			Assert.AreEqual(ability.DefensiveSkills.Count, 1);
+			var defensiveParameter = ability.DefensiveSkills.First();
 			Assert.AreEqual(_parameter.Id, defensiveParameter.Id);
 
 			Assert.IsNotNull(ability.DamageTypes);

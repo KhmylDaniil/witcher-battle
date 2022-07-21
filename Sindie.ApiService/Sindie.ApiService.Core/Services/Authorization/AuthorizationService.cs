@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Abstractions;
+﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using System;
@@ -51,8 +50,8 @@ namespace Sindie.ApiService.Core.Services.Authorization
 		}
 
 		/// <inheritdoc/>
-		public IQueryable<Game> BagOwnerOrMasterFilter(
-			IQueryable<Game> query, Guid gameId, Guid bagId)
+		public IQueryable<Battle> BattleMasterFilter(
+			IQueryable<Battle> query, Guid battleId)
 		{
 			if (query is null)
 				throw new ArgumentNullException(nameof(query));
@@ -60,28 +59,7 @@ namespace Sindie.ApiService.Core.Services.Authorization
 			if (_userContext.Role == SystemRoles.AndminRoleName)
 				return query;
 
-			return query.Where(x => x.Id == gameId
-			&& (x.UserGames.Any(u => u.UserId == _userContext.CurrentUserId && u.GameRoleId == GameRoles.MasterRoleId)
-				|| x.Instances.Any(i =>
-					!i.Characters.Any(c => c.BagId == bagId)
-					||
-					i.Characters.Any(c => c.BagId == bagId && x.UserGames
-						.Any(ug => ug.UserId == _userContext.CurrentUserId && ug.UserGameCharacters
-							.Any(ugc => ugc.Id == c.UserGameActivatedId))))));
-		}
-
-
-		/// <inheritdoc/>
-		public IQueryable<Instance> InstanceMasterFilter(
-			IQueryable<Instance> query, Guid instanceId)
-		{
-			if (query is null)
-				throw new ArgumentNullException(nameof(query));
-
-			if (_userContext.Role == SystemRoles.AndminRoleName)
-				return query;
-
-			return query.Where(i => i.Id == instanceId
+			return query.Where(i => i.Id == battleId
 			&& i.Game.UserGames.Any(u => u.UserId == _userContext.CurrentUserId && u.GameRoleId == GameRoles.MasterRoleId));
 		}
 	}

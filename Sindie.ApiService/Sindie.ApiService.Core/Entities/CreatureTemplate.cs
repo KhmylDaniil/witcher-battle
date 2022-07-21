@@ -114,7 +114,7 @@ namespace Sindie.ApiService.Core.Entities
 			Name = name;
 			Description = description;
 			Abilities = new List<Ability>();
-			CreatureTemplateParameters = new List<CreatureTemplateParameter>();
+			CreatureTemplateSkills = new List<CreatureTemplateSkill>();
 			Creatures = new List<Creature>();
 			CreatureTemplateParts = UpdateBody(armorList);
 		}
@@ -363,9 +363,9 @@ namespace Sindie.ApiService.Core.Entities
 		public List<Ability> Abilities { get; protected set; }
 
 		/// <summary>
-		/// Параметры шаблона существа
+		/// Навыки шаблона существа
 		/// </summary>
-		public List<CreatureTemplateParameter> CreatureTemplateParameters { get; protected set; }
+		public List<CreatureTemplateSkill> CreatureTemplateSkills { get; protected set; }
 
 		/// <summary>
 		/// Части шаблона существа
@@ -386,11 +386,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// Уязвимости
 		/// </summary>
 		public List<DamageType> Vulnerables { get; protected set; }
-
-		/// <summary>
-		/// Иммунитеты
-		/// </summary>
-		public List<DamageType> Immunities { get; protected set; }
 
 		#endregion navigation properties
 
@@ -424,45 +419,44 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Метод изменения списка параметров шаблона существа
+		/// Метод изменения списка навыков шаблона существа
 		/// </summary>
 		/// <param name="data">Данные</param>
-		internal void UpdateCreatureTemplateParameters(List<CreatureTemplateParameterData> data)
+		internal void UpdateCreatureTemplateSkills(List<CreatureTemplateSkillData> data)
 		{
-			if (CreatureTemplateParameters == null)
-				throw new ExceptionEntityNotIncluded<CreatureTemplateParameter>(nameof(CreatureTemplateParameters));
+			if (CreatureTemplateSkills == null)
+				throw new ExceptionEntityNotIncluded<CreatureTemplateSkill>(nameof(CreatureTemplateSkills));
 
 			if (data == null)
-				throw new ExceptionEntityNotIncluded<Parameter>(nameof(CreatureTemplateParameters));
+				throw new ExceptionEntityNotIncluded<Skill>(nameof(CreatureTemplateSkills));
 
-			var entitiesToDelete = CreatureTemplateParameters
-					.Where(x => !data.Any(y => y.Parameter.Id == x.ParameterId)).ToList();
+			var entitiesToDelete = CreatureTemplateSkills
+					.Where(x => !data.Any(y => y.Skill.Id == x.SkillId)).ToList();
 
 			if (entitiesToDelete.Any())
 				foreach (var entity in entitiesToDelete)
-					CreatureTemplateParameters.Remove(entity);
+					CreatureTemplateSkills.Remove(entity);
 
 			if (!data.Any())
 				return;
 
 			foreach (var dataItem in data)
 			{
-				var creatureTemplateParameter = CreatureTemplateParameters.FirstOrDefault(x => x.Id == dataItem.Id);
-				if (creatureTemplateParameter == null)
-					CreatureTemplateParameters.Add(
-						new CreatureTemplateParameter(
-								parameter: dataItem.Parameter,
-								parameterValue: dataItem.Value,
+				var creatureTemplateSkill = CreatureTemplateSkills.FirstOrDefault(x => x.Id == dataItem.Id);
+				if (creatureTemplateSkill == null)
+					CreatureTemplateSkills.Add(
+						new CreatureTemplateSkill(
+								skill: dataItem.Skill,
+								skillValue: dataItem.Value,
 								creatureTemplate: this));
 				else
-					creatureTemplateParameter.ChangeValue(dataItem.Value);
+					creatureTemplateSkill.ChangeValue(dataItem.Value);
 			}
 		}
 
 		/// <summary>
 		/// изменение тела шаблона существа
 		/// </summary>
-		/// <param name="bodyTemplate">Шаблон тела</param>
 		/// <param name="armorList">Броня</param>
 		/// <returns>Список частей шаблона тела</returns>
 		private List<CreatureTemplatePart> UpdateBody(List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
@@ -502,7 +496,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="luck">Удача</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
-		/// <param name="type">Тип существа</param>
 		/// <param name="armorList">Список брони</param>
 		public void ChangeCreatureTemplate(
 			Game game,
@@ -616,9 +609,11 @@ namespace Sindie.ApiService.Core.Entities
 				ModifiedOn = modifiedOn,
 				CreatedByUserId = createdByUserId,
 				Creatures = new List<Creature>(),
-				CreatureTemplateParameters = new List<CreatureTemplateParameter>(),
+				CreatureTemplateSkills = new List<CreatureTemplateSkill>(),
 				Abilities = new List<Ability>(),
-				CreatureTemplateParts = new List<CreatureTemplatePart>()
+				CreatureTemplateParts = new List<CreatureTemplatePart>(),
+				Vulnerables = new List<DamageType>(),
+				Resistances = new List<DamageType>()
 			};
 	}
 }

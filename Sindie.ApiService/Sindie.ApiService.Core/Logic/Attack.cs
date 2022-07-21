@@ -3,6 +3,7 @@ using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BattleRequests;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -95,7 +96,7 @@ namespace Sindie.ApiService.Core.Logic
 
 			var successValue = _rollService.ContestRoll(
 				attackBase: AttackValue(data.Attacker, data.Ability, data.ToHit),
-				defenseBase: DefenseValue(data.Target, data.DefensiveParameter),
+				defenseBase: DefenseValue(data.Target, data.DefensiveSkill),
 				out int attackerFumble,
 				out int defenderFumble);
 
@@ -127,11 +128,11 @@ namespace Sindie.ApiService.Core.Logic
 		/// </summary>
 		/// <param name="attacker">Атакующий</param>
 		/// <param name="ability">Способность</param>
-		/// <param name="toHit">Vjlbabrfnjh к попаданию</param>
+		/// <param name="toHit">Модификатор к попаданию</param>
 		/// <returns>База атаки</returns>
 		private static int AttackValue(Creature attacker, Ability ability, int toHit)
 		{
-			var result = attacker.ParameterBase(ability.AttackParameterId) + ability.Accuracy + toHit;
+			var result = attacker.SkillBase(ability.AttackSkillId) + ability.Accuracy + toHit;
 			return result < 0 ? 0 : result;
 		}
 
@@ -141,9 +142,9 @@ namespace Sindie.ApiService.Core.Logic
 		/// <param name="defender">Защищающееся существо</param>
 		/// <param name="defensiveParameter">Защитный параметр</param>
 		/// <returns>База защиты</returns>
-		private static int DefenseValue(Creature defender, CreatureParameter defensiveParameter)
+		private static int DefenseValue(Creature defender, CreatureSkill defensiveParameter)
 		{
-			var result = defender.ParameterBase(defensiveParameter.ParameterId);
+			var result = defender.SkillBase(defensiveParameter.SkillId);
 			return result < 0 ? 0 : result;
 		}
 
@@ -235,7 +236,7 @@ namespace Sindie.ApiService.Core.Logic
 		/// Удаление мертвых существ
 		/// </summary>
 		/// <param name="instance"></param>
-		internal static void DisposeCorpses(ref Instance instance)
+		internal static void DisposeCorpses(ref Battle instance)
 		{
 			instance.Creatures.RemoveAll(x => x.HP == 0);
 		}
@@ -255,7 +256,7 @@ namespace Sindie.ApiService.Core.Logic
 		{
 			message.AppendLine($"Попадание с превышением на {successValue}.");
 
-			int damage = data.Ability.RollDamage(data.ToDamage);
+			int damage = RollDamage(data.Ability, data.ToDamage);
 
 			ArmorMutigation(ref data, ref damage, ref message);
 
@@ -307,7 +308,7 @@ namespace Sindie.ApiService.Core.Logic
 
 		private static void ApplyConditions(ref AttackData data, ref StringBuilder message)
 		{
-			foreach (var condition in data.Ability.RollConditions())
+			foreach (var condition in RollConditions(data.Ability))
 			{
 				data.Target.Conditions.Add(condition);
 				message.AppendLine($"Наложено состояние {condition.Name}.");
@@ -339,6 +340,38 @@ namespace Sindie.ApiService.Core.Logic
 				damage *= 2;
 
 			damage = (int)Math.Truncate(damage * data.AimedPart.DamageModifier);
+		}
+
+		/// <summary>
+		/// Расчет урона от атаки
+		/// </summary>
+		/// <returns>Нанесенный урон</returns>
+		private static int RollDamage(Ability ability, int specialBonus = default)
+		{
+			Random random = new Random();
+			var result = ability.DamageModifier + specialBonus;
+			for (int i = 0; i < ability.AttackDiceQuantity; i++)
+				result += random.Next(1, 6);
+			return result < 0 ? 0 : result;
+		}
+
+		/// <summary>
+		/// Расчет применения состояний
+		/// </summary>
+		/// <returns>Наложенные состояния</returns>
+		private static List<Condition> RollConditions(Ability ability)
+		{
+			var result = new List<Condition>();
+			Random random = new Random();
+
+			if (!ability.AppliedConditions.Any())
+				return result;
+
+			foreach (var condition in ability.AppliedConditions)
+				if (random.Next(1, 100) <= condition.ApplyChance)
+					result.Add(condition.Condition);
+
+			return result;
 		}
 	}
 }

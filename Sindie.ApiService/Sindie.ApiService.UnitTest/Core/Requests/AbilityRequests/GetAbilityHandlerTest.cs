@@ -22,7 +22,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		private readonly User _user;
 		private readonly Game _game;
 		private readonly Condition _condition;
-		private readonly Parameter _parameter;
+		private readonly Skill _parameter;
 		private readonly Ability _ability;
 		private readonly DamageType _damageType;
 
@@ -41,7 +41,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 					user: _user,
 					gameRole: GameRole.CreateForTest(GameRoles.MasterRoleId)));
 
-			_parameter = Parameter.CreateForTest(game: _game, name: "attackParameter");
+			_parameter = Skill.CreateForTest(game: _game, name: "attackParameter");
 			_condition = Condition.CreateForTest(id: Conditions.BleedId);
 			_damageType = DamageType.CreateForTest(id: DamageTypes.SilverId);
 
@@ -49,7 +49,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 				game: _game,
 				name: "test",
 				attackDiceQuantity: 3,
-				attackParameter: _parameter,
+				attackSkill: _parameter,
 				damageTypes: new List<DamageType> { _damageType },
 				createdOn: DateTimeProvider.Object.TimeProvider,
 				modifiedOn: DateTimeProvider.Object.TimeProvider,
@@ -85,7 +85,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			var request = new GetAbilityCommand(
 				gameId: _game.Id,
 				name: "test",
-				attackParameterId: _parameter.Id,
+				attackSkillId: _parameter.Id,
 				damageTypeId: _damageType.Id,
 				conditionId: _condition.Id,
 				minAttackDiceQuantity: 2,
@@ -110,7 +110,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			var resultItem = result.AbilitiesList.First();
 			
 			var ability = _dbContext.Abilities
-				.Include(x => x.AttackParameter)
+				.Include(x => x.AttackSkill)
 				.Include(y => y.DamageTypes)
 				.Include(x => x.AppliedConditions)
 				.FirstOrDefault(x => x.Id == resultItem.Id);
@@ -122,7 +122,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			Assert.IsTrue(ability.CreatedOn >= creationMinTime && resultItem.CreatedOn <= creationMaxTime);
 			Assert.IsTrue(ability.ModifiedOn >= modificationMinTime && resultItem.ModifiedOn <= modificationMaxTime);
 
-			Assert.AreEqual(ability.AttackParameterId, _parameter.Id);
+			Assert.AreEqual(ability.AttackSkillId, _parameter.Id);
 			Assert.IsTrue(ability.DamageTypes.Any(x => x.Id == _damageType.Id));
 			Assert.IsTrue(ability.AppliedConditions.Any(x => x.ConditionId == _condition.Id));
 

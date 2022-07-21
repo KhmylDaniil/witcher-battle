@@ -94,7 +94,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
 		/// <param name="game">Игра</param>
-		/// <param name="bodyTemplateParts">Список частей шаблона тела</param>
 		/// <returns>Шаблон тела</returns>
 		[Obsolete("Только для тестов")]
 		public static BodyTemplate CreateForTest(
@@ -160,18 +159,6 @@ namespace Sindie.ApiService.Core.Entities
 			if (BodyTemplateParts.Any())
 				BodyTemplateParts.Clear();
 			BodyTemplateParts = CreateBodyTemplateParts(bodyTemplateParts);
-		}
-
-		/// <summary>
-		/// Выбор места попадания
-		/// </summary>
-		/// <param name="id">Айди части шаблона тела</param>
-		/// <returns>Часть шаблона тела</returns>
-		internal BodyTemplatePart DefaultBodyTemplatePart()
-		{
-			Random random = new Random();
-			var roll = random.Next(1, 10);
-			return BodyTemplateParts.First(x => x.MinToHit <= roll && x.MaxToHit >= roll);
 		}
 	}
 }

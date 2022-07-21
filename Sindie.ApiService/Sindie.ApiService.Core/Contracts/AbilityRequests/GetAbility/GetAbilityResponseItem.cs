@@ -23,14 +23,14 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Айди параметра атаки
+		/// Айди навыка атаки
 		/// </summary>
-		public Guid AttackParameterId { get; set; }
+		public Guid AttackSkillId { get; set; }
 
 		/// <summary>
-		/// Название параметра атаки
+		/// Название навыка атаки
 		/// </summary>
-		public string AttackParameterName { get; set; }
+		public string AttackSkillName { get; set; }
 		
 		/// <summary>
 		/// Количество кубов атаки

@@ -11,30 +11,30 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 		/// <summary>
 		/// Конструктор команды атаки героя
 		/// </summary>
-		/// <param name="instanceId">Айди инстанса</param>
+		/// <param name="battleId">Айди боя</param>
 		/// <param name="attackerId">Айди атакующего существа</param>
 		/// <param name="abilityId">Айди способности</param>
 		/// <param name="targetCreatureId">Айди существа цели</param>
 		/// <param name="creaturePartId">Айди части тела при прицеливании</param>
-		/// <param name="defensiveParameter">Способ защиты</param>
+		/// <param name="defensiveSkillId">Способ защиты</param>
 		/// <param name="specialToHit">Специальный бонус к попаданию</param>
 		/// <param name="specialToDamage">Специальный бонус к урону</param>
 		public CreatureAttackCommand(
-			Guid instanceId,
+			Guid battleId,
 			Guid attackerId,
 			Guid? abilityId,
 			Guid targetCreatureId,
 			Guid? creaturePartId,
-			Guid? defensiveParameter,
+			Guid? defensiveSkillId,
 			int? specialToHit,
 			int? specialToDamage)
 		{
-			InstanceId = instanceId;
+			BattleId = battleId;
 			AttackerId = attackerId;
 			AbilityId = abilityId;
 			TargetCreatureId = targetCreatureId;
 			CreaturePartId = creaturePartId;
-			DefensiveParameter = defensiveParameter;
+			DefensiveSkillId = defensiveSkillId;
 			SpecialToHit = specialToHit ?? default;
 			SpecialToDamage = specialToDamage ?? default;
 		}

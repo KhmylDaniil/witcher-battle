@@ -20,12 +20,12 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Фильтр по параметру атаки
+		/// Фильтр по навыку атаки
 		/// </summary>
-		public Guid? AttackParameterId { get; set; }
+		public Guid? AttackSkillId { get; set; }
 
 		/// <summary>
-		/// Фильтр по типу уронв
+		/// Фильтр по типу урона
 		/// </summary>
 		public Guid? DamageTypeId { get; set; }
 
@@ -35,7 +35,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 		public Guid? ConditionId { get; set; }
 
 		/// <summary>
-		/// Минимальное количество ккубов атаки
+		/// Минимальное количество кубов атаки
 		/// </summary>
 		public int MinAttackDiceQuantity { get; set; }
 

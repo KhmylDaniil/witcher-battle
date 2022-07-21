@@ -33,7 +33,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 		/// <param name="luck">Удача</param>
 		/// <param name="armorList">Броня</param>
 		/// <param name="abilities">Способности</param>
-		/// <param name="creatureTemplateParameters">Параметры шаблона существа</param>
+		/// <param name="creatureTemplateSkills">Навыки шаблона существа</param>
 		public ChangeCreatureTemplateCommand(
 			Guid id,
 			Guid gameId,
@@ -55,7 +55,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			int luck,
 			List<ChangeCreatureTemplateRequestArmorList> armorList,
 			List<Guid> abilities,
-			List<ChangeCreatureTemplateRequestParameter> creatureTemplateParameters)
+			List<ChangeCreatureTemplateRequestSkill> creatureTemplateSkills)
 		{
 			Id = id;
 			GameId = gameId;
@@ -83,9 +83,9 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			Abilities = abilities == null
 				? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(Abilities))
 				: abilities;
-			CreatureTemplateParameters = creatureTemplateParameters == null
-				? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(CreatureTemplateParameters))
-				: creatureTemplateParameters;
+			CreatureTemplateSkills = creatureTemplateSkills == null
+				? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(CreatureTemplateSkills))
+				: creatureTemplateSkills;
 		}
 	}
 }

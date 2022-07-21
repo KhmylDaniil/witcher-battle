@@ -15,7 +15,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 		/// <param name="builder">Строитель</param>
 		public override void ConfigureChild(EntityTypeBuilder<UserGameCharacter> builder)
 		{
-			builder.ToTable("UserGameCharacters", "GameInstance")
+			builder.ToTable("UserGameCharacters", "Characters")
 				.HasComment("Персонажи пользователя игры");
 
 			builder.Property(x => x.UserGameId)

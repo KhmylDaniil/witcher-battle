@@ -12,7 +12,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 		/// <summary>
 		/// Конструктор команды получения монстром урона
 		/// </summary>
-		/// <param name="instanceId">Айди инстанса</param>
+		/// <param name="battleId">Айди боя</param>
 		/// <param name="attackerId">Айди атакующего существа</param>
 		/// <param name="targetId">Айди существа цели</param>
 		/// <param name="abilityId">Айди способности</param>
@@ -21,7 +21,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 		/// <param name="creaturePartId">Айди части тела цели</param>
 
 		public MonsterSufferCommand(
-			Guid instanceId,
+			Guid battleId,
 			Guid attackerId,
 			Guid targetId,
 			Guid abilityId,
@@ -29,7 +29,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 			int successValue,
 			Guid? creaturePartId)
 		{
-			InstanceId = instanceId;
+			BattleId = battleId;
 			AttackerId = attackerId;
 			TargetId = targetId;
 			AbilityId = abilityId;

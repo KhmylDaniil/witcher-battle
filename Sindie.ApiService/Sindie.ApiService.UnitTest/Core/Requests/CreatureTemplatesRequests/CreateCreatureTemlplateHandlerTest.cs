@@ -22,7 +22,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly BodyTemplatePart _bodyTemplatePart;
 		private readonly Condition _condition;
-		private readonly Parameter _parameter;
+		private readonly Skill _parameter;
 		private readonly CreatureType _creatureType;
 		private readonly Ability _ability;
 
@@ -45,8 +45,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				maxToHit: 10);
 			_bodyTemplate.BodyTemplateParts = new List<BodyTemplatePart> { _bodyTemplatePart};
 
-			_parameter = Parameter.CreateForTest(game: _game);
-			_ability = Ability.CreateForTest(game: _game, attackParameter: _parameter);
+			_parameter = Skill.CreateForTest(game: _game);
+			_ability = Ability.CreateForTest(game: _game, attackSkill: _parameter);
 			_condition = Condition.CreateForTest();
 			
 			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _parameter, _bodyTemplate, _bodyTemplatePart, _condition, _creatureType, _ability));
@@ -86,11 +86,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 					}
 				},
 				abilities: new List<Guid> { _ability.Id },
-				creatureTemplateParameters: new List<CreateCreatureTemplateRequestParameter>
+				creatureTemplateSkills: new List<CreateCreatureTemplateRequestSkill>
 				{
-					new CreateCreatureTemplateRequestParameter()
+					new CreateCreatureTemplateRequestSkill()
 					{
-						ParameterId = _parameter.Id,
+						SkillId = _parameter.Id,
 						Value = 5
 					}
 				});
@@ -139,13 +139,13 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var ability = _dbContext.Abilities.FirstOrDefault();
 			Assert.AreEqual(ability.Id, _ability.Id);
 
-			Assert.IsNotNull(creatureTemplate.CreatureTemplateParameters);
-			Assert.AreEqual(creatureTemplate.CreatureTemplateParameters.Count(), 1);
+			Assert.IsNotNull(creatureTemplate.CreatureTemplateSkills);
+			Assert.AreEqual(creatureTemplate.CreatureTemplateSkills.Count(), 1);
 			var creatureTemplateParameter = _dbContext.CreatureTemplateParameters
 				.FirstOrDefault(x => x.CreatureTemplateId == creatureTemplate.Id);
 
-			Assert.IsTrue(creatureTemplateParameter.ParameterId == _parameter.Id);
-			Assert.IsTrue(creatureTemplateParameter.ParameterValue == 5);
+			Assert.IsTrue(creatureTemplateParameter.SkillId == _parameter.Id);
+			Assert.IsTrue(creatureTemplateParameter.SkillValue == 5);
 		}
 	}
 }

@@ -127,9 +127,9 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		public List<GetCreatureTemplateByIdResponseBodyPart> CreatureTemplateParts { get; set; }
 
 		/// <summary>
-		/// Список параметров шаблона существа
+		/// Список навыков шаблона существа
 		/// </summary>
-		public List<GetCreatureTemplateByIdResponseParameter> CreatureTemplateParameters { get; set; }
+		public List<GetCreatureTemplateByIdResponseSkill> CreatureTemplateSkills { get; set; }
 
 		/// <summary>
 		/// Способности

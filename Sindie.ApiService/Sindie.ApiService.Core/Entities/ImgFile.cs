@@ -46,54 +46,10 @@ namespace Sindie.ApiService.Core.Entities
 		public Game Game { get; set; }
 
 		/// <summary>
-		/// Пререквизит
+		/// Бой
 		/// </summary>
-		public Prerequisite Prerequisite { get; set; }
+		public Battle Battle { get; set; }
 
-		/// <summary>
-		/// Шаблон персонажа
-		/// </summary>
-		public CharacterTemplate CharacterTemplate { get; set; }
-
-		/// <summary>
-		/// Шаблон предмета
-		/// </summary>
-		public ItemTemplate ItemTemplate { get; set; }
-
-		/// <summary>
-		/// Взаимодействие
-		/// </summary>
-		public Interaction Interaction { get; set; }
-
-		/// <summary>
-		/// Сторона
-		/// </summary>
-		public Party Party { get; set; }
-
-		/// <summary>
-		/// Роль во взаимодействии
-		/// </summary>
-		public InteractionsRole InteractionsRole { get; set; }
-
-		/// <summary>
-		/// Деятельность
-		/// </summary>
-		public Activity Activity { get; set; }
-
-		/// <summary>
-		/// Экземпляр игры
-		/// </summary>
-		public Instance Instance { get; set; }
-
-		/// <summary>
-		/// Персонаж
-		/// </summary>
-		public Character Character { get; set; }
-
-		/// <summary>
-		/// Сумка
-		/// </summary>
-		public Bag Bag { get; set; }
 
 		/// <summary>
 		/// Шаблон существа

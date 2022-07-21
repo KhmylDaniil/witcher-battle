@@ -1,9 +1,4 @@
 ﻿using Sindie.ApiService.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Requests.BattleRequests
 {
@@ -33,9 +28,9 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 		internal CreaturePart AimedPart { get; private set; }
 
 		/// <summary>
-		/// Параметр защиты
+		/// Навык защиты
 		/// </summary>
-		internal CreatureParameter DefensiveParameter { get; private set; }
+		internal CreatureSkill DefensiveSkill { get; private set; }
 
 		/// <summary>
 		/// Специальный бонус к попаданию
@@ -54,7 +49,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 		/// <param name="target">Существо цель</param>
 		/// <param name="aimedPart">Часть тела цель</param>
 		/// <param name="ability">Атакующая способность</param>
-		/// <param name="defensiveParameter">Параметр защиты</param>
+		/// <param name="defensiveSkill">Навык защиты</param>
 		/// <param name="specialToHit">Специальный бонус к попаданию</param>
 		/// <param name="specialToDamage">Специальный бонус к урону</param>
 		/// <returns>Данные для расчета атаки</returns>
@@ -63,13 +58,13 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 			Creature target,
 			CreaturePart aimedPart,
 			Ability ability,
-			CreatureParameter defensiveParameter,
+			CreatureSkill defensiveSkill,
 			int specialToHit,
 			int specialToDamage)
 		{
 			ability = ability is null ? attacker.DefaultAbility() : ability;
-			
-			defensiveParameter = defensiveParameter is null ? target.DefaultDefensiveParameter(ability) : defensiveParameter;
+
+			defensiveSkill = defensiveSkill is null ? target.DefaultDefensiveSkill(ability) : defensiveSkill;
 
 			specialToHit = aimedPart is null ? specialToHit : specialToHit - aimedPart.HitPenalty;
 			
@@ -81,7 +76,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 				Target = target,
 				Ability = ability,
 				AimedPart = aimedPart,
-				DefensiveParameter = defensiveParameter,
+				DefensiveSkill = defensiveSkill,
 				ToHit = specialToHit,
 				ToDamage = specialToDamage
 			};

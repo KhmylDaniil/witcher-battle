@@ -54,10 +54,10 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 		/// <returns></returns>
 		public async Task<MonsterSufferResponse> Handle(MonsterSufferCommand request, CancellationToken cancellationToken)
 		{
-			var instance = await _authorizationService.InstanceMasterFilter(_appDbContext.Instances, request.InstanceId)
+			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Instances, request.BattleId)
 				.Include(i => i.Creatures)
-					.ThenInclude(c => c.CreatureParameters)
-					.ThenInclude(cp => cp.Parameter)
+					.ThenInclude(c => c.CreatureSkills)
+					.ThenInclude(cp => cp.Skill)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureParts)
 					.ThenInclude(cp => cp.BodyPartType)
@@ -70,9 +70,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 					.ThenInclude(a => a.DamageTypes)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
-					.ThenInclude(a => a.DefensiveParameters)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.Immunities)
+					.ThenInclude(a => a.DefensiveSkills)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Vulnerables)
 				.Include(i => i.Creatures)
@@ -80,9 +78,9 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Conditions)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Instance>();
+					?? throw new ExceptionNoAccessToEntity<Battle>();
 
-			var data = CheckAndFormData(request, instance);
+			var data = CheckAndFormData(request, battle);
 
 			var attack = new Attack(_rollService);
 
@@ -91,7 +89,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 				damage: request.DamageValue,
 				successValue: request.SuccessValue);
 
-			Attack.DisposeCorpses(ref instance);
+			Attack.DisposeCorpses(ref battle);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
 			return new MonsterSufferResponse()
@@ -102,13 +100,13 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 		/// Проверка запроса
 		/// </summary>
 		/// <param name="request">Запрос</param>
-		/// <param name="instance">Инстанс</param>
-		private AttackData CheckAndFormData(MonsterSufferCommand request, Instance instance)
+		/// <param name="battle">Бой</param>
+		private AttackData CheckAndFormData(MonsterSufferCommand request, Battle battle)
 		{
-			var attacker = instance.Creatures.FirstOrDefault(x => x.Id == request.AttackerId)
+			var attacker = battle.Creatures.FirstOrDefault(x => x.Id == request.AttackerId)
 				?? throw new ExceptionEntityNotFound<Creature>(request.AttackerId);
 
-			var target = instance.Creatures.FirstOrDefault(x => x.Id == request.TargetId)
+			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetId)
 				?? throw new ExceptionEntityNotFound<Creature>(request.TargetId);
 
 			var aimedPart = request.CreaturePartId == null

@@ -17,7 +17,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
 		private readonly Ability _ability;
-		private readonly Parameter _parameter;
+		private readonly Skill _parameter;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="DeleteAbilityByIdHandler"/>
@@ -25,8 +25,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		public DeleteAbilityByIdHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_parameter = Parameter.CreateForTest(game: _game);
-			_ability = Ability.CreateForTest(game: _game, attackParameter: _parameter);
+			_parameter = Skill.CreateForTest(game: _game);
+			_ability = Ability.CreateForTest(game: _game, attackSkill: _parameter);
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _ability, _parameter));
 		}

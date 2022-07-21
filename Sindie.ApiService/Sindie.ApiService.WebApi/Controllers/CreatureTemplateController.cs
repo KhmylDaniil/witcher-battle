@@ -73,7 +73,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 					luck: request.Luck,
 					armorList: request.ArmorList,
 					abilities: request.Abilities,
-					creatureTemplateParameters: request.CreatureTemplateParameters), cancellationToken);
+					creatureTemplateSkills: request.CreatureTemplateSkills), cancellationToken);
 		}
 
 		/// <summary>
@@ -111,7 +111,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 					luck: request.Luck,
 					armorList: request.ArmorList,
 					abilities: request.Abilities,
-					creatureTemplateParameters: request.CreatureTemplateParameters), cancellationToken);
+					creatureTemplateSkills: request.CreatureTemplateSkills), cancellationToken);
 		}
 
 		/// <summary>

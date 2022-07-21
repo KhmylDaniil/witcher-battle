@@ -80,9 +80,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey<ImgFile>(x => x.Id)
 				.OnDelete(DeleteBehavior.SetNull);
 
-			builder.HasMany(x => x.Notifications)
-				.WithMany(x => x.Receivers);
-
 			builder.HasData(new User
 			(
 				id: SystemUsers.SystemUserId,

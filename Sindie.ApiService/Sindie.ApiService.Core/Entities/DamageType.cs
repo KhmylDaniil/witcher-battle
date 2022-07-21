@@ -66,11 +66,6 @@ namespace Sindie.ApiService.Core.Entities
 		public List<CreatureTemplate> ResistantCreatureTemplates { get; set; }
 
 		/// <summary>
-		/// Иммунные шаблоны существ
-		/// </summary>
-		public List<CreatureTemplate> ImmuneCreatureCreatureTemplates { get; set; }
-
-		/// <summary>
 		/// Уязвимые существа
 		/// </summary>
 		public List<Creature> VulnerableCreatures { get; set; }
@@ -79,11 +74,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// Существа с сопротивлением
 		/// </summary>
 		public List<Creature> ResistantCreatures { get; set; }
-
-		/// <summary>
-		/// Иммунные существа
-		/// </summary>
-		public List<Creature> ImmuneCreatures { get; set; }
 
 		/// <summary>
 		/// Способности
@@ -109,10 +99,8 @@ namespace Sindie.ApiService.Core.Entities
 					Abilities = new List<Ability>(),
 					VulnerableCreatures = new List<Creature>(),
 					ResistantCreatures = new List<Creature>(),
-					ImmuneCreatures = new List<Creature>(),
 					VulnerableCreatureTemplates = new List<CreatureTemplate>(),
 					ResistantCreatureTemplates = new List<CreatureTemplate>(),
-					ImmuneCreatureCreatureTemplates = new List<CreatureTemplate>()
 				};
 	}
 }

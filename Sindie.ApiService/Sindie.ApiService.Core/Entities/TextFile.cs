@@ -35,25 +35,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public List<Game> Games { get; set; }
 
-		/// <summary>
-		/// Взаимодействие
-		/// </summary>
-		public Interaction Interaction { get; set; }
-
-		/// <summary>
-		/// Сторона
-		/// </summary>
-		public Party Party { get; set; }
-
-		/// <summary>
-		/// Роль во взаимодействии
-		/// </summary>
-		public InteractionsRole InteractionsRole { get; set; }
-
-		/// <summary>
-		/// Персонаж
-		/// </summary>
-		public Character Character { get; set; }
 
 		#endregion navigation properties
 

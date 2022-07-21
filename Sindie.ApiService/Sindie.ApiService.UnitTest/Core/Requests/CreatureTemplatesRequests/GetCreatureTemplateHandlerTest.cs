@@ -27,7 +27,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly CreatureTemplatePart _creatureTemplatePart;
 		private readonly BodyPartType _bodyPartType;
 		private readonly Ability _ability;
-		private readonly Parameter _parameter;
+		private readonly Skill _parameter;
 		private readonly CreatureType _creatureType;
 
 		/// <summary>
@@ -48,7 +48,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_bodyPartType = BodyPartType.CreateForTest();
 			_creatureType = CreatureType.CreateForTest();
 
-			_parameter = Parameter.CreateForTest(game: _game);
+			_parameter = Skill.CreateForTest(game: _game);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
 			_condition = Condition.CreateForTest(name: Conditions.BleedName);
 
@@ -74,7 +74,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			_ability = Ability.CreateForTest(
 				game: _game,
-				attackParameter: _parameter);
+				attackSkill: _parameter);
 			_ability.AppliedConditions.Add(new AppliedCondition(
 				ability: _ability,
 				condition: _condition,

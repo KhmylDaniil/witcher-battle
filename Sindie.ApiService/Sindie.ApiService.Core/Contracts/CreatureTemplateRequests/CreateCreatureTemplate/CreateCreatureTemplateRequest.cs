@@ -105,8 +105,8 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 		public List<Guid> Abilities { get; set; }
 
 		/// <summary>
-		/// Параметры шаблона существа
+		/// Навыки шаблона существа
 		/// </summary>
-		public List<CreateCreatureTemplateRequestParameter> CreatureTemplateParameters { get; set; }
+		public List<CreateCreatureTemplateRequestSkill> CreatureTemplateSkills { get; set; }
 	}
 }

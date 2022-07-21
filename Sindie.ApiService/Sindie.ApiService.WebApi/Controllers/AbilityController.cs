@@ -56,12 +56,12 @@ namespace Sindie.ApiService.WebApi.Controllers
 					gameId: request.GameId,
 					name: request.Name,
 					description: request.Description,
-					attackParameterId: request.AttackParameterId,
+					attackSkillId: request.AttackSkillId,
 					attackDiceQuantity: request.AttackDiceQuantity,
 					damageModifier: request.DamageModifier,
 					attackSpeed: request.AttackSpeed,
 					accuracy: request.Accuracy,
-					defensiveParameters: request.DefensiveParameters,
+					defensiveSkills: request.DefensiveSkills,
 					damageTypes: request.DamageTypes,
 					appliedConditions: request.AppliedConditions), cancellationToken);
 		}
@@ -85,12 +85,12 @@ namespace Sindie.ApiService.WebApi.Controllers
 					gameId: request.GameId,
 					name: request.Name,
 					description: request.Description,
-					attackParameterId: request.AttackParameterId,
+					attackSkillId: request.AttackSkillId,
 					attackDiceQuantity: request.AttackDiceQuantity,
 					damageModifier: request.DamageModifier,
 					attackSpeed: request.AttackSpeed,
 					accuracy: request.Accuracy,
-					defensiveParameters: request.DefensiveParameters,
+					defensiveSkills: request.DefensiveSkills,
 					damageTypes: request.DamageTypes,
 					appliedConditions: request.AppliedConditions), cancellationToken);
 		}
@@ -112,7 +112,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 				: new GetAbilityCommand(
 					gameId: request.GameId,
 					name: request.Name,
-					attackParameterId: request?.AttackParameterId,
+					attackSkillId: request.AttackSkillId,
 					damageTypeId: request?.DamageTypeId,
 					conditionId: request?.ConditionId,
 					minAttackDiceQuantity: request.MinAttackDiceQuantity,

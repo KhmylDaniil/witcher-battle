@@ -27,12 +27,12 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		public double DamageModifier { get; set; }
 
 		/// <summary>
-		/// Минимум на попаданиу
+		/// Минимум на попадание
 		/// </summary>
 		public int MinToHit { get; set; }
 
 		/// <summary>
-		/// Максимум на попаданиу
+		/// Максимум на попадание
 		/// </summary>
 		public int MaxToHit { get; set; }
 
