@@ -37,9 +37,9 @@ namespace Sindie.ApiService.Core.Logic
 		{
 			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
 
-			var successValue = _rollService.RollAttack(
-				attackBase: AttackValue(data.Attacker, data.Ability, data.ToHit),
-				defenseValue: defenseValue,
+			var successValue = _rollService.BeatDifficulty(
+				skillBase: AttackValue(data.Attacker, data.Ability, data.ToHit),
+				difficuty: defenseValue,
 				out int attackerFumble);
 
 			if (attackerFumble != 0)

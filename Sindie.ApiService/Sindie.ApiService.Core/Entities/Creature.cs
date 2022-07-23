@@ -244,7 +244,7 @@ namespace Sindie.ApiService.Core.Entities
 			get => _luck;
 			set
 			{
-				if (value < 0)
+				if (value < 1)
 					throw new ExceptionFieldOutOfRange<Creature>(nameof(Luck));
 				_luck = value;
 			}
@@ -258,7 +258,7 @@ namespace Sindie.ApiService.Core.Entities
 			get => _speed;
 			set
 			{
-				if (value < 0)
+				if (value < 1)
 					throw new ExceptionFieldOutOfRange<Creature>(nameof(Speed));
 				_speed = value;
 			}

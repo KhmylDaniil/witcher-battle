@@ -134,10 +134,13 @@ namespace Sindie.ApiService.UnitTest.Core
 			RollService = new Mock<IRollService>();
 			int attackerFumble = 0;
 			int defenderFumble = 0;
-			RollService.Setup(x => x.RollAttack(It.IsAny<int>(), It.IsAny<int>(), out attackerFumble))
+			RollService.Setup(x => x.BeatDifficulty(It.IsAny<int>(), It.IsAny<int>(), out attackerFumble))
 				.Callback(new AttackerFumble((int a, int d, out int attackerFumble)
 					=> attackerFumble = 0 ))
 				.Returns<int, int, int>((attackBase, defenseBase, attackerFumble) => attackBase - defenseBase);
+
+			RollService.Setup(x => x.BeatDifficulty(It.IsAny<int>(), It.IsAny<int>()))
+				.Returns<int, int>((attackBase, defenseBase) => attackBase > defenseBase);
 
 			RollService.Setup(x => x.ContestRoll(It.IsAny<int>(), It.IsAny<int>(), out attackerFumble, out defenderFumble))
 				.Callback(new ContestedFumble((int a, int d, out int attackerFumble, out int defenderFumble)

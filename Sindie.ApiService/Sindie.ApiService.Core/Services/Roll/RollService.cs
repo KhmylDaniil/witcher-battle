@@ -17,21 +17,30 @@ namespace Sindie.ApiService.Core.Services.Roll
 		}
 
 		/// <summary>
-		/// Бросок атаки
+		/// Бросок против сложности
 		/// </summary>
-		/// <param name="attackBase">База атаки</param>
-		/// <param name="defenseValue">Значение защиты</param>
-		/// <param name="attackerFumble">Провал атаки</param>
-		/// <returns>Успешность атаки</returns>
-		public int RollAttack(int attackBase, int defenseValue, out int attackerFumble)
+		/// <param name="skillBase">База навыка</param>
+		/// <param name="difficulty">Сложность для переброса</param>
+		/// <param name="fumble">Провал броска</param>
+		/// <returns>Успешность броска</returns>
+		public int BeatDifficulty(int skillBase, int difficulty, out int fumble)
 		{
-			int attackRoll = Roll();
+			int roll = Roll();
 
-			attackerFumble = CheckFumble(attackRoll);
-			attackBase += attackRoll;
+			fumble = CheckFumble(roll);
+			skillBase += roll;
 
-			return attackBase - defenseValue < 0 ? 0 : attackBase - defenseValue;
+			return skillBase - difficulty < 0 ? 0 : skillBase - difficulty;
 		}
+
+		/// <summary>
+		/// Бросок против сложности
+		/// </summary>
+		/// <param name="skillBase">База навыка</param>
+		/// <param name="difficulty">Сложность для переброса</param>
+		/// <returns>Успешность броска</returns>
+		public bool BeatDifficulty(int skillBase, int difficulty)
+			=> skillBase + Roll() > difficulty;
 
 		/// <summary>
 		/// Встречный бросок
