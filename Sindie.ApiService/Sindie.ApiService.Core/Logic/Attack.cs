@@ -310,7 +310,7 @@ namespace Sindie.ApiService.Core.Logic
 		{
 			foreach (var condition in RollConditions(data.Ability))
 			{
-				data.Target.Conditions.Add(condition);
+				data.Target.Effects.Add(Effect.CreateEffect<Effect>(data.Target, condition));
 				message.AppendLine($"Наложено состояние {condition.Name}.");
 			}
 		}

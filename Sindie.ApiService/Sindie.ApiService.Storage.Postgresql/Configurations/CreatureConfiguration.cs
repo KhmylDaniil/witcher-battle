@@ -134,9 +134,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.WithMany(x => x.Creatures)
 				.UsingEntity(x => x.ToTable("CreatureAbilities", "Battles"));
 
-			builder.HasMany(x => x.Conditions)
-				.WithMany(x => x.Creatures)
-				.UsingEntity(x => x.ToTable("CurrentConditions", "Battles"));
+			builder.HasMany(x => x.Effects)
+				.WithOne(x => x.Creature)
+				.HasForeignKey(x => x.EffectId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasMany(x => x.Vulnerables)
 				.WithMany(x => x.VulnerableCreatures)

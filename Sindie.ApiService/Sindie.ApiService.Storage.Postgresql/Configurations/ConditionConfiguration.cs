@@ -24,8 +24,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Название состояния")
 				.IsRequired();
 
-			builder.HasMany(x => x.Creatures)
-				.WithMany(x => x.Conditions);
+			builder.HasMany(x => x.Effects)
+				.WithOne(x => x.Condition)
+				.HasForeignKey(x => x.EffectId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasMany(x => x.AppliedConditions)
 				.WithOne(x => x.Condition)

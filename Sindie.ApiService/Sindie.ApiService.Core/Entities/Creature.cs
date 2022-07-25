@@ -1,4 +1,5 @@
-﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+﻿using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,7 +86,7 @@ namespace Sindie.ApiService.Core.Entities
 			Description = description;
 			CreatureParts = CreateParts(creatureTemplate.CreatureTemplateParts);
 			Abilities = creatureTemplate.Abilities;
-			Conditions = new List<Condition>();
+			Effects = new List<Effect>();
 			CreatureSkills = CreateSkills(creatureTemplate.CreatureTemplateSkills);
 		}
 
@@ -329,9 +330,9 @@ namespace Sindie.ApiService.Core.Entities
 		public List<CreatureSkill> CreatureSkills { get; protected set; }
 
 		/// <summary>
-		/// Наложенные состояния
+		/// Эффекты
 		/// </summary>
-		public List<Condition> Conditions { get; set; }
+		public List<Effect> Effects { get; set; }
 
 		/// <summary>
 		/// Части тела
@@ -522,7 +523,7 @@ namespace Sindie.ApiService.Core.Entities
 				CreatedOn = createdOn,
 				ModifiedOn = modifiedOn,
 				CreatedByUserId = createdByUserId,
-				Conditions = new List<Condition>(),
+				Effects = new List<Effect>(),
 				CreatureSkills = new List<CreatureSkill>(),
 				Abilities = new List<Ability>(),
 				CreatureParts = new List<CreaturePart>(),

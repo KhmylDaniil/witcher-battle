@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Sindie.ApiService.Storage.Postgresql;
@@ -11,9 +12,10 @@ using Sindie.ApiService.Storage.Postgresql;
 namespace Sindie.ApiService.Storage.Postgresql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220723114521_Conditions2")]
+    partial class Conditions2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2305,21 +2307,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasComment("Части шаблона существа");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.PoisonEffect", b =>
-                {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
-
-                    b.Property<string>("Toxicity")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Toxicity")
-                        .HasComment("Тяжесть");
-
-                    b.ToTable("PoisonEffects", "Battles");
-
-                    b.HasComment("Эффекты отравления");
-                });
-
             modelBuilder.Entity("AbilityCreature", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.Ability", null)
@@ -2941,15 +2928,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired();
 
                     b.Navigation("CreatureTemplate");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.PoisonEffect", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
-                        .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.PoisonEffect", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Ability", b =>

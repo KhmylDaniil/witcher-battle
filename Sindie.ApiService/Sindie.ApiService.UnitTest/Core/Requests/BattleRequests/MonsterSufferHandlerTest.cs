@@ -41,7 +41,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_instance = Battle.CreateForTest(game: _game);
 			_torso = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
 			_head = BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName);
-			_condition = Condition.CreateForTest();
+			_condition = Condition.CreateForTest(name: "Poison");
 			_damageType = DamageType.CreateForTest();
 
 			_parameter = Skill.CreateForTest(game: _game);
@@ -62,7 +62,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				attackSkill: _parameter,
 				damageTypes: new List<DamageType> { _damageType },
 				defensiveSkills: new List<Skill> { _parameter });
-			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 50));
+			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 100));
 
 			_creature = Creature.CreateForTest(
 				battle: _instance,

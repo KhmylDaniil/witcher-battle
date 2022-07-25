@@ -99,7 +99,7 @@ namespace Sindie.ApiService.Core.Entities
 			set
 			{
 				_creature = value ?? throw new ApplicationException("Необходимо передать существо");
-				BodyPartTypeId = value.Id;
+				CreatureId = value.Id;
 			}
 		}
 		#endregion navigation properties

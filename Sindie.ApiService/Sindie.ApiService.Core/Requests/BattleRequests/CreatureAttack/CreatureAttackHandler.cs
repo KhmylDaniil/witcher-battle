@@ -76,7 +76,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Resistances)
 				.Include(i => i.Creatures)
-					.ThenInclude(c => c.Conditions)
+					.ThenInclude(c => c.Effects)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Battle>();
 

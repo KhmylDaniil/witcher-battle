@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sindie.ApiService.Core.Abstractions;
+using System;
 using System.Collections.Generic;
 
 namespace Sindie.ApiService.Core.Entities
@@ -60,9 +61,9 @@ namespace Sindie.ApiService.Core.Entities
 		public List<AppliedCondition> AppliedConditions { get; set; }
 
 		/// <summary>
-		/// Существа
+		/// Эффекты
 		/// </summary>
-		public List<Creature> Creatures { get; set; }
+		public List<Effect> Effects { get; set; }
 
 		#endregion navigation properties
 
@@ -89,7 +90,7 @@ namespace Sindie.ApiService.Core.Entities
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId,
-			Creatures = new List<Creature>(),
+			Effects = new List<Effect>(),
 			AppliedConditions = new List<AppliedCondition>()
 		};
 	}
