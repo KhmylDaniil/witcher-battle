@@ -23,7 +23,7 @@ namespace Sindie.ApiService.Core.Services.Roll
 		/// <param name="difficulty">Сложность для переброса</param>
 		/// <param name="fumble">Провал броска</param>
 		/// <returns>Успешность броска</returns>
-		public int BeatDifficulty(int skillBase, int difficulty, out int fumble)
+		public int BeatDifficultyWithFumble(int skillBase, int difficulty, out int fumble)
 		{
 			int roll = Roll();
 
@@ -43,6 +43,21 @@ namespace Sindie.ApiService.Core.Services.Roll
 			=> skillBase + Roll() > difficulty;
 
 		/// <summary>
+		/// Бросок против сложности
+		/// </summary>
+		/// <param name="skillBase">База навыка</param>
+		/// <param name="difficulty">Сложность для переброса</param>
+		/// <param name="roll">Значение броска</param>
+		/// <returns>Успешность броска</returns>
+		public bool BeatDifficulty(int skillBase, int difficulty, out int roll)
+		{
+			roll = skillBase + Roll();
+
+			return skillBase > difficulty;
+		}
+			
+
+		/// <summary>
 		/// Встречный бросок
 		/// </summary>
 		/// <param name="attackBase">База атаки</param>
@@ -50,7 +65,7 @@ namespace Sindie.ApiService.Core.Services.Roll
 		/// <param name="attackerFumble">Провал атаки</param>
 		/// <param name="defenderFumble">Провал защиты</param>
 		/// <returns>Успешность атаки</returns>
-		public int ContestRoll(int attackBase, int defenseBase, out int attackerFumble, out int defenderFumble)
+		public int ContestRollWithFumble(int attackBase, int defenseBase, out int attackerFumble, out int defenderFumble)
 		{
 			int attackRoll = Roll();
 			int defenseRoll = Roll();

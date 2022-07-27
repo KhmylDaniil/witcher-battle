@@ -19,6 +19,7 @@ namespace Sindie.ApiService.Core.Entities
 
 		private Creature _creature;
 		private Skill _skill;
+		private int _skillValue;
 
 		/// <summary>
 		/// Пустой конструктор
@@ -61,7 +62,15 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// значение навыка у существа
 		/// </summary>
-		public int SkillValue { get; set; }
+		public int SkillValue
+		{
+			get => _skillValue;
+			set
+			{
+				if (value < 0 || value > BaseData.DiceValue.Value) throw new ArgumentOutOfRangeException(nameof(SkillValue));
+				_skillValue = value;
+			}
+		}
 
 		#region navigation properties
 

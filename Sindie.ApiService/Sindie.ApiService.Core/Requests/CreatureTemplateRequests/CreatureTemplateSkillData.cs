@@ -32,22 +32,20 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
 		/// Создание данных для <see cref="CreatureTemplateSkill"/>
 		/// </summary>
 		/// <param name="request">Запрос</param>
-		/// <param name="game">Игра</param>
+		/// <param name="skills">Навыки</param>
 		/// <returns>Данные</returns>
-		internal static List<CreatureTemplateSkillData> CreateCreatureTemplateSkillData(ChangeCreatureTemplateCommand request, Game game)
+		internal static List<CreatureTemplateSkillData> CreateCreatureTemplateSkillData(ChangeCreatureTemplateCommand request, List<Skill> skills)
 		{
 			if (request?.CreatureTemplateSkills == null)
 				throw new ExceptionEntityNotIncluded<CreatureTemplateSkill>(nameof(Game));
-			if (game?.Skills == null)
-				throw new ExceptionEntityNotIncluded<Skill>(nameof(Game));
-
+			
 			var result = new List<CreatureTemplateSkillData>();
 
 			foreach (var item in request.CreatureTemplateSkills)
 				result.Add(new CreatureTemplateSkillData()
 				{
 					Id = item.Id,
-					Skill = game.Skills.FirstOrDefault(x => x.Id == item.SkillId),
+					Skill = skills.FirstOrDefault(x => x.Id == item.SkillId),
 					Value = item.Value
 				});
 			return result;
@@ -57,13 +55,13 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
 		/// Создание данных для <see cref="CreatureTemplateSkill"/>
 		/// </summary>
 		/// <param name="request">Запрос</param>
-		/// <param name="game">Игра</param>
+		/// <param name="skills">Навыки</param>
 		/// <returns>Данные</returns>
-		internal static List<CreatureTemplateSkillData> CreateCreatureTemplateSkillData(CreateCreatureTemplateCommand request, Game game)
+		internal static List<CreatureTemplateSkillData> CreateCreatureTemplateSkillData(CreateCreatureTemplateCommand request, List<Skill> skills)
 		{
 			if (request?.CreatureTemplateSkills == null)
 				throw new ExceptionEntityNotIncluded<CreatureTemplateSkill>(nameof(Game));
-			if (game?.Skills == null)
+			if (skills == null)
 				throw new ExceptionEntityNotIncluded<Skill>(nameof(Game));
 
 			var result = new List<CreatureTemplateSkillData>();
@@ -72,7 +70,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
 				result.Add(new CreatureTemplateSkillData()
 				{
 					Id = null,
-					Skill = game.Skills.FirstOrDefault(x => x.Id == item.SkillId),
+					Skill = skills.FirstOrDefault(x => x.Id == item.SkillId),
 					Value = item.Value
 				});
 			return result;

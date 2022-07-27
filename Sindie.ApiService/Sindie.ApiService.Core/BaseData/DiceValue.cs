@@ -1,5 +1,4 @@
-﻿
-namespace Sindie.ApiService.Core.BaseData
+﻿namespace Sindie.ApiService.Core.BaseData
 {
 	/// <summary>
 	/// Значение бросаемого куба

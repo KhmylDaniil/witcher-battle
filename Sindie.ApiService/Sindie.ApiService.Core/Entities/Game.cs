@@ -90,11 +90,6 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Навыки
-		/// </summary>
-		public List<Skill> Skills { get; set; }
-
-		/// <summary>
 		/// Бои
 		/// </summary>
 		public List<Battle> Battles { get; set; }

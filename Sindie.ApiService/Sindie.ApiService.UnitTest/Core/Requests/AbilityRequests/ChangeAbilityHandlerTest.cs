@@ -20,8 +20,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		private readonly DamageType _damageType;
 		private readonly Condition _condition;
 		private readonly Game _game;
-		private readonly Skill _parameter1;
-		private readonly Skill _parameter2;
+		private readonly Skill _skill1;
+		private readonly Skill _skill2;
 		private readonly Ability _ability;
 
 		/// <summary>
@@ -32,11 +32,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			_game = Game.CreateForTest();
 			_condition = Condition.CreateForTest();
 			_damageType = DamageType.CreateForTest();
-			_parameter1 = Skill.CreateForTest(game: _game);
-			_parameter2 = Skill.CreateForTest(game: _game);
-			_ability = Ability.CreateForTest(game: _game, attackSkill: _parameter1);
+			_skill1 = Skill.CreateForTest();
+			_skill2 = Skill.CreateForTest();
+			_ability = Ability.CreateForTest(game: _game, attackSkill: _skill1, damageType: _damageType);
 
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _condition, _damageType, _ability, _parameter1, _parameter2));
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _condition, _damageType, _ability, _skill1, _skill2));
 		}
 
 		/// <summary>
@@ -55,9 +55,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 				damageModifier: 4,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkillId: _parameter2.Id,
-				defensiveSkills: new List<Guid> { _parameter2.Id },
-				damageTypes: new List<Guid> { _damageType.Id },
+				attackSkillId: _skill2.Id,
+				defensiveSkills: new List<Guid> { _skill2.Id },
+				damageTypeId: _damageType.Id,
 				appliedConditions: new List<ChangeAbilityRequestAppliedCondition>
 				{
 					new ChangeAbilityRequestAppliedCondition()
@@ -83,17 +83,15 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			Assert.AreEqual(ability.DamageModifier, 4);
 			Assert.AreEqual(ability.AttackSpeed, 1);
 			Assert.AreEqual(ability.Accuracy, 1);
-			Assert.AreEqual(ability.AttackSkillId, _parameter2.Id);
+			Assert.AreEqual(ability.AttackSkillId, _skill2.Id);
 
 			Assert.IsNotNull(ability.DefensiveSkills);
 			Assert.AreEqual(ability.DefensiveSkills.Count, 1);
 			var defensiveParameter = ability.DefensiveSkills.First();
-			Assert.AreEqual(_parameter2.Id, defensiveParameter.Id);
+			Assert.AreEqual(_skill2.Id, defensiveParameter.Id);
 
-			Assert.IsNotNull(ability.DamageTypes);
-			Assert.AreEqual(ability.DamageTypes.Count, 1);
-			var damageType = ability.DamageTypes.First();
-			Assert.AreEqual(_damageType.Id, damageType.Id);
+			var damageType = _dbContext.DamageTypes.First(x => x.Id == ability.DamageTypeId);
+			Assert.IsNotNull(damageType);
 
 			Assert.IsNotNull(ability.AppliedConditions);
 			Assert.AreEqual(ability.AppliedConditions.Count, 1);

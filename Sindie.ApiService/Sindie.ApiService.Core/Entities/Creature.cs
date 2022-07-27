@@ -431,7 +431,8 @@ namespace Sindie.ApiService.Core.Entities
 		/// <returns></returns>
 		public int SkillBase(Guid skillId)
 		{
-			var skill = CreatureSkills.FirstOrDefault(x => x.SkillId == skillId);
+			var skill = CreatureSkills.FirstOrDefault(x => x.SkillId == skillId)
+				?? throw new ExceptionEntityNotFound<CreatureSkill>(nameof(Name), skillId);
 
 			var value = typeof(Creature).GetProperty(skill.StatName).GetValue(this);
 

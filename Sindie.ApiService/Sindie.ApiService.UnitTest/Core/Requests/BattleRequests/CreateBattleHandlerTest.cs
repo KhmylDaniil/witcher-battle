@@ -39,7 +39,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_bodyPartType = BodyPartType.CreateForTest();
 			_creatureType = CreatureType.CreateForTest();
 			_condition = Condition.CreateForTest();
-			_parameter = Skill.CreateForTest(game: _game);
+			_parameter = Skill.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 			_creatureTemplate = CreatureTemplate.CreateForTest(game: _game, bodyTemplate: _bodyTemplate, creatureType: _creatureType);
 			_creatureTemplatePart = CreatureTemplatePart.CreateForTest(

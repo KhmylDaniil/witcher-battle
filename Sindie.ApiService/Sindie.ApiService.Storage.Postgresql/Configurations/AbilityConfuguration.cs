@@ -62,13 +62,16 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
+
+			builder.HasOne(x => x.DamageType)
+				.WithMany(x => x.Abilities)
+				.HasForeignKey(x => x.DamageTypeId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
 			builder.HasMany(x => x.Creatures)
 				.WithMany(x => x.Abilities)
 				.UsingEntity(x => x.ToTable("CreatureAbilities", "Battles"));
-
-			builder.HasMany(x => x.DamageTypes)
-				.WithMany(x => x.Abilities)
-				.UsingEntity(x => x.ToTable("AbilityDamageTypes", "GameRules"));
 
 			builder.HasMany(x => x.AppliedConditions)
 				.WithOne(x => x.Ability)
@@ -93,6 +96,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			var parameterNavigation = builder.Metadata.FindNavigation(nameof(Ability.AttackSkill));
 			parameterNavigation.SetField(Ability.SkillField);
 			parameterNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+			var damageTypeNavigation = builder.Metadata.FindNavigation(nameof(Ability.DamageType));
+			damageTypeNavigation.SetField(Ability.DamageTypeField);
+			damageTypeNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

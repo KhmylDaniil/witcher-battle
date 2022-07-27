@@ -24,7 +24,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly CreaturePart _headPart;
 		private readonly CreaturePart _torsoPart;
 		private readonly Condition _condition;
-		private readonly Skill _parameter;
+		private readonly Skill _skill;
+		private readonly Skill _skillBleedingWound;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
 		private readonly Creature _creature;
@@ -41,10 +42,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_instance = Battle.CreateForTest(game: _game);
 			_torso = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
 			_head = BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName);
-			_condition = Condition.CreateForTest(name: "Poison");
+			_condition = Condition.CreateForTest(id: Conditions.BleedingWoundId, name: Conditions.BleedingWoundName);
 			_damageType = DamageType.CreateForTest();
 
-			_parameter = Skill.CreateForTest(game: _game);
+			_skill = Skill.CreateForTest();
+			_skillBleedingWound = Skill.CreateForTest(id: Skills.BleedingWoundId, statName: "Int", name: Skills.BleedingWoundName);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
@@ -59,19 +61,28 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				damageModifier: 1,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkill: _parameter,
-				damageTypes: new List<DamageType> { _damageType },
-				defensiveSkills: new List<Skill> { _parameter });
+				attackSkill: _skill,
+				damageType: _damageType,
+				defensiveSkills: new List<Skill> { _skill });
 			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 100));
 
 			_creature = Creature.CreateForTest(
 				battle: _instance,
 				creatureTemlpate: _creatureTemplate,
-				creatureType: _creatureType);
+				creatureType: _creatureType,
+				@int: 10);
+
 			_creature.Abilities.Add(_ability);
+
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
 				creature: _creature,
-				skill: _parameter,
+				skill: _skill,
+				value: 10));
+
+			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
+				creature: _creature,
+				skill: _skillBleedingWound,
+				statName: "Int",
 				value: 10));
 
 			_headPart = CreaturePart.CreateForTest(
@@ -101,7 +112,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_torso,
 				_head,
 				_condition,
-				_parameter,
+				_skill,
+				_skillBleedingWound,
 				_creatureTemplate,
 				_ability,
 				_creature,
@@ -135,6 +147,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			Assert.IsNotNull(message);
 			Assert.IsTrue(message.Contains("повреждена"));
 			Assert.IsTrue(message.Contains("7 урона"));
+			Assert.IsTrue(message.Contains(Conditions.BleedingWoundName));
 
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);

@@ -86,7 +86,7 @@ namespace Sindie.ApiService.Core.Entities
 		=> new Condition()
 		{
 			Id = id ?? Guid.NewGuid(),
-			Name = name ?? "Condition",
+			Name = name ?? BaseData.Conditions.BleedName,
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId,

@@ -43,7 +43,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_condition = Condition.CreateForTest();
 			_damageType = DamageType.CreateForTest();
 
-			_parameter = Skill.CreateForTest(game: _game);
+			_parameter = Skill.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
@@ -59,9 +59,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				attackSpeed: 1,
 				accuracy: 1,
 				attackSkill: _parameter,
-				damageTypes: new List<DamageType> { _damageType },
+				damageType: _damageType,
 				defensiveSkills: new List<Skill> { _parameter });
-			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 50));
+			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 100));
 
 			_creature = Creature.CreateForTest(
 				battle: _instance,

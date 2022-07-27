@@ -37,7 +37,7 @@ namespace Sindie.ApiService.Core.Logic
 		{
 			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
 
-			var successValue = _rollService.BeatDifficulty(
+			var successValue = _rollService.BeatDifficultyWithFumble(
 				skillBase: AttackValue(data.Attacker, data.Ability, data.ToHit),
 				difficuty: defenseValue,
 				out int attackerFumble);
@@ -55,10 +55,8 @@ namespace Sindie.ApiService.Core.Logic
 
 			ApplyDamage(ref data, ref message, successValue);
 
-			if (data.Target.HP == 0)
-				return message.ToString();
-
-			ApplyConditions(ref data, ref message);
+			if (!CheckDead(ref data, ref message))
+				ApplyConditions(ref data, ref message);
 
 			return message.ToString();
 		}
@@ -82,10 +80,8 @@ namespace Sindie.ApiService.Core.Logic
 
 			ApplyDamage(ref data, ref message, successValue, damage);
 
-			if (data.Target.HP == 0)
-				return message.ToString();
-
-			ApplyConditions(ref data, ref message);
+			if (!CheckDead(ref data, ref message))
+				ApplyConditions(ref data, ref message);
 
 			return message.ToString();
 		}
@@ -94,7 +90,7 @@ namespace Sindie.ApiService.Core.Logic
 		{
 			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
 
-			var successValue = _rollService.ContestRoll(
+			var successValue = _rollService.ContestRollWithFumble(
 				attackBase: AttackValue(data.Attacker, data.Ability, data.ToHit),
 				defenseBase: DefenseValue(data.Target, data.DefensiveSkill),
 				out int attackerFumble,
@@ -115,10 +111,8 @@ namespace Sindie.ApiService.Core.Logic
 
 			ApplyDamage(ref data, ref message, successValue);
 
-			if (data.Target.HP == 0)
-				return message.ToString();
-
-			ApplyConditions(ref data, ref message);
+			if (!CheckDead(ref data, ref message))
+				ApplyConditions(ref data, ref message);
 
 			return message.ToString();
 		}
@@ -238,7 +232,7 @@ namespace Sindie.ApiService.Core.Logic
 		/// <param name="instance"></param>
 		internal static void DisposeCorpses(ref Battle instance)
 		{
-			instance.Creatures.RemoveAll(x => x.HP == 0);
+			instance.Creatures.RemoveAll(x => x.HP < 0 && !(x is Character));
 		}
 
 		private string CritMissMessage(int attackerFumble)
@@ -264,8 +258,8 @@ namespace Sindie.ApiService.Core.Logic
 
 			CheckCrit(data, ref message, successValue, ref damage);
 
+			data.Target.HP -= damage;
 			message.AppendLine($"Нанеcено {damage} урона.");
-			CheckDead(ref data, ref message, damage);
 		}
 
 		/// <summary>
@@ -286,34 +280,44 @@ namespace Sindie.ApiService.Core.Logic
 			CheckCrit(data, ref message, successValue, ref damage);
 
 			message.AppendLine($"Нанеcено {damage} урона.");
-			CheckDead(ref data, ref message, damage);
+			data.Target.HP -= damage;
 		}
-
 
 		/// <summary>
 		/// Проверка смерти
 		/// </summary>
 		/// <param name="data">Данные</param>
 		/// <param name="message">Сообщение</param>
-		/// <param name="damage">Урон</param>
-		private static void CheckDead(ref AttackData data, ref StringBuilder message, int damage)
+		private static bool CheckDead(ref AttackData data, ref StringBuilder message)
 		{
-			data.Target.HP = data.Target.HP - damage > 0
-							? data.Target.HP - damage
-							: 0;
+			if (data.Target.HP >= 0)
+				return false;
 
-			if (data.Target.HP == 0)
-				message.AppendLine($"Существо {data.Target.Name} погибает");
+			if (data.Target is Character)
+			{
+				message.AppendLine($"Существо {data.Target.Name} при смерти");
+				return false;
+			}
+				
+			message.AppendLine($"Существо {data.Target.Name} погибает");
+			return true;
 		}
 
-		private static void ApplyConditions(ref AttackData data, ref StringBuilder message)
+		private void ApplyConditions(ref AttackData data, ref StringBuilder message)
 		{
 			foreach (var condition in RollConditions(data.Ability))
 			{
-				data.Target.Effects.Add(Effect.CreateEffect<Effect>(data.Target, condition));
-				message.AppendLine($"Наложено состояние {condition.Name}.");
+				var effect = Effect.CreateEffect<Effect>(rollService: _rollService, data.Attacker, data.Target, condition);
+
+				if (effect == null)
+					continue;
+				
+				data.Target.Effects.Add(effect);
+
+				message.AppendLine($"Наложен {effect.ToString()}");
 			}
 		}
+
 		private static void ArmorMutigation(ref AttackData data, ref int damage, ref StringBuilder message)
 		{
 			if (data.AimedPart.CurrentArmor == 0)
@@ -333,10 +337,10 @@ namespace Sindie.ApiService.Core.Logic
 
 		private static void CheckModifiers(AttackData data, ref int damage)
 		{
-			if (data.Target.Resistances.Any(x => data.Ability.DamageTypes.All(y => x.Id == y.Id)))
+			if (data.Target.Resistances.Any(x => x.Id == data.Ability.DamageTypeId))
 				damage /= 2;
 
-			if (data.Target.Vulnerables.Any(x => data.Ability.DamageTypes.All(y => x.Id == y.Id)))
+			if (data.Target.Vulnerables.Any(x => x.Id == data.Ability.DamageTypeId))
 				damage *= 2;
 
 			damage = (int)Math.Truncate(damage * data.AimedPart.DamageModifier);

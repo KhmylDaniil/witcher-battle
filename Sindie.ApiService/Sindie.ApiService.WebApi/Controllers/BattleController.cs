@@ -6,6 +6,7 @@ using Sindie.ApiService.Core.Contracts.BattleRequests.CreateBattle;
 using Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack;
 using Sindie.ApiService.Core.Contracts.BattleRequests.MonsterAttack;
 using Sindie.ApiService.Core.Contracts.BattleRequests.MonsterSuffer;
+using Sindie.ApiService.Core.Contracts.BattleRequests.TurnBeginning;
 using Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle;
 using Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack;
 using Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack;
@@ -133,6 +134,23 @@ namespace Sindie.ApiService.WebApi.Controllers
 					defensiveSkillId: request.DefensiveSkillId,
 					specialToHit: request.SpecialToHit,
 					specialToDamage: request.SpecialToDamage), cancellationToken);
+		}
+
+		/// <summary>
+		/// Начало хода существа
+		/// </summary>
+		/// <param name="request">Запрос на обработку начала хода существа</param>
+		/// <param name="cancellationToken">Токен отмены</param>
+		/// <returns></returns>
+		[HttpPost("TurnBeginnning")]
+		[SwaggerResponse(StatusCodes.Status200OK)]
+		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
+		public async Task<TurnBeginningResponse> TurnBeginningAsync([FromBody] TurnBeginningCommand request, CancellationToken cancellationToken)
+		{
+			return await _mediator.Send(
+				request == null
+				? throw new ArgumentNullException(nameof(request))
+				: request, cancellationToken);
 		}
 	}
 }

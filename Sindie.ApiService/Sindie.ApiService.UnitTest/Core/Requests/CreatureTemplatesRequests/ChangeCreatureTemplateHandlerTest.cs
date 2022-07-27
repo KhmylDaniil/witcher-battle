@@ -33,6 +33,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly BodyPartType _torsoType;
 		private readonly CreatureType _creatureType1;
 		private readonly CreatureType _creatureType2;
+		private readonly DamageType _damageType;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="CreateCreatureTemlplateHandler"/>
@@ -40,6 +41,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		public ChangeCreatureTemplateHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
+			_damageType = DamageType.CreateForTest();
 			_torsoType = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
 			_imgFile = ImgFile.CreateForTest();
 			_creatureType1 = CreatureType.CreateForTest(CreatureTypes.BeastId, CreatureTypes.BeastName);
@@ -57,8 +59,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_bodyTemplate.BodyTemplateParts = new List<BodyTemplatePart> { _torso };
 
 			_condition = Condition.CreateForTest();
-			_parameter1 = Skill.CreateForTest(game: _game);
-			_parameter2 = Skill.CreateForTest(game: _game);
+			_parameter1 = Skill.CreateForTest();
+			_parameter2 = Skill.CreateForTest();
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
@@ -76,10 +78,10 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				armor: 0);
 			_creatureTemplate.CreatureTemplateParts.Add(_creatureTemplatePart);
 
-			_ability1 = Ability.CreateForTest(game: _game, attackSkill: _parameter1);
+			_ability1 = Ability.CreateForTest(game: _game, attackSkill: _parameter1, damageType: _damageType);
 			_creatureTemplate.Abilities.Add(_ability1);
 
-			_ability2 = Ability.CreateForTest(game: _game, attackSkill: _parameter2);
+			_ability2 = Ability.CreateForTest(game: _game, attackSkill: _parameter2, damageType: _damageType);
 
 			_creatureTemplateParameter = CreatureTemplateSkill.CreateForTest(
 				creatureTemplate: _creatureTemplate,
