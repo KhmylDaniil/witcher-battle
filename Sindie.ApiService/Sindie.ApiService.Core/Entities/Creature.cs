@@ -144,13 +144,8 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Int
 		{
-			get => _int;
-			set
-			{
-				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Int));
-				_int = value;
-			}
+			get => _int < 1 ? 1 : _int;
+			set => _int = value;
 		}
 
 		/// <summary>
@@ -158,13 +153,8 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Ref
 		{
-			get => _ref;
-			set
-			{
-				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Ref));
-				_ref = value;
-			}
+			get => _ref < 1 ? 1 : _ref;
+			set => _ref = value;
 		}
 
 		/// <summary>
@@ -172,13 +162,8 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Dex
 		{
-			get => _dex;
-			set
-			{
-				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Dex));
-				_dex = value;
-			}
+			get => _dex < 1 ? 1 : _dex;
+			set => _dex = value;
 		}
 
 		/// <summary>
@@ -186,13 +171,8 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Body
 		{
-			get => _body;
-			set
-			{
-				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Body));
-				_body = value;
-			}
+			get => _body < 1 ? 1 : _body;
+			set => _body = value;
 		}
 
 		/// <summary>
@@ -200,13 +180,8 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Emp
 		{
-			get => _emp;
-			set
-			{
-				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Emp));
-				_emp = value;
-			}
+			get => _emp < 1 ? 1 : _emp;
+			set => _emp = value;
 		}
 
 		/// <summary>
@@ -214,13 +189,8 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Cra
 		{
-			get => _cra;
-			set
-			{
-				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Cra));
-				_cra = value;
-			}
+			get => _cra < 1 ? 1 : _cra;
+			set => _cra = value;
 		}
 
 		/// <summary>
@@ -228,13 +198,8 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Will
 		{
-			get => _will;
-			set
-			{
-				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Will));
-				_will = value;
-			}
+			get => _will < 1 ? 1 : _will;
+			set => _will = value;
 		}
 
 		/// <summary>
@@ -256,13 +221,8 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Speed
 		{
-			get => _speed;
-			set
-			{
-				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Speed));
-				_speed = value;
-			}
+			get => _speed < 1 ? 1 : _speed;
+			set => _speed = value;
 		}
 
 		#region navigation properties

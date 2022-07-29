@@ -64,12 +64,8 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int SkillValue
 		{
-			get => _skillValue;
-			set
-			{
-				if (value < 0 || value > BaseData.DiceValue.Value) throw new ArgumentOutOfRangeException(nameof(SkillValue));
-				_skillValue = value;
-			}
+			get => _skillValue < 1 ? 1 : _skillValue;
+			set => _skillValue = value;
 		}
 
 		#region navigation properties

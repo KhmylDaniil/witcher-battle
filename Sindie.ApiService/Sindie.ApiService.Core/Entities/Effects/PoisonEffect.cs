@@ -59,7 +59,19 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
 		{
-			throw new NotImplementedException();
+			var skill = creature.CreatureSkills.FirstOrDefault(x => x.Id == Skills.EnduranceId);
+
+			int skillBase = skill == null
+				? creature.Body
+				: creature.SkillBase(Skills.PhysiqueId);
+
+			if (rollService.BeatDifficulty(skillBase, 15))
+			{
+				message.AppendFormat($"Эффект {Name} снят.");
+				creature.Effects.Remove(this);
+			}
+			else
+				message.AppendLine($"Не удалось снять эффект {Name}.");
 		}
 	}
 }

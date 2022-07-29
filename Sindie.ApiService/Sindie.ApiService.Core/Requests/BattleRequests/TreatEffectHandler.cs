@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BattleRequests.TurnBeginning;
+using Sindie.ApiService.Core.Contracts.BattleRequests.TreatEffect;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
-using Sindie.ApiService.Core.Logic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -14,9 +15,9 @@ using System.Threading.Tasks;
 namespace Sindie.ApiService.Core.Requests.BattleRequests
 {
 	/// <summary>
-	/// Обработчик начала хода существа
+	/// Обработчик попытки снятия эффекта
 	/// </summary>
-	internal class TurnBeginningHandler : IRequestHandler<TurnBeginningCommand, TurnBeginningResponse>
+	public class TreatEffectHandler : IRequestHandler<TreatEffectCommand, TreatEffectResponse>
 	{
 		/// <summary>
 		/// Контекст базы данных
@@ -34,11 +35,11 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 		private readonly IRollService _rollService;
 
 		/// <summary>
-		/// Конструктор обработчика начала хода существа
+		/// Конструктор обработчика попытки снятия эффекта
 		/// </summary>
 		/// <param name="appDbContext"></param>
 		/// <param name="authorizationService"></param>
-		public TurnBeginningHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IRollService rollService)
+		public TreatEffectHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IRollService rollService)
 		{
 			_appDbContext = appDbContext;
 			_authorizationService = authorizationService;
@@ -46,12 +47,12 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 		}
 
 		/// <summary>
-		/// Начало хода существа
+		/// Обработка попытки снятия эффекта
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		public async Task<TurnBeginningResponse> Handle(TurnBeginningCommand request, CancellationToken cancellationToken)
+		public async Task<TreatEffectResponse> Handle(TreatEffectCommand request, CancellationToken cancellationToken)
 		{
 			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Instances, request.BattleId)
 				.Include(i => i.Creatures.Where(c => c.Id == request.CreatureId))
@@ -72,19 +73,16 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 			var creature = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
 				?? throw new ExceptionEntityNotFound<Creature>();
 
-			StringBuilder message = new StringBuilder();
+			var effect = creature.Effects.FirstOrDefault(x => x.Id == request.EffectId)
+				?? throw new ExceptionEntityNotFound<Effect>();
 
-			foreach (var effect in creature.Effects)
-			{
-				effect.Run(ref creature, ref message);
-				effect.AutoEnd(ref creature, ref message);
-			}
+			StringBuilder messege = new();
 
-			Attack.DisposeCorpses(ref battle);
-			
+			effect.Treat(_rollService, ref creature, ref messege);
+
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
-			return new TurnBeginningResponse() { Message = message.ToString() };
+			return new TreatEffectResponse() { Message = messege.ToString() };
 		}
 	}
 }

@@ -55,7 +55,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
 		{
-			throw new System.NotImplementedException();
+			message.AppendLine($"Эффект {Name} снят.");
+			creature.Effects.Remove(this);
 		}
 
 		private int ApplyDamage(CreaturePart creaturePart)

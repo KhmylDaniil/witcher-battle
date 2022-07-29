@@ -8,23 +8,10 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	/// <summary>
 	/// Эффект заморозки
 	/// </summary>
-	public class FreezeEffect : Effect, IStatChangingEffect
+	public class FreezeEffect : Effect
 	{
-		public int Int { get; private set; }
-
-		public int Ref { get; private set; }
-
-		public int Dex { get; private set; }
-
-		public int Body { get; private set; }
-
-		public int Emp { get; private set; }
-
-		public int Cra { get; private set; }
-
-		public int Will { get; private set; }
-
-		public int Speed { get; private set; }
+		private const int SpeedModifier = -3;
+		private const int RefModifier = -1;
 
 		protected FreezeEffect()
 		{
@@ -37,11 +24,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="condition">Состояние</param>
 		public FreezeEffect(Creature creature, Condition condition) : base(creature, condition)
 		{
-			Speed = -3;
-			Ref = -1;
-
-			creature.Ref += Ref;
-			creature.Speed += Speed;
+			creature.Ref += RefModifier;
+			creature.Speed += SpeedModifier;
 		}
 
 		/// <summary>
@@ -69,7 +53,21 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
 		{
-			throw new System.NotImplementedException();
+			var skill = creature.CreatureSkills.FirstOrDefault(x => x.Id == Skills.PhysiqueId);
+
+			int skillBase = skill == null
+				? creature.Body
+				: creature.SkillBase(Skills.PhysiqueId);
+
+			if (rollService.BeatDifficulty(skillBase, 16))
+			{
+				creature.Ref -= RefModifier;
+				creature.Speed -= SpeedModifier;
+				message.AppendFormat($"Эффект {Name} снят. Скорость равна {creature.Speed}, рефлексы равны {creature.Ref}.");
+				creature.Effects.Remove(this);
+			}
+			else
+				message.AppendLine($"Не удалось снять эффект {Name}.");
 		}
 	}
 }

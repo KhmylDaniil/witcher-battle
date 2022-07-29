@@ -6,6 +6,7 @@ using Sindie.ApiService.Core.Contracts.BattleRequests.CreateBattle;
 using Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack;
 using Sindie.ApiService.Core.Contracts.BattleRequests.MonsterAttack;
 using Sindie.ApiService.Core.Contracts.BattleRequests.MonsterSuffer;
+using Sindie.ApiService.Core.Contracts.BattleRequests.TreatEffect;
 using Sindie.ApiService.Core.Contracts.BattleRequests.TurnBeginning;
 using Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle;
 using Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack;
@@ -120,7 +121,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		[HttpPut("CreatureAttack")]
 		[SwaggerResponse(StatusCodes.Status200OK)]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task<CreatureAttackResponse> HeroAttackAsync([FromQuery] CreatureAttackRequest request, CancellationToken cancellationToken)
+		public async Task<CreatureAttackResponse> CreatureAttackAsync([FromQuery] CreatureAttackRequest request, CancellationToken cancellationToken)
 		{
 			return await _mediator.Send(
 				request == null
@@ -142,10 +143,27 @@ namespace Sindie.ApiService.WebApi.Controllers
 		/// <param name="request">Запрос на обработку начала хода существа</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		[HttpPost("TurnBeginnning")]
+		[HttpPut("TurnBeginnning")]
 		[SwaggerResponse(StatusCodes.Status200OK)]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
 		public async Task<TurnBeginningResponse> TurnBeginningAsync([FromBody] TurnBeginningCommand request, CancellationToken cancellationToken)
+		{
+			return await _mediator.Send(
+				request == null
+				? throw new ArgumentNullException(nameof(request))
+				: request, cancellationToken);
+		}
+
+		/// <summary>
+		/// Попытка снять эффект
+		/// </summary>
+		/// <param name="request">Запрос на обработку попытки снять эффект</param>
+		/// <param name="cancellationToken">Токен отмены</param>
+		/// <returns></returns>
+		[HttpPut("TreatEffectById")]
+		[SwaggerResponse(StatusCodes.Status200OK)]
+		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
+		public async Task<TreatEffectResponse> TreatEffectByIdAsync([FromBody] TreatEffectCommand request, CancellationToken cancellationToken)
 		{
 			return await _mediator.Send(
 				request == null
