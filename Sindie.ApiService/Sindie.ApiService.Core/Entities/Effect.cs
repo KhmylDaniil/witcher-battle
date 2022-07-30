@@ -68,6 +68,9 @@ namespace Sindie.ApiService.Core.Entities
 			}
 		}
 
+		/// <summary>
+		/// Состояние
+		/// </summary>
 		public Condition Condition
 		{
 			get => _condition;
@@ -78,10 +81,27 @@ namespace Sindie.ApiService.Core.Entities
 				Name = value.Name;
 			}
 		}
+
+		/// <summary>
+		/// Применить эффект
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public abstract void Run(ref Creature creature, ref StringBuilder message);
 
+		/// <summary>
+		/// Автоматически прекратить эффект
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public abstract void AutoEnd(ref Creature creature, ref StringBuilder message);
 
+		/// <summary>
+		/// Попробовать снять эффект
+		/// </summary>
+		/// <param name="rollService">Сервис бросков</param>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public abstract void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message);
 
 		/// <summary>

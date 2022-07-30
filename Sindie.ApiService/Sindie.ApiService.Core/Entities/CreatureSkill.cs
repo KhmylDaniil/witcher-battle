@@ -131,5 +131,7 @@ namespace Sindie.ApiService.Core.Entities
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId
 		};
+
+		internal int GetValue() => _skillValue;
 	}
 }

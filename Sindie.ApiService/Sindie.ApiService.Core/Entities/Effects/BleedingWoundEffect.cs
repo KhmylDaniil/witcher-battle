@@ -66,7 +66,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		public override void Run(ref Creature creature, ref StringBuilder message)
 		{
 			creature.HP -= Damage;
-			message.AppendLine($"Существо {creature.Name} потеряло {Damage} хитов из-за кровотечения. Осталось {creature.HP} хитов.");
+			message.AppendLine($"Существо {creature.Name} получило {Damage} урона из-за кровавой раны. Осталось {creature.HP} хитов.");
 		}
 
 		public override void AutoEnd(ref Creature creature, ref StringBuilder message)

@@ -1,4 +1,5 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Entities.Effects;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
@@ -491,5 +492,21 @@ namespace Sindie.ApiService.Core.Entities
 				Vulnerables = new List<DamageType>(),
 				Resistances = new List<DamageType>()
 			};
+
+		internal int GetInt() => _int;
+
+		internal int GetRef() => _ref;
+
+		internal int GetDex() => _dex;
+
+		internal int GetBody() => _body;
+
+		internal int GetEmp() => _emp;
+
+		internal int GetCra() => _cra;
+
+		internal int GetWill() => _will;
+
+		internal int GetSpeed() => _speed;
 	}
 }

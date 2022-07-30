@@ -73,16 +73,16 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 			var creature = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
 				?? throw new ExceptionEntityNotFound<Creature>();
 
-			var effect = creature.Effects.FirstOrDefault(x => x.Id == request.EffectId)
+			var effect = creature.Effects.FirstOrDefault(x => x.EffectId == request.EffectId)
 				?? throw new ExceptionEntityNotFound<Effect>();
 
-			StringBuilder messege = new();
+			StringBuilder message = new();
 
-			effect.Treat(_rollService, ref creature, ref messege);
+			effect.Treat(_rollService, ref creature, ref message);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
-			return new TreatEffectResponse() { Message = messege.ToString() };
+			return new TreatEffectResponse() { Message = message.ToString() };
 		}
 	}
 }

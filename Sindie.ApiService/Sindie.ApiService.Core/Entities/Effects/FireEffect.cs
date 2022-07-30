@@ -46,7 +46,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 				totalDamage += ApplyDamage(creaturePart);
 
 			creature.HP -= totalDamage;
-			message.AppendLine($"Существо {creature.Name} получает {totalDamage} от горения. Осталось {creature.HP} хитов.");
+			message.AppendLine($"Существо {creature.Name} получает {totalDamage} урона от горения. Осталось {creature.HP} хитов.");
 		}
 
 		public override void AutoEnd(ref Creature creature, ref StringBuilder message)
@@ -61,12 +61,12 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 		private int ApplyDamage(CreaturePart creaturePart)
 		{
+			int damage = 5 - creaturePart.CurrentArmor;
+
 			if (creaturePart.CurrentArmor > 0)
 				creaturePart.CurrentArmor--;
 
-			return creaturePart.CurrentArmor >= 5
-				? 0
-				: 5 - creaturePart.CurrentArmor;
+			return damage < 0 ? 0 : damage;
 		}
 	}
 }

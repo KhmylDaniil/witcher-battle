@@ -16,7 +16,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 	/// <summary>
 	/// Обработчик начала хода существа
 	/// </summary>
-	internal class TurnBeginningHandler : IRequestHandler<TurnBeginningCommand, TurnBeginningResponse>
+	public class TurnBeginningHandler : IRequestHandler<TurnBeginningCommand, TurnBeginningResponse>
 	{
 		/// <summary>
 		/// Контекст базы данных
