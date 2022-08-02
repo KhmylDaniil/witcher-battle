@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.UserGameRequests
 	/// <summary>
 	/// Команда создания пользователя игры
 	/// </summary>
-	public class CreateUserGameCommand: IRequest<Unit>
+	public sealed class CreateUserGameCommand: IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди игры

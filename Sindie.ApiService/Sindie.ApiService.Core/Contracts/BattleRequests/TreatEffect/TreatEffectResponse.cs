@@ -4,7 +4,7 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.TreatEffect
 	/// <summary>
 	/// Ответ на команду попытки снятия эффекта
 	/// </summary>
-	public class TreatEffectResponse
+	public sealed class TreatEffectResponse
 	{
 		/// <summary>
 		/// Сообщение

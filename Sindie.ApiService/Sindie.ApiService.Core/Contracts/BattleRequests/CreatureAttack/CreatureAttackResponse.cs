@@ -4,7 +4,7 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack
 	/// <summary>
 	/// Ответ на атаку существа
 	/// </summary>
-	public class CreatureAttackResponse
+	public sealed class CreatureAttackResponse
 	{
 		/// <summary>
 		/// Сообщение о результате атаки

@@ -4,7 +4,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 	/// <summary>
 	/// Элемент ответа на запрос шаблона существа по айди - часть шаблона существа
 	/// </summary>
-	public class GetCreatureTemplateByIdResponseBodyPart
+	public sealed class GetCreatureTemplateByIdResponseBodyPart
 	{
 		/// <summary>
 		/// Название

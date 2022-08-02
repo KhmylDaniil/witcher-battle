@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser
 	/// <summary>
 	/// Ответ на команду регистрации
 	/// </summary>
-	public class RegisterUserCommandResponse
+	public sealed class RegisterUserCommandResponse
 	{
 		/// <summary>
 		/// Айди пользователя

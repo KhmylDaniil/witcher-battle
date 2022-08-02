@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.TurnBeginning
 	/// <summary>
 	/// Запрос начала хода
 	/// </summary>
-	public class TurnBeginningCommand : IRequest<TurnBeginningResponse>
+	public sealed class TurnBeginningCommand : IRequest<TurnBeginningResponse>
 	{
 		/// <summary>
 		/// Айди боя

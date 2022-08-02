@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.DeleteCreatu
 	/// <summary>
 	/// Команда на удаление шаблона существа по айди
 	/// </summary>
-	public class DeleteCreatureTemplateByIdCommand: IRequest
+	public sealed class DeleteCreatureTemplateByIdCommand: IRequest
 	{
 		/// <summary>
 		/// Айди игры

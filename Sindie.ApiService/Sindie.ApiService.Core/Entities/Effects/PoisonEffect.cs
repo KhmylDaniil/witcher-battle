@@ -18,7 +18,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		}
 
 		/// <summary>
-		/// Конструктор
+		/// Конструктор эффекта отравления
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="condition">Состояние</param>
@@ -42,6 +42,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			return effect == null ? new PoisonEffect(target, condition) : effect;
 		}
 
+		/// <summary>
+		/// Применить эффект
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public void Run(Creature creature)
 		{
 			creature.HP -= 3;
@@ -53,10 +58,21 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			message.AppendLine($"Существо {creature.Name} потеряло 3 хита из-за отравления. Осталось {creature.HP} хитов.");
 		}
 
+		/// <summary>
+		/// Автоматически прекратить эффект
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public override void AutoEnd(ref Creature creature, ref StringBuilder message)
 		{
 		}
 
+		/// <summary>
+		/// Попробовать снять эффект
+		/// </summary>
+		/// <param name="rollService">Сервис бросков</param>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
 		{
 			var skill = creature.CreatureSkills.FirstOrDefault(x => x.Id == Skills.EnduranceId);

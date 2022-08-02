@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 	/// <summary>
 	/// Элемент запроса создания шаблона существа - навык шаблона существа
 	/// </summary>
-	public class CreateCreatureTemplateRequestSkill
+	public sealed class CreateCreatureTemplateRequestSkill
 	{
 		/// <summary>
 		/// Айди навыка

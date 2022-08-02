@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.UserRequests.GetUsers
 	/// <summary>
 	/// Шаблон пользователя для отправки списка пользователей
 	/// </summary>
-	public class GetUsersQueryResponseItem
+	public sealed class GetUsersQueryResponseItem
 	{
 		/// <summary>
 		/// Имя пользователя

@@ -18,7 +18,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		}
 
 		/// <summary>
-		/// Конструктор
+		/// Конструктор эффекта заморозки
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="condition">Состояние</param>
@@ -40,14 +40,30 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			return effect == null ? new FreezeEffect(target, condition) : effect;
 		}
 
+		/// <summary>
+		/// Применить эффект
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public override void Run(ref Creature creature, ref StringBuilder message)
 		{
 		}
 
+		/// <summary>
+		/// Автоматически прекратить эффект
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public override void AutoEnd(ref Creature creature, ref StringBuilder message)
 		{
 		}
 
+		/// <summary>
+		/// Попробовать снять эффект
+		/// </summary>
+		/// <param name="rollService">Сервис бросков</param>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
 		{
 			var skill = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.PhysiqueId);
@@ -66,13 +82,21 @@ namespace Sindie.ApiService.Core.Entities.Effects
 				message.AppendLine($"Не удалось снять эффект {Name}.");
 		}
 
-		public void ApplyStatChanges(Creature creature)
+		/// <summary>
+		/// Применить изменения характеристик
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		private void ApplyStatChanges(Creature creature)
 		{
 			creature.Speed += SpeedModifier;
 			creature.Ref += RefModifier;
 		}
 
-		public void RevertStatChanges(Creature creature)
+		/// <summary>
+		/// Отменить изменения характеристик
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		private void RevertStatChanges(Creature creature)
 		{
 			creature.Speed = creature.GetSpeed() - SpeedModifier;
 			creature.Ref = creature.GetRef() - RefModifier;

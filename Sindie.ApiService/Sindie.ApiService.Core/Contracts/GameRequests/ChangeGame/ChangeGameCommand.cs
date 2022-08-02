@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame
 {
-	public class ChangeGameCommand : IRequest<Unit>
+	public sealed class ChangeGameCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди игры

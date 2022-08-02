@@ -15,7 +15,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		}
 
 		/// <summary>
-		/// Конструктор
+		/// Конструктор эффекта горения
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="condition">Состояние</param>
@@ -38,6 +38,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			return effect == null ? new FireEffect(target, condition) : effect;
 		}
 
+		/// <summary>
+		/// Применить эффект
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public override void Run(ref Creature creature, ref StringBuilder message)
 		{
 			int totalDamage = 0;
@@ -49,16 +54,32 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			message.AppendLine($"Существо {creature.Name} получает {totalDamage} урона от горения. Осталось {creature.HP} хитов.");
 		}
 
+		/// <summary>
+		/// Автоматически прекратить эффект
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public override void AutoEnd(ref Creature creature, ref StringBuilder message)
 		{
 		}
 
+		/// <summary>
+		/// Попробовать снять эффект
+		/// </summary>
+		/// <param name="rollService">Сервис бросков</param>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
 		{
 			message.AppendLine($"Эффект {Name} снят.");
 			creature.Effects.Remove(this);
 		}
 
+		/// <summary>
+		/// Применение урона от горения
+		/// </summary>
+		/// <param name="creaturePart">Часть тела</param>
+		/// <returns>Урон</returns>
 		private int ApplyDamage(CreaturePart creaturePart)
 		{
 			int damage = 5 - creaturePart.CurrentArmor;

@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.ChangeBattle
 	/// <summary>
 	/// Элемент запроса на изменение боя
 	/// </summary>
-	public class ChangeBattleRequestItem
+	public sealed class ChangeBattleRequestItem
 	{
 		/// <summary>
 		/// Айди существа

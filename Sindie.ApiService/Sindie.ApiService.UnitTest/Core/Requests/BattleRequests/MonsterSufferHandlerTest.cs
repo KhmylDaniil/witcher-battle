@@ -70,7 +70,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				battle: _instance,
 				creatureTemlpate: _creatureTemplate,
 				creatureType: _creatureType,
-				@int: 10);
+				@int: 10,
+				hp: 20);
 
 			_creature.Abilities.Add(_ability);
 
@@ -151,7 +152,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
-			Assert.AreEqual(monster.HP, 3);
+			Assert.AreEqual(monster.HP, 13);
 			var torsoPart = monster.CreatureParts.FirstOrDefault(x => x.BodyPartTypeId == _torso.Id);
 			Assert.IsNotNull(torsoPart);
 			Assert.AreEqual(torsoPart.CurrentArmor, 2);
@@ -169,7 +170,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				attackerId: _creature.Id,
 				targetId: _creature.Id,
 				abilityId: _ability.Id,
-				damageValue: 10,
+				damageValue: 20,
 				successValue: 1,
 				creaturePartId: _headPart.Id);
 

@@ -59,7 +59,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 					HitPenalty = part.HitPenalty,
 					MinToHit = part.MinToHit,
 					MaxToHit = part.MaxToHit
-				});;
+				});
 			return result;
 		}
 

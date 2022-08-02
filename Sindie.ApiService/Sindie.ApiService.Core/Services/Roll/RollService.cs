@@ -53,7 +53,7 @@ namespace Sindie.ApiService.Core.Services.Roll
 		{
 			roll = skillBase + Roll();
 
-			return skillBase > difficulty;
+			return roll > difficulty;
 		}
 			
 

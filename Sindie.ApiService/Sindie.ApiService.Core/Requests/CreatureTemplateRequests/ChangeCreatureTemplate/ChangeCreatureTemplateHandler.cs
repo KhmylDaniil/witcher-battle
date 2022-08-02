@@ -116,7 +116,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			var creatureTemplate = game.CreatureTemplates.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<CreatureTemplate>(request.Id);
 
-			if (game.CreatureTemplates.Any(x => x.Name == request.Name && x.Id != request.Id))
+			if (game.CreatureTemplates.Any(x => string.Equals(x.Name, request.Name, System.StringComparison.Ordinal) && x.Id != request.Id))
 				throw new ExceptionRequestNameNotUniq<ChangeCreatureTemplateCommand>(nameof(request.Name));
 
 			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId)
@@ -165,10 +165,14 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 		private List<(BodyTemplatePart BodyTemplatePart, int Armor)> CreateArmorList(BodyTemplate bodyTemplate, List<ChangeCreatureTemplateRequestArmorList> data)
 		{
 			var result = new List<(BodyTemplatePart BodyTemplatePart, int Armor)>();
-			foreach (var item in data)
-				result.Add((
-					bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == item.BodyTemplatePartId),
-					item.Armor));
+			foreach (var item in bodyTemplate.BodyTemplateParts)
+			{
+				var correspondingPart = data.FirstOrDefault(x => x.BodyTemplatePartId == item.Id);
+
+				var armor = correspondingPart == null ? 0 : correspondingPart.Armor;
+
+				result.Add((item, armor));
+			}
 			return result;
 		}
 

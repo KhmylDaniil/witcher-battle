@@ -53,20 +53,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 		/// <returns>Ответ на запрос списка шаблонов существа</returns>
 		public async Task<GetCreatureTemplateResponse> Handle(GetCreatureTemplateCommand request, CancellationToken cancellationToken)
 		{
-			if (request.PageSize < 1)
-				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.PageSize));
-			if (request.PageNumber < 1)
-				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.PageNumber));
-
-			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
-				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.CreationMinTime));
-			if (request.ModificationMinTime > _dateTimeProvider.TimeProvider)
-				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.ModificationMinTime));
-
-			if (request.CreationMaxTime != default && request.CreationMinTime >= request.CreationMaxTime)
-				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.CreationMaxTime));
-			if (request.ModificationMaxTime != default && request.ModificationMinTime >= request.ModificationMaxTime)
-				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.ModificationMaxTime));
+			CheckRequest(request);
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(g => g.CreatureTemplates)
@@ -114,6 +101,24 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 				}).ToListAsync(cancellationToken);
 
 			return new GetCreatureTemplateResponse { CreatureTemplatesList = list, TotalCount = list.Count };
+		}
+
+		private void CheckRequest(GetCreatureTemplateCommand request)
+		{
+			if (request.PageSize < 1)
+				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.PageSize));
+			if (request.PageNumber < 1)
+				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.PageNumber));
+
+			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
+				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.CreationMinTime));
+			if (request.ModificationMinTime > _dateTimeProvider.TimeProvider)
+				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.ModificationMinTime));
+
+			if (request.CreationMaxTime != default && request.CreationMinTime >= request.CreationMaxTime)
+				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.CreationMaxTime));
+			if (request.ModificationMaxTime != default && request.ModificationMinTime >= request.ModificationMaxTime)
+				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.ModificationMaxTime));
 		}
 	}
 }

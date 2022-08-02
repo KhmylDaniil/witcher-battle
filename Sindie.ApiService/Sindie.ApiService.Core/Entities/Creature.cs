@@ -73,6 +73,7 @@ namespace Sindie.ApiService.Core.Entities
 			CreatureTemplate = creatureTemplate;
 			CreatureTypeId = creatureTemplate.CreatureTypeId;
 			HP = creatureTemplate.HP;
+			MaxHP = creatureTemplate.HP;
 			Sta = creatureTemplate.Sta;
 			Int = creatureTemplate.Int;
 			Ref = creatureTemplate.Ref;
@@ -83,6 +84,7 @@ namespace Sindie.ApiService.Core.Entities
 			Will = creatureTemplate.Will;
 			Speed = creatureTemplate.Speed;
 			Luck = creatureTemplate.Luck;
+			Stun = CalculateStun(creatureTemplate);
 			Name = name;
 			Description = description;
 			CreatureParts = CreateParts(creatureTemplate.CreatureTemplateParts);
@@ -127,6 +129,16 @@ namespace Sindie.ApiService.Core.Entities
 		public int HP { get; set; }
 
 		/// <summary>
+		/// Максимальные хиты
+		/// </summary>
+		public int MaxHP { get; private set; }
+
+		/// <summary>
+		/// Устойчивость
+		/// </summary>
+		public int Stun { get; private set; }
+
+		/// <summary>
 		/// Стамина
 		/// </summary>
 		public int Sta
@@ -145,7 +157,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Int
 		{
-			get => _int < 1 ? 1 : _int;
+			get => CheckWoundTreshold(_int);
 			set => _int = value;
 		}
 
@@ -154,7 +166,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Ref
 		{
-			get => _ref < 1 ? 1 : _ref;
+			get => CheckWoundTreshold(_ref);
 			set => _ref = value;
 		}
 
@@ -163,7 +175,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Dex
 		{
-			get => _dex < 1 ? 1 : _dex;
+			get => CheckWoundTreshold(_dex);
 			set => _dex = value;
 		}
 
@@ -199,7 +211,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Will
 		{
-			get => _will < 1 ? 1 : _will;
+			get => CheckWoundTreshold(_will);
 			set => _will = value;
 		}
 
@@ -211,7 +223,7 @@ namespace Sindie.ApiService.Core.Entities
 			get => _luck;
 			set
 			{
-				if (value < 1)
+				if (value < 0)
 					throw new ExceptionFieldOutOfRange<Creature>(nameof(Luck));
 				_luck = value;
 			}
@@ -425,6 +437,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="description">Описание</param>
 		/// <param name="creatureType">Тип существа</param>
 		/// <param name="hp">Хиты</param>
+		/// <param name="maxHP">Максимальные хиты</param>
 		/// <param name="sta">Стамина</param>
 		/// <param name="int">Интеллект</param>
 		/// <param name="ref">Рефлексы</param>
@@ -435,6 +448,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="will">Воля</param>
 		/// <param name="speed">Скорость</param>
 		/// <param name="luck">Удача</param>
+		/// <param name="stun">Устойчивость</param>
 		/// <param name="createdOn">Дата создания</param>
 		/// <param name="modifiedOn">Дата изменения</param>
 		/// <param name="createdByUserId">Создавший пользователь</param>
@@ -445,10 +459,11 @@ namespace Sindie.ApiService.Core.Entities
 			Battle battle = default,
 			CreatureTemplate creatureTemlpate = default,
 			ImgFile imgFile = default,
-			CreatureType creatureType = default, 
+			CreatureType creatureType = default,
 			string name = default,
 			string description = default,
 			int hp = default,
+			int maxHP = default,
 			int sta = default,
 			int @int = default,
 			int @ref = default,
@@ -459,6 +474,7 @@ namespace Sindie.ApiService.Core.Entities
 			int will = default,
 			int speed = default,
 			int luck = default,
+			int stun = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
@@ -471,7 +487,8 @@ namespace Sindie.ApiService.Core.Entities
 				CreatureType = creatureType,
 				Name = name ?? creatureType.Name,
 				Description = description,
-				HP = hp == default ? 10 : hp,
+				HP = hp == default ? 50 : hp,
+				MaxHP = maxHP == default ? 50 : maxHP,
 				Sta = sta == default ? 10 : sta,
 				Int = @int == default ? 1 : @int,
 				Ref = @ref == default ? 1 : @ref,
@@ -482,6 +499,7 @@ namespace Sindie.ApiService.Core.Entities
 				Will = will == default ? 1 : will,
 				Speed = speed == default ? 1 : speed,
 				Luck = luck == default ? 1 : luck,
+				Stun = stun == default ? 1 : stun,
 				CreatedOn = createdOn,
 				ModifiedOn = modifiedOn,
 				CreatedByUserId = createdByUserId,
@@ -508,5 +526,20 @@ namespace Sindie.ApiService.Core.Entities
 		internal int GetWill() => _will;
 
 		internal int GetSpeed() => _speed;
+
+		private int CheckWoundTreshold(int value)
+		{
+			if (HP <= MaxHP / 5)
+				value /= 2;
+
+			return value < 1 ? 1 : value;
+		}
+
+		private int CalculateStun(CreatureTemplate creatureTemplate)
+		{
+			var result = (creatureTemplate.Will + creatureTemplate.Body) / 2;
+
+			return result > 10 ? 10 : result;
+		}
 	}
 }

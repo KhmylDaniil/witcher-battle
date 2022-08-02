@@ -9,7 +9,7 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.TurnBeginning
 	/// <summary>
 	/// Отчет о начале хода существа
 	/// </summary>
-	public class TurnBeginningResponse
+	public sealed class TurnBeginningResponse
 	{
 		/// <summary>
 		/// Сообщение

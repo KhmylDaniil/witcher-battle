@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.UserRequests.LoginUser
 	/// <summary>
 	/// Ответ на команду аутентификации
 	/// </summary>
-	public class LoginUserCommandResponse
+	public sealed class LoginUserCommandResponse
 	{
 		/// <summary>
 		/// Айди пользователя

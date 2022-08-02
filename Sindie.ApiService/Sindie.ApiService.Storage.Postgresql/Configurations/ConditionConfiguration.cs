@@ -80,6 +80,69 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
 				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Condition
+			(
+				name: Conditions.StunName,
+				id: Conditions.StunId,
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Condition
+			(
+				name: Conditions.StaggeredName,
+				id: Conditions.StaggeredId,
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Condition
+			(
+				name: Conditions.IntoxicationName,
+				id: Conditions.IntoxicationId,
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Condition
+			(
+				name: Conditions.HallutinationName,
+				id: Conditions.HallutinationId,
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Condition
+			(
+				name: Conditions.NauseaName,
+				id: Conditions.NauseaId,
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Condition
+			(
+				name: Conditions.SufflocationName,
+				id: Conditions.SufflocationId,
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Condition
+			(
+				name: Conditions.BlindedName,
+				id: Conditions.BlindedId,
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
 		}
 	}
 }

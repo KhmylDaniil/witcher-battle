@@ -12,7 +12,7 @@ namespace Sindie.ApiService.Core.Logic
 	/// <summary>
 	/// Атака
 	/// </summary>
-	public class Attack
+	public sealed class Attack
 	{
 		private readonly IRollService _rollService;
 

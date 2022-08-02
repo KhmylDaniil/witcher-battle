@@ -1,26 +1,26 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using System;
 using System.Linq;
 using System.Text;
 
 namespace Sindie.ApiService.Core.Entities.Effects
 {
 	/// <summary>
-	/// Эффект кровотечения
+	/// Эффект дизориентации
 	/// </summary>
-	public class BleedEffect : Effect
+	public class StunEffect : Effect
 	{
-		protected BleedEffect()
+		protected StunEffect()
 		{
 		}
 
 		/// <summary>
-		/// Конструктор эффекта кровотечения
+		/// Конструктор эффекта дизориентации
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="condition">Состояние</param>
-
-		public BleedEffect(Creature creature, Condition condition) : base(creature, condition)
+		public StunEffect(Creature creature, Condition condition) : base(creature, condition)
 		{
 		}
 
@@ -32,22 +32,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="target">Цель</param>
 		/// <param name="condition">Состояние</param>
 		/// <returns>Эффект</returns>
-		public static BleedEffect Create(IRollService rollService, Creature attacker, Creature target, Condition condition)
+		public static StunEffect Create(IRollService rollService, Creature attacker, Creature target, Condition condition)
 		{
-			BleedEffect effect = target.Effects.FirstOrDefault(x => x.EffectId == Conditions.BleedId) as BleedEffect;
+			StunEffect effect = target.Effects.FirstOrDefault(x => x.EffectId == Conditions.StunId) as StunEffect;
 
-			return effect == null ? new BleedEffect(target, condition) : effect;
-		}
-
-		/// <summary>
-		/// Применить эффект
-		/// </summary>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void Run(ref Creature creature, ref StringBuilder message)
-		{
-			creature.HP -=2;
-			message.AppendLine($"Существо {creature.Name} потеряло 2 хита из-за кровотечения. Осталось {creature.HP} хитов.");
+			return effect == null ? new StunEffect(target, condition) : effect;
 		}
 
 		/// <summary>
@@ -56,6 +45,23 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
 		public override void AutoEnd(ref Creature creature, ref StringBuilder message)
+		{
+			Random random = new Random();
+			if (random.Next() < creature.Stun)
+			{
+				message.AppendFormat($"Эффект {Name} снят.");
+				creature.Effects.Remove(this);
+			}
+			else
+				message.AppendLine($"Не удалось снять эффект {Name}.");
+		}
+
+		/// <summary>
+		/// Применить эффект
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
+		public override void Run(ref Creature creature, ref StringBuilder message)
 		{
 		}
 
@@ -67,7 +73,6 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
 		{
-			throw new System.NotImplementedException();
 		}
 	}
 }

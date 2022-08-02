@@ -26,7 +26,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		}
 
 		/// <summary>
-		/// Конструктор
+		/// Конструктор эффекта кровавой раны
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="condition">Состояние</param>
@@ -63,19 +63,34 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			return $"effect {Name} with severity {Severity} and {Damage} damage";
 		}
 
+		/// <summary>
+		/// Применить эффект
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public override void Run(ref Creature creature, ref StringBuilder message)
 		{
 			creature.HP -= Damage;
 			message.AppendLine($"Существо {creature.Name} получило {Damage} урона из-за кровавой раны. Осталось {creature.HP} хитов.");
 		}
 
+		/// <summary>
+		/// Автоматически прекратить эффект
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public override void AutoEnd(ref Creature creature, ref StringBuilder message)
 		{
 		}
 
+		/// <summary>
+		/// Попробовать снять эффект
+		/// </summary>
+		/// <param name="rollService">Сервис бросков</param>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
 		{
-			throw new System.NotImplementedException();
 		}
 	}
 }

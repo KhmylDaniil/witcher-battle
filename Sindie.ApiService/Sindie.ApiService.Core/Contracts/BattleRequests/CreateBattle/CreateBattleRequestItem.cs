@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.CreateBattle
 	/// <summary>
 	/// Элемент запроса на создание боя
 	/// </summary>
-	public class CreateBattleRequestItem
+	public sealed class CreateBattleRequestItem
 	{
 		/// <summary>
 		/// Айди шаблона существа

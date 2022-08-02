@@ -4,7 +4,7 @@ namespace Sindie.ApiService.Core.Contracts
 	/// <summary>
 	/// Базоввая часть гет запроса 
 	/// </summary>
-	public  class GetBaseQuery
+	public class GetBaseQuery
 	{
 		/// <summary>
 		/// Колоичество записей на одной странице 

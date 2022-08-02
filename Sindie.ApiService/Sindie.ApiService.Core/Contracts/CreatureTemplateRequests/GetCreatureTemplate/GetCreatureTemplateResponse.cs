@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 	/// <summary>
 	/// Ответ на запрос на получение списка шаблонов существа
 	/// </summary>
-	public class GetCreatureTemplateResponse
+	public sealed class GetCreatureTemplateResponse
 	{
 		/// <summary>
 		/// Список шаблонов существа

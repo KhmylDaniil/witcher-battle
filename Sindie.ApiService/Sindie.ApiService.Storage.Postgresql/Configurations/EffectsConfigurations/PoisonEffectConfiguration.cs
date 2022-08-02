@@ -10,7 +10,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations.EffectsConfigurati
 	public class PoisonEffectConfiguration : HierarchyConfiguration<PoisonEffect>
 	{
 		/// <summary>
-		/// Конфигурация <see cref="BleedEffect"/>
+		/// Конфигурация <see cref="PoisonEffect"/>
 		/// </summary>
 		public override void ConfigureChild(EntityTypeBuilder<PoisonEffect> builder)
 		{

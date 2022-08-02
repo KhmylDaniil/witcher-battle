@@ -50,6 +50,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			.HasComment("Хиты")
 			.IsRequired();
 
+			builder.Property(r => r.MaxHP)
+			.HasColumnName("MaxHP")
+			.HasComment("Максимальные хиты")
+			.IsRequired();
+
+
 			builder.Property(r => r.Sta)
 			.HasColumnName("Sta")
 			.HasComment("Стамина")
