@@ -7,6 +7,7 @@ using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Logic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -76,7 +77,10 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Battle>();
 
-			var data = CheckAndFormData(request, battle);
+			var conditions = await _appDbContext.Conditions.ToListAsync(cancellationToken)
+				?? throw new ExceptionEntityNotFound<Condition>();
+
+			var data = CheckAndFormData(request, battle, conditions);
 
 			var attack = new Attack(_rollService);
 			
@@ -96,7 +100,8 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="battle">Бой</param>
-		private AttackData CheckAndFormData(MonsterAttackCommand request, Battle battle)
+		/// <param name="conditions">Состояния</param>
+		private AttackData CheckAndFormData(MonsterAttackCommand request, Battle battle, List<Condition> conditions)
 		{
 			var monster = battle.Creatures.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<Creature>(request.Id);
@@ -117,7 +122,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 				: monster.Abilities.FirstOrDefault(x => x.Id == request.AbilityId)
 					?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId.Value);
 
-			return AttackData.CreateData(monster, target, aimedPart, ability, null, request.SpecialToHit, request.SpecialToDamage);
+			return AttackData.CreateData(monster, target, aimedPart, ability, null, request.SpecialToHit, request.SpecialToDamage, conditions);
 		}
 	}
 }

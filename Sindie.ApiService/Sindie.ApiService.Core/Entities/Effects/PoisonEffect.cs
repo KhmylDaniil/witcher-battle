@@ -39,7 +39,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			PoisonEffect effect = target.Effects.FirstOrDefault(x => x.EffectId == Conditions.PoisonId) as PoisonEffect;
 
-			return effect == null ? new PoisonEffect(target, condition) : effect;
+			return effect ?? new PoisonEffect(target, condition);
 		}
 
 		/// <summary>

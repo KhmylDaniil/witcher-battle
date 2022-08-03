@@ -92,7 +92,7 @@ namespace Sindie.ApiService.Core.Entities
 		public static DamageType CreateForTest(
 				Guid? id = default,
 				string name = default)
-				=> new DamageType()
+				=> new ()
 				{
 					Id = id ?? DamageTypes.SlashingId,
 					Name = name ?? DamageTypes.SlashingName,

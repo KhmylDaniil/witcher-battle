@@ -10,7 +10,7 @@ using System.Text;
 namespace Sindie.ApiService.Core.Logic
 {
 	/// <summary>
-	/// Атака
+	/// Действие атаки
 	/// </summary>
 	public sealed class Attack
 	{
@@ -64,12 +64,9 @@ namespace Sindie.ApiService.Core.Logic
 		/// <summary>
 		/// Получение монстром урона
 		/// </summary>
-		/// <param name="monster">Монстр</param>
-		/// <param name="aimedPart">Часть тела существа</param>
-		/// <param name="damageValue">Значение урона</param>
+		/// <param name="data">Данные атаки</param>
+		/// <param name="damage">Значение урона</param>
 		/// <param name="successValue">Успешность атаки</param>
-		/// <param name="isResistant">Сопротивление урону</param>
-		/// <param name="isVulnerable">Уязвимость к урону</param>
 		/// <returns>Сообщение о результате атаки</returns>
 		internal string MonsterSuffer(
 			ref AttackData data,
@@ -162,12 +159,16 @@ namespace Sindie.ApiService.Core.Logic
 			{
 				message.AppendLine($"Критическое повреждение не может быть нанесено из-за особенностей существа.");
 				AddBonusDamage(ref damage, critName);
-			}
-				
+			}	
 			else
 			{
-				var name = typeof(Crit).GetField(critName).GetValue(critName);
-				message.AppendLine($"Нанесено критическое повреждение {name.ToString()}.");
+				var condition = data.Conditions.FirstOrDefault(x => x.Name.Equals(critName));
+
+				var effect = Effect.CreateCritEffect<Effect>(data.Target, condition);
+
+				data.Target.Effects.Add(effect);
+
+				message.AppendLine($"Нанесено критическое повреждение {effect.Name}.");
 			}
 
 			static void SetCritSeverity(int successValue, ref int bonusDamage, out string critSeverity)
@@ -199,7 +200,7 @@ namespace Sindie.ApiService.Core.Logic
 				string critName = critSeverity + creaturePart.BodyPartType.Name;
 				if (creaturePart.BodyPartType.Name == BodyPartTypes.HeadName || creaturePart.BodyPartType.Name == BodyPartTypes.TorsoName)
 				{
-					Random random = new Random();
+					Random random = new ();
 					var suffix = random.Next(1, 6) < 5 ? 1 : 2;
 					critName += suffix;
 				}
@@ -232,10 +233,10 @@ namespace Sindie.ApiService.Core.Logic
 		/// <param name="instance"></param>
 		internal static void DisposeCorpses(ref Battle instance)
 		{
-			instance.Creatures.RemoveAll(x => x.HP < 0 && !(x is Character));
+			instance.Creatures.RemoveAll(x => x.HP <= 0 && x is not Character);
 		}
 
-		private string CritMissMessage(int attackerFumble)
+		private static string CritMissMessage(int attackerFumble)
 		{
 			return $"Критический промах {attackerFumble}.";
 		}
@@ -352,7 +353,7 @@ namespace Sindie.ApiService.Core.Logic
 		/// <returns>Нанесенный урон</returns>
 		private static int RollDamage(Ability ability, int specialBonus = default)
 		{
-			Random random = new Random();
+			Random random = new ();
 			var result = ability.DamageModifier + specialBonus;
 			for (int i = 0; i < ability.AttackDiceQuantity; i++)
 				result += random.Next(1, 6);
@@ -366,7 +367,7 @@ namespace Sindie.ApiService.Core.Logic
 		private static List<Condition> RollConditions(Ability ability)
 		{
 			var result = new List<Condition>();
-			Random random = new Random();
+			Random random = new ();
 
 			if (!ability.AppliedConditions.Any())
 				return result;

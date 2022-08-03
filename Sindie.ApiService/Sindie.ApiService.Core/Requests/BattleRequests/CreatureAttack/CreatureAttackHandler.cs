@@ -8,6 +8,7 @@ using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using Sindie.ApiService.Core.Logic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -77,7 +78,10 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Battle>();
 
-			var attackData = CheckAndFormData(request, battle);
+			var conditions = await _appDbContext.Conditions.ToListAsync(cancellationToken)
+				?? throw new ExceptionEntityNotFound<Condition>();
+
+			var attackData = CheckAndFormData(request, battle, conditions);
 
 			var attack = new Attack(_rollService);
 
@@ -94,8 +98,9 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="battle">Бой</param>
+		/// <param name="conditions">Состояния</param>
 		/// <returns>Данные для расчета атаки</returns>
-		private AttackData CheckAndFormData(CreatureAttackCommand request, Battle battle)
+		private AttackData CheckAndFormData(CreatureAttackCommand request, Battle battle, List<Condition> conditions)
 		{
 			var attacker = battle.Creatures.FirstOrDefault(x => x.Id == request.AttackerId)
 				?? throw new ExceptionEntityNotFound<Creature>(request.AttackerId);
@@ -119,12 +124,20 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 			if (ability == null && request.DefensiveSkillId != null)
 				throw new ExceptionRequestFieldIncorrectData<CreatureAttackCommand>(nameof(request.DefensiveSkillId), null);
 
-			var defensiveParameter = request.DefensiveSkillId == null
+			var defensiveSkill = request.DefensiveSkillId == null
 				? null
 				: target.CreatureSkills.FirstOrDefault(x => x.SkillId == ability.DefensiveSkills.First(a => a.Id == request.DefensiveSkillId).Id)
 					?? throw new ExceptionRequestFieldIncorrectData<CreatureAttackCommand>(nameof(request.DefensiveSkillId));
 
-			return AttackData.CreateData(attacker, target, aimedPart, ability, defensiveParameter, request.SpecialToHit, request.SpecialToDamage);
+			return AttackData.CreateData(
+				attacker: attacker,
+				target: target,
+				aimedPart: aimedPart,
+				ability: ability,
+				defensiveSkill: defensiveSkill,
+				specialToHit: request.SpecialToHit,
+				specialToDamage: request.SpecialToDamage,
+				conditions: conditions);
 		}
 	}
 }

@@ -7,6 +7,7 @@ using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Logic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -77,7 +78,10 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Battle>();
 
-			var data = CheckAndFormData(request, battle);
+			var conditions = await _appDbContext.Conditions.ToListAsync(cancellationToken)
+				?? throw new ExceptionEntityNotFound<Condition>();
+
+			var data = CheckAndFormData(request, battle, conditions);
 
 			var attack = new Attack(_rollService);
 
@@ -94,11 +98,12 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 		}
 
 		/// <summary>
-		/// Проверка запроса
+		/// Проверка запроса и формирование данных для расчета атаки
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="battle">Бой</param>
-		private AttackData CheckAndFormData(MonsterSufferCommand request, Battle battle)
+		/// <param name="conditions">Состояния</param>
+		private AttackData CheckAndFormData(MonsterSufferCommand request, Battle battle, List<Condition> conditions)
 		{
 			var attacker = battle.Creatures.FirstOrDefault(x => x.Id == request.AttackerId)
 				?? throw new ExceptionEntityNotFound<Creature>(request.AttackerId);
@@ -117,7 +122,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 			var ability = attacker.Abilities.FirstOrDefault(x => x.Id == request.AbilityId)
 					?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId);
 
-			return AttackData.CreateData(attacker, target, aimedPart, ability, null, 0, 0);
+			return AttackData.CreateData(attacker, target, aimedPart, ability, null, 0, 0, conditions);
 		}
 	}
 }

@@ -125,7 +125,7 @@ namespace Sindie.ApiService.Core.Entities
 			string name = default,
 			ImgFile avatar = default,
 			string description = default)
-		=> new Game()
+		=> new ()
 		{
 			Id = id ?? default,
 			Name = name ?? "Game",

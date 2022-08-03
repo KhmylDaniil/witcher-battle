@@ -52,6 +52,136 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.HasData(new Skill
 			(
+				name: Skills.AwarenessName,
+				id: Skills.AwarenessId,
+				statName: "Int",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.BusinessName,
+				id: Skills.BusinessId,
+				statName: "Int",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.DeductionName,
+				id: Skills.DeductionId,
+				statName: "Int",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.EducationName,
+				id: Skills.EducationId,
+				statName: "Int",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.CommonLanguageName,
+				id: Skills.CommonLanguageId,
+				statName: "Int",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.ElderLanguageName,
+				id: Skills.ElderLanguageId,
+				statName: "Int",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.DwarfenLanguageName,
+				id: Skills.DwarfenLanguageId,
+				statName: "Int",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.MonsterLoreName,
+				id: Skills.MonsterLoreId,
+				statName: "Int",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.SocialEtiquetteName,
+				id: Skills.SocialEtiquetteId,
+				statName: "Int",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.StreetwiseName,
+				id: Skills.StreetwiseId,
+				statName: "Int",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.TacticsName,
+				id: Skills.TacticsId,
+				statName: "Int",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.TeachingName,
+				id: Skills.TeachingId,
+				statName: "Int",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.WildernessSurvivalName,
+				id: Skills.WildernessSurvivalId,
+				statName: "Int",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
 				name: Skills.BrawlingName,
 				id: Skills.BrawlingId,
 				statName: "Ref",
@@ -74,6 +204,26 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.MeleeName,
 				id: Skills.MeleeId,
+				statName: "Ref",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.RidingName,
+				id: Skills.RidingId,
+				statName: "Ref",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.SailingName,
+				id: Skills.SailingId,
 				statName: "Ref",
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -142,6 +292,26 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.HasData(new Skill
 			(
+				name: Skills.SleightOfHandName,
+				id: Skills.SleightOfHandId,
+				statName: "Dex",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.StealthName,
+				id: Skills.StealthId,
+				statName: "Dex",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
 				name: Skills.EnduranceName,
 				id: Skills.EnduranceId,
 				statName: "Body",
@@ -152,9 +322,210 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.HasData(new Skill
 			(
+				name: Skills.PhysiqueName,
+				id: Skills.PhysiqueId,
+				statName: "Body",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.CharismaName,
+				id: Skills.CharismaId,
+				statName: "Emp",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.DeceitName,
+				id: Skills.DeceitId,
+				statName: "Emp",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+
+			builder.HasData(new Skill
+			(
+				name: Skills.FineArtsName,
+				id: Skills.FineArtsId,
+				statName: "Emp",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.GamblingName,
+				id: Skills.GamblingId,
+				statName: "Emp",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.StyleName,
+				id: Skills.StyleId,
+				statName: "Emp",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.HumanPerceptionName,
+				id: Skills.HumanPerceptionId,
+				statName: "Emp",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.LeadershipName,
+				id: Skills.LeadershipId,
+				statName: "Emp",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.PersuasionName,
+				id: Skills.PersuasionId,
+				statName: "Emp",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.PerfomanceName,
+				id: Skills.PerfomanceId,
+				statName: "Emp",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.SeductionName,
+				id: Skills.SeductionId,
+				statName: "Emp",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
 				name: Skills.FirstAidName,
 				id: Skills.FirstAidId,
 				statName: "Cra",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.AlchemyName,
+				id: Skills.AlchemyId,
+				statName: "Cra",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.CraftingName,
+				id: Skills.CraftingId,
+				statName: "Cra",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.DiguiseName,
+				id: Skills.DiguiseId,
+				statName: "Cra",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.ForgeryName,
+				id: Skills.ForgeryId,
+				statName: "Cra",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.PickLockName,
+				id: Skills.PickLockId,
+				statName: "Cra",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.TrapCraftingName,
+				id: Skills.TrapCraftingId,
+				statName: "Cra",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.CourageName,
+				id: Skills.CourageId,
+				statName: "Will",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.HexWeavingName,
+				id: Skills.HexWeavingId,
+				statName: "Will",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.IntimidationName,
+				id: Skills.IntimidationId,
+				statName: "Will",
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -184,6 +555,16 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.ResistCoercionName,
 				id: Skills.ResistCoercionId,
+				statName: "Will",
+				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+				createdByUserId: SystemUsers.SystemUserId,
+				modifiedByUserId: SystemUsers.SystemUserId));
+
+			builder.HasData(new Skill
+			(
+				name: Skills.RitualCraftingName,
+				id: Skills.RitualCraftingId,
 				statName: "Will",
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -225,16 +606,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				name: Skills.HealingHandsName,
 				id: Skills.HealingHandsId,
 				statName: "Cra",
-				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-				createdByUserId: SystemUsers.SystemUserId,
-				modifiedByUserId: SystemUsers.SystemUserId));
-
-			builder.HasData(new Skill
-			(
-				name: Skills.PhysiqueName,
-				id: Skills.PhysiqueId,
-				statName: "Body",
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,

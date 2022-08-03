@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Entities
 	/// <summary>
 	/// Навык справочник
 	/// </summary>
-	public class Skill : EntityBase
+	public sealed class Skill : EntityBase
 	{
 		private string _statName;
 
@@ -110,7 +110,7 @@ namespace Sindie.ApiService.Core.Entities
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
-		=> new Skill()
+		=> new ()
 		{
 			Id = id ?? Guid.NewGuid(),
 			Name = name ?? "Skill",

@@ -13,7 +13,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations.EffectsConfigurati
 		/// </summary>
 		public override void ConfigureChild(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<BleedingWoundEffect> builder)
 		{
-			builder.ToTable("BleedingWoundEffects", "Battles")
+			builder.ToTable("BleedingWoundEffects", "Effects")
 				.HasComment("Эффекты кровавой раны");
 
 			builder.Property(x => x.Severity)

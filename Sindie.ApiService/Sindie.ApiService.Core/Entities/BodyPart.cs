@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+using System;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -70,7 +71,7 @@ namespace Sindie.ApiService.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ArgumentOutOfRangeException(nameof(HitPenalty));
+					throw new ExceptionFieldOutOfRange<BodyPart>(nameof(HitPenalty));
 				_hitPenalty = value;
 			}
 		}

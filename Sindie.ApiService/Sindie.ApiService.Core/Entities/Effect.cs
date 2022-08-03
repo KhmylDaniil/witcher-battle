@@ -139,5 +139,37 @@ namespace Sindie.ApiService.Core.Entities
 
 			return func(rollService, attacker, target, condition);
 		}
+
+		/// <summary>
+		/// Создание критического эффекта нужного вида
+		/// </summary>
+		/// <typeparam name="T">Наследуемый от эффекта тип</typeparam>
+		/// <param name="target">Цель</param>
+		/// <param name="crit">Критический эффект</param>
+		/// <returns>Критический эффект нужного типа</returns>
+		public static T CreateCritEffect<T>(Creature target, Condition crit) where T : Effect
+		{
+			var name = "Sindie.ApiService.Core.Entities.Effects." + crit.Name + "Effect";
+
+			Type type = Type.GetType(name);
+
+			MethodInfo methodInfo = type.GetMethod("Create");
+
+			ParameterExpression paramTarget = Expression.Parameter(typeof(Creature), "target");
+			ParameterExpression paramCondition = Expression.Parameter(typeof(Condition), "crit");
+
+			MethodCallExpression methodCall = Expression.Call(
+				null, methodInfo, paramTarget, paramCondition);
+
+			Expression<Func<Creature, Condition, T>> lambda =
+				Expression.Lambda<Func<Creature, Condition, T>>(
+					methodCall,
+					new ParameterExpression[] { paramTarget, paramCondition }
+					);
+
+			Func<Creature, Condition, T> func = lambda.Compile();
+
+			return func(target, crit);
+		}
 	}
 }

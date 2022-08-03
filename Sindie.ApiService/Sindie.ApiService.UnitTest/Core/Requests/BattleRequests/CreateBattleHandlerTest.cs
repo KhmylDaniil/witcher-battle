@@ -101,7 +101,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			var newHandler = new CreateBattleHandler(_dbContext, AuthorizationService.Object);
 
-			var result = newHandler.Handle(request, default);
+			var result = await newHandler.Handle(request, default);
 
 			Assert.IsNotNull(result);
 			var instance = _dbContext.Instances.FirstOrDefault();
@@ -114,7 +114,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			Assert.AreEqual(instance.GameId, _game.Id);
 
 			Assert.IsNotNull(instance.Creatures);
-			Assert.IsTrue(instance.Creatures.Count() == 1);
+			Assert.IsTrue(instance.Creatures.Count == 1);
 			var creature = instance.Creatures.FirstOrDefault();
 
 			Assert.IsNotNull(creature);
@@ -148,7 +148,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			Assert.AreEqual(creaturePart.StartingArmor, 5);
 
 			Assert.IsNotNull(creature.Abilities);
-			Assert.AreEqual(creature.Abilities.Count(), 1);
+			Assert.AreEqual(creature.Abilities.Count, 1);
 			var ability = _dbContext.Abilities.FirstOrDefault();
 
 			Assert.AreEqual(ability.Name, "attack");
@@ -160,14 +160,14 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			Assert.AreEqual(ability.DamageModifier, 4);
 
 			Assert.IsNotNull(ability.AppliedConditions);
-			Assert.AreEqual(ability.AppliedConditions.Count(), 1);
+			Assert.AreEqual(ability.AppliedConditions.Count, 1);
 			var appliedCondition = ability.AppliedConditions.FirstOrDefault();
 
 			Assert.AreEqual(appliedCondition.ApplyChance, 50);
 			Assert.AreEqual(appliedCondition.ConditionId, _condition.Id);
 
 			Assert.IsNotNull(creature.CreatureSkills);
-			Assert.AreEqual(creature.CreatureSkills.Count(), 1);
+			Assert.AreEqual(creature.CreatureSkills.Count, 1);
 			var creatureParameter = _dbContext.CreatureParameters
 				.FirstOrDefault(x => x.CreatureId == creature.Id);
 

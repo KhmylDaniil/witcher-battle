@@ -36,7 +36,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			StunEffect effect = target.Effects.FirstOrDefault(x => x.EffectId == Conditions.StunId) as StunEffect;
 
-			return effect == null ? new StunEffect(target, condition) : effect;
+			return effect ?? new StunEffect(target, condition);
 		}
 
 		/// <summary>
@@ -46,7 +46,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="message">Сообщение</param>
 		public override void AutoEnd(ref Creature creature, ref StringBuilder message)
 		{
-			Random random = new Random();
+			Random random = new ();
 			if (random.Next() < creature.Stun)
 			{
 				message.AppendFormat($"Эффект {Name} снят.");

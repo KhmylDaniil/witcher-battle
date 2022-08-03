@@ -358,7 +358,7 @@ namespace Sindie.ApiService.Core.Entities
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
-		=> new Ability()
+		=> new ()
 		{
 			Id = id ?? Guid.NewGuid(),
 			Game = game,
