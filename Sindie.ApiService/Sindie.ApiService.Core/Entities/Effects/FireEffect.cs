@@ -1,5 +1,6 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using System;
 using System.Linq;
 using System.Text;
 
@@ -8,20 +9,16 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	/// <summary>
 	/// Эффект горения
 	/// </summary>
-	public class FireEffect : Effect
+	public sealed class FireEffect : Effect
 	{
-		protected FireEffect()
-		{
-		}
+		private FireEffect() { }
 
 		/// <summary>
 		/// Конструктор эффекта горения
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="condition">Состояние</param>
-		public FireEffect(Creature creature, Condition condition) : base(creature, condition)
-		{
-		}
+		private FireEffect(Creature creature, Condition condition) : base(creature, condition) { }
 
 		/// <summary>
 		/// Создание эффекта - синглтон
@@ -32,11 +29,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="condition">Состояние</param>
 		/// <returns>Эффект</returns>
 		public static FireEffect Create(IRollService rollService, Creature attacker, Creature target, Condition condition)
-		{
-			FireEffect effect = target.Effects.FirstOrDefault(x => x.EffectId == Conditions.FireId) as FireEffect;
-
-			return effect == null ? new FireEffect(target, condition) : effect;
-		}
+			=> target.Effects.Any(x => x.EffectId == Conditions.FireId)
+				? null
+				: new FireEffect(target, condition);
 
 		/// <summary>
 		/// Применить эффект
@@ -59,9 +54,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void AutoEnd(ref Creature creature, ref StringBuilder message)
-		{
-		}
+		public override void AutoEnd(ref Creature creature, ref StringBuilder message) { }
 
 		/// <summary>
 		/// Попробовать снять эффект
@@ -80,7 +73,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creaturePart">Часть тела</param>
 		/// <returns>Урон</returns>
-		private int ApplyDamage(CreaturePart creaturePart)
+		private static int ApplyDamage(CreaturePart creaturePart)
 		{
 			int damage = 5 - creaturePart.CurrentArmor;
 
@@ -89,5 +82,33 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			return damage < 0 ? 0 : damage;
 		}
+
+		/// <summary>
+		/// Создать тестовую сущность
+		/// </summary>
+		/// <param name="id">Айди</param>
+		/// <param name="condition">Состояние</param>
+		/// <param name="creature">Существо</param>
+		/// <param name="createdOn">Дата создания</param>
+		/// <param name="modifiedOn">Дата изменения</param>
+		/// <param name="createdByUserId">Создавший пользователь</param>
+		/// <returns>Навык шаблона существа</returns>
+		[Obsolete("Только для тестов")]
+		public static FireEffect CreateForTest(
+			Guid? id = default,
+			Condition condition = default,
+			Creature creature = default,
+			DateTime createdOn = default,
+			DateTime modifiedOn = default,
+			Guid createdByUserId = default)
+		=> new()
+		{
+			Id = id ?? Guid.NewGuid(),
+			Condition = condition,
+			Creature = creature,
+			CreatedOn = createdOn,
+			ModifiedOn = modifiedOn,
+			CreatedByUserId = createdByUserId
+		};
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities.Effects;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
@@ -238,6 +239,11 @@ namespace Sindie.ApiService.Core.Entities
 			set => _speed = value;
 		}
 
+		/// <summary>
+		/// Ведущая рука
+		/// </summary>
+		public Guid LeadingArmId { get; private set; }
+
 		#region navigation properties
 
 		/// <summary>
@@ -360,7 +366,23 @@ namespace Sindie.ApiService.Core.Entities
 					minToHit: part.MinToHit,
 					maxToHit: part.MaxToHit,
 					armor: part.Armor));
+
+			LeadingArmId = DefineLeadingArm(result);
+
 			return result;
+
+			Guid DefineLeadingArm(List<CreaturePart> parts)
+			{
+				var arms = parts.Where(x => x.BodyPartTypeId == BodyPartTypes.ArmId).ToList();
+
+				if (!arms.Any()) return Guid.Empty;
+
+				Random random = new();
+
+				int i = random.Next(0, arms.Count - 1);
+
+				return arms[i].Id;
+			}
 		}
 
 		/// <summary>
@@ -375,6 +397,7 @@ namespace Sindie.ApiService.Core.Entities
 			var sortedAbilities = from a in Abilities
 								orderby a.Accuracy, a.AttackSpeed, a.AttackDiceQuantity, a.DamageModifier
 								select a;
+
 			return sortedAbilities.First();
 		}
 
@@ -421,7 +444,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <returns>Часть шаблона тела</returns>
 		internal CreaturePart DefaultCreaturePart()
 		{
-			Random random = new Random();
+			Random random = new ();
 			var roll = random.Next(1, 10);
 			return CreatureParts.First(x => x.MinToHit <= roll && x.MaxToHit >= roll);
 		}
@@ -478,7 +501,7 @@ namespace Sindie.ApiService.Core.Entities
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
-			=> new Creature
+			=> new() 
 			{
 				Id = id ?? Guid.NewGuid(),
 				Battle = battle,
@@ -535,7 +558,7 @@ namespace Sindie.ApiService.Core.Entities
 			return value < 1 ? 1 : value;
 		}
 
-		private int CalculateStun(CreatureTemplate creatureTemplate)
+		private static int CalculateStun(CreatureTemplate creatureTemplate)
 		{
 			var result = (creatureTemplate.Will + creatureTemplate.Body) / 2;
 

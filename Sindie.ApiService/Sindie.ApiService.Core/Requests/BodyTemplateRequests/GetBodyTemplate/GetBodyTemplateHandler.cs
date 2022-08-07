@@ -54,19 +54,19 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 		public async Task<GetBodyTemplateResponse> Handle(GetBodyTemplateCommand request, CancellationToken cancellationToken)
 		{
 			if (request.PageSize < 1)
-				throw new ArgumentOutOfRangeException(nameof(GetBodyTemplateCommand.PageSize));
+				throw new ArgumentOutOfRangeException(nameof(request.PageSize));
 			if (request.PageNumber < 1)
-				throw new ArgumentOutOfRangeException(nameof(GetBodyTemplateCommand.PageNumber));
+				throw new ArgumentOutOfRangeException(nameof(request.PageNumber));
 
 			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
-				throw new ArgumentOutOfRangeException(nameof(GetBodyTemplateCommand.CreationMinTime));
+				throw new ArgumentOutOfRangeException(nameof(request.CreationMinTime));
 			if (request.ModificationMinTime > _dateTimeProvider.TimeProvider)
-				throw new ArgumentOutOfRangeException(nameof(GetBodyTemplateCommand.ModificationMinTime));
+				throw new ArgumentOutOfRangeException(nameof(request.ModificationMinTime));
 
 			if (request.CreationMaxTime != default && request.CreationMinTime >= request.CreationMaxTime)
-				throw new ArgumentOutOfRangeException(nameof(GetBodyTemplateCommand.CreationMaxTime));
+				throw new ArgumentOutOfRangeException(nameof(request.CreationMaxTime));
 			if (request.ModificationMaxTime != default && request.ModificationMinTime >= request.ModificationMaxTime)
-				throw new ArgumentOutOfRangeException(nameof(GetBodyTemplateCommand.ModificationMaxTime));
+				throw new ArgumentOutOfRangeException(nameof(request.ModificationMaxTime));
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(g => g.BodyTemplates)

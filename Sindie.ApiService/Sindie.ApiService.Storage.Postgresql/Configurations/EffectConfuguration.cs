@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -34,6 +29,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Айди эффекта")
 				.IsRequired();
 
+			builder.Property(x => x.CreaturePartId)
+				.HasColumnName("CreaturePartId")
+				.HasComment("Айди части тела")
+				.IsRequired();
+
 			builder.HasOne(x => x.Creature)
 				.WithMany(x => x.Effects)
 				.HasForeignKey(x => x.CreatureId)
@@ -47,6 +47,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			var conditionNavigation = builder.Metadata.FindNavigation(nameof(Effect.Condition));
 			conditionNavigation.SetField(Effect.ConditionField);
 			conditionNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+			var creaturePartNavigation = builder.Metadata.FindNavigation(nameof(Effect.CreaturePart));
+			creaturePartNavigation.SetField(Effect.CreaturePartField);
+			creaturePartNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

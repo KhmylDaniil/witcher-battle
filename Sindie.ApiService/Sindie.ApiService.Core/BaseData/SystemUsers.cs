@@ -10,6 +10,6 @@ namespace Sindie.ApiService.Core.BaseData
 		/// <summary>
 		/// Гуид системного пользователя
 		/// </summary>
-		public static readonly Guid SystemUserId = new System.Guid("8094e0d0-3137-4791-9053-9667cbe107d6");
+		public static readonly Guid SystemUserId = new("8094e0d0-3137-4791-9053-9667cbe107d6");
 	}
 }

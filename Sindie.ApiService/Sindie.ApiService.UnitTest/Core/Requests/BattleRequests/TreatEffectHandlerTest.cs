@@ -51,7 +51,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				speed: 2,
 				body: 10);
 
-			_creature.Effects.Add(new FreezeEffect(_creature, _freezeCondition));
+			_creature.Effects.Add(FreezeEffect.CreateForTest(creature: _creature, condition: _freezeCondition));
 			_creature.CreatureSkills.Add(new CreatureSkill(7, _creature, _skill));
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(

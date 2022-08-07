@@ -9,20 +9,16 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	/// <summary>
 	/// Эффект дизориентации
 	/// </summary>
-	public class StunEffect : Effect
+	public sealed class StunEffect : Effect
 	{
-		protected StunEffect()
-		{
-		}
+		private StunEffect() { }
 
 		/// <summary>
 		/// Конструктор эффекта дизориентации
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="condition">Состояние</param>
-		public StunEffect(Creature creature, Condition condition) : base(creature, condition)
-		{
-		}
+		private StunEffect(Creature creature, Condition condition) : base(creature, condition) { }
 
 		/// <summary>
 		/// Создание эффекта - синглтон
@@ -33,11 +29,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="condition">Состояние</param>
 		/// <returns>Эффект</returns>
 		public static StunEffect Create(IRollService rollService, Creature attacker, Creature target, Condition condition)
-		{
-			StunEffect effect = target.Effects.FirstOrDefault(x => x.EffectId == Conditions.StunId) as StunEffect;
-
-			return effect ?? new StunEffect(target, condition);
-		}
+			=> target.Effects.Any(x => x.EffectId == Conditions.StunId)
+				? null
+				: new StunEffect(target, condition);
 
 		/// <summary>
 		/// Автоматически прекратить эффект
@@ -61,9 +55,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void Run(ref Creature creature, ref StringBuilder message)
-		{
-		}
+		public override void Run(ref Creature creature, ref StringBuilder message) { }
 
 		/// <summary>
 		/// Попробовать снять эффект
@@ -71,8 +63,6 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="rollService">Сервис бросков</param>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
-		{
-		}
+		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message) { }
 	}
 }

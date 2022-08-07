@@ -80,8 +80,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				startingArmor: 3);
 			_creature.CreatureParts.AddRange(new List<CreaturePart> { _headPart, _torsoPart });
 
-			_creature.Effects.Add(new FireEffect(_creature, _fireCondition));
-			_creature.Effects.Add(new BleedingWoundEffect(_creature, _bleedingWoundCondition, 21));
+			_creature.Effects.Add(FireEffect.CreateForTest(condition: _fireCondition, creature: _creature));
+			_creature.Effects.Add(BleedingWoundEffect.CreateForTest(creature: _creature, condition: _bleedingWoundCondition, damage: 3));
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,

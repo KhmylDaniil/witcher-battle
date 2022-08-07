@@ -11,11 +11,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	/// <summary>
 	/// Эффект отравления
 	/// </summary>
-	public class PoisonEffect : Effect
+	public sealed class PoisonEffect : Effect
 	{
-		protected PoisonEffect()
-		{
-		}
+		private PoisonEffect() { }
 
 		/// <summary>
 		/// Конструктор эффекта отравления
@@ -23,9 +21,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		/// <param name="condition">Состояние</param>
 
-		public PoisonEffect(Creature creature, Condition condition) : base(creature, condition)
-		{
-		}
+		private PoisonEffect(Creature creature, Condition condition) : base(creature, condition) { }
 
 		/// <summary>
 		/// Создание эффекта - синглтон
@@ -36,22 +32,15 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="condition">Состояние</param>
 		/// <returns>Эффект</returns>
 		public static PoisonEffect Create(IRollService rollService, Creature attacker, Creature target, Condition condition)
-		{
-			PoisonEffect effect = target.Effects.FirstOrDefault(x => x.EffectId == Conditions.PoisonId) as PoisonEffect;
-
-			return effect ?? new PoisonEffect(target, condition);
-		}
+			=> target.Effects.Any(x => x.EffectId == Conditions.PoisonId)
+				? null
+				: new PoisonEffect(target, condition);
 
 		/// <summary>
 		/// Применить эффект
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public void Run(Creature creature)
-		{
-			creature.HP -= 3;
-		}
-
 		public override void Run(ref Creature creature, ref StringBuilder message)
 		{
 			creature.HP -= 3;
@@ -63,9 +52,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void AutoEnd(ref Creature creature, ref StringBuilder message)
-		{
-		}
+		public override void AutoEnd(ref Creature creature, ref StringBuilder message) { }
 
 		/// <summary>
 		/// Попробовать снять эффект

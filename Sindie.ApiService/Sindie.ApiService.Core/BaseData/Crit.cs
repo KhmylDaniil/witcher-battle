@@ -102,5 +102,25 @@ namespace Sindie.ApiService.Core.BaseData
 		
 		public const string DeadlyTail = "Потеря хвоста";
 		public static readonly Guid DeadlyTailId = new("208ed04e-73aa-4e57-bb58-26c807fcf558");
+
+		/// <summary>
+		/// Тяжесть крита
+		/// </summary>
+		[Flags]
+		public enum Severity
+		{
+			Unstabilizied = 1,
+			Simple = 2,
+			Complex = 4,
+			Difficult = 8,
+			Deadly = 16
+		}
+		/*
+
+		симпл -2, стабилизировнный -1
+		комплекс -3, стабилизировнный -2
+		дифф /4, стабилизировнный /2
+		простой /4, стабилизировнный /4
+		*/
 	}
 }

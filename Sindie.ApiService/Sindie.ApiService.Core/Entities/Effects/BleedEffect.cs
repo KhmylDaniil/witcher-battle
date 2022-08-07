@@ -1,5 +1,6 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Logic;
 using System.Linq;
 using System.Text;
 
@@ -8,11 +9,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	/// <summary>
 	/// Эффект кровотечения
 	/// </summary>
-	public class BleedEffect : Effect
+	public sealed class BleedEffect : Effect
 	{
-		protected BleedEffect()
-		{
-		}
+		private BleedEffect() { }
 
 		/// <summary>
 		/// Конструктор эффекта кровотечения
@@ -20,9 +19,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		/// <param name="condition">Состояние</param>
 
-		public BleedEffect(Creature creature, Condition condition) : base(creature, condition)
-		{
-		}
+		private BleedEffect(Creature creature, Condition condition) : base(creature, condition) { }
 
 		/// <summary>
 		/// Создание эффекта - синглтон
@@ -33,11 +30,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="condition">Состояние</param>
 		/// <returns>Эффект</returns>
 		public static BleedEffect Create(IRollService rollService, Creature attacker, Creature target, Condition condition)
-		{
-			BleedEffect effect = target.Effects.FirstOrDefault(x => x.EffectId == Conditions.BleedId) as BleedEffect;
-
-			return effect == null ? new BleedEffect(target, condition) : effect;
-		}
+			=> target.Effects.Any(x => x.EffectId == Conditions.BleedId)
+				? null
+				: new BleedEffect(target, condition);
 
 		/// <summary>
 		/// Применить эффект
@@ -55,9 +50,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void AutoEnd(ref Creature creature, ref StringBuilder message)
-		{
-		}
+		public override void AutoEnd(ref Creature creature, ref StringBuilder message) { }
 
 		/// <summary>
 		/// Попробовать снять эффект
@@ -67,7 +60,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
 		{
-			throw new System.NotImplementedException();
+			Heal heal = new(rollService);
+
+			heal.Stabilize(creature, ref creature, ref message, this);
 		}
 	}
 }

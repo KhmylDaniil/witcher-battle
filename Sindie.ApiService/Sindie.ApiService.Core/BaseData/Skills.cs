@@ -32,7 +32,7 @@ namespace Sindie.ApiService.Core.BaseData
 		/// <summary>
 		/// Айди навыка - Дедукция
 		/// </summary>
-		public static readonly Guid DeductionId = new("n5f01eea-10d5-426e-87a6-f6b8046c47da");
+		public static readonly Guid DeductionId = new("754ef5e9-8960-4c38-a1be-a3c43c92b1cd");
 
 		/// <summary>
 		/// Название навыка - Дедукция
@@ -42,7 +42,7 @@ namespace Sindie.ApiService.Core.BaseData
 		/// <summary>
 		/// Айди навыка - Образование
 		/// </summary>
-		public static readonly Guid EducationId = new("c5f01eea-10d5-426e-87a6-f6b8046c47da");
+		public static readonly Guid EducationId = new("32ee830e-7bee-4924-9ddf-1070ceffecdd");
 
 		/// <summary>
 		/// Название навыка - Образование
@@ -52,7 +52,7 @@ namespace Sindie.ApiService.Core.BaseData
 		/// <summary>
 		/// Айди навыка - Общий язык
 		/// </summary>
-		public static readonly Guid CommonLanguageId = new("c5f02eea-10d5-426e-87a6-f6b8046c47da");
+		public static readonly Guid CommonLanguageId = new("4fcbd3d6-fde0-47c1-899d-a8c82c291751");
 
 		/// <summary>
 		/// Название навыка - Общий язык

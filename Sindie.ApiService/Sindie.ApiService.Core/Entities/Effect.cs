@@ -1,6 +1,5 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using System;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
@@ -14,6 +13,7 @@ namespace Sindie.ApiService.Core.Entities
 	{
 		private Creature _creature;
 		private Condition _condition;
+		private CreaturePart _creaturePart;
 
 		/// <summary>
 		/// Поле для <see cref="_creature"/>
@@ -24,6 +24,12 @@ namespace Sindie.ApiService.Core.Entities
 		/// Поле для <see cref="_condition"/>
 		/// </summary>
 		public const string ConditionField = nameof(_condition);
+
+		/// <summary>
+		/// Поле для <see cref="_creaturePart"/>
+		/// </summary>
+		public const string CreaturePartField = nameof(_creaturePart);
+
 
 		/// <summary>
 		/// Пустой конструктор для EF
@@ -37,10 +43,11 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="condition">Состояние</param>
-		public Effect(Creature creature, Condition condition)
+		public Effect(Creature creature, Condition condition, CreaturePart aimedPart = default)
 		{
 			Creature = creature;
 			Condition = condition;
+
 		}
 
 		public string Name { get; protected set; }
@@ -54,6 +61,11 @@ namespace Sindie.ApiService.Core.Entities
 		/// Айди состояния
 		/// </summary>
 		public Guid EffectId { get; protected set; }
+
+		/// <summary>
+		/// Айди части тела
+		/// </summary>
+		public Guid? CreaturePartId { get; protected set; }
 
 		/// <summary>
 		/// Существо
@@ -79,6 +91,19 @@ namespace Sindie.ApiService.Core.Entities
 				_condition = value ?? throw new ApplicationException("Необходимо передать состояние");
 				EffectId = value.Id;
 				Name = value.Name;
+			}
+		}
+
+		/// <summary>
+		/// Часть тела
+		/// </summary>
+		public CreaturePart CreaturePart
+		{
+			get => _creaturePart;
+			set
+			{
+				_creaturePart = value;
+				CreaturePartId = value.Id;
 			}
 		}
 
@@ -147,7 +172,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="target">Цель</param>
 		/// <param name="crit">Критический эффект</param>
 		/// <returns>Критический эффект нужного типа</returns>
-		public static T CreateCritEffect<T>(Creature target, Condition crit) where T : Effect
+		public static T CreateCritEffect<T>(Creature target, CreaturePart aimedPart, Condition crit) where T : Effect
 		{
 			var name = "Sindie.ApiService.Core.Entities.Effects." + crit.Name + "Effect";
 
@@ -156,20 +181,21 @@ namespace Sindie.ApiService.Core.Entities
 			MethodInfo methodInfo = type.GetMethod("Create");
 
 			ParameterExpression paramTarget = Expression.Parameter(typeof(Creature), "target");
+			ParameterExpression paramAimedPart = Expression.Parameter(typeof(CreaturePart), "aimedPart");
 			ParameterExpression paramCondition = Expression.Parameter(typeof(Condition), "crit");
 
 			MethodCallExpression methodCall = Expression.Call(
-				null, methodInfo, paramTarget, paramCondition);
+				null, methodInfo, paramTarget, paramAimedPart, paramCondition);
 
-			Expression<Func<Creature, Condition, T>> lambda =
-				Expression.Lambda<Func<Creature, Condition, T>>(
+			Expression<Func<Creature, CreaturePart, Condition, T>> lambda =
+				Expression.Lambda<Func<Creature, CreaturePart, Condition, T>>(
 					methodCall,
-					new ParameterExpression[] { paramTarget, paramCondition }
+					new ParameterExpression[] { paramTarget, paramAimedPart, paramCondition }
 					);
 
-			Func<Creature, Condition, T> func = lambda.Compile();
+			Func<Creature, CreaturePart, Condition, T> func = lambda.Compile();
 
-			return func(target, crit);
+			return func(target, aimedPart, crit);
 		}
 	}
 }

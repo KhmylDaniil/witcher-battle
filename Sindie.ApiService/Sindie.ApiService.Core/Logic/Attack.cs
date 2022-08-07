@@ -1,6 +1,7 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
+using Sindie.ApiService.Core.Entities.Effects;
 using Sindie.ApiService.Core.Requests.BattleRequests;
 using System;
 using System.Collections.Generic;
@@ -164,9 +165,12 @@ namespace Sindie.ApiService.Core.Logic
 			{
 				var condition = data.Conditions.FirstOrDefault(x => x.Name.Equals(critName));
 
-				var effect = Effect.CreateCritEffect<Effect>(data.Target, condition);
+				var effect = Effect.CreateCritEffect<Effect>(data.Target, data.AimedPart, condition);
 
-				data.Target.Effects.Add(effect);
+				if (effect != null)
+					data.Target.Effects.Add(effect);
+
+				StunCheck(data.Target, ref message);
 
 				message.AppendLine($"Нанесено критическое повреждение {effect.Name}.");
 			}
@@ -224,6 +228,16 @@ namespace Sindie.ApiService.Core.Logic
 					bonusDamage += 15;
 				else if (critName.Equals("DeadlyTorso1", StringComparison.OrdinalIgnoreCase))
 					bonusDamage += 20;
+			}
+
+			void StunCheck(Creature creature, ref StringBuilder message)
+			{
+				Random random = new();
+				if (random.Next() < creature.Stun)
+				{
+					creature.Effects.Add(StunEffect.Create(null, null, target: creature, data.Conditions.FirstOrDefault(x => x.Id == Conditions.StunId)));
+					message.AppendLine($"Из-за наложения критического эффекта наложен эффект {Conditions.StunName}.");
+				}	
 			}
 		}
 
