@@ -19,7 +19,7 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.TreatEffect
 		public Guid CreatureId { get; set; }
 
 		/// <summary>
-		/// Айдм эффекта
+		/// Айди эффекта
 		/// </summary>
 		public Guid EffectId { get; set; }
 	}

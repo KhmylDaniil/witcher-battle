@@ -1,4 +1,5 @@
 ﻿using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -57,14 +58,14 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Название корреспондирующей характеристики
 		/// </summary>
-		public string StatName { get; protected set; }
+		public Stats StatName { get; protected set; }
 
 		/// <summary>
 		/// значение навыка у существа
 		/// </summary>
 		public int SkillValue
 		{
-			get => _skillValue < 1 ? 1 : _skillValue;
+			get => _skillValue < 0 ? 0 : _skillValue;
 			set => _skillValue = value;
 		}
 
@@ -116,7 +117,6 @@ namespace Sindie.ApiService.Core.Entities
 			Creature creature = default,
 			Skill skill = default,
 			int value = default,
-			string statName = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
@@ -126,7 +126,7 @@ namespace Sindie.ApiService.Core.Entities
 			Creature = creature,
 			Skill = skill,
 			SkillValue = value == 0 ? 1 : value,
-			StatName = statName ?? "Ref",
+			StatName = skill.StatName,
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId

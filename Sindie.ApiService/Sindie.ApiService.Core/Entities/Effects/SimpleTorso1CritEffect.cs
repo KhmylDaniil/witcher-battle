@@ -3,14 +3,14 @@ using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Logic;
 using System.Linq;
 using System.Text;
-using static Sindie.ApiService.Core.BaseData.Crit;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities.Effects
 {
 	/// <summary>
 	/// Критический эффект - Инородный объект
 	/// </summary>
-	public class SimpleTorso1CritEffect : Effect, ICrit
+	public class SimpleTorso1CritEffect : CritEffect, ICrit
 	{
 		private SimpleTorso1CritEffect() { }
 
@@ -18,8 +18,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Конструктор эффекта инородного объекта
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		/// <param name="condition">Состояние</param>
-		private SimpleTorso1CritEffect(Creature creature, Condition condition) : base(creature, condition) { }
+		/// <param name="name">Название</param>
+		/// <param name="aimedPart">Часть тела</param>
+		private SimpleTorso1CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name) { }
 
 		/// <summary>
 		/// Тяжесть критического эффекта
@@ -29,18 +30,19 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <summary>
 		/// Тип части тела
 		/// </summary
-		public BodyPartTypes.BodyPartType BodyPartLocation { get; } = BodyPartTypes.BodyPartType.Torso;
+		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Torso;
 
 		/// <summary>
 		/// Создание эффекта - синглтон
 		/// </summary>
-		/// <param name="target">Цель</param>
-		/// <param name="condition">Состояние</param>
+		/// <param name="creature">Существо</param>
+		/// <param name="name">Название</param>
+		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
-		public static SimpleTorso1CritEffect Create(Creature target, CreaturePart aimedPart, Condition condition)
-		=> target.Effects.Any(x => x.EffectId == Crit.SimpleTorso1Id)
+		public static SimpleTorso1CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
+		=> creature.Effects.Any(x => x is SimpleTorso1CritEffect)
 				? null
-				: new SimpleTorso1CritEffect(target, condition);
+				: new SimpleTorso1CritEffect(creature, aimedPart, name);
 
 		/// <summary>
 		/// Применить изменения характеристик

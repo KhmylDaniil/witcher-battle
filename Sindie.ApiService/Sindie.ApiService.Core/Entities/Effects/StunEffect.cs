@@ -17,21 +17,21 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Конструктор эффекта дизориентации
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		/// <param name="condition">Состояние</param>
-		private StunEffect(Creature creature, Condition condition) : base(creature, condition) { }
+		/// <param name="name">Название</param>
+		private StunEffect(Creature creature, string name) : base(creature, name) { }
 
 		/// <summary>
 		/// Создание эффекта - синглтон
 		/// </summary>
 		/// <param name="rollService">Сервис бросков</param>
 		/// <param name="attacker">Атакующий</param>
-		/// <param name="target">Цель</param>
-		/// <param name="condition">Состояние</param>
+		/// <param name="target">Существо</param>
+		/// <param name="name">Название</param>
 		/// <returns>Эффект</returns>
-		public static StunEffect Create(IRollService rollService, Creature attacker, Creature target, Condition condition)
-			=> target.Effects.Any(x => x.EffectId == Conditions.StunId)
+		public static StunEffect Create(IRollService rollService, Creature attacker, Creature target, string name)
+			=> target.Effects.Any(x => x is StunEffect)
 				? null
-				: new StunEffect(target, condition);
+				: new StunEffect(target, name);
 
 		/// <summary>
 		/// Автоматически прекратить эффект
@@ -43,11 +43,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			Random random = new ();
 			if (random.Next() < creature.Stun)
 			{
-				message.AppendFormat($"Эффект {Name} снят.");
+				message.AppendFormat($"Эффект {Conditions.StunName} снят.");
 				creature.Effects.Remove(this);
 			}
 			else
-				message.AppendLine($"Не удалось снять эффект {Name}.");
+				message.AppendLine($"Не удалось снять эффект {Conditions.StunName}.");
 		}
 
 		/// <summary>

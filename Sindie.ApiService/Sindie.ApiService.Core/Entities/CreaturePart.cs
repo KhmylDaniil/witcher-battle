@@ -127,7 +127,7 @@ namespace Sindie.ApiService.Core.Entities
 			Creature creature = default,
 			BodyPartType bodyPartType = default,
 			string name = default,
-			int damageModifier = default,
+			double damageModifier = default,
 			int hitPenalty = default,
 			int minToHit = default,
 			int maxToHit = default,

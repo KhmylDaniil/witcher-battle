@@ -17,8 +17,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Конструктор эффекта горения
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		/// <param name="condition">Состояние</param>
-		private FireEffect(Creature creature, Condition condition) : base(creature, condition) { }
+		/// <param name="name">Название</param>
+		private FireEffect(Creature creature, string name) : base(creature, name) { }
 
 		/// <summary>
 		/// Создание эффекта - синглтон
@@ -26,12 +26,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="rollService">Сервис бросков</param>
 		/// <param name="attacker">Атакующий</param>
 		/// <param name="target">Цель</param>
-		/// <param name="condition">Состояние</param>
 		/// <returns>Эффект</returns>
-		public static FireEffect Create(IRollService rollService, Creature attacker, Creature target, Condition condition)
-			=> target.Effects.Any(x => x.EffectId == Conditions.FireId)
+		public static FireEffect Create(IRollService rollService, Creature attacker, Creature target, string name)
+			=> target.Effects.Any(x => x is FireEffect)
 				? null
-				: new FireEffect(target, condition);
+				: new FireEffect(target, name);
 
 		/// <summary>
 		/// Применить эффект
@@ -64,7 +63,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
 		{
-			message.AppendLine($"Эффект {Name} снят.");
+			message.AppendLine($"Эффект {Conditions.FireName} снят.");
 			creature.Effects.Remove(this);
 		}
 
@@ -87,8 +86,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Создать тестовую сущность
 		/// </summary>
 		/// <param name="id">Айди</param>
-		/// <param name="condition">Состояние</param>
 		/// <param name="creature">Существо</param>
+		/// <param name="name">Название</param>
 		/// <param name="createdOn">Дата создания</param>
 		/// <param name="modifiedOn">Дата изменения</param>
 		/// <param name="createdByUserId">Создавший пользователь</param>
@@ -96,16 +95,16 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		[Obsolete("Только для тестов")]
 		public static FireEffect CreateForTest(
 			Guid? id = default,
-			Condition condition = default,
 			Creature creature = default,
+			string name = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
 		=> new()
 		{
 			Id = id ?? Guid.NewGuid(),
-			Condition = condition,
 			Creature = creature,
+			Name = name ?? Conditions.FireName,
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId

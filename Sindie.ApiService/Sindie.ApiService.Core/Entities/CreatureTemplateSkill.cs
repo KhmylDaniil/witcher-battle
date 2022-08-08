@@ -1,4 +1,5 @@
 ﻿using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -57,7 +58,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Название корреспондирующей характеристики
 		/// </summary>
-		public string StatName { get; protected set; }
+		public Stats StatName { get; protected set; }
 
 		/// <summary>
 		/// Значение навыка у шаблона существа

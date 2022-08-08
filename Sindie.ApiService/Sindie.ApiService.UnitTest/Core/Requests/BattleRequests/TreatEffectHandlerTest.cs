@@ -20,7 +20,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
 		private readonly Battle _battle;
-		private readonly Condition _freezeCondition;
+		private readonly FreezeEffect _freezeEffect;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Creature _creature;
 		private readonly CreatureType _creatureType;
@@ -34,8 +34,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_game = Game.CreateForTest();
 			_creatureType = CreatureType.CreateForTest();
 			_battle = Battle.CreateForTest(game: _game);
-			_freezeCondition = Condition.CreateForTest(id: Conditions.FreezeId, name: Conditions.FreezeName);
-			_skill = Skill.CreateForTest(id: Skills.PhysiqueId, name: Skills.PhysiqueName, statName: "Body");
+			_skill = Skill.CreateForTest(id: Skills.PhysiqueId, name: Skills.PhysiqueName, statName: Enums.Stats.Body);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
@@ -51,14 +50,16 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				speed: 2,
 				body: 10);
 
-			_creature.Effects.Add(FreezeEffect.CreateForTest(creature: _creature, condition: _freezeCondition));
+			_freezeEffect = FreezeEffect.CreateForTest(creature: _creature);
+
+			_creature.Effects.Add(_freezeEffect);
 			_creature.CreatureSkills.Add(new CreatureSkill(7, _creature, _skill));
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
 				_battle,
 				_skill,
-				_freezeCondition,
+				_freezeEffect,
 				_creatureTemplate,
 				_creature,
 				_creatureType));
@@ -75,7 +76,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			{
 				BattleId = _battle.Id,
 				CreatureId = _creature.Id,
-				EffectId = _freezeCondition.Id,
+				EffectId = _freezeEffect.Id,
 			};
 
 			var newHandler = new TreatEffectHandler(_dbContext, AuthorizationService.Object, RollService.Object);

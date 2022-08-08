@@ -73,7 +73,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 			var creature = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
 				?? throw new ExceptionEntityNotFound<Creature>();
 
-			var effect = creature.Effects.FirstOrDefault(x => x.EffectId == request.EffectId)
+			var effect = creature.Effects.FirstOrDefault(x => x.Id == request.EffectId)
 				?? throw new ExceptionEntityNotFound<Effect>();
 
 			StringBuilder message = new();

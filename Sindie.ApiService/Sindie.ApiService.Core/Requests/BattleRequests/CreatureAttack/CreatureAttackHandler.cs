@@ -57,6 +57,8 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 		{
 			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Instances, request.BattleId)
 				.Include(i => i.Creatures)
+					.ThenInclude(c => c.CreatureTemplate)
+				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureSkills)
 					.ThenInclude(cp => cp.Skill)
 				.Include(i => i.Creatures)

@@ -19,9 +19,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Конструктор эффекта отравления
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		/// <param name="condition">Состояние</param>
-
-		private PoisonEffect(Creature creature, Condition condition) : base(creature, condition) { }
+		/// <param name="name">Название</param>
+		private PoisonEffect(Creature creature, string name) : base(creature, name) { }
 
 		/// <summary>
 		/// Создание эффекта - синглтон
@@ -29,12 +28,12 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="rollService">Сервис бросков</param>
 		/// <param name="attacker">Атакующий</param>
 		/// <param name="target">Цель</param>
-		/// <param name="condition">Состояние</param>
+		/// <param name="name">Название</param>
 		/// <returns>Эффект</returns>
-		public static PoisonEffect Create(IRollService rollService, Creature attacker, Creature target, Condition condition)
-			=> target.Effects.Any(x => x.EffectId == Conditions.PoisonId)
+		public static PoisonEffect Create(IRollService rollService, Creature attacker, Creature target, string name)
+			=> target.Effects.Any(x => x is PoisonEffect)
 				? null
-				: new PoisonEffect(target, condition);
+				: new PoisonEffect(target, name);
 
 		/// <summary>
 		/// Применить эффект
@@ -62,19 +61,13 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
 		{
-			var skill = creature.CreatureSkills.FirstOrDefault(x => x.Id == Skills.EnduranceId);
-
-			int skillBase = skill == null
-				? creature.Body
-				: creature.SkillBase(Skills.PhysiqueId);
-
-			if (rollService.BeatDifficulty(skillBase, 15))
+			if (rollService.BeatDifficulty(creature.SkillBase(Skills.PhysiqueId), 15))
 			{
-				message.AppendFormat($"Эффект {Name} снят.");
+				message.AppendFormat($"Эффект {Conditions.PoisonName} снят.");
 				creature.Effects.Remove(this);
 			}
 			else
-				message.AppendLine($"Не удалось снять эффект {Name}.");
+				message.AppendLine($"Не удалось снять эффект {Conditions.PoisonName}.");
 		}
 	}
 }

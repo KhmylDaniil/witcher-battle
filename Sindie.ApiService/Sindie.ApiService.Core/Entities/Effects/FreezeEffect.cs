@@ -20,8 +20,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Конструктор эффекта заморозки
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		/// <param name="condition">Состояние</param>
-		private FreezeEffect(Creature creature, Condition condition) : base(creature, condition)
+		/// <param name="name">Название</param>
+		private FreezeEffect(Creature creature, string name) : base(creature, name)
 			=> ApplyStatChanges(creature);
 
 		/// <summary>
@@ -30,12 +30,12 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="rollService">Сервис бросков</param>
 		/// <param name="attacker">Атакующий</param>
 		/// <param name="target">Цель</param>
-		/// <param name="condition">Состояние</param>
+		/// <param name="name">Название</param>
 		/// <returns>Эффект</returns>
-		public static FreezeEffect Create(IRollService rollService, Creature attacker, Creature target, Condition condition)
-			=> target.Effects.Any(x => x.EffectId == Conditions.FreezeId)
+		public static FreezeEffect Create(IRollService rollService, Creature attacker, Creature target, string name)
+			=> target.Effects.Any(x => x is FreezeEffect)
 				? null
-				: new FreezeEffect(target, condition);
+				: new FreezeEffect(target, name);
 
 		/// <summary>
 		/// Применить эффект
@@ -59,20 +59,14 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
 		{
-			var skill = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.PhysiqueId);
-
-			int skillBase = skill == null
-				? creature.Body
-				: creature.SkillBase(Skills.PhysiqueId);
-
-			if (rollService.BeatDifficulty(skillBase, 16))
+			if (rollService.BeatDifficulty(creature.SkillBase(Skills.PhysiqueId), 16))
 			{
 				RevertStatChanges(creature);
-				message.AppendFormat($"Эффект {Name} снят. Скорость равна {creature.Speed}, рефлексы равны {creature.Ref}.");
+				message.AppendFormat($"Эффект {Conditions.FreezeName} снят. Скорость равна {creature.Speed}, рефлексы равны {creature.Ref}.");
 				creature.Effects.Remove(this);
 			}
 			else
-				message.AppendLine($"Не удалось снять эффект {Name}.");
+				message.AppendLine($"Не удалось снять эффект {Conditions.FreezeName}.");
 		}
 
 		/// <summary>
@@ -99,8 +93,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Создать тестовую сущность
 		/// </summary>
 		/// <param name="id">Айди</param>
-		/// <param name="condition">Состояние</param>
 		/// <param name="creature">Существо</param>
+		/// <param name="name">Название</param>
 		/// <param name="createdOn">Дата создания</param>
 		/// <param name="modifiedOn">Дата изменения</param>
 		/// <param name="createdByUserId">Создавший пользователь</param>
@@ -108,8 +102,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		[Obsolete("Только для тестов")]
 		public static FreezeEffect CreateForTest(
 			Guid? id = default,
-			Condition condition = default,
 			Creature creature = default,
+			string name = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
@@ -117,8 +111,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			FreezeEffect effect = new()
 			{
 				Id = id ?? Guid.NewGuid(),
-				Condition = condition,
 				Creature = creature,
+				Name = name ?? Conditions.FreezeName,
 				CreatedOn = createdOn,
 				ModifiedOn = modifiedOn,
 				CreatedByUserId = createdByUserId

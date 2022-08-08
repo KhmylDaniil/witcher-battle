@@ -17,9 +17,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Конструктор эффекта кровотечения
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		/// <param name="condition">Состояние</param>
+		/// <param name="name">СНазвание</param>
 
-		private BleedEffect(Creature creature, Condition condition) : base(creature, condition) { }
+		private BleedEffect(Creature creature, string name) : base(creature, name) { }
 
 		/// <summary>
 		/// Создание эффекта - синглтон
@@ -27,12 +27,12 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="rollService">Сервис бросков</param>
 		/// <param name="attacker">Атакующий</param>
 		/// <param name="target">Цель</param>
-		/// <param name="condition">Состояние</param>
+		/// <param name="name">Название</param>
 		/// <returns>Эффект</returns>
-		public static BleedEffect Create(IRollService rollService, Creature attacker, Creature target, Condition condition)
-			=> target.Effects.Any(x => x.EffectId == Conditions.BleedId)
+		public static BleedEffect Create(IRollService rollService, Creature attacker, Creature target, string name)
+			=> target.Effects.Any(x => x is BleedEffect)
 				? null
-				: new BleedEffect(target, condition);
+				: new BleedEffect(target, name);
 
 		/// <summary>
 		/// Применить эффект
@@ -62,7 +62,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			Heal heal = new(rollService);
 
-			heal.Stabilize(creature, ref creature, ref message, this);
+			heal.TryStabilize(creature, ref creature, ref message, this);
 		}
 	}
 }

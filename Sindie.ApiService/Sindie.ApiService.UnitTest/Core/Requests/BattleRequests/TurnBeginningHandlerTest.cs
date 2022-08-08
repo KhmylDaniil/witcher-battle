@@ -26,8 +26,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly BodyPartType _head;
 		private readonly CreaturePart _headPart;
 		private readonly CreaturePart _torsoPart;
-		private readonly Condition _bleedingWoundCondition;
-		private readonly Condition _fireCondition;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Creature _creature;
 		private readonly CreatureType _creatureType;
@@ -42,8 +40,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_battle = Battle.CreateForTest(game: _game);
 			_torso = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
 			_head = BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName);
-			_bleedingWoundCondition = Condition.CreateForTest(id: Conditions.BleedingWoundId, name: Conditions.BleedingWoundName);
-			_fireCondition = Condition.CreateForTest(id: Conditions.FireId, name: Conditions.FireName);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
@@ -80,16 +76,14 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				startingArmor: 3);
 			_creature.CreatureParts.AddRange(new List<CreaturePart> { _headPart, _torsoPart });
 
-			_creature.Effects.Add(FireEffect.CreateForTest(condition: _fireCondition, creature: _creature));
-			_creature.Effects.Add(BleedingWoundEffect.CreateForTest(creature: _creature, condition: _bleedingWoundCondition, damage: 3));
+			_creature.Effects.Add(FireEffect.CreateForTest(creature: _creature));
+			_creature.Effects.Add(BleedingWoundEffect.CreateForTest(creature: _creature, damage: 3));
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
 				_battle,
 				_torso,
 				_head,
-				_bleedingWoundCondition,
-				_fireCondition,
 				_creatureTemplate,
 				_creature,
 				_creatureType));

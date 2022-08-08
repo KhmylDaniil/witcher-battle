@@ -3,14 +3,14 @@ using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Logic;
 using System.Linq;
 using System.Text;
-using static Sindie.ApiService.Core.BaseData.Crit;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities.Effects
 {
 	/// <summary>
 	/// Критический эффект - треснувшие ребра
 	/// </summary>
-	public class SimpleTorso2CritEffect : Effect, ICrit
+	public class SimpleTorso2CritEffect : CritEffect, ICrit
 	{
 		private const int BodyModifier = -2;
 		private const int AfterTreatBodyModifier = -1;
@@ -23,7 +23,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <summary>
 		/// Тип части тела
 		/// </summary
-		public BodyPartTypes.BodyPartType BodyPartLocation { get; } = BodyPartTypes.BodyPartType.Torso;
+		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Torso;
 
 		public SimpleTorso2CritEffect() { }
 
@@ -31,20 +31,22 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Конструктор эффекта треснувших ребер
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		/// <param name="condition">Состояние</param>
-		private SimpleTorso2CritEffect(Creature creature, Condition condition) : base(creature, condition)
+		/// <param name="name">Название</param>
+		/// <param name="aimedPart">Часть тела</param>
+		private SimpleTorso2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
 			=> ApplyStatChanges(creature);
 
 		/// <summary>
 		/// Создание эффекта - синглтон
 		/// </summary>
-		/// <param name="target">Цель</param>
-		/// <param name="condition">Состояние</param>
+		/// <param name="creature">Существо</param>
+		/// <param name="name">Название</param>
+		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
-		public static SimpleTorso2CritEffect Create(Creature target, CreaturePart aimedPart, Condition condition)
-			=> target.Effects.Any(x => x.EffectId == Crit.SimpleTorso2Id)
+		public static SimpleTorso2CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
+			=> creature.Effects.Any(x => x is SimpleTorso2CritEffect)
 				? null
-				: new SimpleTorso2CritEffect(target, condition);
+				: new SimpleTorso2CritEffect(creature, aimedPart, name);
 
 		/// <summary>
 		/// Автоматически прекратить эффект

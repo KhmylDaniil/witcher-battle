@@ -417,7 +417,7 @@ namespace Sindie.ApiService.Core.Entities
 							 orderby SkillBase(x.SkillId)
 							 select x;
 
-			return sortedList.First();
+			return sortedList.Last();
 		}
 
 		/// <summary>
@@ -427,15 +427,20 @@ namespace Sindie.ApiService.Core.Entities
 		/// <returns></returns>
 		public int SkillBase(Guid skillId)
 		{
-			var skill = CreatureSkills.FirstOrDefault(x => x.SkillId == skillId)
-				?? throw new ExceptionEntityNotFound<CreatureSkill>(nameof(Name), skillId);
+			var statName = Enums.SkillStats.First(x => x.Key == skillId).Value;
 
-			var value = typeof(Creature).GetProperty(skill.StatName).GetValue(this);
+			var value = typeof(Creature).GetProperty(statName.ToString()).GetValue(this);
 
-			var statBase = String.IsNullOrEmpty(skill.StatName)
-				? 0
-				: (int)value;
-			return statBase + skill.SkillValue;
+			var statBase = Enum.IsDefined(typeof(Enums.Stats), statName)
+				? (int)value
+				: 0;
+
+			var skill = CreatureSkills.FirstOrDefault(x => x.SkillId == skillId);
+
+			if (skill is not null)
+				statBase += skill.SkillValue;
+
+			return statBase;
 		}
 
 		/// <summary>

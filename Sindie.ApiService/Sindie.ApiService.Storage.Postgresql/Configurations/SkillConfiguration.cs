@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -54,7 +55,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.AwarenessName,
 				id: Skills.AwarenessId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -64,7 +65,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.BusinessName,
 				id: Skills.BusinessId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -74,7 +75,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.DeductionName,
 				id: Skills.DeductionId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -84,7 +85,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.EducationName,
 				id: Skills.EducationId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -94,7 +95,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.CommonLanguageName,
 				id: Skills.CommonLanguageId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -104,7 +105,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.ElderLanguageName,
 				id: Skills.ElderLanguageId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -114,7 +115,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.DwarfenLanguageName,
 				id: Skills.DwarfenLanguageId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -124,7 +125,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.MonsterLoreName,
 				id: Skills.MonsterLoreId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -134,7 +135,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.SocialEtiquetteName,
 				id: Skills.SocialEtiquetteId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -144,7 +145,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.StreetwiseName,
 				id: Skills.StreetwiseId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -154,7 +155,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.TacticsName,
 				id: Skills.TacticsId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -164,7 +165,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.TeachingName,
 				id: Skills.TeachingId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -174,7 +175,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.WildernessSurvivalName,
 				id: Skills.WildernessSurvivalId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -184,7 +185,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.BrawlingName,
 				id: Skills.BrawlingId,
-				statName: "Ref",
+				stats: Stats.Ref,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -194,7 +195,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.DodgeName,
 				id: Skills.DodgeId,
-				statName: "Ref",
+				stats: Stats.Ref,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -204,7 +205,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.MeleeName,
 				id: Skills.MeleeId,
-				statName: "Ref",
+				stats: Stats.Ref,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -214,7 +215,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.RidingName,
 				id: Skills.RidingId,
-				statName: "Ref",
+				stats: Stats.Ref,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -224,7 +225,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.SailingName,
 				id: Skills.SailingId,
-				statName: "Ref",
+				stats: Stats.Ref,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -234,7 +235,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.SmallBladesName,
 				id: Skills.SmallBladesId,
-				statName: "Ref",
+				stats: Stats.Ref,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -244,7 +245,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.StaffName,
 				id: Skills.StaffId,
-				statName: "Ref",
+				stats: Stats.Ref,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -254,7 +255,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.SwordName,
 				id: Skills.SwordId,
-				statName: "Ref",
+				stats: Stats.Ref,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -264,7 +265,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.ArcheryName,
 				id: Skills.ArcheryId,
-				statName: "Dex",
+				stats: Stats.Dex,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -274,7 +275,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.AthleticsName,
 				id: Skills.AthleticsId,
-				statName: "Dex",
+				stats: Stats.Dex,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -284,7 +285,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.CrossbowName,
 				id: Skills.CrossbowId,
-				statName: "Dex",
+				stats: Stats.Dex,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -294,7 +295,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.SleightOfHandName,
 				id: Skills.SleightOfHandId,
-				statName: "Dex",
+				stats: Stats.Dex,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -304,7 +305,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.StealthName,
 				id: Skills.StealthId,
-				statName: "Dex",
+				stats: Stats.Dex,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -314,7 +315,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.EnduranceName,
 				id: Skills.EnduranceId,
-				statName: "Body",
+				stats: Stats.Body,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -324,7 +325,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.PhysiqueName,
 				id: Skills.PhysiqueId,
-				statName: "Body",
+				stats: Stats.Body,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -334,7 +335,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.CharismaName,
 				id: Skills.CharismaId,
-				statName: "Emp",
+				stats: Stats.Emp,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -344,7 +345,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.DeceitName,
 				id: Skills.DeceitId,
-				statName: "Emp",
+				stats: Stats.Emp,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -355,7 +356,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.FineArtsName,
 				id: Skills.FineArtsId,
-				statName: "Emp",
+				stats: Stats.Emp,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -365,7 +366,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.GamblingName,
 				id: Skills.GamblingId,
-				statName: "Emp",
+				stats: Stats.Emp,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -375,7 +376,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.StyleName,
 				id: Skills.StyleId,
-				statName: "Emp",
+				stats: Stats.Emp,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -385,7 +386,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.HumanPerceptionName,
 				id: Skills.HumanPerceptionId,
-				statName: "Emp",
+				stats: Stats.Emp,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -395,7 +396,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.LeadershipName,
 				id: Skills.LeadershipId,
-				statName: "Emp",
+				stats: Stats.Emp,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -405,7 +406,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.PersuasionName,
 				id: Skills.PersuasionId,
-				statName: "Emp",
+				stats: Stats.Emp,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -415,7 +416,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.PerfomanceName,
 				id: Skills.PerfomanceId,
-				statName: "Emp",
+				stats: Stats.Emp,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -425,7 +426,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.SeductionName,
 				id: Skills.SeductionId,
-				statName: "Emp",
+				stats: Stats.Emp,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -435,7 +436,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.FirstAidName,
 				id: Skills.FirstAidId,
-				statName: "Cra",
+				stats: Stats.Cra,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -445,7 +446,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.AlchemyName,
 				id: Skills.AlchemyId,
-				statName: "Cra",
+				stats: Stats.Cra,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -455,7 +456,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.CraftingName,
 				id: Skills.CraftingId,
-				statName: "Cra",
+				stats: Stats.Cra,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -465,7 +466,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.DiguiseName,
 				id: Skills.DiguiseId,
-				statName: "Cra",
+				stats: Stats.Cra,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -475,7 +476,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.ForgeryName,
 				id: Skills.ForgeryId,
-				statName: "Cra",
+				stats: Stats.Cra,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -485,7 +486,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.PickLockName,
 				id: Skills.PickLockId,
-				statName: "Cra",
+				stats: Stats.Cra,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -495,7 +496,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.TrapCraftingName,
 				id: Skills.TrapCraftingId,
-				statName: "Cra",
+				stats: Stats.Cra,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -505,7 +506,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.CourageName,
 				id: Skills.CourageId,
-				statName: "Will",
+				stats: Stats.Will,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -515,7 +516,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.HexWeavingName,
 				id: Skills.HexWeavingId,
-				statName: "Will",
+				stats: Stats.Will,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -525,7 +526,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.IntimidationName,
 				id: Skills.IntimidationId,
-				statName: "Will",
+				stats: Stats.Will,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -535,7 +536,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.SpellName,
 				id: Skills.SpellId,
-				statName: "Will",
+				stats: Stats.Will,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -545,7 +546,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.ResistMagicName,
 				id: Skills.ResistMagicId,
-				statName: "Will",
+				stats: Stats.Will,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -555,7 +556,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.ResistCoercionName,
 				id: Skills.ResistCoercionId,
-				statName: "Will",
+				stats: Stats.Will,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -565,7 +566,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.RitualCraftingName,
 				id: Skills.RitualCraftingId,
-				statName: "Will",
+				stats: Stats.Will,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -575,7 +576,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.NeedlingName,
 				id: Skills.NeedlingId,
-				statName: "Emp",
+				stats: Stats.Emp,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -585,7 +586,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.EyeGougeName,
 				id: Skills.EyeGougeId,
-				statName: "Dex",
+				stats: Stats.Dex,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -595,7 +596,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.BleedingWoundName,
 				id: Skills.BleedingWoundId,
-				statName: "Int",
+				stats: Stats.Int,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,
@@ -605,7 +606,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			(
 				name: Skills.HealingHandsName,
 				id: Skills.HealingHandsId,
-				statName: "Cra",
+				stats: Stats.Cra,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,

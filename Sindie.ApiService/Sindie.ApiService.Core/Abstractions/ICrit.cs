@@ -1,7 +1,6 @@
 ﻿using Sindie.ApiService.Core.Entities;
 using System;
-using static Sindie.ApiService.Core.BaseData.Crit;
-using BodyPartType = Sindie.ApiService.Core.BaseData.BodyPartTypes.BodyPartType;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Abstractions
 {
@@ -23,7 +22,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <summary>
 		/// Тип части тела
 		/// </summary>
-		public BodyPartType BodyPartLocation { get; }
+		public BaseData.Enums.BodyPartType BodyPartLocation { get; }
 
 		/// <summary>
 		/// Применить изменения характеристик

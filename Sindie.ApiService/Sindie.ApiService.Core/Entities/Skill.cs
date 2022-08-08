@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+using System;
 using System.Collections.Generic;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -8,7 +11,7 @@ namespace Sindie.ApiService.Core.Entities
 	/// </summary>
 	public sealed class Skill : EntityBase
 	{
-		private string _statName;
+		private Stats _statName;
 
 		/// <summary>
 		/// Пустой конструктор для EF
@@ -30,7 +33,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="roleModifiedUser">Роль изменившего пользователя</param>
 		public Skill(
 			string name,
-			string statName,
+			Stats stats,
 			Guid id,
 			DateTime createdOn,
 			DateTime modifiedOn,
@@ -48,7 +51,7 @@ namespace Sindie.ApiService.Core.Entities
 				  roleModifiedUser)
 		{
 			Name = name;
-			StatName = statName;
+			StatName = stats;
 			CreatureSkills = new List<CreatureSkill>();
 			CreatureTemplateSkills = new List<CreatureTemplateSkill>();
 			AbilitiesForAttack = new List<Ability>();
@@ -63,10 +66,10 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Название корреспондирующей характеристики
 		/// </summary>
-		public string StatName
+		public Stats StatName
 		{
 			get => _statName;
-			set => _statName = BaseData.Stats.StatsList.Contains(value) ? value : string.Empty;
+			set => _statName = Enum.IsDefined(typeof(Stats), value) ? value : throw new ExceptionFieldOutOfRange<Skill>(nameof(StatName));
 		}
 
 		#region navigation properties
@@ -106,7 +109,7 @@ namespace Sindie.ApiService.Core.Entities
 		public static Skill CreateForTest(
 			Guid? id = default,
 			string name = default,
-			string statName = default,
+			Stats statName = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
@@ -114,7 +117,7 @@ namespace Sindie.ApiService.Core.Entities
 		{
 			Id = id ?? Guid.NewGuid(),
 			Name = name ?? "Skill",
-			StatName = statName ?? "Ref",
+			StatName = statName == default ? Stats.Ref : statName,
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId,

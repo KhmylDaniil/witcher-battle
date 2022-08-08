@@ -77,19 +77,5 @@ namespace Sindie.ApiService.Core.BaseData
 		/// Название типа части тела - нет анатомии
 		/// </summary>
 		public static readonly string VoidName = "Void";
-
-		/// <summary>
-		/// Части тела - перечисление
-		/// </summary>
-		public enum BodyPartType
-		{
-			Head = 1,
-			Torso = 2,
-			Arm = 3,
-			Leg = 4,
-			Wing = 5,
-			Tail = 6,
-			Void = 7
-		}
 	}
 }

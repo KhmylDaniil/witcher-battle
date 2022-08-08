@@ -165,18 +165,19 @@ namespace Sindie.ApiService.Core.Logic
 			{
 				var condition = data.Conditions.FirstOrDefault(x => x.Name.Equals(critName));
 
-				var effect = Effect.CreateCritEffect<Effect>(data.Target, data.AimedPart, condition);
+				var effect = CritEffect.CreateCritEffect<Effect>(data.Target, data.AimedPart, condition);
 
 				if (effect != null)
 					data.Target.Effects.Add(effect);
 
 				StunCheck(data.Target, ref message);
-
+				
 				message.AppendLine($"Нанесено критическое повреждение {effect.Name}.");
 			}
 
 			static void SetCritSeverity(int successValue, ref int bonusDamage, out string critSeverity)
 			{
+				//TODO переделать на енум
 				if (successValue < 10)
 				{
 					critSeverity = "Simple";
@@ -209,7 +210,7 @@ namespace Sindie.ApiService.Core.Logic
 					critName += suffix;
 				}
 
-				return critName;
+				return critName ;
 			}
 
 			static bool isCritImmune(CreatureType creatureType, CreaturePart aimedPart)
@@ -233,9 +234,14 @@ namespace Sindie.ApiService.Core.Logic
 			void StunCheck(Creature creature, ref StringBuilder message)
 			{
 				Random random = new();
-				if (random.Next() < creature.Stun)
+				if (random.Next() >= creature.Stun)
 				{
-					creature.Effects.Add(StunEffect.Create(null, null, target: creature, data.Conditions.FirstOrDefault(x => x.Id == Conditions.StunId)));
+					var stun = StunEffect.Create(null, null, target: creature, "Crit-based Stun");
+
+					if (stun is null)
+						return;
+
+					creature.Effects.Add(stun);
 					message.AppendLine($"Из-за наложения критического эффекта наложен эффект {Conditions.StunName}.");
 				}	
 			}
@@ -329,7 +335,7 @@ namespace Sindie.ApiService.Core.Logic
 				
 				data.Target.Effects.Add(effect);
 
-				message.AppendLine($"Наложен {effect.ToString()}");
+				message.AppendLine($"Наложен {effect.Name}");
 			}
 		}
 

@@ -5,14 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static Sindie.ApiService.Core.BaseData.Crit;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities.Effects
 {
 	/// <summary>
 	/// Критический эффект - Вывих ноги
 	/// </summary>
-	public class SimpleLegCritEffect : Effect, ICrit, ILegCrit
+	public class SimpleLegCritEffect : CritEffect, ISharedPenaltyCrit
 	{
 		private const int Modifier = -2;
 		private const int AfterTreatModifier = -1;
@@ -24,8 +24,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Конструктор эффекта вывиха ноги
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		/// <param name="condition">Состояние</param>
-		private SimpleLegCritEffect(Creature creature, CreaturePart aimedPart, Condition condition) : base(creature, condition) { }
+		/// <param name="name">Название</param>
+		/// <param name="aimedPart">Часть тела</param>
+		private SimpleLegCritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name) { }
 
 		/// <summary>
 		/// Тяжесть критического эффекта
@@ -35,7 +36,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <summary>
 		/// Тип части тела
 		/// </summary
-		public BodyPartTypes.BodyPartType BodyPartLocation { get; } = BodyPartTypes.BodyPartType.Leg;
+		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Leg;
 
 		/// <summary>
 		/// Пенальти применено
@@ -45,18 +46,18 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <summary>
 		/// Создание эффекта - синглтон
 		/// </summary>
-		/// <param name="target">Цель</param>
-		/// <param name="condition">Состояние</param>
+		/// <param name="creature">Существо</param>
+		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
-		public static SimpleLegCritEffect Create(Creature target, CreaturePart aimedPart, Condition condition)
+		public static SimpleLegCritEffect Create(Creature creature, CreaturePart aimedPart, string name)
 		{
-			if (!target.Effects.Any(x => x is ILegCrit && x.CreaturePartId == aimedPart.Id))
+			if (creature.Effects.Any(x => x is SimpleLegCritEffect crit && crit.CreaturePartId == aimedPart.Id))
 				return null;
 
-			var effect = new SimpleLegCritEffect(target, aimedPart, condition);
+			var effect = new SimpleLegCritEffect(creature, aimedPart, name);
 
-			Heal.ApplyPenalty(target, effect);
+			ApplySharedPenalty(creature, effect);
 
 			return effect;
 		}
@@ -81,12 +82,10 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void Stabilize(Creature creature)
 		{
-			if (Severity == Crit.Severity.Simple)
+			if (Severity == Enums.Severity.Simple)
 				return;
 
-			Severity = Crit.Severity.Simple;
-
-			Heal.UpdatePenalty(creature, this);
+			Severity = Enums.Severity.Simple;
 
 			creature.Speed -= Modifier;
 			creature.Speed += AfterTreatModifier;
@@ -98,6 +97,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 				skill.SkillValue -= Modifier;
 				skill.SkillValue += AfterTreatModifier;
 			}
+
+			SharedPenaltyMovedToAnotherCrit(creature, this);
 		}
 
 		/// <summary>
@@ -137,9 +138,6 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			PenaltyApplied = false;
 
-			creature.Speed -= Modifier;
-			creature.Speed += AfterTreatModifier;
-
 			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.SkillId));
 
 			foreach (var skill in creatureSkills)
@@ -149,8 +147,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 					skill.SkillValue -= Modifier;
 
 			creature.Speed = Severity == Severity.Simple
-				? - AfterTreatModifier
-				: - Modifier;
+				? creature.Speed - AfterTreatModifier
+				: creature.Speed - Modifier;
 		}
 	}
 }

@@ -4,20 +4,20 @@ using Sindie.ApiService.Core.Logic;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static Sindie.ApiService.Core.BaseData.Crit;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities.Effects
 {
 	/// <summary>
 	/// Критический эффект - Вывих руки
 	/// </summary>
-	public class SimpleArmCritEffect : Effect, ICrit, IArmCrit
+	public class SimpleArmCritEffect : CritEffect, ISharedPenaltyCrit
 	{
 		private const int SkillModifier = -2;
 		private const int AfterTreatSkillModifier = -1;
-		private readonly List<string> AffectedStats = new()
+		private readonly List<Stats> AffectedStats = new()
 		{
-			"Ref", "Dex", "Body", "Cra"
+			Stats.Ref, Stats.Dex, Stats.Body, Stats.Cra
 		};
 
 		private SimpleArmCritEffect() { }
@@ -26,31 +26,40 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Конструктор эффекта вывиха руки
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		/// <param name="condition">Состояние</param>
-		private SimpleArmCritEffect(Creature creature, CreaturePart aimedPart, Condition condition) : base(creature, condition)
-		{
-			if (creature.LeadingArmId == aimedPart.Id)
-				ApplyStatChanges(creature);
-		}
+		/// <param name="name">Название</param>
+		/// <param name="aimedPart">Часть тела</param>
+		private SimpleArmCritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name) { }
 
 		/// <summary>
 		/// Тяжесть критического эффекта
 		/// </summary>
 		public Severity Severity { get; private set; } = Severity.Simple | Severity.Unstabilizied;
 
-		public BodyPartTypes.BodyPartType BodyPartLocation { get; } = BodyPartTypes.BodyPartType.Arm;
+		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Arm;
+
+		/// <summary>
+		/// Пенальти применено
+		/// </summary>
+		public bool PenaltyApplied { get; private set; }
 
 		/// <summary>
 		/// Создание эффекта - синглтон
 		/// </summary>
-		/// <param name="target">Цель</param>
-		/// <param name="condition">Состояние</param>
+		/// <param name="creature">Существо</param>
+		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
-		public static SimpleArmCritEffect Create(Creature target, CreaturePart aimedPart, Condition condition)
-			=> target.Effects.Any(x => x is IArmCrit && x.CreaturePartId == aimedPart.Id)
-				? null
-				: new SimpleArmCritEffect(target, aimedPart, condition);
+		public static SimpleArmCritEffect Create(Creature creature, CreaturePart aimedPart, string name)
+		{
+			if (creature.Effects.Any(x => x is SimpleArmCritEffect crit && crit.CreaturePartId == aimedPart.Id))
+				return null;
+
+			var effect = new SimpleArmCritEffect(creature, aimedPart, name);
+
+			ApplySharedPenalty(creature, effect);
+
+			return effect;
+		}
 
 		/// <summary>
 		/// Автоматически прекратить эффект
@@ -83,6 +92,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 				skill.SkillValue -= SkillModifier;
 				skill.SkillValue += AfterTreatSkillModifier;
 			}
+
+			SharedPenaltyMovedToAnotherCrit(creature, this);
 		}
 
 		/// <summary>
@@ -104,6 +115,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void ApplyStatChanges(Creature creature)
 		{
+			PenaltyApplied = true;
+
 			var creatureSkills = creature.CreatureSkills.Where(x => AffectedStats.Contains(x.StatName));
 
 			foreach (var skill in creatureSkills)
@@ -116,6 +129,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void RevertStatChanges(Creature creature)
 		{
+			PenaltyApplied = false;
+
 			if (CreaturePartId != creature.LeadingArmId)
 				return;
 

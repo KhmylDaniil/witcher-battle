@@ -5,13 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities.Effects
 {
 	/// <summary>
 	/// Критический эффект - Вывих крыла
 	/// </summary>
-	public class SimpleWingCritEffect : Effect, IWingCrit
+	public class SimpleWingCritEffect : CritEffect, ISharedPenaltyCrit
 	{
 		private const int Modifier = -2;
 		private const int AfterTreatModifier = -1;
@@ -23,18 +24,19 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Конструктор эффекта вывиха крыла
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		/// <param name="condition">Состояние</param>
-		private SimpleWingCritEffect(Creature creature, CreaturePart aimedPart, Condition condition) : base(creature, condition) { }
+		/// <param name="name">Название</param>
+		/// <param name="aimedPart">Часть тела</param>
+		private SimpleWingCritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name) { }
 
 		/// <summary>
 		/// Тяжесть критического эффекта
 		/// </summary>
-		public Crit.Severity Severity { get; private set;} = Crit.Severity.Simple | Crit.Severity.Unstabilizied;
+		public Severity Severity { get; private set;} = Severity.Simple | Severity.Unstabilizied;
 
 		/// <summary>
 		/// Тип части тела
 		/// </summary
-		public BodyPartTypes.BodyPartType BodyPartLocation { get; } = BodyPartTypes.BodyPartType.Wing;
+		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Wing;
 
 		/// <summary>
 		/// Пенальти применено
@@ -44,18 +46,18 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <summary>
 		/// Создание эффекта - синглтон
 		/// </summary>
-		/// <param name="target">Цель</param>
-		/// <param name="condition">Состояние</param>
+		/// <param name="creature">Существо</param>
+		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
-		public static SimpleWingCritEffect Create(Creature target, CreaturePart aimedPart, Condition condition)
+		public static SimpleWingCritEffect Create(Creature creature, CreaturePart aimedPart, string name)
 		{
-			if (!target.Effects.Any(x => x is IWingCrit && x.CreaturePartId == aimedPart.Id))
+			if (creature.Effects.Any(x => x is SimpleWingCritEffect crit && crit.CreaturePartId == aimedPart.Id))
 				return null;
 
-			var effect = new SimpleWingCritEffect(target, aimedPart, condition);
+			var effect = new SimpleWingCritEffect(creature, aimedPart, name);
 
-			Heal.ApplyPenalty(target, effect);
+			ApplySharedPenalty(creature, effect);
 
 			return effect;
 		}
@@ -80,12 +82,10 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void Stabilize(Creature creature)
 		{
-			if (Severity == Crit.Severity.Simple)
+			if (Severity == Severity.Simple)
 				return;
 
-			Severity = Crit.Severity.Simple;
-
-			Heal.UpdatePenalty(creature, this);
+			Severity = Severity.Simple;
 
 			creature.Speed -= Modifier;
 			creature.Speed += AfterTreatModifier;
@@ -97,6 +97,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 				skill.SkillValue -= Modifier;
 				skill.SkillValue += AfterTreatModifier;
 			}
+
+			SharedPenaltyMovedToAnotherCrit(creature, this);
 		}
 
 		/// <summary>
@@ -139,12 +141,12 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.SkillId));
 
 			foreach (var skill in creatureSkills)
-				if (Severity == Crit.Severity.Simple)
+				if (Severity == Severity.Simple)
 					skill.SkillValue -= AfterTreatModifier;
 				else
 					skill.SkillValue -= Modifier;
 
-			creature.Speed = Severity == Crit.Severity.Simple
+			creature.Speed = Severity == Severity.Simple
 				? -AfterTreatModifier
 				: -Modifier;
 		}

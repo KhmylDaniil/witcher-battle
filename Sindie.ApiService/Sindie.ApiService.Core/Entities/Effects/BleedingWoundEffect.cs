@@ -28,9 +28,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Конструктор эффекта кровавой раны
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		/// <param name="condition">Состояние</param>
 		/// <param name="severity">Результат броска</param>
-		private BleedingWoundEffect(Creature creature, Condition condition, int severity) : base(creature, condition)
+		/// <param name="name">Название</param>
+		private BleedingWoundEffect(Creature creature, string name, int severity) : base(creature, name)
 		{
 			Severity = severity;
 			Damage = (severity - 15) / 2;
@@ -42,23 +42,26 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="rollService">Сервис бросков</param>
 		/// <param name="attacker">Атакующий</param>
 		/// <param name="target">Цель</param>
-		/// <param name="condition">Состояние</param>
+		/// <param name="name">Название</param>
 		/// <returns>Эффект</returns>
-		public static BleedingWoundEffect Create(IRollService rollService, Creature attacker, Creature target, Condition condition)
+		public static BleedingWoundEffect Create(IRollService rollService, Creature attacker, Creature target, string name)
 		{
 			if (!rollService.BeatDifficulty(attacker.SkillBase(Skills.BleedingWoundId), 15, out int severity))
 				return null;
 
-			if (target.Effects.FirstOrDefault(x => x.EffectId == Conditions.BleedingWoundId) is BleedingWoundEffect effect && severity > effect.Severity)
-				effect.Severity = severity;
-			else
-				return new BleedingWoundEffect(target, condition, severity);
+			var existingEffect = target.Effects.FirstOrDefault(x => x is BleedingWoundEffect) as BleedingWoundEffect;
+
+			if (existingEffect is null)
+				return new BleedingWoundEffect(target, name, severity);
+
+			if (existingEffect.Severity < severity)
+				existingEffect.Severity = severity;
 
 			return null;
 		}
 
 		public override string ToString()
-			=> $"effect {Name} with severity {Severity} and {Damage} damage";
+			=> $"effect {Conditions.BleedingWoundName} with severity {Severity} and {Damage} damage";
 
 		/// <summary>
 		/// Применить эффект
@@ -95,8 +98,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Создать тестовую сущность
 		/// </summary>
 		/// <param name="id">Айди</param>
-		/// <param name="condition">Состояние</param>
 		/// <param name="creature">Существо</param>
+		/// <param name="name">Название</param>
 		/// <param name="createdOn">Дата создания</param>
 		/// <param name="modifiedOn">Дата изменения</param>
 		/// <param name="createdByUserId">Создавший пользователь</param>
@@ -104,8 +107,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		[Obsolete("Только для тестов")]
 		public static BleedingWoundEffect CreateForTest(
 			Guid? id = default,
-			Condition condition = default,
 			Creature creature = default,
+			string name = default,
 			int severity = default,
 			int damage = default,
 			DateTime createdOn = default,
@@ -114,8 +117,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		=> new()
 		{
 			Id = id ?? Guid.NewGuid(),
-			Condition = condition,
 			Creature = creature,
+			Name = name ?? Conditions.BleedingWoundName,
 			Severity = severity,
 			Damage = damage,
 			CreatedOn = createdOn,

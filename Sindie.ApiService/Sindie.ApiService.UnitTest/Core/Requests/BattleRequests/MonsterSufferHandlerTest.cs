@@ -45,8 +45,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_condition = Condition.CreateForTest(id: Conditions.BleedingWoundId, name: Conditions.BleedingWoundName);
 			_damageType = DamageType.CreateForTest();
 
-			_skill = Skill.CreateForTest();
-			_skillBleedingWound = Skill.CreateForTest(id: Skills.BleedingWoundId, statName: "Int", name: Skills.BleedingWoundName);
+			_skill = Skill.CreateForTest(id: Skills.MeleeId, statName: Enums.Stats.Ref);
+			_skillBleedingWound = Skill.CreateForTest(id: Skills.BleedingWoundId, statName: Enums.Stats.Int, name: Skills.BleedingWoundName);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
@@ -83,7 +83,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
 				creature: _creature,
 				skill: _skillBleedingWound,
-				statName: "Int",
 				value: 10));
 
 			_headPart = CreaturePart.CreateForTest(

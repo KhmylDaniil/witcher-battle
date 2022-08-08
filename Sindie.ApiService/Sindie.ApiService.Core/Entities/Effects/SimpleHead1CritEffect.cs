@@ -5,14 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static Sindie.ApiService.Core.BaseData.Crit;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities.Effects
 {
 	/// <summary>
 	/// Критический эффект - Уродующий шрам
 	/// </summary>
-	public sealed class SimpleHead1CritEffect : Effect, ICrit
+	public sealed class SimpleHead1CritEffect : CritEffect, ICrit
 	{
 		private const int SkillModifier = -3;
 		private const int AfterTreatSkillModifier = -1;
@@ -33,8 +33,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// Конструктор эффекта уродующего шрама
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		/// <param name="condition">Состояние</param>
-		private SimpleHead1CritEffect(Creature creature, Condition condition) : base(creature, condition)
+		/// <param name="name">Название</param>
+		/// <param name="aimedPart">Часть тела</param>
+		private SimpleHead1CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
 			=> ApplyStatChanges(creature);
 
 		/// <summary>
@@ -45,18 +46,19 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <summary>
 		/// Тип части тела
 		/// </summary
-		public BodyPartTypes.BodyPartType BodyPartLocation { get; } = BodyPartTypes.BodyPartType.Head;
+		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Head;
 
 		/// <summary>
 		/// Создание эффекта - синглтон
 		/// </summary>
-		/// <param name="target">Цель</param>
-		/// <param name="condition">Состояние</param>
+		/// <param name="creature">Существо</param>
+		/// <param name="name">Название</param>
+		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
-		public static SimpleHead1CritEffect Create(Creature target, CreaturePart aimedPart, Condition condition)
-			=> target.Effects.Any(x => x.EffectId == Crit.SimpleHead1Id)
+		public static SimpleHead1CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
+			=> creature.Effects.Any(x => x is SimpleHead1CritEffect)
 				? null
-				: new SimpleHead1CritEffect(target, condition);
+				: new SimpleHead1CritEffect(creature, aimedPart, name);
 
 		/// <summary>
 		/// Автоматически прекратить эффект

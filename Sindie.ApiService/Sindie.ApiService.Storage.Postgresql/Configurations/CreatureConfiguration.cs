@@ -142,7 +142,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.HasMany(x => x.Effects)
 				.WithOne(x => x.Creature)
-				.HasForeignKey(x => x.EffectId)
+				.HasForeignKey(x => x.CreatureId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 

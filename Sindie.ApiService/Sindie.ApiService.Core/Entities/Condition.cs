@@ -60,11 +60,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public List<AppliedCondition> AppliedConditions { get; set; }
 
-		/// <summary>
-		/// Эффекты
-		/// </summary>
-		public List<Effect> Effects { get; set; }
-
 		#endregion navigation properties
 
 		/// <summary>
@@ -90,7 +85,6 @@ namespace Sindie.ApiService.Core.Entities
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId,
-			Effects = new List<Effect>(),
 			AppliedConditions = new List<AppliedCondition>()
 		};
 	}
