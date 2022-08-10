@@ -43,6 +43,7 @@ namespace Sindie.ApiService.Core.Entities
 			Creature = creature;
 			Skill = skill;
 			SkillValue = skillValue;
+			MaxValue = skillValue;
 		}
 
 		/// <summary>
@@ -61,7 +62,12 @@ namespace Sindie.ApiService.Core.Entities
 		public Stats StatName { get; protected set; }
 
 		/// <summary>
-		/// значение навыка у существа
+		/// Максималальное значение навыка
+		/// </summary>
+		public int MaxValue { get; private set; }
+
+		/// <summary>
+		/// Значение навыка у существа
 		/// </summary>
 		public int SkillValue
 		{
@@ -117,6 +123,7 @@ namespace Sindie.ApiService.Core.Entities
 			Creature creature = default,
 			Skill skill = default,
 			int value = default,
+			int maxValue = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
@@ -126,6 +133,7 @@ namespace Sindie.ApiService.Core.Entities
 			Creature = creature,
 			Skill = skill,
 			SkillValue = value == 0 ? 1 : value,
+			MaxValue = maxValue == 0 ? 1 : maxValue,
 			StatName = skill.StatName,
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,

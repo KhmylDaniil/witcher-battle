@@ -8,32 +8,33 @@ using static Sindie.ApiService.Core.BaseData.Enums;
 namespace Sindie.ApiService.Core.Entities.Effects
 {
 	/// <summary>
-	/// Критический эффект - треснувшие ребра
+	/// Критический эффект - сосущая рана грудной клетки
 	/// </summary>
-	public class SimpleTorso2CritEffect : CritEffect, ICrit
+	public class DifficultTorso1CritEffect : CritEffect, ICrit
 	{
-		private const int BodyModifier = -2;
-		private const int AfterTreatBodyModifier = -1;
+		private const int BodyAndSpeedModifier = -3;
+		private const int AfterTreatBodyAndSpeedModifier = -2;
+		private const string sufflocationName = "Sucking chest wound-based sufflocation.";
 
 		/// <summary>
 		/// Тяжесть критического эффекта
 		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Simple | Severity.Unstabilizied;
+		public Severity Severity { get; private set; } = Severity.Difficult | Severity.Unstabilizied;
 
 		/// <summary>
 		/// Тип части тела
 		/// </summary
 		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Torso;
 
-		public SimpleTorso2CritEffect() { }
+		public DifficultTorso1CritEffect() { }
 
 		/// <summary>
-		/// Конструктор эффекта треснувших ребер
+		/// Конструктор эффекта сосущей раны грудной клетки
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
-		private SimpleTorso2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
+		private DifficultTorso1CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
 			=> ApplyStatChanges(creature);
 
 		/// <summary>
@@ -43,11 +44,16 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
-		public static SimpleTorso2CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
-			=> CheckExistingEffectAndRemoveStabilizedEffect<SimpleTorso2CritEffect>(creature, aimedPart)
-				? new SimpleTorso2CritEffect(creature, aimedPart, name)
-				: null;
+		public static DifficultTorso1CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
+		{
+			if (creature.Effects.Any(x => x is SufflocationEffect))
+				creature.Effects.Add(SufflocationEffect.Create(null, null, creature, sufflocationName));
 
+			return CheckExistingEffectAndRemoveStabilizedEffect<DifficultTorso1CritEffect>(creature, aimedPart)
+				? new DifficultTorso1CritEffect(creature, aimedPart, name)
+				: null;
+		}
+			
 		/// <summary>
 		/// Автоматически прекратить эффект
 		/// </summary>
@@ -80,7 +86,10 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		public void ApplyStatChanges(Creature creature)
-			=> creature.Body = creature.GetBody() + BodyModifier;
+		{
+			creature.Body = creature.GetBody() + BodyAndSpeedModifier;
+			creature.Speed = creature.GetSpeed() + BodyAndSpeedModifier;
+		}
 
 		/// <summary>
 		/// Отменить изменения характеристик
@@ -88,10 +97,16 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void RevertStatChanges(Creature creature)
 		{
-			if (Severity == Severity.Simple)
-				creature.Body = creature.GetBody() - AfterTreatBodyModifier;
+			if (Severity == Severity.Difficult)
+			{
+				creature.Body = creature.GetBody() - AfterTreatBodyAndSpeedModifier;
+				creature.Speed = creature.GetSpeed() - AfterTreatBodyAndSpeedModifier;
+			}
 			else
-				creature.Body = creature.GetBody() - BodyModifier;
+			{
+				creature.Body = creature.GetBody() - BodyAndSpeedModifier;
+				creature.Speed = creature.GetSpeed() - BodyAndSpeedModifier;
+			}
 		}
 
 		/// <summary>
@@ -100,8 +115,21 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void Stabilize(Creature creature)
 		{
-			creature.Body = creature.GetBody() - BodyModifier;
-			creature.Body = creature.GetBody() + AfterTreatBodyModifier;
+			if (Severity == Severity.Difficult)
+				return;
+
+			Severity = Severity.Difficult;
+
+			creature.Body = creature.GetBody() - BodyAndSpeedModifier;
+			creature.Speed = creature.GetSpeed() - BodyAndSpeedModifier;
+
+			creature.Body = creature.GetBody() + AfterTreatBodyAndSpeedModifier;
+			creature.Speed = creature.GetSpeed() + AfterTreatBodyAndSpeedModifier;
+
+			var sufflocation = creature.Effects.FirstOrDefault(x => x is SufflocationEffect && x.Name.Equals(sufflocationName));
+
+			if (sufflocation != null)
+				creature.Effects.Remove(sufflocation);
 		}
 	}
 }

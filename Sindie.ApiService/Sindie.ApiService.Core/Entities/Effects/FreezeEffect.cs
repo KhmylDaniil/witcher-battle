@@ -75,8 +75,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		private void ApplyStatChanges(Creature creature)
 		{
-			creature.Speed += SpeedModifier;
-			creature.Ref += RefModifier;
+			creature.Speed = creature.GetSpeed() + SpeedModifier;
+			creature.Ref = creature.GetRef() + RefModifier;
 		}
 
 		/// <summary>

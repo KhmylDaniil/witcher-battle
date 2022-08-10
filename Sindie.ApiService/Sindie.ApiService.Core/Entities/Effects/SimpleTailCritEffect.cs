@@ -52,10 +52,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <returns>Эффект</returns>
 		public static SimpleTailCritEffect Create(Creature creature, CreaturePart aimedPart, string name)
 		{
-			if (creature.Effects.Any(x => x is SimpleTailCritEffect crit && crit.CreaturePartId == aimedPart.Id))
-				return null;
-
-			var effect = new SimpleTailCritEffect(creature, aimedPart, name);
+			var effect = CheckExistingEffectAndRemoveStabilizedEffect<SimpleTailCritEffect>(creature, aimedPart)
+				? new SimpleTailCritEffect(creature, aimedPart, name)
+				: null;
 
 			ApplySharedPenalty(creature, effect);
 
@@ -91,8 +90,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			foreach (var skill in creatureSkills)
 			{
-				skill.SkillValue -= Modifier;
-				skill.SkillValue += AfterTreatModifier;
+				skill.SkillValue = skill.GetValue() - Modifier;
+				skill.SkillValue = skill.GetValue() + AfterTreatModifier;
 			}
 
 			SharedPenaltyMovedToAnotherCrit(creature, this);
@@ -122,7 +121,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.SkillId));
 
 			foreach (var skill in creatureSkills)
-				skill.SkillValue += Modifier;
+				skill.SkillValue = skill.GetValue() + Modifier;
 		}
 
 		/// <summary>
@@ -137,9 +136,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			foreach (var skill in creatureSkills)
 				if (Severity == Severity.Simple)
-					skill.SkillValue -= AfterTreatModifier;
+					skill.SkillValue = skill.GetValue() - AfterTreatModifier;
 				else
-					skill.SkillValue -= Modifier;
+					skill.SkillValue = skill.GetValue() - Modifier;
 		}
 	}
 }

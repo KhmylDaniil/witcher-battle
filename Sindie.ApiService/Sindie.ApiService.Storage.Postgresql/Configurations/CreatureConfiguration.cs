@@ -50,12 +50,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			.HasComment("Хиты")
 			.IsRequired();
 
-			builder.Property(r => r.MaxHP)
-			.HasColumnName("MaxHP")
-			.HasComment("Максимальные хиты")
-			.IsRequired();
-
-
 			builder.Property(r => r.Sta)
 			.HasColumnName("Sta")
 			.HasComment("Стамина")
@@ -104,6 +98,61 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			builder.Property(r => r.Luck)
 			.HasColumnName("Luck")
 			.HasComment("Удача")
+			.IsRequired();
+
+			builder.Property(r => r.MaxHP)
+			.HasColumnName("MaxHP")
+			.HasComment("Максимальные хиты")
+			.IsRequired();
+
+			builder.Property(r => r.MaxSta)
+			.HasColumnName("MaxSta")
+			.HasComment("Максимальная стамина")
+			.IsRequired();
+
+			builder.Property(r => r.MaxInt)
+			.HasColumnName("MaxInt")
+			.HasComment("Максимальный интеллект")
+			.IsRequired();
+
+			builder.Property(r => r.MaxRef)
+			.HasColumnName("MaxRef")
+			.HasComment("Максимальные рефлексы")
+			.IsRequired();
+
+			builder.Property(r => r.MaxDex)
+			.HasColumnName("MaxDex")
+			.HasComment("Максимальна ловкость")
+			.IsRequired();
+
+			builder.Property(r => r.MaxBody)
+			.HasColumnName("MaxBody")
+			.HasComment("Максимальное телосложение")
+			.IsRequired();
+
+			builder.Property(r => r.MaxEmp)
+			.HasColumnName("MaxEmp")
+			.HasComment("Максимальная эмпатия")
+			.IsRequired();
+
+			builder.Property(r => r.MaxCra)
+			.HasColumnName("MaxCra")
+			.HasComment("Максимальный крафт")
+			.IsRequired();
+
+			builder.Property(r => r.MaxWill)
+			.HasColumnName("MaxWill")
+			.HasComment("Максимальнпя воля")
+			.IsRequired();
+
+			builder.Property(r => r.MaxSpeed)
+			.HasColumnName("MaxSpeed")
+			.HasComment("Максимальная скорость")
+			.IsRequired();
+
+			builder.Property(r => r.MaxLuck)
+			.HasColumnName("MaxLuck")
+			.HasComment("Максимальная удача")
 			.IsRequired();
 
 			builder.HasOne(x => x.Battle)

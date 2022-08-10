@@ -43,6 +43,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly Condition _simpleLegCrit;
 		private readonly Condition _simpleArmCrit;
 		private readonly Condition _difficultLegCrit;
+		private readonly Condition _deadlyLegCrit;
 
 		/// <summary>
 		/// Тест для <see cref="CreatureAttackHandler"/>
@@ -61,6 +62,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_simpleLegCrit = Condition.CreateForTest(id: Crit.SimpleLegId, name: Crit.SimpleLeg);
 			_simpleArmCrit = Condition.CreateForTest(id: Crit.SimpleArmId, name: Crit.SimpleArm);
 			_difficultLegCrit = Condition.CreateForTest(id: Crit.DifficultLegId, name: Crit.DifficultLeg);
+			_deadlyLegCrit = Condition.CreateForTest(id: Crit.DeadlyLegId, name: Crit.DeadlyLeg);
 
 			_damageType = DamageType.CreateForTest();
 
@@ -95,6 +97,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				@ref: 6,
 				dex: 6,
 				speed: 4,
+				maxSpeed: 4,
 				hp: 50);
 
 			_creature.Abilities.Add(_ability);
@@ -112,12 +115,14 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
 				creature: _creature,
 				skill: _dodgeSkill,
-				value: 6));
+				value: 6,
+				maxValue: 6));
 
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
 				creature: _creature,
 				skill: _athleticsSkill,
-				value: 5));
+				value: 5,
+				maxValue: 5));
 
 			_headPart = CreaturePart.CreateForTest(
 				creature: _creature,
@@ -181,6 +186,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_arm,
 				_bleedingWound,
 				_difficultLegCrit,
+				_deadlyLegCrit,
 				_simpleArmCrit,
 				_simpleLegCrit,
 				_meleeSkill,
@@ -342,7 +348,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				attackerId: _creature.Id,
 				targetCreatureId: _creature.Id,
 				creaturePartId: _rightLegPart.Id,
-				specialToHit: 8);
+				specialToHit: 3);
 
 			result = await newHandler.Handle(request, default);
 
@@ -390,7 +396,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				attackerId: _creature.Id,
 				targetCreatureId: _creature.Id,
 				creaturePartId: _rightLegPart.Id,
-				specialToHit: 14);
+				specialToHit: 8);
 
 			result = await newHandler.Handle(request, default);
 
@@ -409,11 +415,39 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			dodge = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.DodgeId);
 			Assert.IsNotNull(dodge);
-			Assert.AreEqual(dodge.SkillValue, 0);
+			Assert.AreEqual(dodge.SkillValue, 1);
 
 			athletics = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AthleticsId);
 			Assert.IsNotNull(athletics);
-			Assert.AreEqual(athletics.SkillValue, 0);
+			Assert.AreEqual(athletics.SkillValue, 1);
+
+			//dismember limb
+			request = new CreatureAttackCommand(
+				battleId: _instance.Id,
+				attackerId: _creature.Id,
+				targetCreatureId: _creature.Id,
+				creaturePartId: _rightLegPart.Id,
+				specialToHit: 17);
+
+			result = await newHandler.Handle(request, default);
+
+			Assert.IsNotNull(message);
+
+			monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
+			Assert.IsNotNull(monster);
+
+			var rightLegDeadlyCrit = monster.Effects.FirstOrDefault(x => x is DeadlyLegCritEffect crit && crit.CreaturePartId == _rightLegPart.Id);
+			Assert.IsNotNull(rightLegDifficultCrit);
+
+			Assert.AreEqual(monster.Speed, 1);
+
+			dodge = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.DodgeId);
+			Assert.IsNotNull(dodge);
+			Assert.AreEqual(dodge.SkillValue, 1);
+
+			athletics = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AthleticsId);
+			Assert.IsNotNull(athletics);
+			Assert.AreEqual(athletics.SkillValue, 1);
 		}
 	}
 }

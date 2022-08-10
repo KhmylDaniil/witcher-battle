@@ -41,8 +41,7 @@ namespace Sindie.ApiService.Core.Logic
 
 			if (_rollService.BeatDifficulty(healingBase, stabilizationDifficulty))
 			{
-				//TODO доделать переделку ту стринга
-				message.AppendLine($"Эффект {effect.ToString()} стабилизирован.");
+				message.AppendLine($"Эффект {effect.Name} стабилизирован.");
 
 				if (effect is ICrit)
 					(effect as ICrit).Stabilize(patient);

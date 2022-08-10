@@ -33,6 +33,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Значение навыка")
 				.IsRequired();
 
+			builder.Property(r => r.MaxValue)
+				.HasColumnName("MaxValue")
+				.HasComment("Макксимальное значение навыка")
+				.IsRequired();
+
 			builder.Property(r => r.StatName)
 				.HasColumnName("StatName")
 				.HasComment("Название корреспондирующей характеристики");

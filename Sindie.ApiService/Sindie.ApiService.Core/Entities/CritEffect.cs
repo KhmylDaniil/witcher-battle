@@ -124,9 +124,54 @@ namespace Sindie.ApiService.Core.Entities
 
 			if (severiestCrit is null)
 				return;
-			
+
 			updatingCrit.RevertStatChanges(creature);
 			severiestCrit.ApplyStatChanges(creature);
 		}
+
+		/// <summary>
+		/// Ппроверка наличия такого же эффекта и удаление стабилизированной версии эффекта при ее наличии
+		/// </summary>
+		/// <typeparam name="T">Тип Критического эффекта</typeparam>
+		/// <param name="creature">Существо</param>
+		/// <param name="aimedPart">Часть тела</param>
+		/// <returns>Возможность создания эффекта</returns>
+		public static bool CheckExistingEffectAndRemoveStabilizedEffect<T>(Creature creature, CreaturePart aimedPart) where T : CritEffect
+		{
+			ICrit crit = creature.Effects.FirstOrDefault(x => x.Id == aimedPart.Id && x is T) as ICrit;
+			
+			if (crit == null)
+				return true;
+
+			if (Enums.IsStabile(crit.Severity))
+				return false;
+
+			if (crit is not ISharedPenaltyCrit sharedPenaltyCrit || sharedPenaltyCrit.PenaltyApplied)
+				crit.RevertStatChanges(creature);
+
+			creature.Effects.Remove((CritEffect)crit);
+
+			return true;
+		}
+
+		///// <summary>
+		///// Уничтожить конечность
+		///// </summary>
+		///// <param name="creature">Существо</param>
+		///// <param name="deadlyCrit">Смертельный критический эффект</param>
+		//public static void DestroyLimb(Creature creature, CritEffect deadlyCrit)
+		//{
+		//	if (deadlyCrit is ISharedPenaltyCrit crit && crit.Severity < Enums.Severity.Deadly)
+		//		return;
+
+		//	var limb = creature.CreatureParts.FirstOrDefault(x => x.Id == deadlyCrit.CreaturePartId);
+
+		//	if (limb.MaxToHit != DiceValue.Value)
+		//		creature.CreatureParts.FirstOrDefault(x => x.MinToHit == limb.MaxToHit + 1).MinToHit = limb.MinToHit;
+		//	else
+		//		creature.CreatureParts.FirstOrDefault(x => x.MaxToHit == limb.MinToHit - 1).MaxToHit = DiceValue.Value;
+
+		//	creature.CreatureParts.Remove(limb);
+		//}
 	}
 }

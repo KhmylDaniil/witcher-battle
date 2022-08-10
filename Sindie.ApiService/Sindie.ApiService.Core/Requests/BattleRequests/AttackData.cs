@@ -1,5 +1,8 @@
-﻿using Sindie.ApiService.Core.Entities;
+﻿using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Entities;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sindie.ApiService.Core.Requests.BattleRequests
 {
@@ -76,7 +79,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 
 			specialToHit = aimedPart is null ? specialToHit : specialToHit - aimedPart.HitPenalty;
 			
-			aimedPart = aimedPart is null ? target.DefaultCreaturePart() : aimedPart;
+			aimedPart = AimedPartIsNullOrDismembered() ? DefaultCreaturePart() : aimedPart;
 			
 			return new AttackData()
 			{
@@ -89,6 +92,30 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 				ToDamage = specialToDamage,
 				Conditions = conditions
 			};
+
+			bool AimedPartIsNullOrDismembered()
+			{
+				if (aimedPart is null)
+					return true;
+
+				return target.Effects.Any(x => x is CritEffect crit && crit.CreaturePartId == aimedPart.Id
+					&& crit is ISharedPenaltyCrit limbCrit && limbCrit.Severity >= BaseData.Enums.Severity.Deadly);
+			}
+			
+			CreaturePart DefaultCreaturePart()
+			{
+				Random random = new();
+				int roll;
+
+				do
+				{
+					roll = random.Next(1, 10);
+					aimedPart = target.CreatureParts.First(x => x.MinToHit <= roll && x.MaxToHit >= roll);
+				}
+				while (AimedPartIsNullOrDismembered());
+
+				return aimedPart;
+			}
 		}
 	}
 }

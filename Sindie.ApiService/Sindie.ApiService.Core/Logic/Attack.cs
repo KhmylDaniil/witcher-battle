@@ -27,7 +27,7 @@ namespace Sindie.ApiService.Core.Logic
 		}
 
 		/// <summary>
-		/// Атака монсстра
+		/// Монстр атакует с учетом защиты извне БД
 		/// </summary>
 		/// <param name="data">Данные для расчета атаки</param>
 		/// <param name="defenseValue">Значение защиты</param>
@@ -63,7 +63,7 @@ namespace Sindie.ApiService.Core.Logic
 		}
 
 		/// <summary>
-		/// Получение монстром урона
+		/// Монстр получает урон извне БД
 		/// </summary>
 		/// <param name="data">Данные атаки</param>
 		/// <param name="damage">Значение урона</param>
@@ -84,6 +84,11 @@ namespace Sindie.ApiService.Core.Logic
 			return message.ToString();
 		}
 
+		/// <summary>
+		/// Существо атакует полностью из БД в БД
+		/// </summary>
+		/// <param name="data">Данные для расчета атаки</param>
+		/// <returns></returns>
 		internal string CreatureAttack(ref AttackData data)
 		{
 			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
@@ -137,6 +142,10 @@ namespace Sindie.ApiService.Core.Logic
 		private static int DefenseValue(Creature defender, CreatureSkill defensiveParameter)
 		{
 			var result = defender.SkillBase(defensiveParameter.SkillId);
+
+			if (defender.Effects.Any(x => x is StunEffect))
+				result = 10;
+
 			return result < 0 ? 0 : result;
 		}
 
@@ -256,6 +265,16 @@ namespace Sindie.ApiService.Core.Logic
 			instance.Creatures.RemoveAll(x => x.HP <= 0 && x is not Character);
 		}
 
+		public static void DeathSave(Creature creature, int modifier = default)
+		{
+			if (new Random().Next(1, 10) >= creature.Stun + modifier)
+				return;
+
+
+
+
+		}
+
 		private static string CritMissMessage(int attackerFumble)
 		{
 			return $"Критический промах {attackerFumble}.";
@@ -270,6 +289,7 @@ namespace Sindie.ApiService.Core.Logic
 		private static void ApplyDamage(ref AttackData data, ref StringBuilder message, int successValue)
 		{
 			message.AppendLine($"Попадание с превышением на {successValue}.");
+			RemoveStunEffect(data);
 
 			int damage = RollDamage(data.Ability, data.ToDamage);
 
@@ -281,6 +301,13 @@ namespace Sindie.ApiService.Core.Logic
 
 			data.Target.HP -= damage;
 			message.AppendLine($"Нанеcено {damage} урона.");
+		}
+
+		private static void RemoveStunEffect(AttackData data)
+		{
+			var stun = data.Target.Effects.FirstOrDefault(x => x is StunEffect);
+			if (stun != null)
+				data.Target.Effects.Remove(stun);
 		}
 
 		/// <summary>
@@ -398,5 +425,6 @@ namespace Sindie.ApiService.Core.Logic
 
 			return result;
 		}
+
 	}
 }

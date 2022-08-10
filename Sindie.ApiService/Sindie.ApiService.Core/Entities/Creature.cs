@@ -1,6 +1,4 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Entities.Effects;
+﻿using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
@@ -73,8 +71,8 @@ namespace Sindie.ApiService.Core.Entities
 			ImgFile = creatureTemplate.ImgFile;
 			CreatureTemplate = creatureTemplate;
 			CreatureTypeId = creatureTemplate.CreatureTypeId;
+
 			HP = creatureTemplate.HP;
-			MaxHP = creatureTemplate.HP;
 			Sta = creatureTemplate.Sta;
 			Int = creatureTemplate.Int;
 			Ref = creatureTemplate.Ref;
@@ -85,7 +83,20 @@ namespace Sindie.ApiService.Core.Entities
 			Will = creatureTemplate.Will;
 			Speed = creatureTemplate.Speed;
 			Luck = creatureTemplate.Luck;
+
+			MaxHP = creatureTemplate.HP;
+			MaxSta = creatureTemplate.Sta;
+			MaxInt = creatureTemplate.Int;
+			MaxRef = creatureTemplate.Ref;
+			MaxDex = creatureTemplate.Dex;
+			MaxBody = creatureTemplate.Body;
+			MaxEmp = creatureTemplate.Emp;
+			MaxCra = creatureTemplate.Cra;
+			MaxWill = creatureTemplate.Will;
+			MaxSpeed = creatureTemplate.Speed;
+			MaxLuck = creatureTemplate.Luck;
 			Stun = CalculateStun(creatureTemplate);
+
 			Name = name;
 			Description = description;
 			CreatureParts = CreateParts(creatureTemplate.CreatureTemplateParts);
@@ -124,10 +135,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public Guid CreatureTypeId { get; protected set; }
 
-		/// <summary>
-		/// Хиты
-		/// </summary>
-		public int HP { get; set; }
+		#region starting stats
 
 		/// <summary>
 		/// Максимальные хиты
@@ -135,9 +143,66 @@ namespace Sindie.ApiService.Core.Entities
 		public int MaxHP { get; private set; }
 
 		/// <summary>
+		/// Максимальная выносливость
+		/// </summary>
+		public int MaxSta { get; set; }
+
+		/// <summary>
+		/// Максимальный интеллект
+		/// </summary>
+		public int MaxInt { get; private set; }
+
+		/// <summary>
+		/// Максимальные рефлексы
+		/// </summary>
+		public int MaxRef { get; private set; }
+
+		/// <summary>
+		/// Максимальная ловкость
+		/// </summary>
+		public int MaxDex { get; private set; }
+
+		/// <summary>
+		/// Максимальное телосложение
+		/// </summary>
+		public int MaxBody { get; private set; }
+
+		/// <summary>
+		/// Максимальная эмпатия
+		/// </summary>
+		public int MaxEmp { get; private set; }
+
+		/// <summary>
+		/// Максимальное ремесло
+		/// </summary>
+		public int MaxCra { get; private set; }
+
+		/// <summary>
+		/// Максимальная воля
+		/// </summary>
+		public int MaxWill { get; private set; }
+
+		/// <summary>
+		/// Максимальная скорость
+		/// </summary>
+		public int MaxSpeed { get; private set; }
+
+		/// <summary>
+		/// Максимальная удача
+		/// </summary>
+		public int MaxLuck { get; private set; }
+
+		/// <summary>
 		/// Устойчивость
 		/// </summary>
-		public int Stun { get; private set; }
+		public int Stun { get; set; }
+
+		#endregion starting stats
+
+		/// <summary>
+		/// Хиты
+		/// </summary>
+		public int HP { get; set; }
 
 		/// <summary>
 		/// Стамина
@@ -397,8 +462,8 @@ namespace Sindie.ApiService.Core.Entities
 			var sortedAbilities = from a in Abilities
 								orderby a.Accuracy, a.AttackSpeed, a.AttackDiceQuantity, a.DamageModifier
 								select a;
-
-			return sortedAbilities.First();
+			//TODO проверить
+			return sortedAbilities.Last();
 		}
 
 		/// <summary>
@@ -444,14 +509,15 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Выбор места попадания
+		/// Возврат максимума скилла
 		/// </summary>
-		/// <returns>Часть шаблона тела</returns>
-		internal CreaturePart DefaultCreaturePart()
+		/// <param name="skillId">Айди навыка</param>
+		/// <returns></returns>
+		public int GetSkillMax(Guid skillId)
 		{
-			Random random = new ();
-			var roll = random.Next(1, 10);
-			return CreatureParts.First(x => x.MinToHit <= roll && x.MaxToHit >= roll);
+			var skill = CreatureSkills.FirstOrDefault(x => x.SkillId == skillId);
+
+			return skill is null ? 0 : skill.MaxValue;
 		}
 
 		/// <summary>
@@ -502,6 +568,7 @@ namespace Sindie.ApiService.Core.Entities
 			int will = default,
 			int speed = default,
 			int luck = default,
+			int maxSpeed = default, 
 			int stun = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
@@ -527,6 +594,7 @@ namespace Sindie.ApiService.Core.Entities
 				Will = will == default ? 1 : will,
 				Speed = speed == default ? 1 : speed,
 				Luck = luck == default ? 1 : luck,
+				MaxSpeed = maxSpeed == default ? 1 : maxSpeed,
 				Stun = stun == default ? 1 : stun,
 				CreatedOn = createdOn,
 				ModifiedOn = modifiedOn,

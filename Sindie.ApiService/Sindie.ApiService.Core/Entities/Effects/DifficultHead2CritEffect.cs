@@ -8,32 +8,31 @@ using static Sindie.ApiService.Core.BaseData.Enums;
 namespace Sindie.ApiService.Core.Entities.Effects
 {
 	/// <summary>
-	/// Критический эффект - треснувшие ребра
+	/// Критический эффект - проломленный череп
 	/// </summary>
-	public class SimpleTorso2CritEffect : CritEffect, ICrit
+	public class DifficultHead2CritEffect : CritEffect, ICrit
 	{
-		private const int BodyModifier = -2;
-		private const int AfterTreatBodyModifier = -1;
+		private const int IntAndDexModifier = -1;
 
 		/// <summary>
 		/// Тяжесть критического эффекта
 		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Simple | Severity.Unstabilizied;
+		public Severity Severity { get; private set; } = Severity.Difficult | Severity.Unstabilizied;
 
 		/// <summary>
 		/// Тип части тела
 		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Torso;
+		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Head;
 
-		public SimpleTorso2CritEffect() { }
+		public DifficultHead2CritEffect() { }
 
 		/// <summary>
-		/// Конструктор эффекта треснувших ребер
+		/// Конструктор эффекта проломленного черепа
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
-		private SimpleTorso2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
+		private DifficultHead2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
 			=> ApplyStatChanges(creature);
 
 		/// <summary>
@@ -43,10 +42,15 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
-		public static SimpleTorso2CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
-			=> CheckExistingEffectAndRemoveStabilizedEffect<SimpleTorso2CritEffect>(creature, aimedPart)
-				? new SimpleTorso2CritEffect(creature, aimedPart, name)
+		public static DifficultHead2CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
+		{
+			if (!creature.Effects.Any(x => x is BleedEffect))
+				creature.Effects.Add(BleedEffect.Create(null, null, creature, "Secondary Bleed"));
+
+			return CheckExistingEffectAndRemoveStabilizedEffect<DifficultHead2CritEffect>(creature, aimedPart)
+				? new DifficultHead2CritEffect(creature, aimedPart, name)
 				: null;
+		}
 
 		/// <summary>
 		/// Автоматически прекратить эффект
@@ -80,7 +84,12 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		public void ApplyStatChanges(Creature creature)
-			=> creature.Body = creature.GetBody() + BodyModifier;
+		{
+			creature.Int = creature.GetRef() + IntAndDexModifier;
+			creature.Dex = creature.GetDex() + IntAndDexModifier;
+
+			creature.CreatureParts.FirstOrDefault(x => x.Id == this.CreaturePartId).DamageModifier++;
+		}
 
 		/// <summary>
 		/// Отменить изменения характеристик
@@ -88,10 +97,10 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void RevertStatChanges(Creature creature)
 		{
-			if (Severity == Severity.Simple)
-				creature.Body = creature.GetBody() - AfterTreatBodyModifier;
-			else
-				creature.Body = creature.GetBody() - BodyModifier;
+			creature.Int = creature.GetRef() - IntAndDexModifier;
+			creature.Dex = creature.GetDex() - IntAndDexModifier;
+
+			creature.CreatureParts.FirstOrDefault(x => x.Id == this.CreaturePartId).DamageModifier--;
 		}
 
 		/// <summary>
@@ -100,8 +109,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void Stabilize(Creature creature)
 		{
-			creature.Body = creature.GetBody() - BodyModifier;
-			creature.Body = creature.GetBody() + AfterTreatBodyModifier;
+			Severity = Severity.Difficult;
 		}
 	}
 }

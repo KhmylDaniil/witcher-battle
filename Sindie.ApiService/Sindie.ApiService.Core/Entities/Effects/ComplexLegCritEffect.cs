@@ -26,7 +26,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
-		private ComplexLegCritEffect(Creature creature, string name, CreaturePart aimedPart) : base(creature, aimedPart, name) { }
+		private ComplexLegCritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name) { }
 
 		/// <summary>
 		/// Тяжесть критического эффекта
@@ -52,10 +52,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <returns>Эффект</returns>
 		public static ComplexLegCritEffect Create(Creature creature, CreaturePart aimedPart, string name)
 		{
-			if (creature.Effects.Any(x => x is ComplexLegCritEffect crit && crit.CreaturePartId == aimedPart.Id))
-				return null;
-
-			var effect = new ComplexLegCritEffect(creature, name, aimedPart);
+			var effect = CheckExistingEffectAndRemoveStabilizedEffect<ComplexLegCritEffect>(creature, aimedPart)
+				? new ComplexLegCritEffect(creature, aimedPart, name)
+				: null;
 
 			ApplySharedPenalty(creature, effect);
 
@@ -82,20 +81,20 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void Stabilize(Creature creature)
 		{
-			if (Severity == Enums.Severity.Complex)
+			if (Severity == Severity.Complex)
 				return;
 
-			Severity = Enums.Severity.Complex;
+			Severity = Severity.Complex;
 
-			creature.Speed -= Modifier;
-			creature.Speed += AfterTreatModifier;
+			creature.Speed = creature.GetSpeed() - Modifier;
+			creature.Speed = creature.GetSpeed() + AfterTreatModifier;
 
 			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.SkillId));
 
 			foreach (var skill in creatureSkills)
 			{
-				skill.SkillValue -= Modifier;
-				skill.SkillValue += AfterTreatModifier;
+				skill.SkillValue = skill.GetValue() - Modifier;
+				skill.SkillValue = skill.GetValue() + AfterTreatModifier;
 			}
 
 			SharedPenaltyMovedToAnotherCrit(creature, this);
@@ -122,12 +121,12 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			PenaltyApplied = true;
 
-			creature.Speed += Modifier;
+			creature.Speed = creature.GetSpeed() + Modifier;
 
 			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.SkillId));
 
 			foreach (var skill in creatureSkills)
-				skill.SkillValue += Modifier;
+				skill.SkillValue = skill.GetValue() + Modifier;
 		}
 
 		/// <summary>
@@ -138,20 +137,17 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			PenaltyApplied = false;
 
-			creature.Speed -= Modifier;
-			creature.Speed += AfterTreatModifier;
-
 			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.SkillId));
 
 			foreach (var skill in creatureSkills)
 				if (Severity == Severity.Complex)
-					skill.SkillValue -= AfterTreatModifier;
+					skill.SkillValue = skill.GetValue() - AfterTreatModifier;
 				else
-					skill.SkillValue -= Modifier;
+					skill.SkillValue = skill.GetValue() - Modifier;
 
 			creature.Speed = Severity == Severity.Complex
-				? -AfterTreatModifier
-				: -Modifier;
+				? creature.Speed = creature.GetSpeed() - AfterTreatModifier
+				: creature.Speed = creature.GetSpeed() - Modifier;
 		}
 	}
 }

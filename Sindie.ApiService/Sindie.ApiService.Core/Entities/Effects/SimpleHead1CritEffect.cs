@@ -56,9 +56,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
 		public static SimpleHead1CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
-			=> creature.Effects.Any(x => x is SimpleHead1CritEffect)
-				? null
-				: new SimpleHead1CritEffect(creature, aimedPart, name);
+			=> CheckExistingEffectAndRemoveStabilizedEffect<SimpleHead1CritEffect>(creature, aimedPart)
+				? new SimpleHead1CritEffect(creature, aimedPart, name)
+				: null;
 
 		/// <summary>
 		/// Автоматически прекратить эффект
@@ -96,7 +96,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			var creatureSkills = creature.CreatureSkills.Where(x => affectedSkills.Contains(x.SkillId));
 
 			foreach (var skill in creatureSkills)
-				skill.SkillValue += SkillModifier;
+				skill.SkillValue = skill.GetValue() + SkillModifier;
 		}
 
 		/// <summary>
@@ -114,10 +114,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			foreach (var skill in creatureSkills)
 			{
-				skill.SkillValue -= SkillModifier;
-				skill.SkillValue += AfterTreatSkillModifier;
+				skill.SkillValue = skill.GetValue() - SkillModifier;
+				skill.SkillValue = skill.GetValue() + AfterTreatSkillModifier;
 			}
-
 		}
 
 		/// <summary>
@@ -130,9 +129,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			foreach (var skill in creatureSkills)
 				if (Severity == Severity.Simple)
-					skill.SkillValue -= AfterTreatSkillModifier;
+					skill.SkillValue = skill.GetValue() - AfterTreatSkillModifier;
 				else
-					skill.SkillValue -= SkillModifier;
+					skill.SkillValue = skill.GetValue() - SkillModifier;
 		}
 	}
 }

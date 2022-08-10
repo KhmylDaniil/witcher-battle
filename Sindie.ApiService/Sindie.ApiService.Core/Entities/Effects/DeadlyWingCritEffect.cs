@@ -9,47 +9,40 @@ using static Sindie.ApiService.Core.BaseData.Enums;
 namespace Sindie.ApiService.Core.Entities.Effects
 {
 	/// <summary>
-	/// Критический эффект - Открытый перелом ноги
+	/// Критический эффект - Потеря крыла
 	/// </summary>
-	public class DifficultLegCritEffect : CritEffect, ISharedPenaltyCrit
+	public class DeadlyWingCritEffect : CritEffect, ISharedPenaltyCrit
 	{
 		private int _speedModifier;
 		private int _dodgeModifier;
 		private int _athleticsModifier;
 
-		private int _afterTreatSpeedModifier;
-		private int _afterTreatDodgeModifier;
-		private int _afterTreatAthleticsModifier;
-
-		private DifficultLegCritEffect() { }
+		private DeadlyWingCritEffect() { }
 
 		/// <summary>
-		/// Конструктор эффекта открытого перелома ноги
+		/// Конструктор эффекта потери крыла
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
-		private DifficultLegCritEffect(Creature creature, CreaturePart aimedPart, string name) : base (creature, aimedPart, name)
+		private DeadlyWingCritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
 		{
 			_speedModifier = (int)Math.Floor(creature.MaxSpeed * -0.75);
-			_afterTreatSpeedModifier = (int)Math.Floor(creature.MaxSpeed * -0.5);
-			
+
 			_dodgeModifier = (int)Math.Floor(creature.GetSkillMax(Skills.DodgeId) * -0.75);
-			_afterTreatDodgeModifier = (int)Math.Floor(creature.GetSkillMax(Skills.DodgeId) * - 0.5);
 
 			_athleticsModifier = (int)Math.Floor(creature.GetSkillMax(Skills.AthleticsId) * -0.75);
-			_afterTreatAthleticsModifier = (int)Math.Floor(creature.GetSkillMax(Skills.AthleticsId) * - 0.5);
 		}
 
 		/// <summary>
 		/// Тяжесть критического эффекта
 		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Difficult | Severity.Unstabilizied;
+		public Severity Severity { get; private set; } = Severity.Deadly | Severity.Unstabilizied;
 
 		/// <summary>
 		/// Тип части тела
 		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Leg;
+		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Wing;
 
 		/// <summary>
 		/// Пенальти применено
@@ -63,13 +56,13 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="name">название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
-		public static DifficultLegCritEffect Create(Creature creature, CreaturePart aimedPart, string name)
+		public static DeadlyWingCritEffect Create(Creature creature, CreaturePart aimedPart, string name)
 		{
 			if (!creature.Effects.Any(x => x is BleedEffect))
 				creature.Effects.Add(BleedEffect.Create(null, null, creature, "Secondary Bleed"));
 
-			var effect = CheckExistingEffectAndRemoveStabilizedEffect<DifficultLegCritEffect>(creature, aimedPart)
-				? new DifficultLegCritEffect(creature, aimedPart, name)
+			var effect = CheckExistingEffectAndRemoveStabilizedEffect<DeadlyWingCritEffect>(creature, aimedPart)
+				? new DeadlyWingCritEffect(creature, aimedPart, name)
 				: null;
 
 			ApplySharedPenalty(creature, effect);
@@ -97,29 +90,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void Stabilize(Creature creature)
 		{
-			if (Severity == Severity.Difficult)
-				return;
-
-			Severity = Severity.Difficult;
-
-			creature.Speed = creature.GetSpeed() - _speedModifier;
-			creature.Speed = creature.GetSpeed() + _afterTreatSpeedModifier;
-			
-			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.Id == Skills.DodgeId);
-			if (dodge is not null)
-			{
-				dodge.SkillValue = dodge.GetValue() - _dodgeModifier;
-				dodge.SkillValue = dodge.GetValue() + _afterTreatDodgeModifier;
-			}
-
-			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.Id == Skills.AthleticsId);
-			if (athletics is not null)
-			{
-				athletics.SkillValue = athletics.GetValue() - _athleticsModifier;
-				athletics.SkillValue = athletics.GetValue() + _afterTreatAthleticsModifier;
-			}
-
-			SharedPenaltyMovedToAnotherCrit(creature, this);
+			Severity = Severity.Deadly;
 		}
 
 		/// <summary>
@@ -133,6 +104,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			Heal heal = new(rollService);
 
 			heal.TryStabilize(creature, ref creature, ref message, this);
+
+			message.AppendLine("Конечность отсечена и не может быть восстановлена.");
 		}
 
 		/// <summary>
@@ -162,29 +135,15 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			PenaltyApplied = false;
 
+			creature.Speed = creature.GetSpeed() - _speedModifier;
+
 			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.DodgeId);
+			if (dodge is not null)
+				dodge.SkillValue = dodge.GetValue() - _dodgeModifier;
+
 			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AthleticsId);
-
-			if (Severity == Severity.Difficult)
-			{
-				creature.Speed -= _afterTreatSpeedModifier;
-
-				if (dodge != null)
-					dodge.SkillValue = dodge.GetValue() - _afterTreatDodgeModifier;
-
-				if (athletics != null)
-					athletics.SkillValue = athletics.GetValue() - _afterTreatAthleticsModifier;
-			}
-			else
-			{
-				creature.Speed = creature.GetSpeed() - _speedModifier;
-
-				if (dodge != null)
-					dodge.SkillValue = dodge.GetValue() - _dodgeModifier;
-
-				if (athletics != null)
-					athletics.SkillValue = athletics.GetValue() - _athleticsModifier;
-			}
+			if (athletics is not null)
+				athletics.SkillValue = athletics.GetValue() - _athleticsModifier;
 		}
 	}
 }

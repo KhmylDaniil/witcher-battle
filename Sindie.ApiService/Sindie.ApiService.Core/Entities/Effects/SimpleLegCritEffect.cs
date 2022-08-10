@@ -52,10 +52,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <returns>Эффект</returns>
 		public static SimpleLegCritEffect Create(Creature creature, CreaturePart aimedPart, string name)
 		{
-			if (creature.Effects.Any(x => x is SimpleLegCritEffect crit && crit.CreaturePartId == aimedPart.Id))
-				return null;
-
-			var effect = new SimpleLegCritEffect(creature, aimedPart, name);
+			var effect = CheckExistingEffectAndRemoveStabilizedEffect<SimpleLegCritEffect>(creature, aimedPart)
+				? new SimpleLegCritEffect(creature, aimedPart, name)
+				: null;
 
 			ApplySharedPenalty(creature, effect);
 
@@ -87,15 +86,15 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			Severity = Enums.Severity.Simple;
 
-			creature.Speed -= Modifier;
-			creature.Speed += AfterTreatModifier;
+			creature.Speed = creature.GetSpeed() - Modifier;
+			creature.Speed = creature.GetSpeed() + AfterTreatModifier;
 
 			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.SkillId));
 
 			foreach (var skill in creatureSkills)
 			{
-				skill.SkillValue -= Modifier;
-				skill.SkillValue += AfterTreatModifier;
+				skill.SkillValue = skill.GetValue() - Modifier;
+				skill.SkillValue = skill.GetValue() + AfterTreatModifier;
 			}
 
 			SharedPenaltyMovedToAnotherCrit(creature, this);
@@ -122,12 +121,12 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			PenaltyApplied = true;
 			
-			creature.Speed += Modifier;
+			creature.Speed = creature.GetSpeed() + Modifier;
 			
 			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.SkillId));
 
 			foreach (var skill in creatureSkills)
-				skill.SkillValue += Modifier;
+				skill.SkillValue = skill.GetValue() + Modifier;
 		}
 
 		/// <summary>
@@ -142,13 +141,13 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			foreach (var skill in creatureSkills)
 				if (Severity == Severity.Simple)
-					skill.SkillValue -= AfterTreatModifier;
+					skill.SkillValue = skill.GetValue() - AfterTreatModifier;
 				else
-					skill.SkillValue -= Modifier;
+					skill.SkillValue = skill.GetValue() - Modifier;
 
 			creature.Speed = Severity == Severity.Simple
-				? creature.Speed - AfterTreatModifier
-				: creature.Speed - Modifier;
+				? creature.Speed = creature.GetSpeed() - AfterTreatModifier
+				: creature.Speed = creature.GetSpeed() - Modifier;
 		}
 	}
 }

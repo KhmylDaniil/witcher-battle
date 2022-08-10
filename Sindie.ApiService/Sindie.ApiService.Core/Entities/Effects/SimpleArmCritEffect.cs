@@ -35,6 +35,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		public Severity Severity { get; private set; } = Severity.Simple | Severity.Unstabilizied;
 
+		/// <summary>
+		/// Тип части тела
+		/// </summary>
 		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Arm;
 
 		/// <summary>
@@ -51,10 +54,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <returns>Эффект</returns>
 		public static SimpleArmCritEffect Create(Creature creature, CreaturePart aimedPart, string name)
 		{
-			if (creature.Effects.Any(x => x is SimpleArmCritEffect crit && crit.CreaturePartId == aimedPart.Id))
-				return null;
-
-			var effect = new SimpleArmCritEffect(creature, aimedPart, name);
+			var effect = CheckExistingEffectAndRemoveStabilizedEffect<SimpleArmCritEffect>(creature, aimedPart)
+				? new SimpleArmCritEffect(creature, aimedPart, name)
+				: null;
 
 			ApplySharedPenalty(creature, effect);
 
@@ -89,8 +91,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			foreach (var skill in creatureSkills)
 			{
-				skill.SkillValue -= SkillModifier;
-				skill.SkillValue += AfterTreatSkillModifier;
+				skill.SkillValue = skill.GetValue() - SkillModifier;
+				skill.SkillValue = skill.GetValue() + AfterTreatSkillModifier;
 			}
 
 			SharedPenaltyMovedToAnotherCrit(creature, this);
@@ -115,12 +117,16 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void ApplyStatChanges(Creature creature)
 		{
+			if (CreaturePartId != creature.LeadingArmId)
+				return;
+
 			PenaltyApplied = true;
+
 
 			var creatureSkills = creature.CreatureSkills.Where(x => AffectedStats.Contains(x.StatName));
 
 			foreach (var skill in creatureSkills)
-				skill.SkillValue += SkillModifier;
+				skill.SkillValue = skill.GetValue() + SkillModifier;
 		}
 
 		/// <summary>
@@ -129,18 +135,18 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void RevertStatChanges(Creature creature)
 		{
-			PenaltyApplied = false;
-
 			if (CreaturePartId != creature.LeadingArmId)
 				return;
+
+			PenaltyApplied = false;
 
 			var creatureSkills = creature.CreatureSkills.Where(x => AffectedStats.Contains(x.StatName));
 
 			foreach (var skill in creatureSkills)
 				if (Severity == Severity.Simple)
-					skill.SkillValue -= AfterTreatSkillModifier;
+					skill.SkillValue = skill.GetValue() - AfterTreatSkillModifier;
 				else
-					skill.SkillValue -= SkillModifier;
+					skill.SkillValue = skill.GetValue() - SkillModifier;
 		}
 	}
 }

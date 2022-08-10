@@ -9,7 +9,7 @@ namespace Sindie.ApiService.Core.BaseData
 	public static class Enums
 	{
 		/// <summary>
-		/// Тяжесть крита
+		/// Тяжесть критического эффекта
 		/// </summary>
 		[Flags]
 		public enum Severity
@@ -20,6 +20,14 @@ namespace Sindie.ApiService.Core.BaseData
 			Difficult = 16,
 			Deadly = 18
 		}
+
+		/// <summary>
+		/// Стабилизирован ли критический эффект
+		/// </summary>
+		/// <param name="severity">Тяжесть критического эффекта</param>
+		/// <returns></returns>
+		public static bool IsStabile(Severity severity)
+			=> severity == Severity.Simple || severity == Severity.Complex || severity == Severity.Difficult || severity == Severity.Deadly;
 
 		/// <summary>
 		/// Характеристики

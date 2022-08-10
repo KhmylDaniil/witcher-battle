@@ -8,32 +8,33 @@ using static Sindie.ApiService.Core.BaseData.Enums;
 namespace Sindie.ApiService.Core.Entities.Effects
 {
 	/// <summary>
-	/// Критический эффект - треснувшие ребра
+	/// Критический эффект - сломанные ребра
 	/// </summary>
-	public class SimpleTorso2CritEffect : CritEffect, ICrit
+	public class ComplexTorso1CritEffect : CritEffect, ICrit
 	{
 		private const int BodyModifier = -2;
 		private const int AfterTreatBodyModifier = -1;
+		private const int RefAndDexModifier = -1;
 
 		/// <summary>
 		/// Тяжесть критического эффекта
 		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Simple | Severity.Unstabilizied;
+		public Severity Severity { get; private set; } = Severity.Complex | Severity.Unstabilizied;
 
 		/// <summary>
 		/// Тип части тела
 		/// </summary
 		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Torso;
 
-		public SimpleTorso2CritEffect() { }
+		public ComplexTorso1CritEffect() { }
 
 		/// <summary>
-		/// Конструктор эффекта треснувших ребер
+		/// Конструктор эффекта сломанных ребер
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
-		private SimpleTorso2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
+		private ComplexTorso1CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
 			=> ApplyStatChanges(creature);
 
 		/// <summary>
@@ -43,9 +44,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
-		public static SimpleTorso2CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
-			=> CheckExistingEffectAndRemoveStabilizedEffect<SimpleTorso2CritEffect>(creature, aimedPart)
-				? new SimpleTorso2CritEffect(creature, aimedPart, name)
+		public static ComplexTorso1CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
+			=> CheckExistingEffectAndRemoveStabilizedEffect<ComplexTorso1CritEffect>(creature, aimedPart)
+				? new ComplexTorso1CritEffect(creature, aimedPart, name)
 				: null;
 
 		/// <summary>
@@ -80,7 +81,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		public void ApplyStatChanges(Creature creature)
-			=> creature.Body = creature.GetBody() + BodyModifier;
+		{
+			creature.Body = creature.GetBody() + BodyModifier;
+			creature.Ref = creature.GetRef() + RefAndDexModifier;
+			creature.Dex = creature.GetDex() + RefAndDexModifier;
+		}
 
 		/// <summary>
 		/// Отменить изменения характеристик
@@ -88,10 +93,13 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void RevertStatChanges(Creature creature)
 		{
-			if (Severity == Severity.Simple)
+			if (Severity == Severity.Complex)
 				creature.Body = creature.GetBody() - AfterTreatBodyModifier;
 			else
 				creature.Body = creature.GetBody() - BodyModifier;
+
+			creature.Ref = creature.GetRef() - RefAndDexModifier;
+			creature.Dex = creature.GetDex() - RefAndDexModifier;
 		}
 
 		/// <summary>
@@ -100,6 +108,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void Stabilize(Creature creature)
 		{
+			if (Severity == Severity.Complex)
+				return;
+
+			Severity = Severity.Complex;
+
 			creature.Body = creature.GetBody() - BodyModifier;
 			creature.Body = creature.GetBody() + AfterTreatBodyModifier;
 		}

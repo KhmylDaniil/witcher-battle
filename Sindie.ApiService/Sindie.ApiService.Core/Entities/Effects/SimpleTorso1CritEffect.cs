@@ -40,9 +40,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
 		public static SimpleTorso1CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
-		=> creature.Effects.Any(x => x is SimpleTorso1CritEffect)
-				? null
-				: new SimpleTorso1CritEffect(creature, aimedPart, name);
+			=> CheckExistingEffectAndRemoveStabilizedEffect<SimpleTorso1CritEffect>(creature, aimedPart)
+				? new SimpleTorso1CritEffect(creature, aimedPart, name)
+				: null;
 
 		/// <summary>
 		/// Применить изменения характеристик
