@@ -79,7 +79,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 		public void Stabilize(Creature creature)
 		{
-			if (Severity == Severity.Simple)
+			if (IsStabile(Severity) || !PenaltyApplied)
 				return;
 
 			Severity = Severity.Simple;

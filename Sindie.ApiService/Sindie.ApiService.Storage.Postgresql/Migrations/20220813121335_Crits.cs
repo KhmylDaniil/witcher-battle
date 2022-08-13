@@ -5,51 +5,71 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Sindie.ApiService.Storage.Postgresql.Migrations
 {
-    public partial class restOfCrits : Migration
+    public partial class Crits : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Effects_Conditions_EffectId",
-                schema: "Battles",
-                table: "Effects");
+                name: "FK_Skills_Games_GameId",
+                schema: "GameRules",
+                table: "Skills");
+
+            migrationBuilder.DropTable(
+                name: "AbilityDamageTypes",
+                schema: "GameRules");
+
+            migrationBuilder.DropTable(
+                name: "CurrentConditions",
+                schema: "Battles");
 
             migrationBuilder.DropIndex(
-                name: "IX_Effects_EffectId",
-                schema: "Battles",
-                table: "Effects");
+                name: "IX_Skills_GameId",
+                schema: "GameRules",
+                table: "Skills");
 
             migrationBuilder.DropColumn(
-                name: "EffectId",
-                schema: "Battles",
-                table: "Effects");
+                name: "Description",
+                schema: "GameRules",
+                table: "Skills");
 
-            migrationBuilder.RenameTable(
-                name: "BleedingWoundEffects",
-                schema: "Battles",
-                newName: "BleedingWoundEffects",
-                newSchema: "Effects");
+            migrationBuilder.DropColumn(
+                name: "GameId",
+                schema: "GameRules",
+                table: "Skills");
 
-            migrationBuilder.AlterColumn<int>(
+            migrationBuilder.DropColumn(
+                name: "MaxValueSkills",
+                schema: "GameRules",
+                table: "Skills");
+
+            migrationBuilder.DropColumn(
+                name: "MinValueSkills",
+                schema: "GameRules",
+                table: "Skills");
+
+            migrationBuilder.EnsureSchema(
+                name: "Effects");
+
+            migrationBuilder.AlterColumn<string>(
                 name: "StatName",
                 schema: "GameRules",
                 table: "Skills",
-                type: "integer",
+                type: "text",
                 nullable: false,
-                defaultValue: 0,
+                defaultValue: "",
                 comment: "Название корреспондирующей характеристики",
                 oldClrType: typeof(string),
                 oldType: "text",
                 oldNullable: true,
                 oldComment: "Название корреспондирующей характеристики");
 
-            migrationBuilder.AlterColumn<int>(
+            migrationBuilder.AlterColumn<string>(
                 name: "StatName",
                 schema: "GameRules",
                 table: "CreatureTemplateParameters",
-                type: "integer",
+                type: "text",
                 nullable: false,
-                defaultValue: 0,
+                defaultValue: "",
                 comment: "Название корреспондирующей характеристики",
                 oldClrType: typeof(string),
                 oldType: "text",
@@ -99,6 +119,15 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 nullable: false,
                 defaultValue: 0,
                 comment: "Максимальная эмпатия");
+
+            migrationBuilder.AddColumn<int>(
+                name: "MaxHP",
+                schema: "Battles",
+                table: "Creatures",
+                type: "integer",
+                nullable: false,
+                defaultValue: 0,
+                comment: "Максимальные хиты");
 
             migrationBuilder.AddColumn<int>(
                 name: "MaxInt",
@@ -154,13 +183,21 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 defaultValue: 0,
                 comment: "Максимальнпя воля");
 
-            migrationBuilder.AlterColumn<int>(
+            migrationBuilder.AddColumn<int>(
+                name: "Stun",
+                schema: "Battles",
+                table: "Creatures",
+                type: "integer",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AlterColumn<string>(
                 name: "StatName",
                 schema: "Battles",
                 table: "CreatureParameters",
-                type: "integer",
+                type: "text",
                 nullable: false,
-                defaultValue: 0,
+                defaultValue: "",
                 comment: "Название корреспондирующей характеристики",
                 oldClrType: typeof(string),
                 oldType: "text",
@@ -175,6 +212,92 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 nullable: false,
                 defaultValue: 0,
                 comment: "Макксимальное значение навыка");
+
+            migrationBuilder.AddColumn<int>(
+                name: "Round",
+                schema: "Battles",
+                table: "Battles",
+                type: "integer",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "DamageTypeId",
+                schema: "GameRules",
+                table: "Abilities",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.CreateTable(
+                name: "Effects",
+                schema: "Battles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
+                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название эффекта"),
+                    CreatureId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди существа"),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
+                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Effects", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Effects_Creatures_CreatureId",
+                        column: x => x.CreatureId,
+                        principalSchema: "Battles",
+                        principalTable: "Creatures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Эффекты");
+
+            migrationBuilder.CreateTable(
+                name: "BleedEffects",
+                schema: "Effects",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BleedEffects", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BleedEffects_Effects_Id",
+                        column: x => x.Id,
+                        principalSchema: "Battles",
+                        principalTable: "Effects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Эффекты кровотечения");
+
+            migrationBuilder.CreateTable(
+                name: "BleedingWoundEffects",
+                schema: "Effects",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
+                    Severity = table.Column<int>(type: "integer", nullable: false, comment: "Тяжесть"),
+                    Damage = table.Column<int>(type: "integer", nullable: false, comment: "Урон")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BleedingWoundEffects", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BleedingWoundEffects_Effects_Id",
+                        column: x => x.Id,
+                        principalSchema: "Battles",
+                        principalTable: "Effects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Эффекты кровавой раны");
 
             migrationBuilder.CreateTable(
                 name: "CritEffects",
@@ -246,6 +369,66 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 comment: "Эффекты при смерти");
 
             migrationBuilder.CreateTable(
+                name: "FireEffects",
+                schema: "Effects",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FireEffects", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FireEffects_Effects_Id",
+                        column: x => x.Id,
+                        principalSchema: "Battles",
+                        principalTable: "Effects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Эффекты горения");
+
+            migrationBuilder.CreateTable(
+                name: "FreezeEffects",
+                schema: "Effects",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FreezeEffects", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FreezeEffects_Effects_Id",
+                        column: x => x.Id,
+                        principalSchema: "Battles",
+                        principalTable: "Effects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Эффекты заморозки");
+
+            migrationBuilder.CreateTable(
+                name: "PoisonEffects",
+                schema: "Effects",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PoisonEffects", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PoisonEffects_Effects_Id",
+                        column: x => x.Id,
+                        principalSchema: "Battles",
+                        principalTable: "Effects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Эффекты отравления");
+
+            migrationBuilder.CreateTable(
                 name: "StaggeredEffects",
                 schema: "Effects",
                 columns: table => new
@@ -264,6 +447,26 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         onDelete: ReferentialAction.Cascade);
                 },
                 comment: "Эффекты ошеломления");
+
+            migrationBuilder.CreateTable(
+                name: "StunEffects",
+                schema: "Effects",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StunEffects", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StunEffects_Effects_Id",
+                        column: x => x.Id,
+                        principalSchema: "Battles",
+                        principalTable: "Effects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Эффекты дезориентации");
 
             migrationBuilder.CreateTable(
                 name: "SufflocationEffects",
@@ -1013,160 +1216,18 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     { new Guid("208ed04e-73aa-4e57-bb58-26c807fcf586"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "SimpleTorso2", "Default", "Default" },
                     { new Guid("208ed04e-73aa-4e57-bb58-26c807fcf587"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "SimpleTorso1", "Default", "Default" },
                     { new Guid("208ed04e-73aa-4e57-bb58-26c807fcf588"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "SimpleHead2", "Default", "Default" },
-                    { new Guid("208ed04e-73aa-4e57-bb58-26c807fcf589"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "SimpleHead1", "Default", "Default" }
+                    { new Guid("208ed04e-73aa-4e57-bb58-26c807fcf589"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "SimpleHead1", "Default", "Default" },
+                    { new Guid("7794e0d0-3147-4791-9053-9667cbe127d7"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "BleedingWound", "Default", "Default" },
+                    { new Guid("8895e0d0-3147-4791-9053-9667cbe127d7"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Fire", "Default", "Default" },
+                    { new Guid("8895e0d1-3147-4791-9053-9667cbe127d7"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Freeze", "Default", "Default" },
+                    { new Guid("afb1c2ac-f6ab-035e-aedd-011da6f5ea9a"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Blinded", "Default", "Default" },
+                    { new Guid("afb1c2ac-f6ab-435e-aedd-011da6f5ea9a"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Stun", "Default", "Default" },
+                    { new Guid("afb1c2ac-f6ab-535e-aedd-011da6f5ea9a"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Staggered", "Default", "Default" },
+                    { new Guid("afb1c2ac-f6ab-635e-aedd-011da6f5ea9a"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Intoxication", "Default", "Default" },
+                    { new Guid("afb1c2ac-f6ab-735e-aedd-011da6f5ea9a"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Hallutination", "Default", "Default" },
+                    { new Guid("afb1c2ac-f6ab-835e-aedd-011da6f5ea9a"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Nausea", "Default", "Default" },
+                    { new Guid("afb1c2ac-f6ab-935e-aedd-011da6f5ea9a"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Sufflocation", "Default", "Default" }
                 });
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-026e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 6);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-420e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 2);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-426e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 2);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-427e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 2);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-428e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 2);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-429e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 2);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-436e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 7);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-446e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 7);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-456e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 7);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-466e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 5);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-476e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 3);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-486e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 1);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-496e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 6);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-506e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 4);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-526e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 2);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-626e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 3);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-726e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 3);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-826e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 3);
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-926e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: 4);
 
             migrationBuilder.InsertData(
                 schema: "GameRules",
@@ -1174,54 +1235,108 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 columns: new[] { "Id", "CreatedByUserId", "CreatedOn", "ModifiedByUserId", "ModifiedOn", "Name", "RoleCreatedUser", "RoleModifiedUser", "StatName" },
                 values: new object[,]
                 {
-                    { new Guid("32ee830e-7bee-4924-9ddf-1070ceffecdd"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Education", "Default", "Default", 1 },
-                    { new Guid("4fcbd3d6-fde0-47c1-899d-a8c82c291751"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "CommonLanguage", "Default", "Default", 1 },
-                    { new Guid("754ef5e9-8960-4c38-a1be-a3c43c92b1cd"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Deduction", "Default", "Default", 1 },
-                    { new Guid("c5f00eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Awareness", "Default", "Default", 1 },
-                    { new Guid("c5f01eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Business", "Default", "Default", 1 },
-                    { new Guid("c5f03eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "ElderLanguage", "Default", "Default", 1 },
-                    { new Guid("c5f04eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "DwarfenLanguage", "Default", "Default", 1 },
-                    { new Guid("c5f05eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "MonsterLore", "Default", "Default", 1 },
-                    { new Guid("c5f06eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "SocialEtiquette", "Default", "Default", 1 },
-                    { new Guid("c5f07eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Streetwise", "Default", "Default", 1 },
-                    { new Guid("c5f08eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Tactics", "Default", "Default", 1 },
-                    { new Guid("c5f09eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Teaching", "Default", "Default", 1 },
-                    { new Guid("c5f10eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "WildernessSurvival", "Default", "Default", 1 },
-                    { new Guid("c5f11eea-10d5-428e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Riding", "Default", "Default", 2 },
-                    { new Guid("c5f12eea-10d5-428e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Sailing", "Default", "Default", 2 },
-                    { new Guid("c5f13eea-10d5-726e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "SleightOfHand", "Default", "Default", 3 },
-                    { new Guid("c5f14eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Stealth", "Default", "Default", 3 },
-                    { new Guid("c5f15eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Charisma", "Default", "Default", 5 },
-                    { new Guid("c5f16eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Deceit", "Default", "Default", 5 },
-                    { new Guid("c5f17eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "FineArts", "Default", "Default", 5 },
-                    { new Guid("c5f18eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Gambling", "Default", "Default", 5 },
-                    { new Guid("c5f19eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "GroomingAndStyle", "Default", "Default", 5 },
-                    { new Guid("c5f20eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "HumanPerception", "Default", "Default", 5 },
-                    { new Guid("c5f21eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Leadership", "Default", "Default", 5 },
-                    { new Guid("c5f22eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Persuasion", "Default", "Default", 5 },
-                    { new Guid("c5f23eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Perfomance", "Default", "Default", 5 },
-                    { new Guid("c5f24eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Seduction", "Default", "Default", 5 },
-                    { new Guid("c5f25eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Alchemy", "Default", "Default", 6 },
-                    { new Guid("c5f26eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Crafting", "Default", "Default", 6 },
-                    { new Guid("c5f27eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Diguise", "Default", "Default", 6 },
-                    { new Guid("c5f28eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Forgery", "Default", "Default", 6 },
-                    { new Guid("c5f29eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "PickLock", "Default", "Default", 6 },
-                    { new Guid("c5f30eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "TrapCrafting", "Default", "Default", 6 },
-                    { new Guid("c5f31eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Courage", "Default", "Default", 7 },
-                    { new Guid("c5f32eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "HexWeaving", "Default", "Default", 7 },
-                    { new Guid("c5f33eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Intimidation", "Default", "Default", 7 },
-                    { new Guid("c5f34eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "RitualCrafting", "Default", "Default", 7 }
+                    { new Guid("32ee830e-7bee-4924-9ddf-1070ceffecdd"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Education", "Default", "Default", "Int" },
+                    { new Guid("4fcbd3d6-fde0-47c1-899d-a8c82c291751"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "CommonLanguage", "Default", "Default", "Int" },
+                    { new Guid("754ef5e9-8960-4c38-a1be-a3c43c92b1cd"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Deduction", "Default", "Default", "Int" },
+                    { new Guid("c5f00eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Awareness", "Default", "Default", "Int" },
+                    { new Guid("c5f01eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Business", "Default", "Default", "Int" },
+                    { new Guid("c5f03eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "ElderLanguage", "Default", "Default", "Int" },
+                    { new Guid("c5f04eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "DwarfenLanguage", "Default", "Default", "Int" },
+                    { new Guid("c5f05eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "MonsterLore", "Default", "Default", "Int" },
+                    { new Guid("c5f06eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "SocialEtiquette", "Default", "Default", "Int" },
+                    { new Guid("c5f07eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Streetwise", "Default", "Default", "Int" },
+                    { new Guid("c5f08eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Tactics", "Default", "Default", "Int" },
+                    { new Guid("c5f09eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Teaching", "Default", "Default", "Int" },
+                    { new Guid("c5f10eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "WildernessSurvival", "Default", "Default", "Int" },
+                    { new Guid("c5f11eea-10d5-428e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Riding", "Default", "Default", "Ref" },
+                    { new Guid("c5f12eea-10d5-428e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Sailing", "Default", "Default", "Ref" },
+                    { new Guid("c5f13eea-10d5-726e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "SleightOfHand", "Default", "Default", "Dex" },
+                    { new Guid("c5f14eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Stealth", "Default", "Default", "Dex" },
+                    { new Guid("c5f15eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Charisma", "Default", "Default", "Emp" },
+                    { new Guid("c5f16eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Deceit", "Default", "Default", "Emp" },
+                    { new Guid("c5f17eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "FineArts", "Default", "Default", "Emp" },
+                    { new Guid("c5f18eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Gambling", "Default", "Default", "Emp" },
+                    { new Guid("c5f19eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "GroomingAndStyle", "Default", "Default", "Emp" },
+                    { new Guid("c5f20eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "HumanPerception", "Default", "Default", "Emp" },
+                    { new Guid("c5f21eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Leadership", "Default", "Default", "Emp" },
+                    { new Guid("c5f22eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Persuasion", "Default", "Default", "Emp" },
+                    { new Guid("c5f23eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Perfomance", "Default", "Default", "Emp" },
+                    { new Guid("c5f24eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Seduction", "Default", "Default", "Emp" },
+                    { new Guid("c5f25eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Alchemy", "Default", "Default", "Cra" },
+                    { new Guid("c5f26eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Crafting", "Default", "Default", "Cra" },
+                    { new Guid("c5f27eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Diguise", "Default", "Default", "Cra" },
+                    { new Guid("c5f28eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Forgery", "Default", "Default", "Cra" },
+                    { new Guid("c5f29eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "PickLock", "Default", "Default", "Cra" },
+                    { new Guid("c5f30eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "TrapCrafting", "Default", "Default", "Cra" },
+                    { new Guid("c5f31eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Courage", "Default", "Default", "Will" },
+                    { new Guid("c5f32eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "HexWeaving", "Default", "Default", "Will" },
+                    { new Guid("c5f33eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Intimidation", "Default", "Default", "Will" },
+                    { new Guid("c5f34eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "RitualCrafting", "Default", "Default", "Will" },
+                    { new Guid("c5f99eea-10d5-026e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "FirstAid", "Default", "Default", "Cra" },
+                    { new Guid("c5f99eea-10d5-420e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Staff/Spear", "Default", "Default", "Ref" },
+                    { new Guid("c5f99eea-10d5-426e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Brawling", "Default", "Default", "Ref" },
+                    { new Guid("c5f99eea-10d5-427e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Dodge", "Default", "Default", "Ref" },
+                    { new Guid("c5f99eea-10d5-428e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Melee", "Default", "Default", "Ref" },
+                    { new Guid("c5f99eea-10d5-429e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "SmallBlades", "Default", "Default", "Ref" },
+                    { new Guid("c5f99eea-10d5-436e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "SpellCasting", "Default", "Default", "Will" },
+                    { new Guid("c5f99eea-10d5-446e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "ResistMagic", "Default", "Default", "Will" },
+                    { new Guid("c5f99eea-10d5-456e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "ResistCoercion", "Default", "Default", "Will" },
+                    { new Guid("c5f99eea-10d5-466e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Needling", "Default", "Default", "Emp" },
+                    { new Guid("c5f99eea-10d5-476e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "EyeGouge", "Default", "Default", "Dex" },
+                    { new Guid("c5f99eea-10d5-486e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "BleedingWound", "Default", "Default", "Int" },
+                    { new Guid("c5f99eea-10d5-496e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "HealingHands", "Default", "Default", "Cra" },
+                    { new Guid("c5f99eea-10d5-506e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Physique", "Default", "Default", "Body" },
+                    { new Guid("c5f99eea-10d5-526e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Swordsmanship", "Default", "Default", "Ref" },
+                    { new Guid("c5f99eea-10d5-626e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Archery", "Default", "Default", "Dex" },
+                    { new Guid("c5f99eea-10d5-726e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Athletics", "Default", "Default", "Dex" },
+                    { new Guid("c5f99eea-10d5-826e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Crossbow", "Default", "Default", "Dex" },
+                    { new Guid("c5f99eea-10d5-926e-87a6-f6b8046c47da"), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Endurance", "Default", "Default", "Body" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Abilities_DamageTypeId",
+                schema: "GameRules",
+                table: "Abilities",
+                column: "DamageTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CritEffects_CreaturePartId",
                 schema: "Battles",
                 table: "CritEffects",
                 column: "CreaturePartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Effects_CreatureId",
+                schema: "Battles",
+                table: "Effects",
+                column: "CreatureId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Abilities_DamageTypes_DamageTypeId",
+                schema: "GameRules",
+                table: "Abilities",
+                column: "DamageTypeId",
+                principalSchema: "GameRules",
+                principalTable: "DamageTypes",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Abilities_DamageTypes_DamageTypeId",
+                schema: "GameRules",
+                table: "Abilities");
+
+            migrationBuilder.DropTable(
+                name: "BleedEffects",
+                schema: "Effects");
+
+            migrationBuilder.DropTable(
+                name: "BleedingWoundEffects",
+                schema: "Effects");
+
             migrationBuilder.DropTable(
                 name: "ComplexArmCritEffects",
                 schema: "Effects");
@@ -1327,6 +1442,18 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 schema: "Effects");
 
             migrationBuilder.DropTable(
+                name: "FireEffects",
+                schema: "Effects");
+
+            migrationBuilder.DropTable(
+                name: "FreezeEffects",
+                schema: "Effects");
+
+            migrationBuilder.DropTable(
+                name: "PoisonEffects",
+                schema: "Effects");
+
+            migrationBuilder.DropTable(
                 name: "SimpleArmCritEffects",
                 schema: "Effects");
 
@@ -1363,12 +1490,25 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 schema: "Effects");
 
             migrationBuilder.DropTable(
+                name: "StunEffects",
+                schema: "Effects");
+
+            migrationBuilder.DropTable(
                 name: "SufflocationEffects",
                 schema: "Effects");
 
             migrationBuilder.DropTable(
                 name: "CritEffects",
                 schema: "Battles");
+
+            migrationBuilder.DropTable(
+                name: "Effects",
+                schema: "Battles");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Abilities_DamageTypeId",
+                schema: "GameRules",
+                table: "Abilities");
 
             migrationBuilder.DeleteData(
                 schema: "GameRules",
@@ -1561,6 +1701,66 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 table: "Conditions",
                 keyColumn: "Id",
                 keyValue: new Guid("208ed04e-73aa-4e57-bb58-26c807fcf589"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Conditions",
+                keyColumn: "Id",
+                keyValue: new Guid("7794e0d0-3147-4791-9053-9667cbe127d7"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Conditions",
+                keyColumn: "Id",
+                keyValue: new Guid("8895e0d0-3147-4791-9053-9667cbe127d7"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Conditions",
+                keyColumn: "Id",
+                keyValue: new Guid("8895e0d1-3147-4791-9053-9667cbe127d7"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Conditions",
+                keyColumn: "Id",
+                keyValue: new Guid("afb1c2ac-f6ab-035e-aedd-011da6f5ea9a"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Conditions",
+                keyColumn: "Id",
+                keyValue: new Guid("afb1c2ac-f6ab-435e-aedd-011da6f5ea9a"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Conditions",
+                keyColumn: "Id",
+                keyValue: new Guid("afb1c2ac-f6ab-535e-aedd-011da6f5ea9a"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Conditions",
+                keyColumn: "Id",
+                keyValue: new Guid("afb1c2ac-f6ab-635e-aedd-011da6f5ea9a"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Conditions",
+                keyColumn: "Id",
+                keyValue: new Guid("afb1c2ac-f6ab-735e-aedd-011da6f5ea9a"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Conditions",
+                keyColumn: "Id",
+                keyValue: new Guid("afb1c2ac-f6ab-835e-aedd-011da6f5ea9a"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Conditions",
+                keyColumn: "Id",
+                keyValue: new Guid("afb1c2ac-f6ab-935e-aedd-011da6f5ea9a"));
 
             migrationBuilder.DeleteData(
                 schema: "GameRules",
@@ -1784,6 +1984,120 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 keyColumn: "Id",
                 keyValue: new Guid("c5f34eea-10d5-026e-87a6-f6b8046c47da"));
 
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-026e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-420e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-426e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-427e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-428e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-429e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-436e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-446e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-456e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-466e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-476e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-486e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-496e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-506e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-526e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-626e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-726e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-826e-87a6-f6b8046c47da"));
+
+            migrationBuilder.DeleteData(
+                schema: "GameRules",
+                table: "Skills",
+                keyColumn: "Id",
+                keyValue: new Guid("c5f99eea-10d5-926e-87a6-f6b8046c47da"));
+
             migrationBuilder.DropColumn(
                 name: "LeadingArmId",
                 schema: "Battles",
@@ -1806,6 +2120,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
             migrationBuilder.DropColumn(
                 name: "MaxEmp",
+                schema: "Battles",
+                table: "Creatures");
+
+            migrationBuilder.DropColumn(
+                name: "MaxHP",
                 schema: "Battles",
                 table: "Creatures");
 
@@ -1840,15 +2159,24 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 table: "Creatures");
 
             migrationBuilder.DropColumn(
+                name: "Stun",
+                schema: "Battles",
+                table: "Creatures");
+
+            migrationBuilder.DropColumn(
                 name: "MaxValue",
                 schema: "Battles",
                 table: "CreatureParameters");
 
-            migrationBuilder.RenameTable(
-                name: "BleedingWoundEffects",
-                schema: "Effects",
-                newName: "BleedingWoundEffects",
-                newSchema: "Battles");
+            migrationBuilder.DropColumn(
+                name: "Round",
+                schema: "Battles",
+                table: "Battles");
+
+            migrationBuilder.DropColumn(
+                name: "DamageTypeId",
+                schema: "GameRules",
+                table: "Abilities");
 
             migrationBuilder.AlterColumn<string>(
                 name: "StatName",
@@ -1857,18 +2185,42 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 type: "text",
                 nullable: true,
                 comment: "Название корреспондирующей характеристики",
-                oldClrType: typeof(int),
-                oldType: "integer",
+                oldClrType: typeof(string),
+                oldType: "text",
                 oldComment: "Название корреспондирующей характеристики");
 
+            migrationBuilder.AddColumn<string>(
+                name: "Description",
+                schema: "GameRules",
+                table: "Skills",
+                type: "text",
+                nullable: true,
+                comment: "Описание навыка");
+
             migrationBuilder.AddColumn<Guid>(
-                name: "EffectId",
-                schema: "Battles",
-                table: "Effects",
+                name: "GameId",
+                schema: "GameRules",
+                table: "Skills",
                 type: "uuid",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"),
-                comment: "Айди эффекта");
+                comment: "Айди игры");
+
+            migrationBuilder.AddColumn<int>(
+                name: "MaxValueSkills",
+                schema: "GameRules",
+                table: "Skills",
+                type: "integer",
+                nullable: true,
+                comment: "Максимальное значение навыка");
+
+            migrationBuilder.AddColumn<int>(
+                name: "MinValueSkills",
+                schema: "GameRules",
+                table: "Skills",
+                type: "integer",
+                nullable: true,
+                comment: "Минимальное значение навыка");
 
             migrationBuilder.AlterColumn<string>(
                 name: "StatName",
@@ -1877,8 +2229,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 type: "text",
                 nullable: true,
                 comment: "Название корреспондирующей характеристики",
-                oldClrType: typeof(int),
-                oldType: "integer",
+                oldClrType: typeof(string),
+                oldType: "text",
                 oldComment: "Название корреспондирующей характеристики");
 
             migrationBuilder.AlterColumn<string>(
@@ -1888,175 +2240,89 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 type: "text",
                 nullable: true,
                 comment: "Название корреспондирующей характеристики",
-                oldClrType: typeof(int),
-                oldType: "integer",
+                oldClrType: typeof(string),
+                oldType: "text",
                 oldComment: "Название корреспондирующей характеристики");
 
-            migrationBuilder.UpdateData(
+            migrationBuilder.CreateTable(
+                name: "AbilityDamageTypes",
                 schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-026e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Cra");
+                columns: table => new
+                {
+                    AbilitiesId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DamageTypesId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AbilityDamageTypes", x => new { x.AbilitiesId, x.DamageTypesId });
+                    table.ForeignKey(
+                        name: "FK_AbilityDamageTypes_Abilities_AbilitiesId",
+                        column: x => x.AbilitiesId,
+                        principalSchema: "GameRules",
+                        principalTable: "Abilities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AbilityDamageTypes_DamageTypes_DamageTypesId",
+                        column: x => x.DamageTypesId,
+                        principalSchema: "GameRules",
+                        principalTable: "DamageTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-420e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Ref");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-426e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Ref");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-427e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Ref");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-428e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Ref");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-429e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Ref");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-436e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Will");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-446e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Will");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-456e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Will");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-466e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Emp");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-476e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Dex");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-486e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Int");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-496e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Cra");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-506e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Body");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-526e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Ref");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-626e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Dex");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-726e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Dex");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-826e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Dex");
-
-            migrationBuilder.UpdateData(
-                schema: "GameRules",
-                table: "Skills",
-                keyColumn: "Id",
-                keyValue: new Guid("c5f99eea-10d5-926e-87a6-f6b8046c47da"),
-                column: "StatName",
-                value: "Body");
+            migrationBuilder.CreateTable(
+                name: "CurrentConditions",
+                schema: "Battles",
+                columns: table => new
+                {
+                    ConditionsId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreaturesId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CurrentConditions", x => new { x.ConditionsId, x.CreaturesId });
+                    table.ForeignKey(
+                        name: "FK_CurrentConditions_Conditions_ConditionsId",
+                        column: x => x.ConditionsId,
+                        principalSchema: "GameRules",
+                        principalTable: "Conditions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CurrentConditions_Creatures_CreaturesId",
+                        column: x => x.CreaturesId,
+                        principalSchema: "Battles",
+                        principalTable: "Creatures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Effects_EffectId",
+                name: "IX_Skills_GameId",
+                schema: "GameRules",
+                table: "Skills",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AbilityDamageTypes_DamageTypesId",
+                schema: "GameRules",
+                table: "AbilityDamageTypes",
+                column: "DamageTypesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CurrentConditions_CreaturesId",
                 schema: "Battles",
-                table: "Effects",
-                column: "EffectId");
+                table: "CurrentConditions",
+                column: "CreaturesId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Effects_Conditions_EffectId",
-                schema: "Battles",
-                table: "Effects",
-                column: "EffectId",
-                principalSchema: "GameRules",
-                principalTable: "Conditions",
+                name: "FK_Skills_Games_GameId",
+                schema: "GameRules",
+                table: "Skills",
+                column: "GameId",
+                principalSchema: "BaseGame",
+                principalTable: "Games",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
         }

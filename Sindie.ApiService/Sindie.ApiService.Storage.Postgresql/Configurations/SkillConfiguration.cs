@@ -27,7 +27,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.Property(r => r.StatName)
 				.HasColumnName("StatName")
-				.HasComment("Название корреспондирующей характеристики");
+				.HasComment("Название корреспондирующей характеристики")
+				.HasConversion(
+					v => v.ToString(),
+					v => (Stats)Enum.Parse(typeof(Stats), v));
 
 			builder.HasMany(x => x.CreatureSkills)
 				.WithOne(x => x.Skill)

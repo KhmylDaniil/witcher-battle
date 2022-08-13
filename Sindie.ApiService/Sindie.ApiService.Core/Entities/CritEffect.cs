@@ -120,7 +120,8 @@ namespace Sindie.ApiService.Core.Entities
 			var severiestCrit = creature.Effects.Where(x => x.Id != updatingCrit.Id
 			&& x is ISharedPenaltyCrit crit
 			&& crit.BodyPartLocation == updatingCrit.BodyPartLocation
-			&& crit.Severity > updatingCrit.Severity).Cast<ISharedPenaltyCrit>().OrderByDescending(x => x.Severity).FirstOrDefault();
+			&& crit.Severity > updatingCrit.Severity
+			&& !crit.PenaltyApplied).Cast<ISharedPenaltyCrit>().OrderByDescending(x => x.Severity).FirstOrDefault();
 
 			if (severiestCrit is null)
 				return;

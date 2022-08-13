@@ -91,7 +91,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void RevertStatChanges(Creature creature)
 		{
-			if (Severity == Severity.Complex)
+			if (IsStabile(Severity))
 			{
 				creature.Int = creature.GetInt() - Modifier;
 				creature.Will = creature.GetWill() - Modifier;
@@ -110,7 +110,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void Stabilize(Creature creature)
 		{
-			if (Severity == Severity.Complex)
+			if (IsStabile(Severity))
 				return;
 
 			Severity = Severity.Complex;

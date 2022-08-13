@@ -92,19 +92,19 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void Stabilize(Creature creature)
 		{
-			if (Severity == Severity.Difficult)
+			if (IsStabile(Severity) || !PenaltyApplied)
 				return;
 
 			Severity = Severity.Difficult;
 
-			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.Id == Skills.DodgeId);
+			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.DodgeId);
 			if (dodge is not null)
 			{
 				dodge.SkillValue = dodge.GetValue() - _dodgeModifier;
 				dodge.SkillValue = dodge.GetValue() + _afterTreatDodgeModifier;
 			}
 
-			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.Id == Skills.AthleticsId);
+			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AthleticsId);
 			if (athletics is not null)
 			{
 				athletics.SkillValue = athletics.GetValue() - _athleticsModifier;

@@ -12,8 +12,8 @@ using Sindie.ApiService.Storage.Postgresql;
 namespace Sindie.ApiService.Storage.Postgresql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220813112206_restOfCrits")]
-    partial class restOfCrits
+    [Migration("20220813121335_Crits")]
+    partial class Crits
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1387,8 +1387,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("SkillValue")
                         .HasComment("Значение навыка");
 
-                    b.Property<int>("StatName")
-                        .HasColumnType("integer")
+                    b.Property<string>("StatName")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("StatName")
                         .HasComment("Название корреспондирующей характеристики");
 
@@ -1574,8 +1575,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("SkillValue")
                         .HasComment("Значение навыка");
 
-                    b.Property<int>("StatName")
-                        .HasColumnType("integer")
+                    b.Property<string>("StatName")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("StatName")
                         .HasComment("Название корреспондирующей характеристики");
 
@@ -2260,8 +2262,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Property<string>("RoleModifiedUser")
                         .HasColumnType("text");
 
-                    b.Property<int>("StatName")
-                        .HasColumnType("integer")
+                    b.Property<string>("StatName")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("StatName")
                         .HasComment("Название корреспондирующей характеристики");
 
@@ -2282,7 +2285,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Awareness",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2294,7 +2297,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Business",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2306,7 +2309,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Deduction",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2318,7 +2321,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Education",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2330,7 +2333,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "CommonLanguage",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2342,7 +2345,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "ElderLanguage",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2354,7 +2357,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "DwarfenLanguage",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2366,7 +2369,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "MonsterLore",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2378,7 +2381,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "SocialEtiquette",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2390,7 +2393,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Streetwise",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2402,7 +2405,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Tactics",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2414,7 +2417,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Teaching",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2426,7 +2429,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "WildernessSurvival",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2438,7 +2441,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Brawling",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 2
+                            StatName = "Ref"
                         },
                         new
                         {
@@ -2450,7 +2453,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Dodge",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 2
+                            StatName = "Ref"
                         },
                         new
                         {
@@ -2462,7 +2465,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Melee",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 2
+                            StatName = "Ref"
                         },
                         new
                         {
@@ -2474,7 +2477,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Riding",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 2
+                            StatName = "Ref"
                         },
                         new
                         {
@@ -2486,7 +2489,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Sailing",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 2
+                            StatName = "Ref"
                         },
                         new
                         {
@@ -2498,7 +2501,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "SmallBlades",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 2
+                            StatName = "Ref"
                         },
                         new
                         {
@@ -2510,7 +2513,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Staff/Spear",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 2
+                            StatName = "Ref"
                         },
                         new
                         {
@@ -2522,7 +2525,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Swordsmanship",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 2
+                            StatName = "Ref"
                         },
                         new
                         {
@@ -2534,7 +2537,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Archery",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 3
+                            StatName = "Dex"
                         },
                         new
                         {
@@ -2546,7 +2549,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Athletics",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 3
+                            StatName = "Dex"
                         },
                         new
                         {
@@ -2558,7 +2561,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Crossbow",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 3
+                            StatName = "Dex"
                         },
                         new
                         {
@@ -2570,7 +2573,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "SleightOfHand",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 3
+                            StatName = "Dex"
                         },
                         new
                         {
@@ -2582,7 +2585,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Stealth",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 3
+                            StatName = "Dex"
                         },
                         new
                         {
@@ -2594,7 +2597,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Endurance",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 4
+                            StatName = "Body"
                         },
                         new
                         {
@@ -2606,7 +2609,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Physique",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 4
+                            StatName = "Body"
                         },
                         new
                         {
@@ -2618,7 +2621,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Charisma",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 5
+                            StatName = "Emp"
                         },
                         new
                         {
@@ -2630,7 +2633,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Deceit",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 5
+                            StatName = "Emp"
                         },
                         new
                         {
@@ -2642,7 +2645,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "FineArts",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 5
+                            StatName = "Emp"
                         },
                         new
                         {
@@ -2654,7 +2657,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Gambling",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 5
+                            StatName = "Emp"
                         },
                         new
                         {
@@ -2666,7 +2669,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "GroomingAndStyle",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 5
+                            StatName = "Emp"
                         },
                         new
                         {
@@ -2678,7 +2681,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "HumanPerception",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 5
+                            StatName = "Emp"
                         },
                         new
                         {
@@ -2690,7 +2693,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Leadership",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 5
+                            StatName = "Emp"
                         },
                         new
                         {
@@ -2702,7 +2705,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Persuasion",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 5
+                            StatName = "Emp"
                         },
                         new
                         {
@@ -2714,7 +2717,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Perfomance",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 5
+                            StatName = "Emp"
                         },
                         new
                         {
@@ -2726,7 +2729,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Seduction",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 5
+                            StatName = "Emp"
                         },
                         new
                         {
@@ -2738,7 +2741,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "FirstAid",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 6
+                            StatName = "Cra"
                         },
                         new
                         {
@@ -2750,7 +2753,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Alchemy",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 6
+                            StatName = "Cra"
                         },
                         new
                         {
@@ -2762,7 +2765,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Crafting",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 6
+                            StatName = "Cra"
                         },
                         new
                         {
@@ -2774,7 +2777,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Diguise",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 6
+                            StatName = "Cra"
                         },
                         new
                         {
@@ -2786,7 +2789,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Forgery",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 6
+                            StatName = "Cra"
                         },
                         new
                         {
@@ -2798,7 +2801,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "PickLock",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 6
+                            StatName = "Cra"
                         },
                         new
                         {
@@ -2810,7 +2813,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "TrapCrafting",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 6
+                            StatName = "Cra"
                         },
                         new
                         {
@@ -2822,7 +2825,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Courage",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 7
+                            StatName = "Will"
                         },
                         new
                         {
@@ -2834,7 +2837,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "HexWeaving",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 7
+                            StatName = "Will"
                         },
                         new
                         {
@@ -2846,7 +2849,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Intimidation",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 7
+                            StatName = "Will"
                         },
                         new
                         {
@@ -2858,7 +2861,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "SpellCasting",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 7
+                            StatName = "Will"
                         },
                         new
                         {
@@ -2870,7 +2873,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "ResistMagic",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 7
+                            StatName = "Will"
                         },
                         new
                         {
@@ -2882,7 +2885,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "ResistCoercion",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 7
+                            StatName = "Will"
                         },
                         new
                         {
@@ -2894,7 +2897,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "RitualCrafting",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 7
+                            StatName = "Will"
                         },
                         new
                         {
@@ -2906,7 +2909,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "Needling",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 5
+                            StatName = "Emp"
                         },
                         new
                         {
@@ -2918,7 +2921,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "EyeGouge",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 3
+                            StatName = "Dex"
                         },
                         new
                         {
@@ -2930,7 +2933,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "BleedingWound",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 1
+                            StatName = "Int"
                         },
                         new
                         {
@@ -2942,7 +2945,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             Name = "HealingHands",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default",
-                            StatName = 6
+                            StatName = "Cra"
                         });
                 });
 

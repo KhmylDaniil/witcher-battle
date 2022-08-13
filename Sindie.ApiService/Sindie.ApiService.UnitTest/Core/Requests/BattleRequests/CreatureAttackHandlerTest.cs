@@ -329,8 +329,10 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			var stun = monster.Effects.FirstOrDefault(x => x is StunEffect);
 			Assert.IsNotNull(stun);
 			
-			var leftLegSimpleCrit = monster.Effects.FirstOrDefault(x => x is SimpleLegCritEffect);
+			var leftLegSimpleCrit = monster.Effects.FirstOrDefault(x => x is SimpleLegCritEffect) as ICrit;
 			Assert.IsNotNull(leftLegSimpleCrit);
+			Assert.AreEqual((int)leftLegSimpleCrit.Severity, 13);
+			Assert.AreEqual(leftLegSimpleCrit.Severity, Enums.Severity.Unstabilizied | Enums.Severity.Simple);
 
 			Assert.AreEqual(monster.Speed, 2);
 

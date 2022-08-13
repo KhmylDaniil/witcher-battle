@@ -31,7 +31,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <summary>
 		/// Тяжесть критического эффекта
 		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Simple | Severity.Unstabilizied;
+		public Severity Severity { get; private set; } = Severity.Unstabilizied | Severity.Simple;
 
 		/// <summary>
 		/// Тип части тела
@@ -81,7 +81,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void Stabilize(Creature creature)
 		{
-			if (Severity == Enums.Severity.Simple)
+			if (IsStabile(Severity) || !PenaltyApplied)
 				return;
 
 			Severity = Enums.Severity.Simple;
