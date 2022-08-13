@@ -56,7 +56,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <returns>Эффект</returns>
 		public static DeadlyTorso1CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
 		{
-			if (creature.Effects.Any(x => x is PoisonEffect))
+			if (!creature.Effects.Any(x => x is PoisonEffect))
 				creature.Effects.Add(PoisonEffect.Create(null, null, creature, poisonName));
 
 			return CheckExistingEffectAndRemoveStabilizedEffect<DeadlyTorso1CritEffect>(creature, aimedPart)
@@ -102,7 +102,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			creature.Ref = creature.GetRef() + Modifier;
 			creature.Dex = creature.GetDex() + Modifier;
 
-			creature.MaxSta -= _staModifier;
+			creature.MaxSta += _staModifier;
 			if (creature.Sta > creature.MaxSta)
 				creature.Sta = creature.MaxSta;
 		}

@@ -265,16 +265,6 @@ namespace Sindie.ApiService.Core.Logic
 			instance.Creatures.RemoveAll(x => x.HP <= 0 && x is not Character);
 		}
 
-		public static void DeathSave(Creature creature, int modifier = default)
-		{
-			if (new Random().Next(1, 10) >= creature.Stun + modifier)
-				return;
-
-
-
-
-		}
-
 		private static string CritMissMessage(int attackerFumble)
 		{
 			return $"Критический промах {attackerFumble}.";
@@ -301,6 +291,9 @@ namespace Sindie.ApiService.Core.Logic
 
 			data.Target.HP -= damage;
 			message.AppendLine($"Нанеcено {damage} урона.");
+
+			//if (damage > 0)
+			//	CheckDying(ref data, ref message);
 		}
 
 		private static void RemoveStunEffect(AttackData data)
@@ -329,6 +322,9 @@ namespace Sindie.ApiService.Core.Logic
 
 			message.AppendLine($"Нанеcено {damage} урона.");
 			data.Target.HP -= damage;
+
+			//if (damage > 0)
+			//	CheckDying(ref data, ref message);
 		}
 
 		/// <summary>
@@ -343,27 +339,13 @@ namespace Sindie.ApiService.Core.Logic
 
 			if (data.Target is Character)
 			{
+				data.Target.Effects.Add(DyingEffect.Create(null, null, data.Target, Conditions.DyingName));
 				message.AppendLine($"Существо {data.Target.Name} при смерти");
 				return false;
 			}
-				
+
 			message.AppendLine($"Существо {data.Target.Name} погибает");
 			return true;
-		}
-
-		private void ApplyConditions(ref AttackData data, ref StringBuilder message)
-		{
-			foreach (var condition in RollConditions(data.Ability))
-			{
-				var effect = Effect.CreateEffect<Effect>(rollService: _rollService, data.Attacker, data.Target, condition);
-
-				if (effect == null)
-					continue;
-				
-				data.Target.Effects.Add(effect);
-
-				message.AppendLine($"Наложен {effect.Name}");
-			}
 		}
 
 		private static void ArmorMutigation(ref AttackData data, ref int damage, ref StringBuilder message)
@@ -408,6 +390,26 @@ namespace Sindie.ApiService.Core.Logic
 		}
 
 		/// <summary>
+		/// Применение состояний
+		/// </summary>
+		/// <param name="data">Данные для атаки</param>
+		/// <param name="message">Сообщение</param>
+		private void ApplyConditions(ref AttackData data, ref StringBuilder message)
+		{
+			foreach (var condition in RollConditions(data.Ability))
+			{
+				var effect = Effect.CreateEffect<Effect>(rollService: _rollService, data.Attacker, data.Target, condition);
+
+				if (effect == null)
+					continue;
+
+				data.Target.Effects.Add(effect);
+
+				message.AppendLine($"Наложен {effect.Name}");
+			}
+		}
+
+		/// <summary>
 		/// Расчет применения состояний
 		/// </summary>
 		/// <returns>Наложенные состояния</returns>
@@ -426,5 +428,16 @@ namespace Sindie.ApiService.Core.Logic
 			return result;
 		}
 
+		///// <summary>
+		///// Проверка атаки по умирающим
+		///// </summary>
+		///// <param name="data">Данные для атаки</param>
+		///// <param name="message">Сообщение</param>
+		//private void CheckDying(ref AttackData data, ref StringBuilder message)
+		//{
+		//	var dying = data.Target.Effects.FirstOrDefault(x => x is DyingEffect) as DyingEffect;
+		//	if (dying != null) dying.Run(ref data.Target, ref message);
+				
+		//}
 	}
 }

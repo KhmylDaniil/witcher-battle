@@ -61,13 +61,15 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
-		public static DeadlyTorso1CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
+		public static DeadlyTorso2CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
 		{
-			if (creature.Effects.Any(x => x is PoisonEffect))
-				creature.Effects.Add(PoisonEffect.Create(null, null, creature, poisonName));
+			//TODO если не мертв
+			
+			if (!creature.Effects.Any(x => x is BleedEffect))
+				creature.Effects.Add(BleedEffect.Create(null, null, creature, "Secondary Bleed"));
 
-			return CheckExistingEffectAndRemoveStabilizedEffect<DeadlyTorso1CritEffect>(creature, aimedPart)
-				? new DeadlyTorso1CritEffect(creature, aimedPart, name)
+			return CheckExistingEffectAndRemoveStabilizedEffect<DeadlyTorso2CritEffect>(creature, aimedPart)
+				? new DeadlyTorso2CritEffect(creature, aimedPart, name)
 				: null;
 		}
 
@@ -104,12 +106,10 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void ApplyStatChanges(Creature creature)
 		{
-			creature.Int = creature.GetInt() + Modifier;
-			creature.Will = creature.GetWill() + Modifier;
-			creature.Ref = creature.GetRef() + Modifier;
-			creature.Dex = creature.GetDex() + Modifier;
+			creature.Speed = creature.GetSpeed() + _speedModifier;
+			creature.Body = creature.GetBody() + _bodyModifier;
 
-			creature.MaxSta -= _staModifier;
+			creature.MaxSta += _staModifier;
 			if (creature.Sta > creature.MaxSta)
 				creature.Sta = creature.MaxSta;
 		}
@@ -122,18 +122,14 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			if (IsStabile(Severity))
 			{
-				creature.Int = creature.GetInt() - AfterTreatModifier;
-				creature.Will = creature.GetWill() - AfterTreatModifier;
-				creature.Ref = creature.GetRef() - AfterTreatModifier;
-				creature.Dex = creature.GetDex() - AfterTreatModifier;
+				creature.Speed = creature.GetSpeed() + _afterTreatSpeedModifier;
+				creature.Body = creature.GetBody() + _afterTreatBodyModifier;
 				creature.MaxSta -= _afterTreatStaModifier;
 			}
 			else
 			{
-				creature.Int = creature.GetInt() - Modifier;
-				creature.Will = creature.GetWill() - Modifier;
-				creature.Ref = creature.GetRef() - Modifier;
-				creature.Dex = creature.GetDex() - Modifier;
+				creature.Speed = creature.GetSpeed() + _speedModifier;
+				creature.Body = creature.GetBody() + _bodyModifier;
 				creature.MaxSta -= _staModifier;
 			}
 		}
@@ -149,16 +145,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			Severity = Severity.Deadly;
 
-			creature.Int = creature.GetInt() - Modifier + AfterTreatModifier;
-			creature.Will = creature.GetWill() - Modifier + AfterTreatModifier;
-			creature.Ref = creature.GetRef() - Modifier + AfterTreatModifier;
-			creature.Dex = creature.GetDex() - Modifier + AfterTreatModifier;
+			creature.Speed = creature.GetSpeed() - _speedModifier + _afterTreatSpeedModifier;
+			creature.Body = creature.GetBody() - _bodyModifier + _afterTreatBodyModifier;
 			creature.MaxSta -= _staModifier + _afterTreatStaModifier;
-
-			var poison = creature.Effects.FirstOrDefault(x => x is PoisonEffect && x.Name.Equals(poisonName));
-
-			if (poison != null)
-				creature.Effects.Remove(poison);
 		}
 	}
 }

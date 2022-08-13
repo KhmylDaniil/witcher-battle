@@ -46,7 +46,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <returns>Эффект</returns>
 		public static DifficultTorso1CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
 		{
-			if (creature.Effects.Any(x => x is SufflocationEffect))
+			if (!creature.Effects.Any(x => x is SufflocationEffect))
 				creature.Effects.Add(SufflocationEffect.Create(null, null, creature, sufflocationName));
 
 			return CheckExistingEffectAndRemoveStabilizedEffect<DifficultTorso1CritEffect>(creature, aimedPart)

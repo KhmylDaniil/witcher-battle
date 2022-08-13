@@ -126,5 +126,15 @@ namespace Sindie.ApiService.Core.BaseData
 		/// Названия состояния слепота
 		/// </summary>
 		public static readonly string BlindedName = "Blinded";
+
+		/// <summary>
+		/// Айди состояния при смерти
+		/// </summary>
+		public static readonly Guid DyingId = new Guid("afb1c2ac-f6ab-035e-aedd-011da6f5ea9b");
+
+		/// <summary>
+		/// Названия состояния при смерти
+		/// </summary>
+		public static readonly string DyingName = "Blinded";
 	}
 }

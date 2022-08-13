@@ -54,7 +54,7 @@ namespace Sindie.ApiService.Core.Logic
 			static int CalculateHealingBase(Creature healer)
 				=> Math.Max(healer.SkillBase(Skills.HealingHandsId), healer.SkillBase(Skills.FirstAidId));
 
-			static int CalculateStabilizationDifficulty(Effect effect)
+			int CalculateStabilizationDifficulty(Effect effect)
 			{
 				if (effect is ICrit critEffect)
 					return (int)critEffect.Severity;
