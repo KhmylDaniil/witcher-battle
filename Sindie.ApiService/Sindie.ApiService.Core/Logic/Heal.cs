@@ -57,7 +57,7 @@ namespace Sindie.ApiService.Core.Logic
 			int CalculateStabilizationDifficulty(Effect effect)
 			{
 				if (effect is ICrit critEffect)
-					return (int)critEffect.Severity;
+					return (int)critEffect.Severity - (int)Enums.Severity.Unstabilizied;
 				
 
 				if (effect is BleedEffect)

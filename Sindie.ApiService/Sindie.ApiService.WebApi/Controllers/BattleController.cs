@@ -146,7 +146,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		[HttpPut("TurnBeginnning")]
 		[SwaggerResponse(StatusCodes.Status200OK)]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task<TurnBeginningResponse> TurnBeginningAsync([FromBody] TurnBeginningCommand request, CancellationToken cancellationToken)
+		public async Task<TurnBeginningResponse> TurnBeginningAsync([FromQuery] TurnBeginningCommand request, CancellationToken cancellationToken)
 		{
 			return await _mediator.Send(
 				request == null
@@ -163,7 +163,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		[HttpPut("TreatEffectById")]
 		[SwaggerResponse(StatusCodes.Status200OK)]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task<TreatEffectResponse> TreatEffectByIdAsync([FromBody] TreatEffectCommand request, CancellationToken cancellationToken)
+		public async Task<TreatEffectResponse> TreatEffectByIdAsync([FromQuery] TreatEffectCommand request, CancellationToken cancellationToken)
 		{
 			return await _mediator.Send(
 				request == null
