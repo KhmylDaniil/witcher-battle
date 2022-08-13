@@ -63,14 +63,14 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public abstract void Run(ref Creature creature, ref StringBuilder message);
+		public abstract void Run(Creature creature, ref StringBuilder message);
 
 		/// <summary>
 		/// Автоматически прекратить эффект
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public abstract void AutoEnd(ref Creature creature, ref StringBuilder message);
+		public abstract void AutoEnd(Creature creature, ref StringBuilder message);
 
 		/// <summary>
 		/// Попробовать снять эффект
@@ -78,7 +78,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="rollService">Сервис бросков</param>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public abstract void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message);
+		public abstract void Treat(IRollService rollService, Creature creature, ref StringBuilder message);
 
 		/// <summary>
 		/// Создание эффекта нужного вида

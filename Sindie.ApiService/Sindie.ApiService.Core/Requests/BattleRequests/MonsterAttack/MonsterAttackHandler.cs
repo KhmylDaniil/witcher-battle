@@ -88,7 +88,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 				data: data,
 				defenseValue: request.DefenseValue);
 
-			Attack.DisposeCorpses(ref battle);
+			Attack.DisposeCorpses(battle);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
 			return new MonsterAttackResponse()

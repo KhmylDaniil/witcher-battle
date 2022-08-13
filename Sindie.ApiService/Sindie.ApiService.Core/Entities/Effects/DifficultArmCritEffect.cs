@@ -69,14 +69,14 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void AutoEnd(ref Creature creature, ref StringBuilder message) { }
+		public override void AutoEnd(Creature creature, ref StringBuilder message) { }
 
 		/// <summary>
 		/// Применить эффект
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void Run(ref Creature creature, ref StringBuilder message) { }
+		public override void Run(Creature creature, ref StringBuilder message) { }
 
 		/// <summary>
 		/// Стабилизировать критический эффект
@@ -98,11 +98,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="rollService">Сервис бросков</param>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
+		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
 		{
 			Heal heal = new(rollService);
 
-			heal.TryStabilize(creature, ref creature, ref message, this);
+			heal.TryStabilize(creature, creature, ref message, this);
 		}
 
 		/// <summary>

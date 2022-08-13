@@ -76,11 +76,11 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 
 			foreach (var effect in creature.Effects)
 			{
-				effect.Run(ref creature, ref message);
-				effect.AutoEnd(ref creature, ref message);
+				effect.Run( creature, ref message);
+				effect.AutoEnd(creature, ref message);
 			}
 
-			Attack.DisposeCorpses(ref battle);
+			Attack.DisposeCorpses(battle);
 			
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 

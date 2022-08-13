@@ -33,7 +33,7 @@ namespace Sindie.ApiService.Core.Logic
 		/// <param name="patient">Пациент</param>
 		/// <param name="message">Сообщение</param>
 		/// <param name="effect">Эффект</param>
-		public void TryStabilize(Creature healer, ref Creature patient, ref StringBuilder message, Effect effect)
+		public void TryStabilize(Creature healer, Creature patient, ref StringBuilder message, Effect effect)
 		{
 			int healingBase = CalculateHealingBase(healer);
 
@@ -65,6 +65,9 @@ namespace Sindie.ApiService.Core.Logic
 
 				if (effect is BleedingWoundEffect bleedingWoundEffect)
 					return bleedingWoundEffect.Severity;
+
+				if (effect is DyingEffect)
+					return patient.HP * -1;
 
 				throw new ExceptionFieldOutOfRange<Effect>();
 			}

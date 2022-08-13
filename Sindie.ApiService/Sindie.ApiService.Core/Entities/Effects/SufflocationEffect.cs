@@ -38,7 +38,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void Run(ref Creature creature, ref StringBuilder message)
+		public override void Run(Creature creature, ref StringBuilder message)
 		{
 			creature.HP -= 3;
 			message.AppendLine($"Существо {creature.Name} потеряло 3 хита из-за удушья. Осталось {creature.HP} хитов.");
@@ -49,7 +49,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void AutoEnd(ref Creature creature, ref StringBuilder message) { }
+		public override void AutoEnd(Creature creature, ref StringBuilder message) { }
 
 		/// <summary>
 		/// Попробовать снять эффект
@@ -57,7 +57,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="rollService">Сервис бросков</param>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
+		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
 		{
 			message.AppendFormat($"Эффект {Conditions.SufflocationName} снят.");
 				creature.Effects.Remove(this);

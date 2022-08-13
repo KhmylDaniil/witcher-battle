@@ -1,6 +1,7 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Logic;
+using System;
 using System.Linq;
 using System.Text;
 using static Sindie.ApiService.Core.BaseData.Enums;
@@ -8,32 +9,29 @@ using static Sindie.ApiService.Core.BaseData.Enums;
 namespace Sindie.ApiService.Core.Entities.Effects
 {
 	/// <summary>
-	/// Критический эффект - рана в живот
+	/// Критический эффект - потеря головы
 	/// </summary>
-	public class DifficultTorso2CritEffect : CritEffect, ICrit
+	public class DeadlyHead2CritEffect : CritEffect, ICrit
 	{
-		private const int Modifier = -2;
-
 		/// <summary>
 		/// Тяжесть критического эффекта
 		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Difficult | Severity.Unstabilizied;
+		public Severity Severity { get; private set; } = Severity.Deadly | Severity.Unstabilizied;
 
 		/// <summary>
 		/// Тип части тела
 		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Torso;
+		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Head;
 
-		public DifficultTorso2CritEffect() { }
+		public DeadlyHead2CritEffect() { }
 
 		/// <summary>
-		/// Конструктор эффекта раны в живот
+		/// Конструктор эффекта потери головы
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
-		private DifficultTorso2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
-			=> ApplyStatChanges(creature);
+		private DeadlyHead2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name) { }
 
 		/// <summary>
 		/// Создание эффекта - синглтон
@@ -42,11 +40,15 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
-		public static DifficultTorso2CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
-			=> CheckExistingEffectAndRemoveStabilizedEffect<DifficultTorso2CritEffect>(creature, aimedPart)
-			? new DifficultTorso2CritEffect(creature, aimedPart, name)
-			: null;
+		public static DeadlyHead2CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
+		{
+			creature.Effects.Add(DeadEffect.Create(null, null, creature, "Dead due decapitation"));
 
+			return CheckExistingEffectAndRemoveStabilizedEffect<DeadlyHead2CritEffect>(creature, aimedPart)
+				? new DeadlyHead2CritEffect(creature, aimedPart, name)
+				: null;
+		}
+			
 		/// <summary>
 		/// Автоматически прекратить эффект
 		/// </summary>
@@ -59,14 +61,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void Run(Creature creature, ref StringBuilder message)
-		{
-			if (!IsStabile(Severity))
-			{
-				creature.HP -= 4;
-				message.AppendLine($"{Name} приводит к получению 4 урона от кислотыю");
-			}
-		}
+		public override void Run(Creature creature, ref StringBuilder message) { }
 
 		/// <summary>
 		/// Попробовать снять эффект
@@ -79,35 +74,26 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			Heal heal = new(rollService);
 
 			heal.TryStabilize(creature, creature, ref message, this);
+
+			message.AppendLine("Невозможно стабилизировать этот эффект");
 		}
 
 		/// <summary>
 		/// Применить изменения характеристик
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		public void ApplyStatChanges(Creature creature)
-		{
-			foreach (var skill in creature.CreatureSkills)
-				skill.SkillValue = skill.GetValue() + Modifier;
-		}
+		public void ApplyStatChanges(Creature creature) { }
 
 		/// <summary>
 		/// Отменить изменения характеристик
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		public void RevertStatChanges(Creature creature)
-		{
-			foreach (var skill in creature.CreatureSkills)
-				skill.SkillValue = skill.GetValue() - Modifier;
-		}
+		public void RevertStatChanges(Creature creature) { }
 
 		/// <summary>
 		/// Стабилизировать критический эффект
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		public void Stabilize(Creature creature)
-		{
-			Severity = Severity.Difficult;
-		}
+		public void Stabilize(Creature creature) { }
 	}
 }

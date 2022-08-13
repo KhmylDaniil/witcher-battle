@@ -1,6 +1,7 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Logic;
+using System;
 using System.Linq;
 using System.Text;
 using static Sindie.ApiService.Core.BaseData.Enums;
@@ -8,31 +9,35 @@ using static Sindie.ApiService.Core.BaseData.Enums;
 namespace Sindie.ApiService.Core.Entities.Effects
 {
 	/// <summary>
-	/// Критический эффект - рана в живот
+	/// Критический эффект - повреждение глаза
 	/// </summary>
-	public class DifficultTorso2CritEffect : CritEffect, ICrit
+	public class DeadlyHead1CritEffect : CritEffect, ICrit
 	{
-		private const int Modifier = -2;
+		private const int DexModifier = -4;
+		private const int AfterTreatDexModifier = -2;
+
+		private const int AwarenessModifier = -5;
+		private const int AfterTreatAwarenessModifier = -3;
 
 		/// <summary>
 		/// Тяжесть критического эффекта
 		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Difficult | Severity.Unstabilizied;
+		public Severity Severity { get; private set; } = Severity.Deadly | Severity.Unstabilizied;
 
 		/// <summary>
 		/// Тип части тела
 		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Torso;
+		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Head;
 
-		public DifficultTorso2CritEffect() { }
+		public DeadlyHead1CritEffect() { }
 
 		/// <summary>
-		/// Конструктор эффекта раны в живот
+		/// Конструктор эффекта повреждения глаза
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
-		private DifficultTorso2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
+		private DeadlyHead1CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
 			=> ApplyStatChanges(creature);
 
 		/// <summary>
@@ -42,10 +47,10 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
-		public static DifficultTorso2CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
-			=> CheckExistingEffectAndRemoveStabilizedEffect<DifficultTorso2CritEffect>(creature, aimedPart)
-			? new DifficultTorso2CritEffect(creature, aimedPart, name)
-			: null;
+		public static DeadlyHead1CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
+			=> CheckExistingEffectAndRemoveStabilizedEffect<DeadlyHead1CritEffect>(creature, aimedPart)
+				? new DeadlyHead1CritEffect(creature, aimedPart, name)
+				: null;
 
 		/// <summary>
 		/// Автоматически прекратить эффект
@@ -59,14 +64,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void Run(Creature creature, ref StringBuilder message)
-		{
-			if (!IsStabile(Severity))
-			{
-				creature.HP -= 4;
-				message.AppendLine($"{Name} приводит к получению 4 урона от кислотыю");
-			}
-		}
+		public override void Run(Creature creature, ref StringBuilder message) { }
 
 		/// <summary>
 		/// Попробовать снять эффект
@@ -87,8 +85,12 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void ApplyStatChanges(Creature creature)
 		{
-			foreach (var skill in creature.CreatureSkills)
-				skill.SkillValue = skill.GetValue() + Modifier;
+			creature.Dex = creature.GetDex() + DexModifier;
+
+			var awareness = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AwarenessId);
+
+			if (awareness != null)
+				awareness.SkillValue = awareness.GetValue() + AwarenessModifier;
 		}
 
 		/// <summary>
@@ -97,8 +99,22 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void RevertStatChanges(Creature creature)
 		{
-			foreach (var skill in creature.CreatureSkills)
-				skill.SkillValue = skill.GetValue() - Modifier;
+			var awareness = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AwarenessId);
+
+			if (IsStabile(Severity))
+			{
+				creature.Dex = creature.GetDex() - AfterTreatDexModifier;
+
+				if (awareness != null)
+					awareness.SkillValue = awareness.GetValue() - AfterTreatAwarenessModifier;
+			}
+			else
+			{
+				creature.Dex = creature.GetDex() - DexModifier;
+
+				if (awareness != null)
+					awareness.SkillValue = awareness.GetValue() - AwarenessModifier;
+			}
 		}
 
 		/// <summary>
@@ -107,7 +123,16 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void Stabilize(Creature creature)
 		{
-			Severity = Severity.Difficult;
+			if (!IsStabile(Severity))
+
+				Severity = Severity.Deadly;
+
+			creature.Dex = creature.GetDex() - DexModifier + AfterTreatDexModifier;
+
+			var awareness = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AwarenessId);
+
+			if (awareness != null)
+				awareness.SkillValue = awareness.GetValue() - AwarenessModifier + AfterTreatAwarenessModifier;
 		}
 	}
 }

@@ -86,11 +86,11 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 			var attack = new Attack(_rollService);
 
 			var attackResult = attack.MonsterSuffer(
-				data: ref data,
+				data: data,
 				damage: request.DamageValue,
 				successValue: request.SuccessValue);
 
-			Attack.DisposeCorpses(ref battle);
+			Attack.DisposeCorpses(battle);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
 			return new MonsterSufferResponse()

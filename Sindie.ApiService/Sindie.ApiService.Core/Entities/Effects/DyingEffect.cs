@@ -45,11 +45,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void Run(ref Creature creature, ref StringBuilder message)
+		public override void Run(Creature creature, ref StringBuilder message)
 		{
 			if (new Random().Next(1, 10) >= creature.Stun + Counter)
 			{
-				creature.HP = -100;
+				creature.Effects.Add(DeadEffect.Create(null, null, creature, "Dead due failed death save"));
 				return;
 			}
 				Counter--;
@@ -61,7 +61,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void AutoEnd(ref Creature creature, ref StringBuilder message)
+		public override void AutoEnd(Creature creature, ref StringBuilder message)
 		{
 			if (creature.HP >= 0)
 				creature.Effects.Remove(this);
@@ -73,29 +73,18 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="rollService">Сервис бросков</param>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
+		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
 		{
-			//Heal heal = new(rollService);
+			Heal heal = new(rollService);
 
-			//heal.TryStabilize(creature, ref creature, ref message, this);
+			heal.TryStabilize(creature, creature, ref message, this);
 		}
 
-		///// <summary>
-		///// Испытание против внезапной смерти
-		///// </summary>
-		///// <param name="creature">Существо</param>
-		//public static bool DeathSave(Creature creature)
-		//{
-		//	var modifier = (creature.Effects.FirstOrDefault(x => x is DyingEffect) as DyingEffect)?.Counter;
-			
-		//	if (new Random().Next(1, 10) >= creature.Stun + modifier)
-		//		return false;
-		//	}
-		//	Counter--;
-		//	message.AppendLine($"Персонаж {creature.Name} цепляется за жизнь.");
-		//}
-
-
-		//=> new Random().Next(1, 10) >= creature.Stun;
+		/// <summary>
+		/// Испытание против внезапной смерти
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		public static bool DeathSave(Creature creature)
+			=> new Random().Next(1, 10) >= creature.Stun;
 	}
 }

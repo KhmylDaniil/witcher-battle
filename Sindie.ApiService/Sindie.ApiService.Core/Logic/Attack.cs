@@ -54,10 +54,10 @@ namespace Sindie.ApiService.Core.Logic
 				return message.ToString();
 			}
 
-			ApplyDamage(ref data, ref message, successValue);
+			ApplyDamage(data, ref message, successValue);
 
-			if (!CheckDead(ref data, ref message))
-				ApplyConditions(ref data, ref message);
+			if (!CheckDead(data, ref message))
+				ApplyConditions(data, ref message);
 
 			return message.ToString();
 		}
@@ -70,16 +70,16 @@ namespace Sindie.ApiService.Core.Logic
 		/// <param name="successValue">Успешность атаки</param>
 		/// <returns>Сообщение о результате атаки</returns>
 		internal string MonsterSuffer(
-			ref AttackData data,
+			AttackData data,
 			int damage,
 			int successValue)
 		{
 			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
 
-			ApplyDamage(ref data, ref message, successValue, damage);
+			ApplyDamage(data, ref message, successValue, damage);
 
-			if (!CheckDead(ref data, ref message))
-				ApplyConditions(ref data, ref message);
+			if (!CheckDead(data, ref message))
+				ApplyConditions(data, ref message);
 
 			return message.ToString();
 		}
@@ -89,7 +89,7 @@ namespace Sindie.ApiService.Core.Logic
 		/// </summary>
 		/// <param name="data">Данные для расчета атаки</param>
 		/// <returns></returns>
-		internal string CreatureAttack(ref AttackData data)
+		internal string CreatureAttack(AttackData data)
 		{
 			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
 
@@ -112,10 +112,10 @@ namespace Sindie.ApiService.Core.Logic
 				return message.ToString();
 			}
 
-			ApplyDamage(ref data, ref message, successValue);
+			ApplyDamage(data, ref message, successValue);
 
-			if (!CheckDead(ref data, ref message))
-				ApplyConditions(ref data, ref message);
+			if (!CheckDead(data, ref message))
+				ApplyConditions(data, ref message);
 
 			return message.ToString();
 		}
@@ -129,7 +129,16 @@ namespace Sindie.ApiService.Core.Logic
 		/// <returns>База атаки</returns>
 		private static int AttackValue(Creature attacker, Ability ability, int toHit)
 		{
-			var result = attacker.SkillBase(ability.AttackSkillId) + ability.Accuracy + toHit;
+			var staggeredModifier = attacker.Effects.FirstOrDefault(x => x is StaggeredEffect) is null
+				? 0
+				: StaggeredEffect.AttackAndDefenseModifier;
+
+			var blindedModifier = attacker.Effects.FirstOrDefault(x => x is BlindedEffect) is null
+				? 0
+				: BlindedEffect.AttackAndDefenseModifier;
+
+			var result = attacker.SkillBase(ability.AttackSkillId) + ability.Accuracy + toHit + staggeredModifier + blindedModifier;
+
 			return result < 0 ? 0 : result;
 		}
 
@@ -141,7 +150,15 @@ namespace Sindie.ApiService.Core.Logic
 		/// <returns>База защиты</returns>
 		private static int DefenseValue(Creature defender, CreatureSkill defensiveParameter)
 		{
-			var result = defender.SkillBase(defensiveParameter.SkillId);
+			var staggeredModifier = defender.Effects.FirstOrDefault(x => x is StaggeredEffect) is null
+				? 0
+				: StaggeredEffect.AttackAndDefenseModifier;
+
+			var blindedModifier = defender.Effects.FirstOrDefault(x => x is BlindedEffect) is null
+				? 0
+				: BlindedEffect.AttackAndDefenseModifier;
+
+			var result = defender.SkillBase(defensiveParameter.SkillId) + staggeredModifier + blindedModifier;
 
 			if (defender.Effects.Any(x => x is StunEffect))
 				result = 10;
@@ -260,7 +277,7 @@ namespace Sindie.ApiService.Core.Logic
 		/// Удаление мертвых существ
 		/// </summary>
 		/// <param name="instance"></param>
-		internal static void DisposeCorpses(ref Battle instance)
+		internal static void DisposeCorpses(Battle instance)
 		{
 			instance.Creatures.RemoveAll(x => x.HP <= 0 && x is not Character);
 		}
@@ -276,14 +293,14 @@ namespace Sindie.ApiService.Core.Logic
 		/// <param name="data">Данные для расчета атаки</param>
 		/// <param name="message">Сообщение</param>
 		/// <param name="successValue">Успешность атаки</param>
-		private static void ApplyDamage(ref AttackData data, ref StringBuilder message, int successValue)
+		private static void ApplyDamage(AttackData data, ref StringBuilder message, int successValue)
 		{
 			message.AppendLine($"Попадание с превышением на {successValue}.");
 			RemoveStunEffect(data);
 
 			int damage = RollDamage(data.Ability, data.ToDamage);
 
-			ArmorMutigation(ref data, ref damage, ref message);
+			ArmorMutigation(data, ref damage, ref message);
 
 			CheckModifiers(data, ref damage);
 
@@ -292,8 +309,8 @@ namespace Sindie.ApiService.Core.Logic
 			data.Target.HP -= damage;
 			message.AppendLine($"Нанеcено {damage} урона.");
 
-			//if (damage > 0)
-			//	CheckDying(ref data, ref message);
+			if (damage > 0)
+				CheckDying(data.Target, ref message);
 		}
 
 		private static void RemoveStunEffect(AttackData data)
@@ -310,11 +327,11 @@ namespace Sindie.ApiService.Core.Logic
 		/// <param name="message">Сообщение</param>
 		/// <param name="successValue">Успешность атаки</param>
 		/// <param name="damage">Урон</param>
-		private static void ApplyDamage(ref AttackData data, ref StringBuilder message, int successValue, int damage)
+		private static void ApplyDamage(AttackData data, ref StringBuilder message, int successValue, int damage)
 		{
 			message.AppendLine($"Попадание с превышением на {successValue}.");
 
-			ArmorMutigation(ref data, ref damage, ref message);
+			ArmorMutigation(data, ref damage, ref message);
 
 			CheckModifiers(data, ref damage);
 
@@ -323,8 +340,8 @@ namespace Sindie.ApiService.Core.Logic
 			message.AppendLine($"Нанеcено {damage} урона.");
 			data.Target.HP -= damage;
 
-			//if (damage > 0)
-			//	CheckDying(ref data, ref message);
+			if (damage > 0)
+				CheckDying(data.Target, ref message);
 		}
 
 		/// <summary>
@@ -332,7 +349,7 @@ namespace Sindie.ApiService.Core.Logic
 		/// </summary>
 		/// <param name="data">Данные</param>
 		/// <param name="message">Сообщение</param>
-		private static bool CheckDead(ref AttackData data, ref StringBuilder message)
+		private static bool CheckDead(AttackData data, ref StringBuilder message)
 		{
 			if (data.Target.HP >= 0)
 				return false;
@@ -348,7 +365,7 @@ namespace Sindie.ApiService.Core.Logic
 			return true;
 		}
 
-		private static void ArmorMutigation(ref AttackData data, ref int damage, ref StringBuilder message)
+		private static void ArmorMutigation(AttackData data, ref int damage, ref StringBuilder message)
 		{
 			if (data.AimedPart.CurrentArmor == 0)
 				return;
@@ -394,7 +411,7 @@ namespace Sindie.ApiService.Core.Logic
 		/// </summary>
 		/// <param name="data">Данные для атаки</param>
 		/// <param name="message">Сообщение</param>
-		private void ApplyConditions(ref AttackData data, ref StringBuilder message)
+		private void ApplyConditions(AttackData data, ref StringBuilder message)
 		{
 			foreach (var condition in RollConditions(data.Ability))
 			{
@@ -428,16 +445,17 @@ namespace Sindie.ApiService.Core.Logic
 			return result;
 		}
 
-		///// <summary>
-		///// Проверка атаки по умирающим
-		///// </summary>
-		///// <param name="data">Данные для атаки</param>
-		///// <param name="message">Сообщение</param>
-		//private void CheckDying(ref AttackData data, ref StringBuilder message)
-		//{
-		//	var dying = data.Target.Effects.FirstOrDefault(x => x is DyingEffect) as DyingEffect;
-		//	if (dying != null) dying.Run(ref data.Target, ref message);
-				
-		//}
+		/// <summary>
+		/// Проверка атаки по умирающим
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
+		private static void CheckDying(Creature creature, ref StringBuilder message)
+		{
+			var dying = creature.Effects.FirstOrDefault(x => x is DyingEffect) as DyingEffect;
+
+			if (dying != null)
+				dying.Run(creature, ref message);
+		}
 	}
 }

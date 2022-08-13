@@ -14,7 +14,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations.EffectsConfigurati
 		/// </summary>
 		public override void ConfigureChild(EntityTypeBuilder<DifficultTorso2CritEffect> builder)
 		{
-			builder.ToTable("DifficultTorso1CritEffects", "Effects")
+			builder.ToTable("DifficultTorso2CritEffects", "Effects")
 				.HasComment("Эффекты раны в живот");
 		}
 	}

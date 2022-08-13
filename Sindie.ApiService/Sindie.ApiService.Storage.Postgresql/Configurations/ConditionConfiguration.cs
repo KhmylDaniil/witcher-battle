@@ -140,15 +140,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.HasData(new Condition
 			(
-				name: Conditions.DyingName,
-				id: Conditions.DyingId,
-				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-				createdByUserId: SystemUsers.SystemUserId,
-				modifiedByUserId: SystemUsers.SystemUserId));
-
-			builder.HasData(new Condition
-			(
 				name: Crit.SimpleArm,
 				id: Crit.SimpleArmId,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),

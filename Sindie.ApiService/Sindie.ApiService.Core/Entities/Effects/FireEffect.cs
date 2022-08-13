@@ -37,7 +37,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void Run(ref Creature creature, ref StringBuilder message)
+		public override void Run(Creature creature, ref StringBuilder message)
 		{
 			int totalDamage = 0;
 			
@@ -53,7 +53,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void AutoEnd(ref Creature creature, ref StringBuilder message) { }
+		public override void AutoEnd(Creature creature, ref StringBuilder message) { }
 
 		/// <summary>
 		/// Попробовать снять эффект
@@ -61,7 +61,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="rollService">Сервис бросков</param>
 		/// <param name="creature">Существо</param>
 		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, ref Creature creature, ref StringBuilder message)
+		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
 		{
 			message.AppendLine($"Эффект {Conditions.FireName} снят.");
 			creature.Effects.Remove(this);

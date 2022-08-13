@@ -430,7 +430,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				specialToHit: 17);
 
 			result = await newHandler.Handle(request, default);
-
+			message = result.Message;
 			Assert.IsNotNull(message);
 
 			monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
