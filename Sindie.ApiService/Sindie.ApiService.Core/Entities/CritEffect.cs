@@ -165,25 +165,5 @@ namespace Sindie.ApiService.Core.Entities
 
 			return true;
 		}
-
-		///// <summary>
-		///// Уничтожить конечность
-		///// </summary>
-		///// <param name="creature">Существо</param>
-		///// <param name="deadlyCrit">Смертельный критический эффект</param>
-		//public static void DestroyLimb(Creature creature, CritEffect deadlyCrit)
-		//{
-		//	if (deadlyCrit is ISharedPenaltyCrit crit && crit.Severity < Enums.Severity.Deadly)
-		//		return;
-
-		//	var limb = creature.CreatureParts.FirstOrDefault(x => x.Id == deadlyCrit.CreaturePartId);
-
-		//	if (limb.MaxToHit != DiceValue.Value)
-		//		creature.CreatureParts.FirstOrDefault(x => x.MinToHit == limb.MaxToHit + 1).MinToHit = limb.MinToHit;
-		//	else
-		//		creature.CreatureParts.FirstOrDefault(x => x.MaxToHit == limb.MinToHit - 1).MaxToHit = DiceValue.Value;
-
-		//	creature.CreatureParts.Remove(limb);
-		//}
 	}
 }

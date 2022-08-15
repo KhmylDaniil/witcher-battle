@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.BattleRequests.MonsterSuffer;
 using Sindie.ApiService.Core.Entities;
+using Sindie.ApiService.Core.Entities.Effects;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Logic;
@@ -110,6 +111,8 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 
 			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetId)
 				?? throw new ExceptionEntityNotFound<Creature>(request.TargetId);
+
+			if (target.Effects.Any(x => x is DeadEffect)) throw new ApplicationException("Цель уже мертва");
 
 			var aimedPart = request.CreaturePartId == null
 				? null

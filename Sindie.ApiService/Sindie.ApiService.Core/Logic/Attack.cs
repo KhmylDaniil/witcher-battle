@@ -99,11 +99,11 @@ namespace Sindie.ApiService.Core.Logic
 				out int attackerFumble,
 				out int defenderFumble);
 
-			//ApplyFumble(attackerFumble); TODO
+			//ApplyAttackerFumble(attackerFumble, ref message); TODO
 
 			if (attackerFumble != 0)
 			{
-				message.AppendLine(CritMissMessage(attackerFumble)); //TODO
+				message.AppendLine(FumbleMessage(attackerFumble)); //TODO
 				return message.ToString();
 			} 
 			if (successValue == 0)
@@ -282,10 +282,10 @@ namespace Sindie.ApiService.Core.Logic
 			&& (x.HP <= 0 || x.Effects.Any(x => x is DeadEffect)));
 		}
 
-		private static string CritMissMessage(int attackerFumble)
-		{
-			return $"Критический промах {attackerFumble}.";
-		}
+		//private static string CritMissMessage(int attackerFumble)
+		//{
+		//	return $"Критический промах {attackerFumble}.";
+		//}
 
 		/// <summary>
 		/// Применить урон
@@ -300,7 +300,7 @@ namespace Sindie.ApiService.Core.Logic
 
 			int damage = RollDamage(data.Ability, data.ToDamage);
 
-			ArmorMutigation(data, ref damage, ref message);
+			ArmorMutigation(data.AimedPart, ref damage, ref message);
 
 			CheckModifiers(data, ref damage);
 
@@ -330,8 +330,9 @@ namespace Sindie.ApiService.Core.Logic
 		private static void ApplyDamage(AttackData data, ref StringBuilder message, int successValue, int damage)
 		{
 			message.AppendLine($"Попадание с превышением на {successValue}.");
+			RemoveStunEffect(data);
 
-			ArmorMutigation(data, ref damage, ref message);
+			ArmorMutigation(data.AimedPart, ref damage, ref message);
 
 			CheckModifiers(data, ref damage);
 
@@ -365,20 +366,20 @@ namespace Sindie.ApiService.Core.Logic
 			return true;
 		}
 
-		private static void ArmorMutigation(AttackData data, ref int damage, ref StringBuilder message)
+		private static void ArmorMutigation(CreaturePart creaturePart, ref int damage, ref StringBuilder message)
 		{
-			if (data.AimedPart.CurrentArmor == 0)
+			if (creaturePart.CurrentArmor == 0)
 				return;
 
-			if (data.AimedPart.CurrentArmor > damage)
+			if (creaturePart.CurrentArmor > damage)
 			{
 				damage = 0;
 				message.AppendLine("Броня поглотила урон");
 				return;
 			}
 
-			damage -= data.AimedPart.CurrentArmor--;
-			message.AppendLine($"Броня повреждена. Осталось {data.AimedPart.CurrentArmor} брони");
+			damage -= creaturePart.CurrentArmor--;
+			message.AppendLine($"Броня повреждена. Осталось {creaturePart.CurrentArmor} брони");
 			return;
 		}
 
@@ -455,6 +456,116 @@ namespace Sindie.ApiService.Core.Logic
 			var dying = creature.Effects.FirstOrDefault(x => x is DyingEffect) as DyingEffect;
 
 			dying?.Run(creature, ref message);
+		}
+
+
+
+
+
+
+
+		private void ApplyAttackerFumble(Creature creature, CreatureSkill attackSkill, int attackerFumble, ref StringBuilder message)
+		{
+			if (attackSkill.SkillId == Skills.BrawlingId)
+				ApplyUnarmedFumble(creature, attackerFumble, ref message);
+
+
+
+
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+		private void ApplyUnarmedFumble(Creature creature, int fumble, ref StringBuilder message)
+		{
+			switch (fumble)
+			{
+				case 6:
+					{
+						var staggered = StaggeredEffect.Create(null, null, target: creature, "Fumble-based stagger");
+
+						if (staggered is null)
+							break;
+
+						creature.Effects.Add(staggered);
+						message.AppendLine($"Из-за провала существо {creature.Name} получает эффект {Conditions.StaggeredName}.");
+						break;
+					}
+
+				case 7:
+					{
+						FallProne(ref message);
+						break;
+					}
+
+				case 8:
+					{
+						FallProne(ref message);
+						StunCheck(ref message);
+						break;
+					}
+				case 9:
+					{
+						int staLoss = new Random().Next(1, 6);
+
+						creature.Sta = creature.Sta >= staLoss
+							? creature.Sta - staLoss
+							: 0;
+
+						FallProne(ref message);
+						StunCheck(ref message);
+						break;
+					}
+				case 10:
+					{
+						int damage = new Random().Next(1, 6);
+
+						var head = creature.CreatureParts.FirstOrDefault(x => x.BodyPartTypeId == BodyPartTypes.HeadId);
+
+						if (head is null) creature.HP -= damage;
+
+						ArmorMutigation(head, ref damage, ref message);
+
+						damage = (int)Math.Truncate(damage * head.DamageModifier);
+						creature.HP -= damage;
+
+						FallProne(ref message);
+						StunCheck(ref message);
+						break;
+					}
+
+				default:
+					throw new ApplicationException("Что-то пошло не так");
+
+					void FallProne(ref StringBuilder message)
+					{
+						var prone = ProneEffect.Create(null, null, target: creature, "Fumble-based prone");
+
+						if (prone is null)
+							return;
+
+						creature.Effects.Add(prone);
+						message.AppendLine($"Из-за провала существо {creature.Name} падает.");
+					}
+
+					void StunCheck(ref StringBuilder message)
+					{
+						if (new Random().Next(1, 10) < creature.Stun || creature.Effects.Any(x => x is StunEffect))
+							return;
+
+						creature.Effects.Add(StunEffect.Create(null, null, creature, "fumble-based stun"));
+						message.AppendLine($"Из-за провала существо {creature.Name} получает эффект {Conditions.StunName}.");
+					}
+			}
 		}
 	}
 }

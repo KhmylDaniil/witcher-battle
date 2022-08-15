@@ -30,6 +30,8 @@ namespace Sindie.ApiService.Core.Services.Roll
 			fumble = CheckFumble(roll);
 			skillBase += roll;
 
+			if (fumble > 0) return 0;
+
 			return skillBase - difficulty < 0 ? 0 : skillBase - difficulty;
 		}
 
@@ -72,6 +74,8 @@ namespace Sindie.ApiService.Core.Services.Roll
 
 			attackerFumble = CheckFumble(attackRoll);
 			defenderFumble = CheckFumble(defenseRoll);
+
+			if (attackerFumble > 0) return 0;
 
 			attackBase += attackRoll;
 			defenseBase += defenseRoll;
@@ -119,7 +123,7 @@ namespace Sindie.ApiService.Core.Services.Roll
 			
 			if (input <= -DiceValue.Value)
 				fumble = DiceValue.Value;
-			else if (input < DiceValue.Value / -2)
+			else if (input <= DiceValue.Value / -2)
 				fumble = -input;
 
 			return fumble;
