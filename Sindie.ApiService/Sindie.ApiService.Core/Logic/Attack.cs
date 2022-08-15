@@ -203,25 +203,24 @@ namespace Sindie.ApiService.Core.Logic
 
 			static void SetCritSeverity(int successValue, ref int bonusDamage, out string critSeverity)
 			{
-				//TODO переделать на енум
 				if (successValue < 10)
 				{
-					critSeverity = "Simple";
+					critSeverity = Enums.Severity.Simple.ToString();
 					bonusDamage += 3;
 				}
 				else if (successValue < 13)
 				{
-					critSeverity = "Complex";
+					critSeverity = Enums.Severity.Complex.ToString();
 					bonusDamage += 5;
 				}
 				else if (successValue < 15)
 				{
-					critSeverity = "Difficult";
+					critSeverity = Enums.Severity.Difficult.ToString();
 					bonusDamage += 8;
 				}
 				else
 				{
-					critSeverity = "Deadly";
+					critSeverity = Enums.Severity.Deadly.ToString();
 					bonusDamage += 10;
 				}
 			}
@@ -236,7 +235,7 @@ namespace Sindie.ApiService.Core.Logic
 					critName += suffix;
 				}
 
-				return critName ;
+				return critName;
 			}
 
 			static bool isCritImmune(CreatureType creatureType, CreaturePart aimedPart)
@@ -260,7 +259,7 @@ namespace Sindie.ApiService.Core.Logic
 			void StunCheck(Creature creature, ref StringBuilder message)
 			{
 				Random random = new();
-				if (random.Next() >= creature.Stun)
+				if (random.Next(1, 10) >= creature.Stun)
 				{
 					var stun = StunEffect.Create(null, null, target: creature, "Crit-based Stun");
 
@@ -279,7 +278,8 @@ namespace Sindie.ApiService.Core.Logic
 		/// <param name="instance"></param>
 		internal static void DisposeCorpses(Battle instance)
 		{
-			instance.Creatures.RemoveAll(x => x.HP <= 0 && x is not Character);
+			instance.Creatures.RemoveAll(x => x is not Character
+			&& (x.HP <= 0 || x.Effects.Any(x => x is DeadEffect)));
 		}
 
 		private static string CritMissMessage(int attackerFumble)
@@ -454,8 +454,7 @@ namespace Sindie.ApiService.Core.Logic
 		{
 			var dying = creature.Effects.FirstOrDefault(x => x is DyingEffect) as DyingEffect;
 
-			if (dying != null)
-				dying.Run(creature, ref message);
+			dying?.Run(creature, ref message);
 		}
 	}
 }

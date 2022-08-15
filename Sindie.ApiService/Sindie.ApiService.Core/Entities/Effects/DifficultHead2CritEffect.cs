@@ -33,7 +33,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		private DifficultHead2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
-			=> ApplyStatChanges(creature);
+		{
+			ApplyStatChanges(creature);
+			Severity = Severity.Difficult | Severity.Unstabilizied;
+			BodyPartLocation = Enums.BodyPartType.Head;
+		}
 
 		/// <summary>
 		/// Создание эффекта - синглтон

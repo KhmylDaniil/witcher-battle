@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.BattleRequests.CreateBattle;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle;
@@ -23,7 +24,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly CreatureTemplatePart _creatureTemplatePart;
-		private readonly BodyPartType _bodyPartType;
+		private readonly BodyPartType _armPartType;
 		private readonly Ability _ability;
 		private readonly Condition _condition;
 		private readonly Skill _parameter;
@@ -36,7 +37,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		{
 			_game = Game.CreateForTest();
 			_imgFile = ImgFile.CreateForTest();
-			_bodyPartType = BodyPartType.CreateForTest();
+			_armPartType = BodyPartType.CreateForTest(id: BodyPartTypes.ArmId);
 			_creatureType = CreatureType.CreateForTest();
 			_condition = Condition.CreateForTest();
 			_parameter = Skill.CreateForTest();
@@ -44,8 +45,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_creatureTemplate = CreatureTemplate.CreateForTest(game: _game, bodyTemplate: _bodyTemplate, creatureType: _creatureType);
 			_creatureTemplatePart = CreatureTemplatePart.CreateForTest(
 				creatureTemplate: _creatureTemplate,
-				bodyPartType: _bodyPartType,
-				name: "torso",
+				bodyPartType: _armPartType,
+				name: "arm",
 				armor: 5);
 			_creatureTemplate.CreatureTemplateParts.Add(_creatureTemplatePart);
 
@@ -82,7 +83,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		/// </summary>
 		/// <returns></returns>
 		[TestMethod]
-		public async Task Handle_CreateInstance_ShouldReturnUnit()
+		public async Task Handle_CreateBattle_ShouldReturnUnit()
 		{
 			var request = new CreateBattleCommand(
 				gameId: _game.Id,
@@ -139,13 +140,17 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			var creaturePart = creature.CreatureParts.FirstOrDefault();
 			Assert.IsNotNull(creaturePart);
 			Assert.AreEqual(creature.CreatureParts.Count, 1);
-			Assert.AreEqual(creaturePart.Name, "torso");
+			Assert.AreEqual(creaturePart.Name, "arm");
 			Assert.AreEqual(creaturePart.HitPenalty, 1);
 			Assert.AreEqual(creaturePart.DamageModifier, 1);
 			Assert.AreEqual(creaturePart.MaxToHit, 10);
 			Assert.AreEqual(creaturePart.MinToHit, 1);
 			Assert.AreEqual(creaturePart.CurrentArmor, 5);
 			Assert.AreEqual(creaturePart.StartingArmor, 5);
+
+			Assert.IsTrue(creature.LeadingArmId != default);
+			Assert.IsTrue(creature.LeadingArmId == creaturePart.Id);
+
 
 			Assert.IsNotNull(creature.Abilities);
 			Assert.AreEqual(creature.Abilities.Count, 1);

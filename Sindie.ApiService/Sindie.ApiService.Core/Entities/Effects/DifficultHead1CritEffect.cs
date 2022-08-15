@@ -25,16 +25,6 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		public int NextCheck { get; private set; }
 
-		/// <summary>
-		/// Тяжесть критического эффекта
-		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Difficult | Severity.Unstabilizied;
-
-		/// <summary>
-		/// Тип части тела
-		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Head;
-
 		public DifficultHead1CritEffect() { }
 
 		/// <summary>
@@ -47,6 +37,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			NextCheck = new Random().Next(1, 6);
 			ApplyStatChanges(creature);
+
+			Severity = Severity.Difficult | Severity.Unstabilizied;
+			BodyPartLocation = Enums.BodyPartType.Head;
 		}
 
 		/// <summary>

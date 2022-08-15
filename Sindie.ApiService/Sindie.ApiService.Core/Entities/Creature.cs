@@ -35,6 +35,7 @@ namespace Sindie.ApiService.Core.Entities
 		private ImgFile _imgFile;
 		private CreatureTemplate _creatureTemplate;
 		private CreatureType _creatureType;
+		private Guid? _leadingArmId;
 
 		private int _sta;
 		private int _int;
@@ -307,7 +308,15 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Ведущая рука
 		/// </summary>
-		public Guid LeadingArmId { get; private set; }
+		public Guid? LeadingArmId
+		{
+			get
+			{
+				if (_leadingArmId == default)
+					_leadingArmId = DefineLeadingArm();
+				return _leadingArmId;
+			}
+		}
 
 		#region navigation properties
 
@@ -432,22 +441,7 @@ namespace Sindie.ApiService.Core.Entities
 					maxToHit: part.MaxToHit,
 					armor: part.Armor));
 
-			LeadingArmId = DefineLeadingArm(result);
-
 			return result;
-
-			Guid DefineLeadingArm(List<CreaturePart> parts)
-			{
-				var arms = parts.Where(x => x.BodyPartTypeId == BodyPartTypes.ArmId).ToList();
-
-				if (!arms.Any()) return Guid.Empty;
-
-				Random random = new();
-
-				int i = random.Next(0, arms.Count - 1);
-
-				return arms[i].Id;
-			}
 		}
 
 		/// <summary>
@@ -518,6 +512,19 @@ namespace Sindie.ApiService.Core.Entities
 			var skill = CreatureSkills.FirstOrDefault(x => x.SkillId == skillId);
 
 			return skill is null ? 0 : skill.MaxValue;
+		}
+
+		private Guid DefineLeadingArm()
+		{
+			var arms = CreatureParts.Where(x => x.BodyPartTypeId == BodyPartTypes.ArmId).ToList();
+
+			if (!arms.Any()) return Guid.Empty;
+
+			Random random = new();
+
+			int i = random.Next(0, arms.Count - 1);
+
+			return arms[i].Id;
 		}
 
 		/// <summary>

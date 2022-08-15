@@ -16,6 +16,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations.EffectsConfigurati
 		{
 			builder.ToTable("SimpleWingCritEffects", "Effects")
 				.HasComment("Эффекты вывиха крыла");
+
+			builder.Property(x => x.PenaltyApplied)
+			.HasColumnName("PenaltyApplied")
+			.HasComment("Пенальти применено")
+			.IsRequired();
 		}
 	}
 }

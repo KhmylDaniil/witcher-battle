@@ -16,16 +16,6 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		private const int AfterTreatBodyAndSpeedModifier = -2;
 		private const string sufflocationName = "Sucking chest wound-based sufflocation.";
 
-		/// <summary>
-		/// Тяжесть критического эффекта
-		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Difficult | Severity.Unstabilizied;
-
-		/// <summary>
-		/// Тип части тела
-		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Torso;
-
 		public DifficultTorso1CritEffect() { }
 
 		/// <summary>
@@ -35,7 +25,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		private DifficultTorso1CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
-			=> ApplyStatChanges(creature);
+		{
+			ApplyStatChanges(creature);
+			Severity = Severity.Difficult | Severity.Unstabilizied;
+			BodyPartLocation = Enums.BodyPartType.Torso;
+		}
 
 		/// <summary>
 		/// Создание эффекта - синглтон

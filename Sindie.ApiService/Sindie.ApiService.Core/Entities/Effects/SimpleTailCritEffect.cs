@@ -16,7 +16,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	{
 		private const int Modifier = -2;
 		private const int AfterTreatModifier = -1;
-		private readonly List<Guid> _affectedSkills = new() {	Skills.DodgeId, Skills.AthleticsId	};
+		private static readonly List<Guid> _affectedSkills = new() {	Skills.DodgeId, Skills.AthleticsId	};
 
 		private SimpleTailCritEffect() { }
 
@@ -26,17 +26,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
-		private SimpleTailCritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name) { }
-
-		/// <summary>
-		/// Тяжесть критического эффекта
-		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Simple | Severity.Unstabilizied;
-
-		/// <summary>
-		/// Тип части тела
-		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Tail;
+		private SimpleTailCritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
+		{
+			Severity = Severity.Simple | Severity.Unstabilizied;
+			BodyPartLocation = Enums.BodyPartType.Tail;
+		}
 
 		/// <summary>
 		/// Пенальти применено

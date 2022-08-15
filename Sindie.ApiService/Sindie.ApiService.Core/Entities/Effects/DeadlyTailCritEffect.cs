@@ -13,8 +13,15 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	/// </summary>
 	public class DeadlyTailCritEffect : CritEffect, ISharedPenaltyCrit
 	{
-		private int _dodgeModifier;
-		private int _athleticsModifier;
+		/// <summary>
+		/// Модификатор уклонения
+		/// </summary>
+		public int DodgeModifier { get; private set; }
+
+		/// <summary>
+		/// Модификатор атлетики
+		/// </summary>
+		public int AthleticsModifier { get; private set; }
 
 		private DeadlyTailCritEffect() { }
 
@@ -26,20 +33,13 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="aimedPart">Часть тела</param>
 		private DeadlyTailCritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
 		{
-			_dodgeModifier = (int)Math.Floor(creature.GetSkillMax(Skills.DodgeId) * -0.75);
+			DodgeModifier = (int)Math.Floor(creature.GetSkillMax(Skills.DodgeId) * -0.75);
 
-			_athleticsModifier = (int)Math.Floor(creature.GetSkillMax(Skills.AthleticsId) * -0.75);
+			AthleticsModifier = (int)Math.Floor(creature.GetSkillMax(Skills.AthleticsId) * -0.75);
+
+			Severity = Severity.Deadly | Severity.Unstabilizied;
+			BodyPartLocation = Enums.BodyPartType.Tail;
 		}
-
-		/// <summary>
-		/// Тяжесть критического эффекта
-		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Deadly | Severity.Unstabilizied;
-
-		/// <summary>
-		/// Тип части тела
-		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Tail;
 
 		/// <summary>
 		/// Пенальти применено
@@ -115,11 +115,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.DodgeId);
 			if (dodge is not null)
-				dodge.SkillValue = dodge.GetValue() + _dodgeModifier;
+				dodge.SkillValue = dodge.GetValue() + DodgeModifier;
 
 			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AthleticsId);
 			if (athletics is not null)
-				athletics.SkillValue = athletics.GetValue() + _athleticsModifier;
+				athletics.SkillValue = athletics.GetValue() + AthleticsModifier;
 		}
 
 		/// <summary>
@@ -132,11 +132,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.DodgeId);
 			if (dodge is not null)
-				dodge.SkillValue = dodge.GetValue() - _dodgeModifier;
+				dodge.SkillValue = dodge.GetValue() - DodgeModifier;
 
 			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AthleticsId);
 			if (athletics is not null)
-				athletics.SkillValue = athletics.GetValue() - _athleticsModifier;
+				athletics.SkillValue = athletics.GetValue() - AthleticsModifier;
 		}
 	}
 }

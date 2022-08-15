@@ -16,7 +16,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	{
 		private const int SkillModifier = -3;
 		private const int AfterTreatSkillModifier = -2;
-		private readonly List<Guid> affectedSkills = new()
+		private static readonly List<Guid> affectedSkills = new()
 		{
 			Skills.SpellId,
 			Skills.RitualCraftingId,
@@ -39,17 +39,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		private ComplexHead1CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
-			=> ApplyStatChanges(creature);
-
-		/// <summary>
-		/// Тяжесть критического эффекта
-		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Complex | Severity.Unstabilizied;
-
-		/// <summary>
-		/// Тип части тела
-		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Head;
+		{
+			ApplyStatChanges(creature);
+			Severity = Severity.Complex | Severity.Unstabilizied;
+			BodyPartLocation = Enums.BodyPartType.Head;
+		}
 
 		/// <summary>
 		/// Создание эффекта - синглтон

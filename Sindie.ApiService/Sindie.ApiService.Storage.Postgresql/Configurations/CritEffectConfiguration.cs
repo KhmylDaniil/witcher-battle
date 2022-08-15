@@ -17,9 +17,19 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			builder.ToTable("CritEffects", "Battles")
 				.HasComment("Критические эффекты");
 
+			builder.Property(x => x.Severity)
+				.HasColumnName("Severity")
+				.HasComment("Тяжесть критического эффекта")
+				.IsRequired();
+
 			builder.Property(x => x.CreaturePartId)
 				.HasColumnName("CreaturePartId")
 				.HasComment("Айди части тела")
+				.IsRequired();
+
+			builder.Property(x => x.BodyPartLocation)
+				.HasColumnName("BodyPartLocation")
+				.HasComment("Тип части тела")
 				.IsRequired();
 
 			var creaturePartNavigation = builder.Metadata.FindNavigation(nameof(CritEffect.CreaturePart));

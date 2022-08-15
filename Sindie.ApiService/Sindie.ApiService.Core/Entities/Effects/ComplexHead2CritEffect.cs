@@ -14,17 +14,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	{
 		private const int Modifier = -1;
 
-		/// <summary>
-		/// Тяжесть критического эффекта
-		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Complex | Severity.Unstabilizied;
-
-		/// <summary>
-		/// Тип части тела
-		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Head;
-
-		public ComplexHead2CritEffect() { }
+		private ComplexHead2CritEffect() { }
 
 		/// <summary>
 		/// Конструктор эффекта небольшой травмы головы
@@ -33,7 +23,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		private ComplexHead2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
-			=> ApplyStatChanges(creature);
+		{
+			ApplyStatChanges(creature);
+			Severity = Severity.Complex | Severity.Unstabilizied;
+			BodyPartLocation = Enums.BodyPartType.Head;
+		}
 
 		/// <summary>
 		/// Создание эффекта - синглтон

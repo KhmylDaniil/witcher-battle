@@ -19,16 +19,6 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		private const int AwarenessModifier = -5;
 		private const int AfterTreatAwarenessModifier = -3;
 
-		/// <summary>
-		/// Тяжесть критического эффекта
-		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Deadly | Severity.Unstabilizied;
-
-		/// <summary>
-		/// Тип части тела
-		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Head;
-
 		public DeadlyHead1CritEffect() { }
 
 		/// <summary>
@@ -38,7 +28,12 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		private DeadlyHead1CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
-			=> ApplyStatChanges(creature);
+		{
+			ApplyStatChanges(creature);
+			Severity = Severity.Deadly | Severity.Unstabilizied;
+			BodyPartLocation = Enums.BodyPartType.Head;
+		}
+			
 
 		/// <summary>
 		/// Создание эффекта - синглтон

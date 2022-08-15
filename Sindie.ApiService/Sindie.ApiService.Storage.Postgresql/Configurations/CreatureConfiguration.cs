@@ -142,7 +142,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.Property(r => r.MaxWill)
 			.HasColumnName("MaxWill")
-			.HasComment("Максимальнпя воля")
+			.HasComment("Максимальная воля")
 			.IsRequired();
 
 			builder.Property(r => r.MaxSpeed)
@@ -154,6 +154,15 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			.HasColumnName("MaxLuck")
 			.HasComment("Максимальная удача")
 			.IsRequired();
+
+			builder.Property(r => r.Stun)
+			.HasColumnName("Stun")
+			.HasComment("Устойчивость")
+			.IsRequired();
+
+			builder.Property(r => r.LeadingArmId)
+			.HasColumnName("LeadingArmId")
+			.HasComment("Айди ведущей руки");
 
 			builder.HasOne(x => x.Battle)
 				.WithMany(x => x.Creatures)

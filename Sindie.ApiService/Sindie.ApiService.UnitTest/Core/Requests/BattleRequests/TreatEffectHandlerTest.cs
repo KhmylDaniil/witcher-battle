@@ -53,6 +53,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_freezeEffect = FreezeEffect.CreateForTest(creature: _creature);
 
 			_creature.Effects.Add(_freezeEffect);
+			
 			_creature.CreatureSkills.Add(new CreatureSkill(7, _creature, _skill));
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(

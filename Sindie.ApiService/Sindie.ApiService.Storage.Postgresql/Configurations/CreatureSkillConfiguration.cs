@@ -16,8 +16,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 		/// </summary>
 		public override void ConfigureChild(EntityTypeBuilder<CreatureSkill> builder)
 		{
-			builder.ToTable("CreatureParameters", "Battles")
-				.HasComment("Параметры существа");
+			builder.ToTable("CreatureSkills", "Battles")
+				.HasComment("Навыки существа");
 
 			builder.Property(r => r.CreatureId)
 				.HasColumnName("CreatureId")

@@ -13,16 +13,6 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	/// </summary>
 	public class DeadlyHead2CritEffect : CritEffect, ICrit
 	{
-		/// <summary>
-		/// Тяжесть критического эффекта
-		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Deadly | Severity.Unstabilizied;
-
-		/// <summary>
-		/// Тип части тела
-		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Head;
-
 		public DeadlyHead2CritEffect() { }
 
 		/// <summary>
@@ -31,7 +21,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
-		private DeadlyHead2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name) { }
+		private DeadlyHead2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
+		{
+			Severity = Severity.Deadly | Severity.Unstabilizied;
+			BodyPartLocation = Enums.BodyPartType.Head;
+		}
 
 		/// <summary>
 		/// Создание эффекта - синглтон

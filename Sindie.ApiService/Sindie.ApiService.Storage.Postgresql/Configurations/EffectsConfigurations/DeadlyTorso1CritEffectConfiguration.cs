@@ -16,6 +16,16 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations.EffectsConfigurati
 		{
 			builder.ToTable("DeadlyTorso1CritEffects", "Effects")
 				.HasComment("Эффекты септического шока");
+
+			builder.Property(x => x.StaModifier)
+			.HasColumnName("StaModifier")
+			.HasComment("Модификатор стамины")
+			.IsRequired();
+
+			builder.Property(x => x.AfterTreatStaModifier)
+			.HasColumnName("AfterTreatStaModifier")
+			.HasComment("Модификатор стамины после стабилизации")
+			.IsRequired();
 		}
 	}
 }

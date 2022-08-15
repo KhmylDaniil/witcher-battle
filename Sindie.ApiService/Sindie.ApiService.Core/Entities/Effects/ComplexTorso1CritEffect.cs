@@ -16,16 +16,6 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		private const int AfterTreatBodyModifier = -1;
 		private const int RefAndDexModifier = -1;
 
-		/// <summary>
-		/// Тяжесть критического эффекта
-		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Complex | Severity.Unstabilizied;
-
-		/// <summary>
-		/// Тип части тела
-		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Torso;
-
 		public ComplexTorso1CritEffect() { }
 
 		/// <summary>
@@ -35,7 +25,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
 		private ComplexTorso1CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
-			=> ApplyStatChanges(creature);
+		{
+			ApplyStatChanges(creature);
+			Severity = Severity.Complex | Severity.Unstabilizied;
+			BodyPartLocation = Enums.BodyPartType.Torso;
+		}
 
 		/// <summary>
 		/// Создание эффекта - синглтон

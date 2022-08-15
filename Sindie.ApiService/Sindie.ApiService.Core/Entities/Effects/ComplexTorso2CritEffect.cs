@@ -18,16 +18,6 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// </summary>
 		public int RoundCounter { get; private set; }
 
-		/// <summary>
-		/// Тяжесть критического эффекта
-		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Complex | Severity.Unstabilizied;
-
-		/// <summary>
-		/// Тип части тела
-		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Torso;
-
 		public ComplexTorso2CritEffect() { }
 
 		/// <summary>
@@ -36,7 +26,12 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		/// <param name="name">Название</param>
 		/// <param name="aimedPart">Часть тела</param>
-		private ComplexTorso2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name) { }
+		private ComplexTorso2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
+		{
+			ApplyStatChanges(creature);
+			Severity = Severity.Complex | Severity.Unstabilizied;
+			BodyPartLocation = Enums.BodyPartType.Torso;
+		}
 
 		/// <summary>
 		/// Создание эффекта - синглтон

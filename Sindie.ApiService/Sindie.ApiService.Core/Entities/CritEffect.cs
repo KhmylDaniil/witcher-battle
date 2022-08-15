@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -35,6 +36,16 @@ namespace Sindie.ApiService.Core.Entities
 		{
 			CreaturePart = aimedPart;
 		}
+
+		/// <summary>
+		/// Тяжесть критического эффекта
+		/// </summary>
+		public Severity Severity { get; protected set; }
+
+		/// <summary>
+		/// Тип части тела
+		/// </summary
+		public Enums.BodyPartType BodyPartLocation { get; protected set; } 
 
 		/// <summary>
 		/// Айди части тела
@@ -139,18 +150,18 @@ namespace Sindie.ApiService.Core.Entities
 		/// <returns>Возможность создания эффекта</returns>
 		public static bool CheckExistingEffectAndRemoveStabilizedEffect<T>(Creature creature, CreaturePart aimedPart) where T : CritEffect
 		{
-			ICrit crit = creature.Effects.FirstOrDefault(x => x.Id == aimedPart.Id && x is T) as ICrit;
+			ICrit existingCrit = creature.Effects.FirstOrDefault(x => x is T crit && crit.CreaturePartId == aimedPart.Id) as ICrit;
 			
-			if (crit == null)
+			if (existingCrit == null)
 				return true;
 
-			if (Enums.IsStabile(crit.Severity))
+			if (!IsStabile(existingCrit.Severity))
 				return false;
 
-			if (crit is not ISharedPenaltyCrit sharedPenaltyCrit || sharedPenaltyCrit.PenaltyApplied)
-				crit.RevertStatChanges(creature);
+			if (existingCrit is not ISharedPenaltyCrit sharedPenaltyCrit || sharedPenaltyCrit.PenaltyApplied)
+				existingCrit.RevertStatChanges(creature);
 
-			creature.Effects.Remove((CritEffect)crit);
+			creature.Effects.Remove((CritEffect)existingCrit);
 
 			return true;
 		}

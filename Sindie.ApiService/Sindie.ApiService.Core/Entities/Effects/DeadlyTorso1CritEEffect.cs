@@ -15,21 +15,18 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	{
 		private const int Modifier = -3;
 		private const int AfterTreatModifier = -1;
-		
-		private int _staModifier;
-		private int _afterTreatStaModifier;
+
+		/// <summary>
+		/// Модификатор стамины
+		/// </summary>
+		public int StaModifier { get; private set; }
+
+		/// <summary>
+		/// Модификатор стамины после стабилизации
+		/// </summary>
+		public int AfterTreatStaModifier { get; private set; }
 
 		private const string poisonName = "Septic shock-based poison.";
-
-		/// <summary>
-		/// Тяжесть критического эффекта
-		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Deadly | Severity.Unstabilizied;
-
-		/// <summary>
-		/// Тип части тела
-		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Torso;
 
 		public DeadlyTorso1CritEffect() { }
 
@@ -41,10 +38,13 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="aimedPart">Часть тела</param>
 		private DeadlyTorso1CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
 		{
-			_staModifier = (int)Math.Floor(creature.MaxSta * -0.75);
-			_afterTreatStaModifier = (int)Math.Floor(creature.MaxSta * -0.5);
+			StaModifier = (int)Math.Floor(creature.MaxSta * -0.75);
+			AfterTreatStaModifier = (int)Math.Floor(creature.MaxSta * -0.5);
 
 			ApplyStatChanges(creature);
+
+			Severity = Severity.Deadly | Severity.Unstabilizied;
+			BodyPartLocation = Enums.BodyPartType.Torso;
 		}
 			
 		/// <summary>
@@ -102,7 +102,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			creature.Ref = creature.GetRef() + Modifier;
 			creature.Dex = creature.GetDex() + Modifier;
 
-			creature.MaxSta += _staModifier;
+			creature.MaxSta += StaModifier;
 			if (creature.Sta > creature.MaxSta)
 				creature.Sta = creature.MaxSta;
 		}
@@ -119,7 +119,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 				creature.Will = creature.GetWill() - AfterTreatModifier;
 				creature.Ref = creature.GetRef() - AfterTreatModifier;
 				creature.Dex = creature.GetDex() - AfterTreatModifier;
-				creature.MaxSta -= _afterTreatStaModifier;
+				creature.MaxSta -= AfterTreatStaModifier;
 			}
 			else
 			{
@@ -127,7 +127,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 				creature.Will = creature.GetWill() - Modifier;
 				creature.Ref = creature.GetRef() - Modifier;
 				creature.Dex = creature.GetDex() - Modifier;
-				creature.MaxSta -= _staModifier;
+				creature.MaxSta -= StaModifier;
 			}
 		}
 
@@ -146,7 +146,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			creature.Will = creature.GetWill() - Modifier + AfterTreatModifier;
 			creature.Ref = creature.GetRef() - Modifier + AfterTreatModifier;
 			creature.Dex = creature.GetDex() - Modifier + AfterTreatModifier;
-			creature.MaxSta -= _staModifier + _afterTreatStaModifier;
+			creature.MaxSta -= StaModifier + AfterTreatStaModifier;
 
 			var poison = creature.Effects.FirstOrDefault(x => x is PoisonEffect && x.Name.Equals(poisonName));
 
