@@ -49,14 +49,14 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 		{
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
 				.Include(g => g.Abilities)
-				.Include(x => x.Skills)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
+			var skills = await _appDbContext.Skills.ToListAsync(cancellationToken);
 			var conditions =  await _appDbContext.Conditions.ToListAsync(cancellationToken);
 			var damageTypes = await _appDbContext.DamageTypes.ToListAsync(cancellationToken);
 
-			CheckRequest(request, game, conditions, damageTypes);
+			CheckRequest(request, game, conditions, damageTypes, skills);
 
 			var newAbility = Ability.CreateAbility(
 				game: game,
@@ -66,9 +66,9 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 				damageModifier: request.DamageModifier,
 				attackSpeed: request.AttackSpeed,
 				accuracy: request.Accuracy,
-				attackSkill: game.Skills.First(x => x.Id == request.AttackSkillId),
-				defensiveSkills: CreateDefensiveSkills(request, game),
-				damageTypes: CreateDamageTypes(request, damageTypes),
+				attackSkill: skills.First(x => x.Id == request.AttackSkillId),
+				defensiveSkills: CreateDefensiveSkills(request, skills),
+				damageType: damageTypes.First(x => x.Id == request.DamageTypeId),
 				appliedConditions: AppliedConditionData.CreateAbilityData(request, conditions));
 
 			_appDbContext.Abilities.Add(newAbility);
@@ -83,21 +83,21 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 		/// <param name="game">Игра</param>
 		/// <param name="conditions">Состояния</param>
 		/// <param name="damageTypes">Типы урона</param>
-		private void CheckRequest(CreateAbilityCommand request, Game game, List<Condition> conditions, List<DamageType> damageTypes)
+		/// <param name="skills">Навыки</param>
+		private void CheckRequest(CreateAbilityCommand request, Game game, List<Condition> conditions, List<DamageType> damageTypes, List<Skill> skills)
 		{
 			if (game.Abilities.Any(x => x.Name == request.Name))
 				throw new ExceptionRequestNameNotUniq<CreateAbilityCommand>(nameof(request.Name));
 
-			_ = game.Skills.FirstOrDefault(x => x.Id == request.AttackSkillId)
+			_ = skills.FirstOrDefault(x => x.Id == request.AttackSkillId)
 				?? throw new ExceptionEntityNotFound<Skill>(request.AttackSkillId);
 
-			foreach (var id in request.DefensiveSkills)
-				_ = game.Skills.FirstOrDefault(x => x.Id == id)
-					?? throw new ExceptionEntityNotFound<Skill>(id);
+			_ = damageTypes.FirstOrDefault(x => x.Id == request.DamageTypeId)
+				?? throw new ExceptionEntityNotFound<DamageType>(request.DamageTypeId);
 
-			foreach (var id in request.DamageTypes)
-				_ = damageTypes.FirstOrDefault(x => x.Id == id)
-					?? throw new ExceptionEntityNotFound<DamageType>(id);
+			foreach (var id in request.DefensiveSkills)
+				_ = skills.FirstOrDefault(x => x.Id == id)
+					?? throw new ExceptionEntityNotFound<Skill>(id);
 
 			foreach (var appliedCondition in request.AppliedConditions)
 			{
@@ -115,30 +115,15 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 		/// <param name="request">Запрос</param>
 		/// <param name="game">Игра</param>
 		/// <returns>Список защитных навыков</returns>
-		private List<Skill> CreateDefensiveSkills(CreateAbilityCommand request, Game game)
+		private List<Skill> CreateDefensiveSkills(CreateAbilityCommand request, List<Skill> skills)
 		{
 			var defensiveSkills = new List<Skill>();
 
 			foreach (var id in request.DefensiveSkills)
-				defensiveSkills.Add(game.Skills.FirstOrDefault(x => x.Id == id));
+				defensiveSkills.Add(skills.FirstOrDefault(x => x.Id == id));
 
 			return defensiveSkills;
 		}
 
-		/// <summary>
-		/// Создание списка типов урона
-		/// </summary>
-		/// <param name="request">Запрос</param>
-		/// <param name="damageTypes">Список типов урона из БД</param>
-		/// <returns>Список типов урона</returns>
-		private List<DamageType> CreateDamageTypes(CreateAbilityCommand request, List<DamageType> damageTypes)
-		{
-			var result = new List<DamageType>();
-
-			foreach (var id in request.DamageTypes)
-				result.Add(damageTypes.FirstOrDefault(x => x.Id == id));
-
-			return result;
-		}
 	}
 }

@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 	/// <summary>
 	/// Элемент ответа на запрос шаблона существа по айди - способность
 	/// </summary>
-	public class GetCreatureTemplateByIdResponseAbility
+	public sealed class GetCreatureTemplateByIdResponseAbility
 	{
 		/// <summary>
 		/// Айди

@@ -50,14 +50,14 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility
 		public int Accuracy { get; set; }
 
 		/// <summary>
+		/// Тип урона
+		/// </summary>
+		public Guid DamageTypeId { get; set; }
+
+		/// <summary>
 		/// Навыки для защиты
 		/// </summary>
 		public List<Guid> DefensiveSkills { get; set; }
-
-		/// <summary>
-		/// Типы урона
-		/// </summary>
-		public List<Guid> DamageTypes { get; set; }
 
 		/// <summary>
 		/// Накладываемые состояния

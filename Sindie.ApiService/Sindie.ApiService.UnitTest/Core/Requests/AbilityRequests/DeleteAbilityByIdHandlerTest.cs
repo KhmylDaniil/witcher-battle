@@ -25,7 +25,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		public DeleteAbilityByIdHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_parameter = Skill.CreateForTest(game: _game);
+			_parameter = Skill.CreateForTest();
 			_ability = Ability.CreateForTest(game: _game, attackSkill: _parameter);
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _ability, _parameter));

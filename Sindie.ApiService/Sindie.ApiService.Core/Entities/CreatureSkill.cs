@@ -1,4 +1,5 @@
 ﻿using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -19,6 +20,7 @@ namespace Sindie.ApiService.Core.Entities
 
 		private Creature _creature;
 		private Skill _skill;
+		private int _skillValue;
 
 		/// <summary>
 		/// Пустой конструктор
@@ -41,6 +43,7 @@ namespace Sindie.ApiService.Core.Entities
 			Creature = creature;
 			Skill = skill;
 			SkillValue = skillValue;
+			MaxValue = skillValue;
 		}
 
 		/// <summary>
@@ -56,12 +59,21 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Название корреспондирующей характеристики
 		/// </summary>
-		public string StatName { get; protected set; }
+		public Stats StatName { get; protected set; }
 
 		/// <summary>
-		/// значение навыка у существа
+		/// Максималальное значение навыка
 		/// </summary>
-		public int SkillValue { get; set; }
+		public int MaxValue { get; private set; }
+
+		/// <summary>
+		/// Значение навыка у существа
+		/// </summary>
+		public int SkillValue
+		{
+			get => _skillValue < 0 ? 0 : _skillValue;
+			set => _skillValue = value;
+		}
 
 		#region navigation properties
 
@@ -111,7 +123,7 @@ namespace Sindie.ApiService.Core.Entities
 			Creature creature = default,
 			Skill skill = default,
 			int value = default,
-			string statName = default,
+			int maxValue = default,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
@@ -121,10 +133,13 @@ namespace Sindie.ApiService.Core.Entities
 			Creature = creature,
 			Skill = skill,
 			SkillValue = value == 0 ? 1 : value,
-			StatName = statName ?? "Ref",
+			MaxValue = maxValue == 0 ? 1 : maxValue,
+			StatName = skill.StatName,
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId
 		};
+
+		internal int GetValue() => _skillValue;
 	}
 }

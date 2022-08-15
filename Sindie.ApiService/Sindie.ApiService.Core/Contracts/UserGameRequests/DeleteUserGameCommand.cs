@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.UserGameRequests
 	/// <summary>
 	/// Команда удаления пользователя игры
 	/// </summary>
-	public class DeleteUserGameCommand : IRequest<Unit>
+	public sealed class DeleteUserGameCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди игры

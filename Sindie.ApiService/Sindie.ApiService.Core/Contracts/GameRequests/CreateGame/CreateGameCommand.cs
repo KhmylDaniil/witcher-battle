@@ -7,7 +7,7 @@ namespace Sindie.ApiService.Core.Contracts.GameRequests.CreateGame
 	/// <summary>
 	/// Команда создания игры
 	/// </summary>
-	public class CreateGameCommand : IRequest<Unit>
+	public sealed class CreateGameCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди аватара игры

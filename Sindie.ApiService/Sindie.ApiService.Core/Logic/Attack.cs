@@ -1,6 +1,7 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
+using Sindie.ApiService.Core.Entities.Effects;
 using Sindie.ApiService.Core.Requests.BattleRequests;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,9 @@ using System.Text;
 namespace Sindie.ApiService.Core.Logic
 {
 	/// <summary>
-	/// Атака
+	/// Действие атаки
 	/// </summary>
-	public class Attack
+	public sealed class Attack
 	{
 		private readonly IRollService _rollService;
 
@@ -26,7 +27,7 @@ namespace Sindie.ApiService.Core.Logic
 		}
 
 		/// <summary>
-		/// Атака монсстра
+		/// Монстр атакует с учетом защиты извне БД
 		/// </summary>
 		/// <param name="data">Данные для расчета атаки</param>
 		/// <param name="defenseValue">Значение защиты</param>
@@ -37,9 +38,9 @@ namespace Sindie.ApiService.Core.Logic
 		{
 			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
 
-			var successValue = _rollService.RollAttack(
-				attackBase: AttackValue(data.Attacker, data.Ability, data.ToHit),
-				defenseValue: defenseValue,
+			var successValue = _rollService.BeatDifficultyWithFumble(
+				skillBase: AttackValue(data.Attacker, data.Ability, data.ToHit),
+				difficuty: defenseValue,
 				out int attackerFumble);
 
 			if (attackerFumble != 0)
@@ -53,48 +54,46 @@ namespace Sindie.ApiService.Core.Logic
 				return message.ToString();
 			}
 
-			ApplyDamage(ref data, ref message, successValue);
+			ApplyDamage(data, ref message, successValue);
 
-			if (data.Target.HP == 0)
-				return message.ToString();
-
-			ApplyConditions(ref data, ref message);
+			if (!CheckDead(data, ref message))
+				ApplyConditions(data, ref message);
 
 			return message.ToString();
 		}
 
 		/// <summary>
-		/// Получение монстром урона
+		/// Монстр получает урон извне БД
 		/// </summary>
-		/// <param name="monster">Монстр</param>
-		/// <param name="aimedPart">Часть тела существа</param>
-		/// <param name="damageValue">Значение урона</param>
+		/// <param name="data">Данные атаки</param>
+		/// <param name="damage">Значение урона</param>
 		/// <param name="successValue">Успешность атаки</param>
-		/// <param name="isResistant">Сопротивление урону</param>
-		/// <param name="isVulnerable">Уязвимость к урону</param>
 		/// <returns>Сообщение о результате атаки</returns>
 		internal string MonsterSuffer(
-			ref AttackData data,
+			AttackData data,
 			int damage,
 			int successValue)
 		{
 			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
 
-			ApplyDamage(ref data, ref message, successValue, damage);
+			ApplyDamage(data, ref message, successValue, damage);
 
-			if (data.Target.HP == 0)
-				return message.ToString();
-
-			ApplyConditions(ref data, ref message);
+			if (!CheckDead(data, ref message))
+				ApplyConditions(data, ref message);
 
 			return message.ToString();
 		}
 
-		internal string CreatureAttack(ref AttackData data)
+		/// <summary>
+		/// Существо атакует полностью из БД в БД
+		/// </summary>
+		/// <param name="data">Данные для расчета атаки</param>
+		/// <returns></returns>
+		internal string CreatureAttack(AttackData data)
 		{
 			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
 
-			var successValue = _rollService.ContestRoll(
+			var successValue = _rollService.ContestRollWithFumble(
 				attackBase: AttackValue(data.Attacker, data.Ability, data.ToHit),
 				defenseBase: DefenseValue(data.Target, data.DefensiveSkill),
 				out int attackerFumble,
@@ -113,12 +112,10 @@ namespace Sindie.ApiService.Core.Logic
 				return message.ToString();
 			}
 
-			ApplyDamage(ref data, ref message, successValue);
+			ApplyDamage(data, ref message, successValue);
 
-			if (data.Target.HP == 0)
-				return message.ToString();
-
-			ApplyConditions(ref data, ref message);
+			if (!CheckDead(data, ref message))
+				ApplyConditions(data, ref message);
 
 			return message.ToString();
 		}
@@ -132,7 +129,16 @@ namespace Sindie.ApiService.Core.Logic
 		/// <returns>База атаки</returns>
 		private static int AttackValue(Creature attacker, Ability ability, int toHit)
 		{
-			var result = attacker.SkillBase(ability.AttackSkillId) + ability.Accuracy + toHit;
+			var staggeredModifier = attacker.Effects.FirstOrDefault(x => x is StaggeredEffect) is null
+				? 0
+				: StaggeredEffect.AttackAndDefenseModifier;
+
+			var blindedModifier = attacker.Effects.FirstOrDefault(x => x is BlindedEffect) is null
+				? 0
+				: BlindedEffect.AttackAndDefenseModifier;
+
+			var result = attacker.SkillBase(ability.AttackSkillId) + ability.Accuracy + toHit + staggeredModifier + blindedModifier;
+
 			return result < 0 ? 0 : result;
 		}
 
@@ -144,7 +150,19 @@ namespace Sindie.ApiService.Core.Logic
 		/// <returns>База защиты</returns>
 		private static int DefenseValue(Creature defender, CreatureSkill defensiveParameter)
 		{
-			var result = defender.SkillBase(defensiveParameter.SkillId);
+			var staggeredModifier = defender.Effects.FirstOrDefault(x => x is StaggeredEffect) is null
+				? 0
+				: StaggeredEffect.AttackAndDefenseModifier;
+
+			var blindedModifier = defender.Effects.FirstOrDefault(x => x is BlindedEffect) is null
+				? 0
+				: BlindedEffect.AttackAndDefenseModifier;
+
+			var result = defender.SkillBase(defensiveParameter.SkillId) + staggeredModifier + blindedModifier;
+
+			if (defender.Effects.Any(x => x is StunEffect))
+				result = 10;
+
 			return result < 0 ? 0 : result;
 		}
 
@@ -168,34 +186,41 @@ namespace Sindie.ApiService.Core.Logic
 			{
 				message.AppendLine($"Критическое повреждение не может быть нанесено из-за особенностей существа.");
 				AddBonusDamage(ref damage, critName);
-			}
-				
+			}	
 			else
 			{
-				var name = typeof(Crit).GetField(critName).GetValue(critName);
-				message.AppendLine($"Нанесено критическое повреждение {name.ToString()}.");
+				var condition = data.Conditions.FirstOrDefault(x => x.Name.Equals(critName));
+
+				var effect = CritEffect.CreateCritEffect<Effect>(data.Target, data.AimedPart, condition);
+
+				if (effect != null)
+					data.Target.Effects.Add(effect);
+
+				StunCheck(data.Target, ref message);
+				
+				message.AppendLine($"Нанесено критическое повреждение {effect.Name}.");
 			}
 
 			static void SetCritSeverity(int successValue, ref int bonusDamage, out string critSeverity)
 			{
 				if (successValue < 10)
 				{
-					critSeverity = "Simple";
+					critSeverity = Enums.Severity.Simple.ToString();
 					bonusDamage += 3;
 				}
 				else if (successValue < 13)
 				{
-					critSeverity = "Complex";
+					critSeverity = Enums.Severity.Complex.ToString();
 					bonusDamage += 5;
 				}
 				else if (successValue < 15)
 				{
-					critSeverity = "Difficult";
+					critSeverity = Enums.Severity.Difficult.ToString();
 					bonusDamage += 8;
 				}
 				else
 				{
-					critSeverity = "Deadly";
+					critSeverity = Enums.Severity.Deadly.ToString();
 					bonusDamage += 10;
 				}
 			}
@@ -205,7 +230,7 @@ namespace Sindie.ApiService.Core.Logic
 				string critName = critSeverity + creaturePart.BodyPartType.Name;
 				if (creaturePart.BodyPartType.Name == BodyPartTypes.HeadName || creaturePart.BodyPartType.Name == BodyPartTypes.TorsoName)
 				{
-					Random random = new Random();
+					Random random = new ();
 					var suffix = random.Next(1, 6) < 5 ? 1 : 2;
 					critName += suffix;
 				}
@@ -230,18 +255,34 @@ namespace Sindie.ApiService.Core.Logic
 				else if (critName.Equals("DeadlyTorso1", StringComparison.OrdinalIgnoreCase))
 					bonusDamage += 20;
 			}
+
+			void StunCheck(Creature creature, ref StringBuilder message)
+			{
+				Random random = new();
+				if (random.Next(1, 10) >= creature.Stun)
+				{
+					var stun = StunEffect.Create(null, null, target: creature, "Crit-based Stun");
+
+					if (stun is null)
+						return;
+
+					creature.Effects.Add(stun);
+					message.AppendLine($"Из-за наложения критического эффекта наложен эффект {Conditions.StunName}.");
+				}	
+			}
 		}
 
 		/// <summary>
 		/// Удаление мертвых существ
 		/// </summary>
 		/// <param name="instance"></param>
-		internal static void DisposeCorpses(ref Battle instance)
+		internal static void DisposeCorpses(Battle instance)
 		{
-			instance.Creatures.RemoveAll(x => x.HP == 0);
+			instance.Creatures.RemoveAll(x => x is not Character
+			&& (x.HP <= 0 || x.Effects.Any(x => x is DeadEffect)));
 		}
 
-		private string CritMissMessage(int attackerFumble)
+		private static string CritMissMessage(int attackerFumble)
 		{
 			return $"Критический промах {attackerFumble}.";
 		}
@@ -252,20 +293,31 @@ namespace Sindie.ApiService.Core.Logic
 		/// <param name="data">Данные для расчета атаки</param>
 		/// <param name="message">Сообщение</param>
 		/// <param name="successValue">Успешность атаки</param>
-		private static void ApplyDamage(ref AttackData data, ref StringBuilder message, int successValue)
+		private static void ApplyDamage(AttackData data, ref StringBuilder message, int successValue)
 		{
 			message.AppendLine($"Попадание с превышением на {successValue}.");
+			RemoveStunEffect(data);
 
 			int damage = RollDamage(data.Ability, data.ToDamage);
 
-			ArmorMutigation(ref data, ref damage, ref message);
+			ArmorMutigation(data, ref damage, ref message);
 
 			CheckModifiers(data, ref damage);
 
 			CheckCrit(data, ref message, successValue, ref damage);
 
+			data.Target.HP -= damage;
 			message.AppendLine($"Нанеcено {damage} урона.");
-			CheckDead(ref data, ref message, damage);
+
+			if (damage > 0)
+				CheckDying(data.Target, ref message);
+		}
+
+		private static void RemoveStunEffect(AttackData data)
+		{
+			var stun = data.Target.Effects.FirstOrDefault(x => x is StunEffect);
+			if (stun != null)
+				data.Target.Effects.Remove(stun);
 		}
 
 		/// <summary>
@@ -275,46 +327,45 @@ namespace Sindie.ApiService.Core.Logic
 		/// <param name="message">Сообщение</param>
 		/// <param name="successValue">Успешность атаки</param>
 		/// <param name="damage">Урон</param>
-		private static void ApplyDamage(ref AttackData data, ref StringBuilder message, int successValue, int damage)
+		private static void ApplyDamage(AttackData data, ref StringBuilder message, int successValue, int damage)
 		{
 			message.AppendLine($"Попадание с превышением на {successValue}.");
 
-			ArmorMutigation(ref data, ref damage, ref message);
+			ArmorMutigation(data, ref damage, ref message);
 
 			CheckModifiers(data, ref damage);
 
 			CheckCrit(data, ref message, successValue, ref damage);
 
 			message.AppendLine($"Нанеcено {damage} урона.");
-			CheckDead(ref data, ref message, damage);
-		}
+			data.Target.HP -= damage;
 
+			if (damage > 0)
+				CheckDying(data.Target, ref message);
+		}
 
 		/// <summary>
 		/// Проверка смерти
 		/// </summary>
 		/// <param name="data">Данные</param>
 		/// <param name="message">Сообщение</param>
-		/// <param name="damage">Урон</param>
-		private static void CheckDead(ref AttackData data, ref StringBuilder message, int damage)
+		private static bool CheckDead(AttackData data, ref StringBuilder message)
 		{
-			data.Target.HP = data.Target.HP - damage > 0
-							? data.Target.HP - damage
-							: 0;
+			if (data.Target.HP >= 0)
+				return false;
 
-			if (data.Target.HP == 0)
-				message.AppendLine($"Существо {data.Target.Name} погибает");
-		}
-
-		private static void ApplyConditions(ref AttackData data, ref StringBuilder message)
-		{
-			foreach (var condition in RollConditions(data.Ability))
+			if (data.Target is Character)
 			{
-				data.Target.Conditions.Add(condition);
-				message.AppendLine($"Наложено состояние {condition.Name}.");
+				data.Target.Effects.Add(DyingEffect.Create(null, null, data.Target, Conditions.DyingName));
+				message.AppendLine($"Существо {data.Target.Name} при смерти");
+				return false;
 			}
+
+			message.AppendLine($"Существо {data.Target.Name} погибает");
+			return true;
 		}
-		private static void ArmorMutigation(ref AttackData data, ref int damage, ref StringBuilder message)
+
+		private static void ArmorMutigation(AttackData data, ref int damage, ref StringBuilder message)
 		{
 			if (data.AimedPart.CurrentArmor == 0)
 				return;
@@ -333,10 +384,10 @@ namespace Sindie.ApiService.Core.Logic
 
 		private static void CheckModifiers(AttackData data, ref int damage)
 		{
-			if (data.Target.Resistances.Any(x => data.Ability.DamageTypes.All(y => x.Id == y.Id)))
+			if (data.Target.Resistances.Any(x => x.Id == data.Ability.DamageTypeId))
 				damage /= 2;
 
-			if (data.Target.Vulnerables.Any(x => data.Ability.DamageTypes.All(y => x.Id == y.Id)))
+			if (data.Target.Vulnerables.Any(x => x.Id == data.Ability.DamageTypeId))
 				damage *= 2;
 
 			damage = (int)Math.Truncate(damage * data.AimedPart.DamageModifier);
@@ -348,11 +399,31 @@ namespace Sindie.ApiService.Core.Logic
 		/// <returns>Нанесенный урон</returns>
 		private static int RollDamage(Ability ability, int specialBonus = default)
 		{
-			Random random = new Random();
+			Random random = new ();
 			var result = ability.DamageModifier + specialBonus;
 			for (int i = 0; i < ability.AttackDiceQuantity; i++)
 				result += random.Next(1, 6);
 			return result < 0 ? 0 : result;
+		}
+
+		/// <summary>
+		/// Применение состояний
+		/// </summary>
+		/// <param name="data">Данные для атаки</param>
+		/// <param name="message">Сообщение</param>
+		private void ApplyConditions(AttackData data, ref StringBuilder message)
+		{
+			foreach (var condition in RollConditions(data.Ability))
+			{
+				var effect = Effect.CreateEffect<Effect>(rollService: _rollService, data.Attacker, data.Target, condition);
+
+				if (effect == null)
+					continue;
+
+				data.Target.Effects.Add(effect);
+
+				message.AppendLine($"Наложен {effect.Name}");
+			}
 		}
 
 		/// <summary>
@@ -362,7 +433,7 @@ namespace Sindie.ApiService.Core.Logic
 		private static List<Condition> RollConditions(Ability ability)
 		{
 			var result = new List<Condition>();
-			Random random = new Random();
+			Random random = new ();
 
 			if (!ability.AppliedConditions.Any())
 				return result;
@@ -372,6 +443,18 @@ namespace Sindie.ApiService.Core.Logic
 					result.Add(condition.Condition);
 
 			return result;
+		}
+
+		/// <summary>
+		/// Проверка атаки по умирающим
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="message">Сообщение</param>
+		private static void CheckDying(Creature creature, ref StringBuilder message)
+		{
+			var dying = creature.Effects.FirstOrDefault(x => x is DyingEffect) as DyingEffect;
+
+			dying?.Run(creature, ref message);
 		}
 	}
 }

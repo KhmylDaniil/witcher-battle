@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.Entities;
+using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -14,8 +16,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 		/// </summary>
 		public override void ConfigureChild(EntityTypeBuilder<CreatureTemplateSkill> builder)
 		{
-			builder.ToTable("CreatureTemplateParameters", "GameRules")
-				.HasComment("Параметры шаблона существа");
+			builder.ToTable("CreatureTemplateSkills", "GameRules")
+				.HasComment("Навыки шаблона существа");
 
 			builder.Property(r => r.CreatureTemplateId)
 				.HasColumnName("CreatureId")
@@ -34,7 +36,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.Property(r => r.StatName)
 				.HasColumnName("StatName")
-				.HasComment("Название корреспондирующей характеристики");
+				.HasComment("Название корреспондирующей характеристики")
+				.HasConversion(
+					v => v.ToString(),
+					v => (Stats)Enum.Parse(typeof(Stats), v));
 
 			builder.HasOne(x => x.CreatureTemplate)
 				.WithMany(x => x.CreatureTemplateSkills)

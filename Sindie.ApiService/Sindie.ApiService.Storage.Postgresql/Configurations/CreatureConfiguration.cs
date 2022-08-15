@@ -100,6 +100,70 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			.HasComment("Удача")
 			.IsRequired();
 
+			builder.Property(r => r.MaxHP)
+			.HasColumnName("MaxHP")
+			.HasComment("Максимальные хиты")
+			.IsRequired();
+
+			builder.Property(r => r.MaxSta)
+			.HasColumnName("MaxSta")
+			.HasComment("Максимальная стамина")
+			.IsRequired();
+
+			builder.Property(r => r.MaxInt)
+			.HasColumnName("MaxInt")
+			.HasComment("Максимальный интеллект")
+			.IsRequired();
+
+			builder.Property(r => r.MaxRef)
+			.HasColumnName("MaxRef")
+			.HasComment("Максимальные рефлексы")
+			.IsRequired();
+
+			builder.Property(r => r.MaxDex)
+			.HasColumnName("MaxDex")
+			.HasComment("Максимальна ловкость")
+			.IsRequired();
+
+			builder.Property(r => r.MaxBody)
+			.HasColumnName("MaxBody")
+			.HasComment("Максимальное телосложение")
+			.IsRequired();
+
+			builder.Property(r => r.MaxEmp)
+			.HasColumnName("MaxEmp")
+			.HasComment("Максимальная эмпатия")
+			.IsRequired();
+
+			builder.Property(r => r.MaxCra)
+			.HasColumnName("MaxCra")
+			.HasComment("Максимальный крафт")
+			.IsRequired();
+
+			builder.Property(r => r.MaxWill)
+			.HasColumnName("MaxWill")
+			.HasComment("Максимальная воля")
+			.IsRequired();
+
+			builder.Property(r => r.MaxSpeed)
+			.HasColumnName("MaxSpeed")
+			.HasComment("Максимальная скорость")
+			.IsRequired();
+
+			builder.Property(r => r.MaxLuck)
+			.HasColumnName("MaxLuck")
+			.HasComment("Максимальная удача")
+			.IsRequired();
+
+			builder.Property(r => r.Stun)
+			.HasColumnName("Stun")
+			.HasComment("Устойчивость")
+			.IsRequired();
+
+			builder.Property(r => r.LeadingArmId)
+			.HasColumnName("LeadingArmId")
+			.HasComment("Айди ведущей руки");
+
 			builder.HasOne(x => x.Battle)
 				.WithMany(x => x.Creatures)
 				.HasForeignKey(x => x.BattleId)
@@ -134,9 +198,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.WithMany(x => x.Creatures)
 				.UsingEntity(x => x.ToTable("CreatureAbilities", "Battles"));
 
-			builder.HasMany(x => x.Conditions)
-				.WithMany(x => x.Creatures)
-				.UsingEntity(x => x.ToTable("CurrentConditions", "Battles"));
+			builder.HasMany(x => x.Effects)
+				.WithOne(x => x.Creature)
+				.HasForeignKey(x => x.CreatureId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasMany(x => x.Vulnerables)
 				.WithMany(x => x.VulnerableCreatures)

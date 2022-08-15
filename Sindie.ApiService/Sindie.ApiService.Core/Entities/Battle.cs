@@ -80,6 +80,12 @@ namespace Sindie.ApiService.Core.Entities
 		public string Description { get; set; }
 
 		/// <summary>
+		/// Счетчик раундов
+		/// </summary>
+		public int Round { get; private set; }
+
+
+		/// <summary>
 		/// Время активации боя
 		/// </summary>
 		public DateTime? ActivationTime { get; set; }

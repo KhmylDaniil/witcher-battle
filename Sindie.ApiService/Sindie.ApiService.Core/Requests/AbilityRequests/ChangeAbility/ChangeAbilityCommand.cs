@@ -23,7 +23,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 		/// <param name="attackSpeed">Скорость атаки</param>
 		/// <param name="accuracy">Точность атаки</param>
 		/// <param name="defensiveSkills">Навыки для защиты</param>
-		/// <param name="damageTypes">Типы урона</param>
+		/// <param name="damageType">Тип урона</param>
 		/// <param name="appliedConditions">Накладываемые состояния</param>
 		public ChangeAbilityCommand(
 			Guid id,
@@ -36,7 +36,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 			int attackSpeed,
 			int accuracy,
 			List<Guid> defensiveSkills,
-			List<Guid> damageTypes,
+			Guid damageTypeId,
 			List<ChangeAbilityRequestAppliedCondition> appliedConditions
 			)
 		{
@@ -54,9 +54,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 			DefensiveSkills = defensiveSkills == null
 				? throw new ExceptionRequestFieldIncorrectData<ChangeAbilityRequest>(nameof(DefensiveSkills))
 				: defensiveSkills;
-			DamageTypes = damageTypes == null
-				? throw new ExceptionRequestFieldIncorrectData<ChangeAbilityRequest>(nameof(DamageTypes))
-				: damageTypes;
+			DamageTypeId = damageTypeId;
 			AppliedConditions = appliedConditions == null
 				? throw new ExceptionRequestFieldIncorrectData<ChangeAbilityRequest>(nameof(AppliedConditions))
 				: appliedConditions;

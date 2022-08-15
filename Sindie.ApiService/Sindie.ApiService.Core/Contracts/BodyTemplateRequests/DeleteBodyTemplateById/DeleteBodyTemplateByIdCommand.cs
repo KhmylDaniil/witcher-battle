@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.DeleteBodyTempla
 	/// <summary>
 	/// Команда на удаление шаблона тела по айди
 	/// </summary>
-	public class DeleteBodyTemplateByIdCommand: IRequest
+	public sealed class DeleteBodyTemplateByIdCommand: IRequest
 	{
 		/// <summary>
 		/// Айди игры

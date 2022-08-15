@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.UserRequests.GetUsers
 	/// <summary>
 	/// Ответ на запрос получения списка пользователей
 	/// </summary>
-	public class GetUsersQueryResponse
+	public sealed class GetUsersQueryResponse
 	{
 		/// <summary>
 		///  Список найденных по запросу пользователей

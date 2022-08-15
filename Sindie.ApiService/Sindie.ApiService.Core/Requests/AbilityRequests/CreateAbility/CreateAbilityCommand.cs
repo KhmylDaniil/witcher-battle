@@ -22,7 +22,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 		/// <param name="attackSpeed">Скорость атаки</param>
 		/// <param name="accuracy">Точность атаки</param>
 		/// <param name="defensiveSkills">Навыки для защиты</param>
-		/// <param name="damageTypes">Типы урона</param>
+		/// <param name="damageTypeId">Тип урона</param>
 		/// <param name="appliedConditions">Накладываемые состояния</param>
 		public CreateAbilityCommand(
 			Guid gameId,
@@ -34,7 +34,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 			int attackSpeed,
 			int accuracy,
 			List<Guid> defensiveSkills,
-			List<Guid> damageTypes,
+			Guid damageTypeId,
 			List<CreateAbilityRequestAppliedCondition> appliedConditions
 			)
 		{
@@ -51,9 +51,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 			DefensiveSkills = defensiveSkills == null
 				? throw new ExceptionRequestFieldIncorrectData<CreateAbilityRequest>(nameof(DefensiveSkills))
 				: defensiveSkills;
-			DamageTypes = damageTypes == null
-				? throw new ExceptionRequestFieldIncorrectData<CreateAbilityRequest>(nameof(DamageTypes))
-				: damageTypes;
+			DamageTypeId = damageTypeId;
 			AppliedConditions = appliedConditions == null
 				? throw new ExceptionRequestFieldIncorrectData<CreateAbilityRequest>(nameof(AppliedConditions))
 				: appliedConditions;

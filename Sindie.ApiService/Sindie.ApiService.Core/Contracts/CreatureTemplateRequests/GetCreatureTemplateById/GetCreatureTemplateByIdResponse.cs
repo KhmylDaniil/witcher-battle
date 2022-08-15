@@ -9,7 +9,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 	/// <summary>
 	/// Ответ на запрос шаблона существа по айди
 	/// </summary>
-	public class GetCreatureTemplateByIdResponse
+	public sealed class GetCreatureTemplateByIdResponse
 	{
 		/// <summary>
 		/// Айди игры

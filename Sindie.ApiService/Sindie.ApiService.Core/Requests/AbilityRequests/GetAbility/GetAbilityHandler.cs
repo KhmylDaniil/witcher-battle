@@ -76,7 +76,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 						.Where(x => (request.ModificationMaxTime == default && x.ModifiedOn <= _dateTimeProvider.TimeProvider)
 						|| x.ModifiedOn <= request.ModificationMaxTime))
 						.Where(x => request.AttackSkillId == null || x.AttackSkillId == request.AttackSkillId)
-						.Where(x => request.DamageTypeId == null || x.DamageTypes.Select(dt => dt.Id).Contains(request.DamageTypeId.Value))
+						.Where(x => request.DamageTypeId == null || x.DamageTypeId == request.DamageTypeId)
 						.Where(x => request.ConditionId == null || x.AppliedConditions.Select(ac => ac.ConditionId).Contains(request.ConditionId.Value));
 
 			var list = await filter

@@ -29,6 +29,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly Creature _creature;
 		private readonly CreatureType _creatureType;
 		private readonly DamageType _damageType;
+		private readonly Condition _head1Crit;
+		private readonly Condition _head2Crit;
 
 		/// <summary>
 		/// Тест для <see cref="MonsterAttackHandler"/>
@@ -43,7 +45,10 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_condition = Condition.CreateForTest();
 			_damageType = DamageType.CreateForTest();
 
-			_parameter = Skill.CreateForTest(game: _game);
+			_head1Crit = Condition.CreateForTest(id: Crit.SimpleHead1Id, name: Crit.SimpleHead1);
+			_head2Crit = Condition.CreateForTest(id: Crit.SimpleHead2Id, name: Crit.SimpleHead2);
+
+			_parameter = Skill.CreateForTest(id: Skills.MeleeId, statName: Enums.Stats.Ref);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
@@ -59,9 +64,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				attackSpeed: 1,
 				accuracy: 1,
 				attackSkill: _parameter,
-				damageTypes: new List<DamageType> { _damageType },
+				damageType: _damageType,
 				defensiveSkills: new List<Skill> { _parameter });
-			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 50));
+			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 100));
 
 			_creature = Creature.CreateForTest(
 				battle: _instance,
@@ -103,7 +108,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_ability,
 				_creature,
 				_creatureType,
-				_damageType));
+				_damageType,
+				_head1Crit,
+				_head2Crit));
 		}
 
 		/// <summary>
@@ -134,7 +141,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			Assert.IsTrue(message.Contains("Попадание"));
 		}
 
-
 		/// <summary>
 		/// Тест метода Handle - атака монстра
 		/// </summary>
@@ -147,9 +153,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				id: _creature.Id,
 				abilityId: _ability.Id,
 				targetCreatureId: _creature.Id,
-				creaturePartId: null,
+				creaturePartId: _headPart.Id,
 				defenseValue: 1,
-				specialToHit: 0,
+				specialToHit: 3,
 				specialToDamage: 0);
 
 			var newHandler = new MonsterAttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);

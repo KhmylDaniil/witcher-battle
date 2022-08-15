@@ -60,7 +60,7 @@ namespace Sindie.ApiService.Core.Services.Hasher
 			if (hash == null)
 				throw new ExceptionApplicationBase("Пустое поле хешированый пароль.");
 
-			return hash == Hash(password);
+			return string.Equals(hash, Hash(password), StringComparison.Ordinal);
 		}
 	}
 }

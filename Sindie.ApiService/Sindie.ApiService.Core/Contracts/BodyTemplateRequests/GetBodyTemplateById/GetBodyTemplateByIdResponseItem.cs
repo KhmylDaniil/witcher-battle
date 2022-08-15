@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateB
 	/// <summary>
 	/// Элемент ответа на запрос шаблона тела по айди - часть шаблона тела
 	/// </summary>
-	public class GetBodyTemplateByIdResponseItem
+	public sealed class GetBodyTemplateByIdResponseItem
 	{
 		/// <summary>
 		/// Айди части шаблона тела

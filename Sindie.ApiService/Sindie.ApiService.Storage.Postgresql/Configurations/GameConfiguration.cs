@@ -52,12 +52,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey<ImgFile>(x => x.Id)
 				.OnDelete(DeleteBehavior.SetNull);
 
-			builder.HasMany(x => x.Skills)
-				.WithOne(x => x.Game)
-				.HasForeignKey(x => x.GameId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
 			builder.HasMany(x => x.Battles)
 				.WithOne(x => x.Game)
 				.HasForeignKey(x => x.GameId)

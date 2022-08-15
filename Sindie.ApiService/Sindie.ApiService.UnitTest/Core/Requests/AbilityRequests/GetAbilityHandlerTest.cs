@@ -41,7 +41,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 					user: _user,
 					gameRole: GameRole.CreateForTest(GameRoles.MasterRoleId)));
 
-			_parameter = Skill.CreateForTest(game: _game, name: "attackParameter");
+			_parameter = Skill.CreateForTest(name: "attackParameter");
 			_condition = Condition.CreateForTest(id: Conditions.BleedId);
 			_damageType = DamageType.CreateForTest(id: DamageTypes.SilverId);
 
@@ -50,7 +50,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 				name: "test",
 				attackDiceQuantity: 3,
 				attackSkill: _parameter,
-				damageTypes: new List<DamageType> { _damageType },
+				damageType: _damageType,
 				createdOn: DateTimeProvider.Object.TimeProvider,
 				modifiedOn: DateTimeProvider.Object.TimeProvider,
 				createdByUserId: _user.Id);
@@ -111,7 +111,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			
 			var ability = _dbContext.Abilities
 				.Include(x => x.AttackSkill)
-				.Include(y => y.DamageTypes)
+
 				.Include(x => x.AppliedConditions)
 				.FirstOrDefault(x => x.Id == resultItem.Id);
 			Assert.IsNotNull(ability);
@@ -123,7 +123,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			Assert.IsTrue(ability.ModifiedOn >= modificationMinTime && resultItem.ModifiedOn <= modificationMaxTime);
 
 			Assert.AreEqual(ability.AttackSkillId, _parameter.Id);
-			Assert.IsTrue(ability.DamageTypes.Any(x => x.Id == _damageType.Id));
+			Assert.AreEqual(ability.DamageTypeId, _damageType.Id);
 			Assert.IsTrue(ability.AppliedConditions.Any(x => x.ConditionId == _condition.Id));
 
 

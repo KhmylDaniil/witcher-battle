@@ -9,7 +9,7 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.MonsterSuffer
 	/// <summary>
 	/// Монстр получает урон
 	/// </summary>
-	public class MonsterSufferResponse
+	public sealed class MonsterSufferResponse
 	{
 		/// <summary>
 		/// Сообщение

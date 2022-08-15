@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.InterfaceRequests.GetInterfaces
 	/// <summary>
 	/// Ответ на запрос получения списка интерфейсов
 	/// </summary>
-	public class GetInterfacesQueryResponse
+	public sealed class GetInterfacesQueryResponse
 	{
 		/// <summary>
 		///  Список найденных по запросу интерфейсов

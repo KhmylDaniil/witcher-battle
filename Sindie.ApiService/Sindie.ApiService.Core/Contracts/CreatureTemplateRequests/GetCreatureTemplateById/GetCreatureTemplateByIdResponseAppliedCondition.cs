@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 	/// <summary>
 	/// Элемент ответа на запрос шаблона существа по айди - применяемое состояние
 	/// </summary>
-	public class GetCreatureTemplateByIdResponseAppliedCondition
+	public sealed class GetCreatureTemplateByIdResponseAppliedCondition
 	{
 		/// <summary>
 		/// Айди

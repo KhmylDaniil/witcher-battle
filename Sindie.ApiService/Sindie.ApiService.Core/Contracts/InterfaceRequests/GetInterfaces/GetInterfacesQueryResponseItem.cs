@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.InterfaceRequests.GetInterfaces
 	/// <summary>
 	/// Шаблон интерфейса для отправки списка интерфейсов
 	/// </summary>
-	public class GetInterfacesQueryResponseItem
+	public sealed class GetInterfacesQueryResponseItem
 	{
 
 		/// <summary>

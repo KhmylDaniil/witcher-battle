@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 	/// <summary>
 	/// Элемент запроса создания шаблона существа - броня
 	/// </summary>
-	public class CreateCreatureTemplateRequestArmorList
+	public sealed class CreateCreatureTemplateRequestArmorList
 	{
 		/// <summary>
 		/// Айди части шаблона тела

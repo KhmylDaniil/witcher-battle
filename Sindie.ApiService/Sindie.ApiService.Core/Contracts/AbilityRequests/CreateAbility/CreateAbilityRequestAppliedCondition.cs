@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility
 	/// <summary>
 	/// Элемент запроса создания способности - применяемое состояние
 	/// </summary>
-	public class CreateAbilityRequestAppliedCondition
+	public sealed class CreateAbilityRequestAppliedCondition
 	{
 		/// <summary>
 		/// Айди состояния

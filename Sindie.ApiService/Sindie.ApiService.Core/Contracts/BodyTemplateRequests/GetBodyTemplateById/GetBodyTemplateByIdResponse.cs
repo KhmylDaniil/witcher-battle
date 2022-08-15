@@ -9,7 +9,7 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateB
 	/// <summary>
 	/// Ответ на запрос шаблона тела по айди
 	/// </summary>
-	public class GetBodyTemplateByIdResponse
+	public sealed class GetBodyTemplateByIdResponse
 	{
 		/// <summary>
 		/// Айди

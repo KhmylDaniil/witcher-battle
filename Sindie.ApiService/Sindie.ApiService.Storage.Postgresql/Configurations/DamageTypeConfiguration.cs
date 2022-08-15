@@ -3,10 +3,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -29,8 +25,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.IsRequired();
 
 			builder.HasMany(x => x.Abilities)
-				.WithMany(x => x.DamageTypes)
-				.UsingEntity(x => x.ToTable("AbilityDamageTypes", "GameRules"));
+				.WithOne(x => x.DamageType)
+				.HasForeignKey(x => x.DamageTypeId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasMany(x => x.VulnerableCreatures)
 				.WithMany(x => x.Vulnerables)

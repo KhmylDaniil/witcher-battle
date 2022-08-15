@@ -52,21 +52,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.ToTable("CreatureTemplateAbilities", "GameRules");
                 });
 
-            modelBuilder.Entity("AbilityDamageType", b =>
-                {
-                    b.Property<Guid>("AbilitiesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("DamageTypesId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("AbilitiesId", "DamageTypesId");
-
-                    b.HasIndex("DamageTypesId");
-
-                    b.ToTable("AbilityDamageTypes", "GameRules");
-                });
-
             modelBuilder.Entity("AbilitySkill", b =>
                 {
                     b.Property<Guid>("AbilitiesForDefenseId")
@@ -80,21 +65,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasIndex("DefensiveSkillsId");
 
                     b.ToTable("DefensiveSkills", "GameRules");
-                });
-
-            modelBuilder.Entity("ConditionCreature", b =>
-                {
-                    b.Property<Guid>("ConditionsId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CreaturesId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ConditionsId", "CreaturesId");
-
-                    b.HasIndex("CreaturesId");
-
-                    b.ToTable("CurrentConditions", "Battles");
                 });
 
             modelBuilder.Entity("CreatureDamageType", b =>
@@ -242,6 +212,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("DamageModifier")
                         .HasComment("Модификатор атаки");
 
+                    b.Property<Guid>("DamageTypeId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Description")
                         .HasColumnType("text")
                         .HasColumnName("Description")
@@ -273,6 +246,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AttackSkillId");
+
+                    b.HasIndex("DamageTypeId");
 
                     b.HasIndex("GameId");
 
@@ -386,6 +361,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.Property<string>("RoleModifiedUser")
                         .HasColumnType("text");
+
+                    b.Property<int>("Round")
+                        .HasColumnType("integer");
 
                     b.Property<Guid?>("UserGameActivatedId")
                         .HasColumnType("uuid")
@@ -697,12 +675,474 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         },
                         new
                         {
+                            Id = new Guid("7794e0d0-3147-4791-9053-9667cbe127d7"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "BleedingWound",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
                             Id = new Guid("8894e0d0-3147-4791-9053-9667cbe127d7"),
                             CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
                             CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
                             ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = "Poison",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("8895e0d0-3147-4791-9053-9667cbe127d7"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Fire",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("8895e0d1-3147-4791-9053-9667cbe127d7"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Freeze",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("afb1c2ac-f6ab-435e-aedd-011da6f5ea9a"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Stun",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("afb1c2ac-f6ab-535e-aedd-011da6f5ea9a"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Staggered",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("afb1c2ac-f6ab-635e-aedd-011da6f5ea9a"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Intoxication",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("afb1c2ac-f6ab-735e-aedd-011da6f5ea9a"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Hallutination",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("afb1c2ac-f6ab-835e-aedd-011da6f5ea9a"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Nausea",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("afb1c2ac-f6ab-935e-aedd-011da6f5ea9a"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Sufflocation",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("afb1c2ac-f6ab-035e-aedd-011da6f5ea9a"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Blinded",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf585"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "SimpleArm",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf589"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "SimpleHead1",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf588"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "SimpleHead2",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf584"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "SimpleLeg",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf582"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "SimpleTail",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf587"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "SimpleTorso1",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf586"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "SimpleTorso2",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf583"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "SimpleWing",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf577"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "ComplexArm",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf581"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "ComplexHead1",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf580"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "ComplexHead2",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf576"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "ComplexLeg",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf574"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "ComplexTail",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf579"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "ComplexTorso1",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf578"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "ComplexTorso2",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf575"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "ComplexWing",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf569"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DifficultArm",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf573"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DifficultHead1",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf572"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DifficultHead2",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf568"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DifficultLeg",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf566"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DifficultTail",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf571"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DifficultTorso1",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf570"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DifficultTorso2",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf567"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DifficultWing",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf561"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DeadlyArm",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf565"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DeadlyHead1",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf564"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DeadlyHead2",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf560"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DeadlyLeg",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf558"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DeadlyTail",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf563"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DeadlyTorso1",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf562"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DeadlyTorso2",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("208ed04e-73aa-4e57-bb58-26c807fcf559"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DeadlyWing",
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default"
                         });
@@ -778,10 +1218,70 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("Int")
                         .HasComment("Интеллект");
 
+                    b.Property<Guid?>("LeadingArmId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("LeadingArmId")
+                        .HasComment("Айди ведущей руки");
+
                     b.Property<int>("Luck")
                         .HasColumnType("integer")
                         .HasColumnName("Luck")
                         .HasComment("Удача");
+
+                    b.Property<int>("MaxBody")
+                        .HasColumnType("integer")
+                        .HasColumnName("MaxBody")
+                        .HasComment("Максимальное телосложение");
+
+                    b.Property<int>("MaxCra")
+                        .HasColumnType("integer")
+                        .HasColumnName("MaxCra")
+                        .HasComment("Максимальный крафт");
+
+                    b.Property<int>("MaxDex")
+                        .HasColumnType("integer")
+                        .HasColumnName("MaxDex")
+                        .HasComment("Максимальна ловкость");
+
+                    b.Property<int>("MaxEmp")
+                        .HasColumnType("integer")
+                        .HasColumnName("MaxEmp")
+                        .HasComment("Максимальная эмпатия");
+
+                    b.Property<int>("MaxHP")
+                        .HasColumnType("integer")
+                        .HasColumnName("MaxHP")
+                        .HasComment("Максимальные хиты");
+
+                    b.Property<int>("MaxInt")
+                        .HasColumnType("integer")
+                        .HasColumnName("MaxInt")
+                        .HasComment("Максимальный интеллект");
+
+                    b.Property<int>("MaxLuck")
+                        .HasColumnType("integer")
+                        .HasColumnName("MaxLuck")
+                        .HasComment("Максимальная удача");
+
+                    b.Property<int>("MaxRef")
+                        .HasColumnType("integer")
+                        .HasColumnName("MaxRef")
+                        .HasComment("Максимальные рефлексы");
+
+                    b.Property<int>("MaxSpeed")
+                        .HasColumnType("integer")
+                        .HasColumnName("MaxSpeed")
+                        .HasComment("Максимальная скорость");
+
+                    b.Property<int>("MaxSta")
+                        .HasColumnType("integer")
+                        .HasColumnName("MaxSta")
+                        .HasComment("Максимальная стамина");
+
+                    b.Property<int>("MaxWill")
+                        .HasColumnType("integer")
+                        .HasColumnName("MaxWill")
+                        .HasComment("Максимальная воля");
 
                     b.Property<Guid>("ModifiedByUserId")
                         .HasColumnType("uuid");
@@ -815,6 +1315,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("Sta")
                         .HasComment("Стамина");
+
+                    b.Property<int>("Stun")
+                        .HasColumnType("integer")
+                        .HasColumnName("Stun")
+                        .HasComment("Устойчивость");
 
                     b.Property<int>("Will")
                         .HasColumnType("integer")
@@ -857,6 +1362,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("CreatureId")
                         .HasComment("Айди существа");
 
+                    b.Property<int>("MaxValue")
+                        .HasColumnType("integer")
+                        .HasColumnName("MaxValue")
+                        .HasComment("Макксимальное значение навыка");
+
                     b.Property<Guid>("ModifiedByUserId")
                         .HasColumnType("uuid");
 
@@ -880,6 +1390,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasComment("Значение навыка");
 
                     b.Property<string>("StatName")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("StatName")
                         .HasComment("Название корреспондирующей характеристики");
@@ -890,9 +1401,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.HasIndex("SkillId");
 
-                    b.ToTable("CreatureParameters", "Battles");
+                    b.ToTable("CreatureSkills", "Battles");
 
-                    b.HasComment("Параметры существа");
+                    b.HasComment("Навыки существа");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplate", b =>
@@ -1067,6 +1578,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasComment("Значение навыка");
 
                     b.Property<string>("StatName")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("StatName")
                         .HasComment("Название корреспондирующей характеристики");
@@ -1077,9 +1589,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
                     b.HasIndex("SkillId");
 
-                    b.ToTable("CreatureTemplateParameters", "GameRules");
+                    b.ToTable("CreatureTemplateSkills", "GameRules");
 
-                    b.HasComment("Параметры шаблона существа");
+                    b.HasComment("Навыки шаблона существа");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureType", b =>
@@ -1362,6 +1874,53 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             RoleCreatedUser = "Default",
                             RoleModifiedUser = "Default"
                         });
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effect", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<Guid>("CreatureId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatureId")
+                        .HasComment("Айди существа");
+
+                    b.Property<Guid>("ModifiedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Name")
+                        .HasComment("Название эффекта");
+
+                    b.Property<string>("RoleCreatedUser")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleModifiedUser")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatureId");
+
+                    b.ToTable("Effects", "Battles");
+
+                    b.HasComment("Эффекты");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Game", b =>
@@ -1687,16 +2246,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now() at time zone 'utc'");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("Description")
-                        .HasComment("Описание навыка");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("GameId")
-                        .HasComment("Айди игры");
-
                     b.Property<Guid>("ModifiedByUserId")
                         .HasColumnType("uuid");
 
@@ -1716,17 +2265,690 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("StatName")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("StatName")
                         .HasComment("Название корреспондирующей характеристики");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GameId");
-
                     b.ToTable("Skills", "GameRules");
 
                     b.HasComment("Навыки");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c5f00eea-10d5-426e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Awareness",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f01eea-10d5-426e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Business",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("754ef5e9-8960-4c38-a1be-a3c43c92b1cd"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Deduction",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("32ee830e-7bee-4924-9ddf-1070ceffecdd"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Education",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("4fcbd3d6-fde0-47c1-899d-a8c82c291751"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "CommonLanguage",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f03eea-10d5-426e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "ElderLanguage",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f04eea-10d5-426e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DwarfenLanguage",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f05eea-10d5-426e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "MonsterLore",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f06eea-10d5-426e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "SocialEtiquette",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f07eea-10d5-426e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Streetwise",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f08eea-10d5-426e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Tactics",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f09eea-10d5-426e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Teaching",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f10eea-10d5-426e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "WildernessSurvival",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-426e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Brawling",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Ref"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-427e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Dodge",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Ref"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-428e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Melee",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Ref"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f11eea-10d5-428e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Riding",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Ref"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f12eea-10d5-428e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Sailing",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Ref"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-429e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "SmallBlades",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Ref"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-420e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Staff/Spear",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Ref"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-526e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Swordsmanship",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Ref"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-626e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Archery",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Dex"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-726e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Athletics",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Dex"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-826e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Crossbow",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Dex"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f13eea-10d5-726e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "SleightOfHand",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Dex"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f14eea-10d5-826e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Stealth",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Dex"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-926e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Endurance",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Body"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-506e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Physique",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Body"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f15eea-10d5-826e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Charisma",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Emp"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f16eea-10d5-826e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Deceit",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Emp"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f17eea-10d5-826e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "FineArts",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Emp"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f18eea-10d5-826e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Gambling",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Emp"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f19eea-10d5-826e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "GroomingAndStyle",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Emp"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f20eea-10d5-826e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "HumanPerception",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Emp"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f21eea-10d5-826e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Leadership",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Emp"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f22eea-10d5-826e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Persuasion",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Emp"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f23eea-10d5-826e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Perfomance",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Emp"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f24eea-10d5-826e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Seduction",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Emp"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-026e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "FirstAid",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Cra"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f25eea-10d5-026e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Alchemy",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Cra"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f26eea-10d5-026e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Crafting",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Cra"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f27eea-10d5-026e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Diguise",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Cra"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f28eea-10d5-026e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Forgery",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Cra"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f29eea-10d5-026e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "PickLock",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Cra"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f30eea-10d5-026e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "TrapCrafting",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Cra"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f31eea-10d5-026e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Courage",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Will"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f32eea-10d5-026e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "HexWeaving",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Will"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f33eea-10d5-026e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Intimidation",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Will"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-436e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "SpellCasting",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Will"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-446e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "ResistMagic",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Will"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-456e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "ResistCoercion",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Will"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f34eea-10d5-026e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "RitualCrafting",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Will"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-466e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Needling",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Emp"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-476e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "EyeGouge",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Dex"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-486e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "BleedingWound",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Int"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5f99eea-10d5-496e-87a6-f6b8046c47da"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "HealingHands",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default",
+                            StatName = "Cra"
+                        });
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.SystemRole", b =>
@@ -2249,6 +3471,681 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasComment("Части шаблона существа");
                 });
 
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+
+                    b.Property<int>("BodyPartLocation")
+                        .HasColumnType("integer")
+                        .HasColumnName("BodyPartLocation")
+                        .HasComment("Тип части тела");
+
+                    b.Property<Guid?>("CreaturePartId")
+                        .IsRequired()
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreaturePartId")
+                        .HasComment("Айди части тела");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("integer")
+                        .HasColumnName("Severity")
+                        .HasComment("Тяжесть критического эффекта");
+
+                    b.HasIndex("CreaturePartId");
+
+                    b.ToTable("CritEffects", "Battles");
+
+                    b.HasComment("Критические эффекты");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.BleedEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+
+                    b.ToTable("BleedEffects", "Effects");
+
+                    b.HasComment("Эффекты кровотечения");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.BleedingWoundEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+
+                    b.Property<int>("Damage")
+                        .HasColumnType("integer")
+                        .HasColumnName("Damage")
+                        .HasComment("Урон");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("integer")
+                        .HasColumnName("Severity")
+                        .HasComment("Тяжесть");
+
+                    b.ToTable("BleedingWoundEffects", "Effects");
+
+                    b.HasComment("Эффекты кровавой раны");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+
+                    b.ToTable("DeadEffects", "Effects");
+
+                    b.HasComment("Эффекты смерти");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DyingEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+
+                    b.Property<int>("Counter")
+                        .HasColumnType("integer")
+                        .HasColumnName("Counter")
+                        .HasComment("Модификатор сложности");
+
+                    b.ToTable("DyingEffects", "Effects");
+
+                    b.HasComment("Эффекты при смерти");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.FireEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+
+                    b.ToTable("FireEffects", "Effects");
+
+                    b.HasComment("Эффекты горения");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.FreezeEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+
+                    b.ToTable("FreezeEffects", "Effects");
+
+                    b.HasComment("Эффекты заморозки");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.PoisonEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+
+                    b.ToTable("PoisonEffects", "Effects");
+
+                    b.HasComment("Эффекты отравления");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.StaggeredEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+
+                    b.ToTable("StaggeredEffects", "Effects");
+
+                    b.HasComment("Эффекты ошеломления");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.StunEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+
+                    b.ToTable("StunEffects", "Effects");
+
+                    b.HasComment("Эффекты дезориентации");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SufflocationEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+
+                    b.ToTable("SufflocationEffects", "Effects");
+
+                    b.HasComment("Эффекты удушья");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexArmCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.ToTable("ComplexArmCritEffects", "Effects");
+
+                    b.HasComment("Эффекты перелома руки");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexHead1CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.ToTable("ComplexHead1CritEffects", "Effects");
+
+                    b.HasComment("Эффекты выбитых зубов");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexHead2CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.ToTable("ComplexHead2CritEffects", "Effects");
+
+                    b.HasComment("Эффекты небольшой травмы головы");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexLegCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.ToTable("ComplexLegCritEffects", "Effects");
+
+                    b.HasComment("Эффекты перелома ноги");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexTailCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.ToTable("ComplexTailCritEffects", "Effects");
+
+                    b.HasComment("Эффекты перелома хвоста");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexTorso1CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.ToTable("ComplexTorso1CritEffects", "Effects");
+
+                    b.HasComment("Эффекты сломанных ребер");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexTorso2CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<int>("RoundCounter")
+                        .HasColumnType("integer")
+                        .HasColumnName("RoundCounter")
+                        .HasComment("Счетчик раундов");
+
+                    b.ToTable("ComplexTorso2CritEffects", "Effects");
+
+                    b.HasComment("Эффекты разрыва селезенки");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexWingCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.ToTable("ComplexWingCritEffects", "Effects");
+
+                    b.HasComment("Эффекты перелома крыла");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyArmCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.ToTable("DeadlyArmCritEffects", "Effects");
+
+                    b.HasComment("Эффекты потери руки");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyHead1CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.ToTable("DeadlyHead1CritEffects", "Effects");
+
+                    b.HasComment("Эффекты повреждения глаза");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyHead2CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.ToTable("DeadlyHead2CritEffects", "Effects");
+
+                    b.HasComment("Эффекты отсечения головы");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyLegCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<int>("AthleticsModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AthleticsModifier")
+                        .HasComment("Модификатор атлетики");
+
+                    b.Property<int>("DodgeModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("DodgeModifier")
+                        .HasComment("Модификатор уклонения");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.Property<int>("SpeedModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("SpeedModifier")
+                        .HasComment("Модификатор скорости");
+
+                    b.ToTable("DeadlyLegCritEffects", "Effects");
+
+                    b.HasComment("Эффекты потери ноги");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyTailCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<int>("AthleticsModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AthleticsModifier")
+                        .HasComment("Модификатор атлетики");
+
+                    b.Property<int>("DodgeModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("DodgeModifier")
+                        .HasComment("Модификатор уклонения");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.ToTable("DeadlyTailCritEffects", "Effects");
+
+                    b.HasComment("Эффекты потери хвоста");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyTorso1CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<int>("AfterTreatStaModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AfterTreatStaModifier")
+                        .HasComment("Модификатор стамины после стабилизации");
+
+                    b.Property<int>("StaModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("StaModifier")
+                        .HasComment("Модификатор стамины");
+
+                    b.ToTable("DeadlyTorso1CritEffects", "Effects");
+
+                    b.HasComment("Эффекты септического шока");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyTorso2CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<int>("AfterTreatBodyModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AfterTreatBodyModifier")
+                        .HasComment("Модификатор телосложения после стабилизации");
+
+                    b.Property<int>("AfterTreatSpeedModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AfterTreatSpeedModifier")
+                        .HasComment("Модификатор скорости после стабилизации");
+
+                    b.Property<int>("AfterTreatStaModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AfterTreatStaModifier")
+                        .HasComment("Модификатор стамины после стабилизации");
+
+                    b.Property<int>("BodyModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("BodyModifier")
+                        .HasComment("Модификатор телосложения");
+
+                    b.Property<int>("SpeedModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("SpeedModifier")
+                        .HasComment("Модификатор скорости");
+
+                    b.Property<int>("StaModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("StaModifier")
+                        .HasComment("Модификатор стамины");
+
+                    b.ToTable("DeadlyTorso2CritEffects", "Effects");
+
+                    b.HasComment("Эффекты травмы сердца");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyWingCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<int>("AthleticsModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AthleticsModifier")
+                        .HasComment("Модификатор атлетики");
+
+                    b.Property<int>("DodgeModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("DodgeModifier")
+                        .HasComment("Модификатор уклонения");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.Property<int>("SpeedModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("SpeedModifier")
+                        .HasComment("Модификатор скорости");
+
+                    b.ToTable("DeadlyWingCritEffects", "Effects");
+
+                    b.HasComment("Эффекты потери крыла");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultArmCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.ToTable("DifficultArmCritEffects", "Effects");
+
+                    b.HasComment("Эффекты открытого перелома руки");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultHead1CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<int>("NextCheck")
+                        .HasColumnType("integer")
+                        .HasColumnName("NextCheck")
+                        .HasComment("Раунд следующей проверки");
+
+                    b.Property<int>("RoundCounter")
+                        .HasColumnType("integer")
+                        .HasColumnName("RoundCounter")
+                        .HasComment("Счетчик раундов");
+
+                    b.ToTable("DifficultHead1CritEffects", "Effects");
+
+                    b.HasComment("Эффекты контузии");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultHead2CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.ToTable("DifficultHead2CritEffects", "Effects");
+
+                    b.HasComment("Эффекты проломленного черепа");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultLegCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<int>("AfterTreatAthleticsModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AfterTreatAthleticsModifier")
+                        .HasComment("Модификатор атлетики после стабилизации");
+
+                    b.Property<int>("AfterTreatDodgeModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AfterTreatDodgeModifier")
+                        .HasComment("Модификатор уклонения после стабилизации");
+
+                    b.Property<int>("AfterTreatSpeedModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AfterTreatSpeedModifier")
+                        .HasComment("Модификатор скорости после стабилизации");
+
+                    b.Property<int>("AthleticsModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AthleticsModifier")
+                        .HasComment("Модификатор атлетики");
+
+                    b.Property<int>("DodgeModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("DodgeModifier")
+                        .HasComment("Модификатор уклонения");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.Property<int>("SpeedModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("SpeedModifier")
+                        .HasComment("Модификатор скорости");
+
+                    b.ToTable("DifficultLegCritEffects", "Effects");
+
+                    b.HasComment("Эффекты открытого перелома ноги");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultTailCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<int>("AfterTreatAthleticsModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AfterTreatAthleticsModifier")
+                        .HasComment("Модификатор атлетики после стабилизации");
+
+                    b.Property<int>("AfterTreatDodgeModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AfterTreatDodgeModifier")
+                        .HasComment("Модификатор уклонения после стабилизации");
+
+                    b.Property<int>("AthleticsModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AthleticsModifier")
+                        .HasComment("Модификатор атлетики");
+
+                    b.Property<int>("DodgeModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("DodgeModifier")
+                        .HasComment("Модификатор уклонения");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.ToTable("DifficultTailCritEffects", "Effects");
+
+                    b.HasComment("Эффекты открытого перелома хвоста");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultTorso1CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.ToTable("DifficultTorso1CritEffects", "Effects");
+
+                    b.HasComment("Эффекты сосущей раны грудной клетки");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultTorso2CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.ToTable("DifficultTorso2CritEffects", "Effects");
+
+                    b.HasComment("Эффекты раны в живот");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultWingCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<int>("AfterTreatAthleticsModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AfterTreatAthleticsModifier")
+                        .HasComment("Модификатор атлетики после стабилизации");
+
+                    b.Property<int>("AfterTreatDodgeModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AfterTreatDodgeModifier")
+                        .HasComment("Модификатор уклонения после стабилизации");
+
+                    b.Property<int>("AfterTreatSpeedModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AfterTreatSpeedModifier")
+                        .HasComment("Модификатор скорости после стабилизации");
+
+                    b.Property<int>("AthleticsModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("AthleticsModifier")
+                        .HasComment("Модификатор атлетики");
+
+                    b.Property<int>("DodgeModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("DodgeModifier")
+                        .HasComment("Модификатор уклонения");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.Property<int>("SpeedModifier")
+                        .HasColumnType("integer")
+                        .HasColumnName("SpeedModifier")
+                        .HasComment("Модификатор скорости");
+
+                    b.ToTable("DifficultWingCritEffects", "Effects");
+
+                    b.HasComment("Эффекты открытого перелома крыла");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleArmCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.ToTable("SimpleArmCritEffects", "Effects");
+
+                    b.HasComment("Эффекты вывиха руки");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleHead1CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.ToTable("SimpleHead1CritEffects", "Effects");
+
+                    b.HasComment("Эффекты уродующего шрама");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleHead2CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.ToTable("SimpleHead2CritEffects", "Effects");
+
+                    b.HasComment("Эффекты треснувшей челюсти");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleLegCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.ToTable("SimpleLegCritEffects", "Effects");
+
+                    b.HasComment("Эффекты вывиха ноги");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleTailCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.ToTable("SimpleTailCritEffects", "Effects");
+
+                    b.HasComment("Эффекты вывиха крыла");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleTorso1CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.ToTable("SimpleTorso1CritEffects", "Effects");
+
+                    b.HasComment("Эффекты инородного объекта");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleTorso2CritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.ToTable("SimpleTorso2CritEffects", "Effects");
+
+                    b.HasComment("Эффекты треснувших ребер");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleWingCritEffect", b =>
+                {
+                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+
+                    b.Property<bool>("PenaltyApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("PenaltyApplied")
+                        .HasComment("Пенальти применено");
+
+                    b.ToTable("SimpleWingCritEffects", "Effects");
+
+                    b.HasComment("Эффекты вывиха крыла");
+                });
+
             modelBuilder.Entity("AbilityCreature", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.Ability", null)
@@ -2279,21 +4176,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AbilityDamageType", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Ability", null)
-                        .WithMany()
-                        .HasForeignKey("AbilitiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.DamageType", null)
-                        .WithMany()
-                        .HasForeignKey("DamageTypesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("AbilitySkill", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.Ability", null)
@@ -2305,21 +4187,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasOne("Sindie.ApiService.Core.Entities.Skill", null)
                         .WithMany()
                         .HasForeignKey("DefensiveSkillsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ConditionCreature", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Condition", null)
-                        .WithMany()
-                        .HasForeignKey("ConditionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.Creature", null)
-                        .WithMany()
-                        .HasForeignKey("CreaturesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -2437,6 +4304,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Sindie.ApiService.Core.Entities.DamageType", "DamageType")
+                        .WithMany("Abilities")
+                        .HasForeignKey("DamageTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
                         .WithMany("Abilities")
                         .HasForeignKey("GameId")
@@ -2444,6 +4317,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired();
 
                     b.Navigation("AttackSkill");
+
+                    b.Navigation("DamageType");
 
                     b.Navigation("Game");
                 });
@@ -2620,6 +4495,17 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("Skill");
                 });
 
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Creature", "Creature")
+                        .WithMany("Effects")
+                        .HasForeignKey("CreatureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creature");
+                });
+
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Game", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "Avatar")
@@ -2628,43 +4514,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Avatar");
-                });
-
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Skill", b =>
-                {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
-                        .WithMany("Skills")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("Sindie.ApiService.Core.Entities.Skill+SkillBound", "SkillBounds", b1 =>
-                        {
-                            b1.Property<Guid>("SkillId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
-
-                            b1.Property<int>("MaxValueSkill")
-                                .HasColumnType("integer")
-                                .HasColumnName("MaxValueSkills")
-                                .HasComment("Максимальное значение навыка");
-
-                            b1.Property<int>("MinValueSkill")
-                                .HasColumnType("integer")
-                                .HasColumnName("MinValueSkills")
-                                .HasComment("Минимальное значение навыка");
-
-                            b1.HasKey("SkillId");
-
-                            b1.ToTable("Skills", "GameRules");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SkillId");
-                        });
-
-                    b.Navigation("Game");
-
-                    b.Navigation("SkillBounds");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.User", b =>
@@ -2859,6 +4708,401 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("CreatureTemplate");
                 });
 
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CreaturePart", "CreaturePart")
+                        .WithMany()
+                        .HasForeignKey("CreaturePartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreaturePart");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.BleedEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.BleedEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.BleedingWoundEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.BleedingWoundEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DyingEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DyingEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.FireEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.FireEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.FreezeEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.FreezeEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.PoisonEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.PoisonEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.StaggeredEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.StaggeredEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.StunEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.StunEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SufflocationEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SufflocationEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexArmCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexArmCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexHead1CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexHead1CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexHead2CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexHead2CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexLegCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexLegCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexTailCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexTailCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexTorso1CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexTorso1CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexTorso2CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexTorso2CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexWingCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexWingCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyArmCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyArmCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyHead1CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyHead1CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyHead2CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyHead2CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyLegCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyLegCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyTailCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyTailCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyTorso1CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyTorso1CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyTorso2CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyTorso2CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyWingCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyWingCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultArmCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultArmCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultHead1CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultHead1CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultHead2CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultHead2CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultLegCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultLegCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultTailCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultTailCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultTorso1CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultTorso1CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultTorso2CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultTorso2CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultWingCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultWingCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleArmCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleArmCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleHead1CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleHead1CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleHead2CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleHead2CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleLegCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleLegCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleTailCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleTailCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleTorso1CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleTorso1CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleTorso2CritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleTorso2CritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleWingCritEffect", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleWingCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Ability", b =>
                 {
                     b.Navigation("AppliedConditions");
@@ -2891,6 +5135,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("CreatureParts");
 
                     b.Navigation("CreatureSkills");
+
+                    b.Navigation("Effects");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplate", b =>
@@ -2909,6 +5155,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("Creatures");
                 });
 
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.DamageType", b =>
+                {
+                    b.Navigation("Abilities");
+                });
+
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Game", b =>
                 {
                     b.Navigation("Abilities");
@@ -2918,8 +5169,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("BodyTemplates");
 
                     b.Navigation("CreatureTemplates");
-
-                    b.Navigation("Skills");
 
                     b.Navigation("UserGames");
                 });

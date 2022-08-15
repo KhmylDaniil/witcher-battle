@@ -90,11 +90,6 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Навыки
-		/// </summary>
-		public List<Skill> Skills { get; set; }
-
-		/// <summary>
 		/// Бои
 		/// </summary>
 		public List<Battle> Battles { get; set; }
@@ -130,7 +125,7 @@ namespace Sindie.ApiService.Core.Entities
 			string name = default,
 			ImgFile avatar = default,
 			string description = default)
-		=> new Game()
+		=> new ()
 		{
 			Id = id ?? default,
 			Name = name ?? "Game",

@@ -1,4 +1,5 @@
 ﻿using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -19,6 +20,7 @@ namespace Sindie.ApiService.Core.Entities
 
 		private CreatureTemplate _creatureTemplate;
 		private Skill _skill;
+		private int _skillValue;
 
 		/// <summary>
 		/// Пустой конструктор
@@ -56,12 +58,20 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Название корреспондирующей характеристики
 		/// </summary>
-		public string StatName { get; protected set; }
+		public Stats StatName { get; protected set; }
 
 		/// <summary>
 		/// Значение навыка у шаблона существа
 		/// </summary>
-		public int SkillValue { get; set; }
+		public int SkillValue
+		{
+			get => _skillValue;
+			set
+			{
+				if (value < 0 || value > BaseData.DiceValue.Value) throw new ArgumentOutOfRangeException(nameof(SkillValue));
+				_skillValue = value;
+			}
+		}
 
 		#region navigation properties
 

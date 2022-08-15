@@ -22,12 +22,12 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 		public CreatureAttackCommand(
 			Guid battleId,
 			Guid attackerId,
-			Guid? abilityId,
 			Guid targetCreatureId,
-			Guid? creaturePartId,
-			Guid? defensiveSkillId,
-			int? specialToHit,
-			int? specialToDamage)
+			Guid? abilityId = default,
+			Guid? creaturePartId = default,
+			Guid? defensiveSkillId = default,
+			int? specialToHit = default,
+			int? specialToDamage = default)
 		{
 			BattleId = battleId;
 			AttackerId = attackerId;

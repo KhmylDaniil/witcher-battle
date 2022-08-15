@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAbilitybyId
 	/// <summary>
 	/// Команда на удаление способности по айди
 	/// </summary>
-	public class DeleteAbilityByIdCommand : IRequest
+	public sealed class DeleteAbilityByIdCommand : IRequest
 	{
 		/// <summary>
 		/// Айди игры

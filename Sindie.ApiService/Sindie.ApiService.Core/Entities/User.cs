@@ -165,7 +165,7 @@ namespace Sindie.ApiService.Core.Entities
 			string login = default,
 			string password = default,
 			SystemRole role = default)
-		=> new User()
+		=> new ()
 		{
 			Id = id ?? default,
 			Name = name ?? "User",

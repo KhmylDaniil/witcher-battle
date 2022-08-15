@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 	/// <summary>
 	/// Элемент ответа на запрос списка способностей
 	/// </summary>
-	public class GetAbilityResponseItem
+	public sealed class GetAbilityResponseItem
 	{
 		/// <summary>
 		/// Айди

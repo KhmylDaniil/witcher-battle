@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sindie.ApiService.Core.Abstractions;
+using System;
 using System.Collections.Generic;
 
 namespace Sindie.ApiService.Core.Entities
@@ -59,11 +60,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public List<AppliedCondition> AppliedConditions { get; set; }
 
-		/// <summary>
-		/// Существа
-		/// </summary>
-		public List<Creature> Creatures { get; set; }
-
 		#endregion navigation properties
 
 		/// <summary>
@@ -85,11 +81,10 @@ namespace Sindie.ApiService.Core.Entities
 		=> new Condition()
 		{
 			Id = id ?? Guid.NewGuid(),
-			Name = name ?? "Condition",
+			Name = name ?? BaseData.Conditions.BleedName,
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId,
-			Creatures = new List<Creature>(),
 			AppliedConditions = new List<AppliedCondition>()
 		};
 	}

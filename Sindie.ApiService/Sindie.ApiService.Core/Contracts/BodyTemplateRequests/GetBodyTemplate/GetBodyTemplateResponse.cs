@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate
 	/// <summary>
 	/// Ответ на запрос списка шаблонов тела
 	/// </summary>
-	public class GetBodyTemplateResponse
+	public sealed class GetBodyTemplateResponse
 	{
 		/// <summary>
 		/// Список шаблонов тела

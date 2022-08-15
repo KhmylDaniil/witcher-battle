@@ -66,7 +66,7 @@ namespace Sindie.ApiService.Core.Entities
 			protected set
 			{
 				_bodyTemplate = value ?? throw new ApplicationException("Необходимо передать тип части тела");
-				BodyPartTypeId = value.Id;
+				BodyTemplateId = value.Id;
 			}
 		}
 		#endregion navigation properties

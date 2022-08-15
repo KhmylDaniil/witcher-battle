@@ -38,7 +38,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_bodyPartType = BodyPartType.CreateForTest();
 			_creatureType = CreatureType.CreateForTest();
 
-			_parameter = Skill.CreateForTest(game: _game);
+			_parameter = Skill.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
 			_condition = Condition.CreateForTest(name: Conditions.BleedName);
 

@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.UserRequests.GetUsers
 	/// <summary>
 	/// Запрос получение списка пользователей
 	/// </summary>
-	public class GetUsersQuery: GetBaseQuery, IRequest<GetUsersQueryResponse>
+	public sealed class GetUsersQuery: GetBaseQuery, IRequest<GetUsersQueryResponse>
 	{
 		/// <summary>
 		/// Подстрока для поиска пользователей

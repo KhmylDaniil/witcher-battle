@@ -74,7 +74,7 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 				?? throw new ExceptionEntityNotFound<Game>(request.Id);
 
 			//проверка на уникальность имени игры
-			if (request.Name != game.Name && await _appDbContext.Games
+			if (!string.Equals(request.Name, game.Name, System.StringComparison.Ordinal) && await _appDbContext.Games
 				.AnyAsync(x => x.Name == request.Name, cancellationToken))
 				throw new ExceptionRequestNameNotUniq<ChangeGameCommand>(nameof(request.Name));
 

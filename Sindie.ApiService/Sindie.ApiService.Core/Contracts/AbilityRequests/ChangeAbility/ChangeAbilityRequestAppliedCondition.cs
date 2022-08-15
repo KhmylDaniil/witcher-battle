@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 	/// <summary>
 	/// Элемент запроса изменения способности - применяемое состояние
 	/// </summary>
-	public class ChangeAbilityRequestAppliedCondition
+	public sealed class ChangeAbilityRequestAppliedCondition
 	{
 		/// <summary>
 		/// Айди
