@@ -2,7 +2,6 @@
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Entities.Effects;
-using Sindie.ApiService.Core.Requests.BattleRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -464,14 +463,19 @@ namespace Sindie.ApiService.Core.Logic
 
 
 
-		private void ApplyAttackerFumble(Creature creature, CreatureSkill attackSkill, int attackerFumble, ref StringBuilder message)
+		private bool ApplyAttackerFumble(AttackData data, int attackerFumble, ref StringBuilder message)
 		{
-			if (attackSkill.SkillId == Skills.BrawlingId)
-				ApplyUnarmedFumble(creature, attackerFumble, ref message);
+			if (data.Ability.AttackSkill.Id == Skills.BrawlingId)
+				ApplyUnarmedFumble(data.Attacker, attackerFumble, ref message);
 
+			else if (data.Ability.AttackSkill.Id == Skills.SpellId)
+				ApplySpellFumble(data.Attacker, attackerFumble, ref message);
 
+			else if (data.Ability.AttackSkill.Id == Skills.ArcheryId || data.Ability.AttackSkill.Id == Skills.CrossbowId || data.Ability.AttackSkill.Id == Skills.AthleticsId)
+				ApplyRangedFumble(data, attackerFumble, ref message);
 
-
+			else
+				ApplyArmedAttackFumble(data, attackerFumble, ref message);
 		}
 
 
@@ -487,6 +491,9 @@ namespace Sindie.ApiService.Core.Logic
 
 		private void ApplyUnarmedFumble(Creature creature, int fumble, ref StringBuilder message)
 		{
+			if (fumble < 6)
+				return;
+
 			switch (fumble)
 			{
 				case 6:
@@ -521,6 +528,8 @@ namespace Sindie.ApiService.Core.Logic
 							? creature.Sta - staLoss
 							: 0;
 
+						message.AppendLine($"Из-за провала существо {creature.Name} теряет {staLoss} выносливости.");
+
 						FallProne(ref message);
 						StunCheck(ref message);
 						break;
@@ -538,13 +547,15 @@ namespace Sindie.ApiService.Core.Logic
 						damage = (int)Math.Truncate(damage * head.DamageModifier);
 						creature.HP -= damage;
 
+						message.AppendLine($"Из-за провала существо {creature.Name} получает {damage} урона.");
+
 						FallProne(ref message);
 						StunCheck(ref message);
 						break;
 					}
 
 				default:
-					throw new ApplicationException("Что-то пошло не так");
+					throw new ApplicationException("Что-то пошло не так с расчетом провала при атаке.");
 
 					void FallProne(ref StringBuilder message)
 					{
@@ -566,6 +577,108 @@ namespace Sindie.ApiService.Core.Logic
 						message.AppendLine($"Из-за провала существо {creature.Name} получает эффект {Conditions.StunName}.");
 					}
 			}
+		}
+
+		private void ApplyRangedFumble(AttackData data, int fumble, ref StringBuilder message)
+		{
+			if (fumble < 6)
+				return;
+
+			switch (fumble)
+			{
+				case 6:
+				case 7:
+					{
+						message.AppendLine($"Из-за провала атаки {data.Attacker.Name} метательный снаряд сломался.");
+						break;
+					}
+				case 8:
+				case 9:
+					{
+						message.AppendLine($"Из-за провала атаки {data.Attacker.Name} роняет оружие на землю. Требуется раунд, чтобы его подобрать.");
+						break;
+					}
+				case 10:
+					{
+						int damage = RollDamage(data.Ability, data.ToDamage);
+						message.AppendLine($"Дистанционная атака существа {data.Attacker.Name} попала в другую цель. Нанесено {damage} {data.Ability.DamageType.Name} урона.");
+						break;
+					}
+				default:
+					throw new ApplicationException("Что-то пошло не так с расчетом провала при атаке.");
+
+			}				
+		}
+
+		private void ApplyArmedAttackFumble(AttackData data, int fumble, ref StringBuilder message)
+		{
+			if (fumble < 6)
+				return;
+
+			switch (fumble)
+			{
+				case 6:
+					{
+						var staggered = StaggeredEffect.Create(null, null, target: data.Attacker, "Fumble-based stagger");
+
+						if (staggered is null)
+							break;
+
+						data.Attacker.Effects.Add(staggered);
+						message.AppendLine($"Из-за провала атаки существо {data.Attacker.Name} получает эффект {Conditions.StaggeredName}.");
+						break;
+					}
+				case 7:
+					{
+						message.AppendLine($"Из-за провала атаки оружие {data.Attacker.Name} застревает. Требуется раунд, чтобы его вытащить.");
+						break;
+					}
+				case 8:
+					{
+						message.AppendLine($"Из-за провала атаки оружие {data.Attacker.Name} теряет {new Random().Next(1, 10)} прочности.");
+						break;
+					}
+				case 9:
+					{
+						int damage = RollDamage(data.Ability, data.ToDamage);
+						var aimedPart = AttackData.DefaultCreaturePart(data.Attacker);
+
+						ArmorMutigation(aimedPart, ref damage, ref message);
+
+						damage = (int)Math.Truncate(damage * aimedPart.DamageModifier);
+						data.Attacker.HP -= damage;
+
+						message.AppendLine($"Из-за провала существо {data.Attacker.Name} получает {damage} урона от собственного оружия.");
+						break;
+					}
+				case 10:
+					{
+						int damage = RollDamage(data.Ability, data.ToDamage);
+						message.AppendLine($"Атака существа {data.Attacker.Name} попала в другую цель. Нанесено {damage} {data.Ability.DamageType.Name} урона.");
+						break;
+					}
+				default:
+					throw new ApplicationException("Что-то пошло не так с расчетом провала при атаке.");
+
+			}
+		}
+
+		private void ApplySpellFumble(Creature creature, int fumble, ref StringBuilder message)
+		{
+			creature.HP -= fumble;
+
+			message.AppendLine($"Из-за провала заклинания существо {creature.Name} получает {fumble} урона.");
+
+			//switch (fumble)
+			//{
+			//	case 7:
+			//	case 8:
+			//	case 9:
+			//		{
+
+
+			//		}
+			//}
 		}
 	}
 }

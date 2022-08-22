@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sindie.ApiService.Core.Requests.BattleRequests
+namespace Sindie.ApiService.Core.Logic
 {
 	/// <summary>
 	/// Данные для расчета атаки
@@ -78,9 +78,9 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 			defensiveSkill = defensiveSkill is null ? target.DefaultDefensiveSkill(ability) : defensiveSkill;
 
 			specialToHit = aimedPart is null ? specialToHit : specialToHit - aimedPart.HitPenalty;
-			
-			aimedPart = AimedPartIsNullOrDismembered() ? DefaultCreaturePart() : aimedPart;
-			
+
+			aimedPart = AimedPartIsNullOrDismembered(target, aimedPart) ? DefaultCreaturePart(target) : aimedPart;
+
 			return new AttackData()
 			{
 				Attacker = attacker,
@@ -92,30 +92,37 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 				ToDamage = specialToDamage,
 				Conditions = conditions
 			};
+		}
 
-			bool AimedPartIsNullOrDismembered()
+		internal static CreaturePart DefaultCreaturePart(Creature creature)
+		{
+			Random random = new();
+			int roll;
+			CreaturePart creaturePart;
+
+			do
 			{
-				if (aimedPart is null)
-					return true;
-
-				return target.Effects.Any(x => x is CritEffect crit && crit.CreaturePartId == aimedPart.Id
-					&& crit is ISharedPenaltyCrit limbCrit && limbCrit.Severity >= BaseData.Enums.Severity.Deadly);
+				roll = random.Next(1, 10);
+				creaturePart = creature.CreatureParts.First(x => x.MinToHit <= roll && x.MaxToHit >= roll);
 			}
-			
-			CreaturePart DefaultCreaturePart()
-			{
-				Random random = new();
-				int roll;
+			while (AimedPartIsNullOrDismembered(creature, creaturePart));
 
-				do
-				{
-					roll = random.Next(1, 10);
-					aimedPart = target.CreatureParts.First(x => x.MinToHit <= roll && x.MaxToHit >= roll);
-				}
-				while (AimedPartIsNullOrDismembered());
+			return creaturePart;
+		}
 
-				return aimedPart;
-			}
+		/// <summary>
+		/// Конечность не определена или отсечена
+		/// </summary>
+		/// <param name="creature">Существо</param>
+		/// <param name="creaturePart">Часть тела</param>
+		/// <returns></returns>
+		internal static bool AimedPartIsNullOrDismembered(Creature creature, CreaturePart creaturePart)
+		{
+			if (creaturePart is null)
+				return true;
+
+			return creature.Effects.Any(x => x is CritEffect crit && crit.CreaturePartId == creaturePart.Id
+				&& crit is ISharedPenaltyCrit limbCrit && limbCrit.Severity >= BaseData.Enums.Severity.Deadly);
 		}
 	}
 }
