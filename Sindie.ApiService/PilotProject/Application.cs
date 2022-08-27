@@ -32,19 +32,18 @@ namespace PilotProject
 			_dateTimeProvider = dateTimeProvider;
 		}
 
-		public void Run()
+		public async void Run()
 		{
-			//CreatureTemplateController newCTController = new(_appDbContext, _authorizationService, _dateTimeProvider);
-			
-			Console.WriteLine("Welcome to witcher battle helper. Would you manage creature templates (press 1) or pick existing (press 2)?");
+			Console.WriteLine("Welcome to witcher battle helper. Would you manage creature templates (press 1) or go to battle simulation (press 2)?");
+
+			CreatureTemplateController newCTController = new(_appDbContext, _authorizationService, _dateTimeProvider);
 
 			int input = 0;
 
 			while (input != 1 && input != 2)
 				int.TryParse(Console.ReadLine(), out input);
 
-			if (input == 1)
-				CreatureTemplateController.Run();
+			if (input == 1) await newCTController.GetAsync();
 		}
 	}
 }
