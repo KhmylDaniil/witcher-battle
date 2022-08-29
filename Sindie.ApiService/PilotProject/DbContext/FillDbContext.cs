@@ -224,7 +224,21 @@ namespace PilotProject.DbContext
 				body: 8,
 				speed: 5);
 			_ghoul.Abilities.Add(_clawsAttack);
-			//TODO доделать темплейт, добавть абилки и скиллы
+			_ghoul.CreatureTemplateSkills.AddRange(new List<CreatureTemplateSkill>
+			{ 
+				CreatureTemplateSkill.CreateForTest(
+					creatureTemplate: _ghoul,
+					skill: _meleeSkill,
+					value: 6),
+				CreatureTemplateSkill.CreateForTest(
+					creatureTemplate: _ghoul,
+					skill: _dodgeSkill,
+					value: 7),
+				CreatureTemplateSkill.CreateForTest(
+					creatureTemplate: _ghoul,
+					skill: _athleticsSkill,
+					value: 5)
+			});
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,

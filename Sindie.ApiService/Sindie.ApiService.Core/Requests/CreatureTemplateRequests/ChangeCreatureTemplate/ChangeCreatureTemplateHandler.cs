@@ -147,7 +147,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 					if (creatureTemplate.CreatureTemplateSkills.Any(x => x.SkillId == skill.SkillId))
 						throw new ExceptionRequestNotUniq<CreatureTemplateSkill>(skill.SkillId);
 
-				if (skill.Value < 1)
+				if (skill.Value < 0)
 					throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateCommand>(nameof(skill.Value));
 			}
 

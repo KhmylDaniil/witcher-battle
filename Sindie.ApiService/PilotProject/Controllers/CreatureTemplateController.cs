@@ -65,7 +65,7 @@ namespace PilotProject.Controllers
 
 			if (result == null) throw new ApplicationException("Get CT query is null");
 
-			Console.WriteLine($"There are {result.TotalCount} aviable creature templates:");
+			Console.WriteLine($"\nThere are {result.TotalCount} aviable creature templates:");
 			for (int i = 0; i < result.TotalCount; i++)
 			{
 				Console.WriteLine($"Name: {result.CreatureTemplatesList[i].Name}. If you want to look closer, press {i + 1}.");
@@ -74,14 +74,14 @@ namespace PilotProject.Controllers
 
 			int input = 0;
 
-			while (!int.TryParse(Console.ReadLine(), out input) || (input < 0 && input > result.TotalCount));
+			while (!int.TryParse(Console.ReadLine(), out input) || (input < 0 && input > result.TotalCount)) ;
 
 			if (input == 0)
 				return CreateAsync();
 
 			else
-				return GetByIdAsync(result.CreatureTemplatesList[input-1].Id);
-			
+				return GetByIdAsync(result.CreatureTemplatesList[input - 1].Id);
+
 			GetCreatureTemplateCommand GetCommandFromQuery(GetCreatureTemplateQuery request)
 			{
 				return request == null
@@ -168,13 +168,13 @@ namespace PilotProject.Controllers
 
 			int input = 0;
 
-			while (int.TryParse(Console.ReadLine(), out input) || (input < 1 && input > 3 ));
+			while (int.TryParse(Console.ReadLine(), out input) && (input < 1 || input > 3 ));
 
 			var abilityId = input switch
 			{
 				1 => _appDbContext.Abilities.FirstOrDefault(x => x.Name.Equals("SwordAttack")).Id,
 				2 => _appDbContext.Abilities.FirstOrDefault(x => x.Name.Equals("ArcheryAttack")).Id,
-				3 => _appDbContext.Abilities.FirstOrDefault(x => x.Name.Equals("ClawsAttack"))?.Id
+				3 => _appDbContext.Abilities.FirstOrDefault(x => x.Name.Equals("ClawsAttack")).Id
 			};
 
 			var bodyTemplateParts = _appDbContext.BodyTemplateParts.Where(x => x.BodyTemplateId == TestDbContext.BodyTemplateId).ToList();
@@ -224,7 +224,7 @@ namespace PilotProject.Controllers
 				Will = will,
 				Speed = speed,
 				Luck = luck,
-				Abilities = new List<Guid> { abilityId.Value },
+				Abilities = new List<Guid> { abilityId },
 				ArmorList = armorList,
 				CreatureTemplateSkills = createCreatureTemplateRequestSkills
 			};
@@ -268,7 +268,7 @@ namespace PilotProject.Controllers
 		/// </summary>
 		/// <param name="id">айди</param>
 		/// <returns></returns>
-		public async Task GetByIdAsync(Guid id)
+		public async Task<Task> GetByIdAsync(Guid id)
 		{
 			GetCreatureTemplateByIdQuery query = new GetCreatureTemplateByIdQuery() { GameId = TestDbContext.GameId, Id = id};
 
@@ -279,8 +279,8 @@ namespace PilotProject.Controllers
 			if (result == null) throw new ApplicationException($"Creature Template with id {id} is not found");
 
 			Console.WriteLine($"Name: {result.Name}\n Description: {result.Description}\n HP: {result.HP}\n Stamina: {result.Sta}\n" +
-				$"Int: {result.Int}\n Ref: {result.Ref}\n Dex {result.Dex}, Body: {result.Body}\n Emp: {result.Emp}\n Cra: {result.Cra}\n Will: {result.Will}\n" +
-				$"Luck: {result.Luck}\n Speed: {result.Speed}");
+				$" Int: {result.Int}\n Ref: {result.Ref}\n Dex {result.Dex}, Body: {result.Body}\n Emp: {result.Emp}\n Cra: {result.Cra}\n Will: {result.Will}\n" +
+				$" Luck: {result.Luck}\n Speed: {result.Speed}");
 
 			if (result.CreatureTemplateParts.Any())
 				ViewCreatureTemplateParts(result);
@@ -291,18 +291,20 @@ namespace PilotProject.Controllers
 			if (result.CreatureTemplateSkills.Any())
 				ViewSkills(result);
 
-			Console.WriteLine("\nYou can edit this creature template (press 1), delete it (press 2) or return to general view (press 0)");
+			Console.WriteLine("\nYou can edit this creature template (press 1), delete it (press 2), pick it up to battle (press 3) or return to general view (press 0)");
 
 			int input = 0;
 
 			while (!int.TryParse(Console.ReadLine(), out input) || (input < 0 && input > 2)) ;
 
-			if (input == 0)
-				await GetAsync();
-			else if (input == 1)
-				await ChangeAsync(id);
-			else
-				await DeleteAsync(id);
+			if (input == 1)
+				return await ChangeAsync(id);
+			else if (input == 2)
+				return await DeleteAsync(id);
+			else if (input == 3)
+				BattleController.PickUpToBattle(id);
+
+			return await GetAsync();
 
 			static void ViewCreatureTemplateParts(GetCreatureTemplateByIdResponse result)
 			{
@@ -422,13 +424,13 @@ namespace PilotProject.Controllers
 
 			int input = 0;
 
-			while (int.TryParse(Console.ReadLine(), out input) || (input < 1 && input > 3)) ;
+			while (int.TryParse(Console.ReadLine(), out input) && (input < 1 || input > 3)) ;
 
 			var abilityId = input switch
 			{
 				1 => _appDbContext.Abilities.FirstOrDefault(x => x.Name.Equals("SwordAttack")).Id,
 				2 => _appDbContext.Abilities.FirstOrDefault(x => x.Name.Equals("ArcheryAttack")).Id,
-				3 => _appDbContext.Abilities.FirstOrDefault(x => x.Name.Equals("ClawsAttack"))?.Id
+				3 => _appDbContext.Abilities.FirstOrDefault(x => x.Name.Equals("ClawsAttack")).Id
 			};
 
 			var bodyTemplateParts = _appDbContext.BodyTemplateParts.Where(x => x.BodyTemplateId == TestDbContext.BodyTemplateId).ToList();
@@ -486,7 +488,7 @@ namespace PilotProject.Controllers
 				Will = will,
 				Speed = speed,
 				Luck = luck,
-				Abilities = new List<Guid> { abilityId.Value },
+				Abilities = new List<Guid> { abilityId },
 				ArmorList = armorList,
 				CreatureTemplateSkills = changeCreatureTemplateRequestSkills
 			};

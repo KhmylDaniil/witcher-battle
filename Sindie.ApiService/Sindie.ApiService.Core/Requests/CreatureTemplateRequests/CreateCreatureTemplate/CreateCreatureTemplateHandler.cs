@@ -130,7 +130,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 				_ = skills.FirstOrDefault(x => x.Id == skill.SkillId)
 					?? throw new ExceptionEntityNotFound<Skill>(skill.SkillId);
 
-				if (skill.Value < 1 || skill.Value > BaseData.DiceValue.Value)
+				if (skill.Value < 0 || skill.Value > BaseData.DiceValue.Value)
 					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateCommand>(nameof(skill.Value));
 			}
 

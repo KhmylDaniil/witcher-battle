@@ -1,5 +1,6 @@
 ﻿using PilotProject.Controllers;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,25 +26,41 @@ namespace PilotProject
 		/// </summary>
 		private readonly IDateTimeProvider _dateTimeProvider;
 
-		public Application(IAppDbContext appDbContext, IAuthorizationService authorizationService, IDateTimeProvider dateTimeProvider)
+		/// <summary>
+		/// Бросок параметра
+		/// </summary>
+		private readonly IRollService _rollService;
+
+		/// <summary>
+		/// Контроллер боя
+		/// </summary>
+		private BattleController _battleController;
+
+		/// <summary>
+		/// Контроллер шаблона существа
+		/// </summary>
+		private CreatureTemplateController _creatureTemplateController;
+
+
+		public Application(IAppDbContext appDbContext, IAuthorizationService authorizationService, IDateTimeProvider dateTimeProvider, IRollService rollService)
 		{
 			_appDbContext = appDbContext;
 			_authorizationService = authorizationService;
 			_dateTimeProvider = dateTimeProvider;
+			_rollService = rollService;
+			_battleController = new(_appDbContext, _authorizationService, _rollService);
+			_creatureTemplateController = new(_appDbContext, _authorizationService, _dateTimeProvider);
 		}
 
 		public async void Run()
 		{
-			Console.WriteLine("Welcome to witcher battle helper. Would you manage creature templates (press 1) or go to battle simulation (press 2)?");
+			Console.WriteLine("Welcome to Witcher battle helper.");
+			await _creatureTemplateController.GetAsync();
+		}
 
-			CreatureTemplateController newCTController = new(_appDbContext, _authorizationService, _dateTimeProvider);
-
-			int input = 0;
-
-			while (input != 1 && input != 2)
-				int.TryParse(Console.ReadLine(), out input);
-
-			if (input == 1) await newCTController.GetAsync();
+		public void StartBattle(CreateBattleCommand command)
+		{
+			
 		}
 	}
 }
