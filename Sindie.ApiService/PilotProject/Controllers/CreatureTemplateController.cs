@@ -2,6 +2,7 @@
 using PilotProject.DbContext;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Contracts.BattleRequests.CreateBattle;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatureTemplate;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.DeleteCreatureTemplateById;
@@ -14,6 +15,7 @@ using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatureTem
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.DeleteCreatureTemplateById;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTemplate;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTemplateById;
+using System.Text.Json;
 
 namespace PilotProject.Controllers
 {
@@ -38,16 +40,27 @@ namespace PilotProject.Controllers
 		private readonly IDateTimeProvider _dateTimeProvider;
 
 		/// <summary>
+		/// Бросок параметра
+		/// </summary>
+		private readonly IRollService _rollService;
+
+		/// <summary>
+		/// Словарь для сбора данных о бое
+		/// </summary>
+		public static readonly Dictionary<string, Guid> PickedCreatureTemplates = new();
+
+		/// <summary>
 		/// Конструктор контроллера шаблона существа
 		/// </summary>
 		/// <param name="appDbContext">Контекст базы данных</param>
 		/// <param name="authorizationService">Сервис авторизации</param>
 		/// <param name="dateTimeProvider">Провайдер времени</param>
-		public CreatureTemplateController(IAppDbContext appDbContext, IAuthorizationService authorizationService, IDateTimeProvider dateTimeProvider)
+		public CreatureTemplateController(IAppDbContext appDbContext, IAuthorizationService authorizationService, IDateTimeProvider dateTimeProvider, IRollService rollService)
 		{
 			_appDbContext = appDbContext;
 			_authorizationService = authorizationService;
 			_dateTimeProvider = dateTimeProvider;
+			_rollService = rollService;
 		}
 
 		/// <summary>
@@ -231,7 +244,7 @@ namespace PilotProject.Controllers
 
 			var newHandler = new CreateCreatureTemplateHandler(_appDbContext, _authorizationService);
 
-			var result = await newHandler.Handle(CreateCommandFromQuery(request), default);
+			await newHandler.Handle(CreateCommandFromQuery(request), default);
 
 			return GetAsync();
 
@@ -297,13 +310,18 @@ namespace PilotProject.Controllers
 
 			while (!int.TryParse(Console.ReadLine(), out input) || (input < 0 && input > 2)) ;
 
-			if (input == 1)
-				return await ChangeAsync(id);
-			else if (input == 2)
-				return await DeleteAsync(id);
-			else if (input == 3)
-				BattleController.PickUpToBattle(id);
 
+			switch (input)
+			{
+				case 0:
+					return await GetAsync();
+				case 1:
+					return await ChangeAsync(id);
+				case 2:
+					return await DeleteAsync(id);
+				case 3:
+					return await GoToBattleAsync(id);
+			}
 			return await GetAsync();
 
 			static void ViewCreatureTemplateParts(GetCreatureTemplateByIdResponse result)
@@ -351,7 +369,7 @@ namespace PilotProject.Controllers
 
 			var newHandler = new DeleteCreatureTemplateByIdHandler(_appDbContext, _authorizationService);
 
-			var result = await newHandler.Handle(command, default);
+			await newHandler.Handle(command, default);
 
 			Console.WriteLine($"Creature template with id {id} is deleted.");
 
@@ -495,7 +513,7 @@ namespace PilotProject.Controllers
 
 			var newHandler = new ChangeCreatureTemplateHandler(_appDbContext, _authorizationService);
 
-			var result = await newHandler.Handle(CreateCommandFromQuery(request), default);
+			await newHandler.Handle(CreateCommandFromQuery(request), default);
 
 			ChangeCreatureTemplateCommand CreateCommandFromQuery(ChangeCreatureTemplateRequest request)
 			{
@@ -526,6 +544,46 @@ namespace PilotProject.Controllers
 			}
 
 			return GetAsync();
+		}
+
+		public async Task<Task> GoToBattleAsync(Guid id)
+		{
+			Console.WriteLine($"Enter unique name for this creature");
+			string name = string.Empty;
+			while (string.IsNullOrEmpty(name))
+				name = Console.ReadLine();
+
+			PickedCreatureTemplates.Add(name, id);
+
+			if (PickedCreatureTemplates.Count != 2)
+				return GetAsync();
+
+			var creatures = new List<CreateBattleRequestItem>();
+
+			foreach (var pickedCreature in PickedCreatureTemplates)
+				creatures.Add(new CreateBattleRequestItem
+				{
+					CreatureTemplateId = pickedCreature.Value,
+					Name = pickedCreature.Key
+				});
+
+			CreateBattleRequest request = new()
+			{
+				GameId = TestDbContext.GameId,
+				ImgFileId = null,
+				Name = "TestName",
+				Description = null,
+				Creatures = creatures
+			};
+
+			PickedCreatureTemplates.Clear();
+
+			//using (FileStream fs = new FileStream(Constants.BattlePath, FileMode.OpenOrCreate))
+			//	await JsonSerializer.SerializeAsync(fs, request);
+
+			var newBattleController = new BattleController(_appDbContext, _authorizationService, _rollService);
+
+			return newBattleController.CreateBattle();
 		}
 	}
 }

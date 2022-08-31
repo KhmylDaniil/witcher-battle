@@ -105,9 +105,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			var result = await newHandler.Handle(request, default);
 
 			Assert.IsNotNull(result);
-			var instance = _dbContext.Instances.FirstOrDefault();
+			var instance = _dbContext.Battles.FirstOrDefault();
 			Assert.IsNotNull(instance);
-			Assert.IsTrue(_dbContext.Instances.Count() == 1);
+			Assert.IsTrue(_dbContext.Battles.Count() == 1);
 
 			Assert.AreEqual(instance.Name, "instance");
 			Assert.AreEqual(instance.Description, "description");

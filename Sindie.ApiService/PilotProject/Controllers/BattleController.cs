@@ -1,15 +1,11 @@
-﻿using PilotProject.DbContext;
-using Sindie.ApiService.Core.Abstractions;
+﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.BattleRequests.CreateBattle;
+using Sindie.ApiService.Core.Entities;
+using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle;
-using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatureTemplate;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
+using System.IO;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace PilotProject.Controllers
 {
@@ -31,11 +27,6 @@ namespace PilotProject.Controllers
 		private readonly IRollService _rollService;
 
 		/// <summary>
-		/// Словарь для сбора данных о бое
-		/// </summary>
-		public readonly Dictionary<Guid, string> PickedCreatureTemplates = new();
-
-		/// <summary>
 		/// Конструктор обработчика атаки существа
 		/// </summary>
 		/// <param name="appDbContext"></param>
@@ -48,37 +39,34 @@ namespace PilotProject.Controllers
 			_rollService = rollService;
 		}
 
-		public static void PickUpToBattle(Guid id)
+		
+
+		public async Task<Task> CreateBattle()
 		{
-			Console.WriteLine($"Enter unique name for this creature");
-			string name = string.Empty;
-			while (string.IsNullOrEmpty(name))
-				name = Console.ReadLine();
+			//CreateBattleRequest request = new();
 
-			PickedCreatureTemplates.Add(id, name);
+			//using (FileStream fstream = File.OpenRead(Constants.BattlePath))
+			//{
+			//	byte[] buffer = new byte[fstream.Length];
+	
+			//	await fstream.ReadAsync(buffer, 0, buffer.Length);
 
-			if (PickedCreatureTemplates.Count != 2)
-				return;
+			//	string json = Encoding.Default.GetString(buffer);
+			//	request = JsonSerializer.Deserialize<CreateBattleRequest>(json);
+			//}
 
-			var creatures = new List<CreateBattleRequestItem>();
 
-			foreach (var pickedCreature in PickedCreatureTemplates)
-				creatures.Add(new CreateBattleRequestItem
-				{
-					CreatureTemplateId = pickedCreature.Key,
-					Name = pickedCreature.Value
-				});
-			
-			CreateBattleRequest request = new()
-			{
-				GameId = TestDbContext.GameId,
-				ImgFileId = null,
-				Name = "TestName",
-				Description = null,
-				Creatures = creatures
-			};
+			//using (FileStream fs = new FileStream(Constants.BattlePath, FileMode.))
+			//{
+			//	var aaa = await
+			//		JsonSerializer.DeserializeAsync<CreateBattleRequest>(fs);
+			//}
 
-			Application.CreateBattle(CreateBattleCommandFromQuery(request));
+			//var newHandler = new CreateBattleHandler(_appDbContext, _authorizationService);
+
+			//await newHandler.Handle(CreateBattleCommandFromQuery(request), default);
+
+			return BattleOrder();
 
 			static CreateBattleCommand CreateBattleCommandFromQuery(CreateBattleRequest request)
 				=> request == null
@@ -89,6 +77,19 @@ namespace PilotProject.Controllers
 						name: request.Name,
 						description: request.Description,
 						creatures: request.Creatures);
+		}
+
+		public async Task BattleOrder()
+		{
+			var battle = _appDbContext.Battles.FirstOrDefault() ?? throw new ExceptionEntityNotFound<Battle>();
+
+			
+			foreach (var creature in battle.Creatures)
+			{
+				Console.WriteLine($"Creature name is {creature.Name}");
+			}
+
+
 		}
 	}
 }

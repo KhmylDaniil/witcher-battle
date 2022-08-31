@@ -108,7 +108,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <summary>
 		/// Экземпляры
 		/// </summary>
-		DbSet<Battle> Instances { get; }
+		DbSet<Battle> Battles { get; }
 
 		/// <summary>
 		/// Интерфейсы

@@ -84,7 +84,7 @@ namespace Sindie.ApiService.UnitTest.Core.Services.Authorization
 			var authorizationService = new AuthorizationService(UserContextAsUser.Object);
 
 			//Act
-			var result = authorizationService.BattleMasterFilter(_dbContext.Instances, _instance.Id);
+			var result = authorizationService.BattleMasterFilter(_dbContext.Battles, _instance.Id);
 
 			//Assert
 			Assert.AreEqual(1, result.Count());

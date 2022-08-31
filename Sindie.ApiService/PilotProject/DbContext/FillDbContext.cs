@@ -239,6 +239,62 @@ namespace PilotProject.DbContext
 					skill: _athleticsSkill,
 					value: 5)
 			});
+			_ghoul.CreatureTemplateParts.AddRange(new List<CreatureTemplatePart>
+			{
+				CreatureTemplatePart.CreateForTest(
+					creatureTemplate: _ghoul,
+					bodyPartType: _head,
+					name: "Head",
+					damageModifier: 3,
+					hitPenalty: 6,
+					minToHit: 1,
+					maxToHit: 1),
+
+				CreatureTemplatePart.CreateForTest(
+					creatureTemplate: _ghoul,
+					bodyPartType: _torso,
+					name: "Torso",
+					damageModifier: 1,
+					hitPenalty: 1,
+					minToHit: 2,
+					maxToHit: 4),
+
+				CreatureTemplatePart.CreateForTest(
+					creatureTemplate: _ghoul,
+					bodyPartType: _arm,
+					name: "Left Arm",
+					damageModifier: 0.5,
+					hitPenalty: 3,
+					minToHit: 5,
+					maxToHit: 5),
+
+				CreatureTemplatePart.CreateForTest(
+					creatureTemplate: _ghoul,
+					bodyPartType: _arm,
+					name: "Right Arm",
+					damageModifier: 0.5,
+					hitPenalty: 3,
+					minToHit: 6,
+					maxToHit: 6),
+
+				CreatureTemplatePart.CreateForTest(
+					creatureTemplate: _ghoul,
+					bodyPartType: _leg,
+					name: "Right Leg",
+					damageModifier: 0.5,
+					hitPenalty: 2,
+					minToHit: 7,
+					maxToHit: 8),
+
+				CreatureTemplatePart.CreateForTest(
+					creatureTemplate: _ghoul,
+					bodyPartType: _leg,
+					name: "Left Leg",
+					damageModifier: 0.5,
+					hitPenalty: 2,
+					minToHit: 9,
+					maxToHit: 10)
+			});
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
