@@ -5,11 +5,6 @@ using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Storage.Postgresql;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Sindie.ApiService.Core.Entities.UserAccount;
 
 namespace PilotProject.DbContext
@@ -35,6 +30,16 @@ namespace PilotProject.DbContext
 		/// Идентификатор роли
 		/// </summary>
 		protected Guid RoleId = new Guid("8094e0d0-3148-4791-9053-9667cbe137d7");
+
+		protected Guid HeadId = new Guid("EEE87B1F-E23A-4CF9-AC14-6CBBFE2D0717");
+		protected Guid TorsoId = new Guid("11E87B1F-E23A-4CF9-AC14-6CBBFE2D0717");
+		protected Guid LeftArmId = new Guid("22E87B1F-E23A-4CF9-AC14-6CBBFE2D0717");
+		protected Guid RightArmId = new Guid("33E87B1F-E23A-4CF9-AC14-6CBBFE2D0717");
+		protected Guid LeftLegId = new Guid("44E87B1F-E23A-4CF9-AC14-6CBBFE2D0717");
+		protected Guid RightLegId = new Guid("55E87B1F-E23A-4CF9-AC14-6CBBFE2D0717");
+		protected Guid AbilitySwordId = new Guid("66E87B1F-E23A-4CF9-AC14-6CBBFE2D0717");
+		protected Guid AbilityBowId = new Guid("77E87B1F-E23A-4CF9-AC14-6CBBFE2D0717");
+		protected Guid AbilityclawsId = new Guid("88E87B1F-E23A-4CF9-AC14-6CBBFE2D0717");
 
 		/// <summary>
 		/// Контекст текущего пользователя

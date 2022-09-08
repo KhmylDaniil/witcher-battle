@@ -1,13 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Abstractions;
+﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PilotProject.DbContext
 {
@@ -67,8 +60,6 @@ namespace PilotProject.DbContext
 		private readonly Ability _archeryAttack;
 		private readonly Ability _clawsAttack;
 
-		private CreatureTemplate _ghoul;
-
 		public FillDbContext()
 		{
 			_game = Game.CreateForTest(id: GameId);
@@ -119,6 +110,7 @@ namespace PilotProject.DbContext
 			_archery = Skill.CreateForTest(id: Skills.ArcheryId, name: Skills.ArcheryName, statName: Enums.Stats.Dex);
 
 		_swordAttack = Ability.CreateForTest(
+				id: AbilitySwordId,
 				game: _game,
 				name: "SwordAttack",
 				attackDiceQuantity: 2,
@@ -131,6 +123,7 @@ namespace PilotProject.DbContext
 			_swordAttack.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_swordAttack, _bleed, 50));
 
 			_clawsAttack = Ability.CreateForTest(
+				id: AbilityclawsId,
 				game: _game,
 				name: "ClawsAttack",
 				attackDiceQuantity: 3,
@@ -143,6 +136,7 @@ namespace PilotProject.DbContext
 			_clawsAttack.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_clawsAttack, _poison, 50));
 
 			_archeryAttack = Ability.CreateForTest(
+				id: AbilityBowId,
 				game: _game,
 				name: "ArcheryAttack",
 				attackDiceQuantity: 4,
@@ -157,6 +151,7 @@ namespace PilotProject.DbContext
 			_bodyTemplate.BodyTemplateParts.AddRange(new List<BodyTemplatePart>
 			{
 				BodyTemplatePart.CreateForTest(
+					id: HeadId,
 					bodyTemplate: _bodyTemplate,
 					bodyPartType: _head,
 					name: "Head",
@@ -166,6 +161,7 @@ namespace PilotProject.DbContext
 					maxToHit: 1),
 
 				BodyTemplatePart.CreateForTest(
+					id: TorsoId,
 					bodyTemplate: _bodyTemplate,
 					bodyPartType: _torso,
 					name: "Torso",
@@ -175,6 +171,7 @@ namespace PilotProject.DbContext
 					maxToHit: 4),
 
 				BodyTemplatePart.CreateForTest(
+					id: LeftArmId,
 					bodyTemplate: _bodyTemplate,
 					bodyPartType: _arm,
 					name: "Left Arm",
@@ -184,6 +181,7 @@ namespace PilotProject.DbContext
 					maxToHit: 5),
 
 				BodyTemplatePart.CreateForTest(
+					id: RightArmId,
 					bodyTemplate: _bodyTemplate,
 					bodyPartType: _arm,
 					name: "Right Arm",
@@ -193,6 +191,7 @@ namespace PilotProject.DbContext
 					maxToHit: 6),
 
 				BodyTemplatePart.CreateForTest(
+					id: RightLegId,
 					bodyTemplate: _bodyTemplate,
 					bodyPartType: _leg,
 					name: "Right Leg",
@@ -202,6 +201,7 @@ namespace PilotProject.DbContext
 					maxToHit: 8),
 
 				BodyTemplatePart.CreateForTest(
+					id: LeftLegId,
 					bodyTemplate: _bodyTemplate,
 					bodyPartType: _leg,
 					name: "Left Leg",
@@ -209,91 +209,6 @@ namespace PilotProject.DbContext
 					hitPenalty: 2,
 					minToHit: 9,
 				maxToHit: 10)
-			});
-
-			_ghoul = CreatureTemplate.CreateForTest(
-				game: _game,
-				bodyTemplate: _bodyTemplate,
-				creatureType: _creatureType,
-				name: "Ghoul",
-				hp: 30,
-				sta: 30,
-				@int: 5,
-				@ref: 7,
-				dex: 6,
-				body: 8,
-				speed: 5);
-			_ghoul.Abilities.Add(_clawsAttack);
-			_ghoul.CreatureTemplateSkills.AddRange(new List<CreatureTemplateSkill>
-			{ 
-				CreatureTemplateSkill.CreateForTest(
-					creatureTemplate: _ghoul,
-					skill: _meleeSkill,
-					value: 6),
-				CreatureTemplateSkill.CreateForTest(
-					creatureTemplate: _ghoul,
-					skill: _dodgeSkill,
-					value: 7),
-				CreatureTemplateSkill.CreateForTest(
-					creatureTemplate: _ghoul,
-					skill: _athleticsSkill,
-					value: 5)
-			});
-			_ghoul.CreatureTemplateParts.AddRange(new List<CreatureTemplatePart>
-			{
-				CreatureTemplatePart.CreateForTest(
-					creatureTemplate: _ghoul,
-					bodyPartType: _head,
-					name: "Head",
-					damageModifier: 3,
-					hitPenalty: 6,
-					minToHit: 1,
-					maxToHit: 1),
-
-				CreatureTemplatePart.CreateForTest(
-					creatureTemplate: _ghoul,
-					bodyPartType: _torso,
-					name: "Torso",
-					damageModifier: 1,
-					hitPenalty: 1,
-					minToHit: 2,
-					maxToHit: 4),
-
-				CreatureTemplatePart.CreateForTest(
-					creatureTemplate: _ghoul,
-					bodyPartType: _arm,
-					name: "Left Arm",
-					damageModifier: 0.5,
-					hitPenalty: 3,
-					minToHit: 5,
-					maxToHit: 5),
-
-				CreatureTemplatePart.CreateForTest(
-					creatureTemplate: _ghoul,
-					bodyPartType: _arm,
-					name: "Right Arm",
-					damageModifier: 0.5,
-					hitPenalty: 3,
-					minToHit: 6,
-					maxToHit: 6),
-
-				CreatureTemplatePart.CreateForTest(
-					creatureTemplate: _ghoul,
-					bodyPartType: _leg,
-					name: "Right Leg",
-					damageModifier: 0.5,
-					hitPenalty: 2,
-					minToHit: 7,
-					maxToHit: 8),
-
-				CreatureTemplatePart.CreateForTest(
-					creatureTemplate: _ghoul,
-					bodyPartType: _leg,
-					name: "Left Leg",
-					damageModifier: 0.5,
-					hitPenalty: 2,
-					minToHit: 9,
-					maxToHit: 10)
 			});
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
@@ -343,9 +258,8 @@ namespace PilotProject.DbContext
 
 				_swordAttack,
 				_archeryAttack,
-				_clawsAttack,
+				_clawsAttack
 
-				_ghoul
 				));
 		}
 		public IAppDbContext ReturnContext()

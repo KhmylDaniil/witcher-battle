@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplateById
 {
 	/// <summary>
@@ -6,6 +8,11 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 	/// </summary>
 	public sealed class GetCreatureTemplateByIdResponseBodyPart
 	{
+		/// <summary>
+		/// Айди
+		/// </summary>
+		public Guid Id { get; set; }
+
 		/// <summary>
 		/// Название
 		/// </summary>

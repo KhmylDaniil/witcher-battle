@@ -1,7 +1,6 @@
 ﻿using PilotProject.CommandBuilders;
-using PilotProject.DbContext;
+using PilotProject.Files;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BattleRequests.CreateBattle;
 using Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack;
 using Sindie.ApiService.Core.Contracts.BattleRequests.TurnBeginning;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.DeleteCreatureTemplateById;
@@ -42,11 +41,6 @@ namespace PilotProject
 		/// </summary>
 		private readonly IRollService _rollService;
 
-		/// <summary>
-		/// Словарь для сбора данных о бое
-		/// </summary>
-		public static readonly Dictionary<string, Guid> PickedCreatureTemplates = new();
-
 		public Application(IAppDbContext appDbContext, IAuthorizationService authorizationService, IDateTimeProvider dateTimeProvider, IRollService rollService)
 		{
 			_appDbContext = appDbContext;
@@ -55,9 +49,15 @@ namespace PilotProject
 			_rollService = rollService;
 		}
 
+		/// <summary>
+		/// Запуск приложения
+		/// </summary>
 		public async void Run()
 		{
 			Console.WriteLine("Welcome to Witcher battle helper.");
+
+			await LoadCT();
+
 			await GetAsync();
 		}
 
@@ -78,7 +78,7 @@ namespace PilotProject
 			ViewResult(result);
 
 			int input;
-			while (!int.TryParse(Console.ReadLine(), out input) || (input < 0 && input > result.TotalCount)) ;
+			while (!int.TryParse(Console.ReadLine(), out input) || input < 0 || input > result.TotalCount) ;
 
 			if (input == 0)
 				return CreateAsync();
@@ -129,10 +129,10 @@ namespace PilotProject
 
 			ViewResult(result);
 
-			Console.WriteLine("\nYou can edit this creature template (press 1), delete it (press 2), pick it up to battle (press 3) or return to general view (press 0)");
+			Console.WriteLine("\nYou can edit this creature template (press 1), delete it (press 2), save it (press 3), pick it up to battle (press 4) or return to general view (press 0)");
 
 			int input;
-			while (!int.TryParse(Console.ReadLine(), out input) || (input < 0 && input > 2)) ;
+			while (!int.TryParse(Console.ReadLine(), out input) || input < 0 || input > 4) ;
 
 			switch (input)
 			{
@@ -143,6 +143,9 @@ namespace PilotProject
 				case 2:
 					return await DeleteAsync(id);
 				case 3:
+					FilesManager.SaveCT(result, _appDbContext);
+					return await GetAsync();
+				case 4:
 					return await GoToBattleAsync(id);
 			}
 			return await GetAsync();
@@ -230,55 +233,31 @@ namespace PilotProject
 			return GetAsync();
 		}
 
+		/// <summary>
+		/// Запись существа для битвы
+		/// </summary>
+		/// <param name="id">Айди</param>
+		/// <returns></returns>
 		public async Task<Task> GoToBattleAsync(Guid id)
 		{
-			Console.WriteLine($"Enter unique name for this creature");
-			string name = string.Empty;
-			while (string.IsNullOrEmpty(name))
-				name = Console.ReadLine();
+			BattleCommandBuilder.PickCreature(id);
 
-			PickedCreatureTemplates.Add(name, id);
-
-			if (PickedCreatureTemplates.Count != 2)
+			if (BattleCommandBuilder.PickedCreatureTemplates.Count != 2)
 				return GetAsync();
 
-			var creatures = new List<CreateBattleRequestItem>();
-
-			foreach (var pickedCreature in PickedCreatureTemplates)
-				creatures.Add(new CreateBattleRequestItem
-				{
-					CreatureTemplateId = pickedCreature.Value,
-					Name = pickedCreature.Key
-				});
-
-			CreateBattleRequest request = new()
-			{
-				GameId = TestDbContext.GameId,
-				ImgFileId = null,
-				Name = "TestName",
-				Description = null,
-				Creatures = creatures
-			};
-
-			PickedCreatureTemplates.Clear();
+			var command = BattleCommandBuilder.FormCreateBattleCommand();
 
 			var newHandler = new CreateBattleHandler(_appDbContext, _authorizationService);
 
-			await newHandler.Handle(CreateBattleCommandFromQuery(request), default);
+			await newHandler.Handle(command, default);
 
 			return RunBattle();
-
-			static CreateBattleCommand CreateBattleCommandFromQuery(CreateBattleRequest request)
-				=> request == null
-					? throw new ArgumentNullException(nameof(request))
-					: new CreateBattleCommand(
-						gameId: request.GameId,
-						imgFileId: request.ImgFileId,
-						name: request.Name,
-						description: request.Description,
-						creatures: request.Creatures);
 		}
 
+		/// <summary>
+		/// Проведение битвы
+		/// </summary>
+		/// <returns></returns>
 		public async Task<Task> RunBattle()
 		{
 			var battle = _appDbContext.Battles.FirstOrDefault() ?? throw new ExceptionEntityNotFound<Battle>();
@@ -322,6 +301,8 @@ namespace PilotProject
 
 				if (IsBattleOver(battle)) break;
 
+				Console.ReadKey(true);
+
 				Console.WriteLine((await turnBeginningHandler.Handle(secondCreatureTurnBeginningRequest, default)).Message);
 
 				if (IsBattleOver(battle)) break;
@@ -329,6 +310,8 @@ namespace PilotProject
 				Console.WriteLine((await creatureAttackHandler.Handle(CreatureAttackCommandFromRequest(secondCreatureAttackRequest), default)).Message);
 
 				if (IsBattleOver(battle)) break;
+
+				Console.ReadKey(true);
 			}
 
 			_appDbContext.Battles.Remove(battle);
@@ -350,6 +333,20 @@ namespace PilotProject
 						defensiveSkillId: request.DefensiveSkillId,
 						specialToHit: request.SpecialToHit,
 						specialToDamage: request.SpecialToDamage);
+		}
+
+		/// <summary>
+		/// Загрузка сохраненной базы данных
+		/// </summary>
+		/// <returns></returns>
+		private async Task LoadCT()
+		{
+			var commands = FilesManager.LoadCT();
+
+			var handler = new CreateCreatureTemplateHandler(_appDbContext, _authorizationService);
+
+			foreach (var command in commands)
+				await handler.Handle(command, default);
 		}
 	}
 }

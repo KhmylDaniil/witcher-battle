@@ -97,6 +97,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 				CreatureTemplateParts = creatureTemplate.CreatureTemplateParts
 					.Select(x => new GetCreatureTemplateByIdResponseBodyPart()
 					{
+						Id = x.Id,
 						Name = x.Name,
 						BodyPartTypeName = x.BodyPartType.Name,
 						HitPenalty = x.HitPenalty,

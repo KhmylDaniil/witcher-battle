@@ -126,6 +126,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsNotNull(result.CreatureTemplateParts);
 			var creatureTemplatePart = result.CreatureTemplateParts.First();
 			Assert.IsNotNull(creatureTemplatePart);
+			Assert.AreEqual(creatureTemplatePart.Id, _creatureTemplatePart.Id);
 			Assert.AreEqual(creatureTemplatePart.Name, "torso");
 			Assert.AreEqual(creatureTemplatePart.HitPenalty, 1);
 			Assert.AreEqual(creatureTemplatePart.DamageModifier, 1);

@@ -22,4 +22,8 @@
     <ProjectReference Include="..\Sindie.ApiService.WebApi\Sindie.ApiService.WebApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Files\Data\" />
+  </ItemGroup>
+
 </Project>
