@@ -36,7 +36,7 @@ namespace Sindie.ApiService.Core.Logic
 			AttackData data,
 			int defenseValue)
 		{
-			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
+			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}. ");
 
 			var successValue = _rollService.BeatDifficultyWithFumble(
 				skillBase: AttackValue(data.Attacker, data.Ability, data.ToHit),

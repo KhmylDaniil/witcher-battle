@@ -1,26 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <UserSecretsId>359a3332-83ca-4ac6-9777-92785e35e70f</UserSecretsId>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.6" />
+    <PackageReference Include="Moq" Version="4.18.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Sindie.ApiService.Core\Sindie.ApiService.Core.csproj" />
+    <ProjectReference Include="..\Sindie.ApiService.Storage.Postgresql\Sindie.ApiService.Storage.Postgresql.csproj" />
+    <ProjectReference Include="..\Sindie.ApiService.WebApi\Sindie.ApiService.WebApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
+    <Folder Include="Files\Data\" />
   </ItemGroup>
 
 </Project>

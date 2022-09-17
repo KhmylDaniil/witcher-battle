@@ -53,7 +53,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 		/// <returns></returns>
 		public async Task<TurnBeginningResponse> Handle(TurnBeginningCommand request, CancellationToken cancellationToken)
 		{
-			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Instances, request.BattleId)
+			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
 				.Include(i => i.Creatures.Where(c => c.Id == request.CreatureId))
 					.ThenInclude(c => c.CreatureSkills)
 					.ThenInclude(cp => cp.Skill)

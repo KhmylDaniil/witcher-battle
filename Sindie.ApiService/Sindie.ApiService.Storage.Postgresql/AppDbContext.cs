@@ -12,7 +12,6 @@ namespace Sindie.ApiService.Storage.Postgresql
 	/// Контекст базы данных
 	/// </summary>
 	public class AppDbContext : DbContext, IAppDbContext
-
 	{
 		/// <summary>
 		/// Способности
@@ -112,7 +111,7 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// <summary>
 		/// Экземпляры
 		/// </summary>
-		public DbSet<Battle> Instances { get; set; }
+		public DbSet<Battle> Battles { get; set; }
 
 		/// <summary>
 		/// Интерфейсы

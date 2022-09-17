@@ -54,7 +54,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 		/// <returns>Результат атаки монстра</returns>
 		public async Task<MonsterAttackResponse> Handle(MonsterAttackCommand request, CancellationToken cancellationToken)
 		{
-			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Instances, request.BattleId)
+			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureSkills)
 					.ThenInclude(cp => cp.Skill)
