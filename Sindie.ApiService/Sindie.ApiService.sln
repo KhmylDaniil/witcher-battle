@@ -26,6 +26,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PilotProject", "PilotProject\PilotProject.csproj", "{00F1A371-3DC4-4D6C-8981-75096B05D94F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Witcher.MVC", "Witcher.MVC\Witcher.MVC.csproj", "{27F04267-1D55-4EDD-AA0F-B80ECDEAA9C1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E96C899-BB38-4589-959A-F6744D56D261} = {4E96C899-BB38-4589-959A-F6744D56D261}
+		{5E0F5EE0-BC41-4347-8D63-1B40489DB4FD} = {5E0F5EE0-BC41-4347-8D63-1B40489DB4FD}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

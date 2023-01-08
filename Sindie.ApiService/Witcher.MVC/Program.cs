@@ -1,7 +1,12 @@
+using Witcher.MVC;
+using Witcher.MVC.Logger;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.ConfigureSerilog(LogLevel.Warning);
+
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+Startup.ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
 
 var app = builder.Build();
 

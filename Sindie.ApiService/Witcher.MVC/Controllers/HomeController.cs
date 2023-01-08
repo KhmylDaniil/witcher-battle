@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Sindie.ApiService.Core.Abstractions;
 using System.Diagnostics;
 using Witcher.MVC.Models;
 
@@ -8,13 +10,23 @@ namespace Witcher.MVC.Controllers
 	{
 		private readonly ILogger<HomeController> _logger;
 
-		public HomeController(ILogger<HomeController> logger)
+		private readonly IAppDbContext _appDbContext;
+		private readonly IUserContext _userContext;
+
+		public HomeController(ILogger<HomeController> logger, IAppDbContext appDbContext, IUserContext userContext)
 		{
 			_logger = logger;
+			_appDbContext = appDbContext;
+			_userContext = userContext;
 		}
 
-		public IActionResult Index()
+		public IActionResult IndexAsync()
 		{
+			var aa = _userContext.CurrentUserId;
+			
+			var aaa = _appDbContext.Users.FirstOrDefault();
+			
+			
 			return View();
 		}
 
