@@ -1,3 +1,4 @@
+using Sindie.ApiService.Storage.Postgresql;
 using Witcher.MVC;
 using Witcher.MVC.Logger;
 
@@ -9,6 +10,8 @@ builder.ConfigureSerilog(LogLevel.Warning);
 Startup.ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
 
 var app = builder.Build();
+
+Entry.MigrateDB(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

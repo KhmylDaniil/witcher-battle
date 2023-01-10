@@ -20,13 +20,8 @@ namespace Witcher.MVC.Controllers
 			_userContext = userContext;
 		}
 
-		public IActionResult IndexAsync()
+		public IActionResult Index()
 		{
-			var aa = _userContext.CurrentUserId;
-			
-			var aaa = _appDbContext.Users.FirstOrDefault();
-			
-			
 			return View();
 		}
 
