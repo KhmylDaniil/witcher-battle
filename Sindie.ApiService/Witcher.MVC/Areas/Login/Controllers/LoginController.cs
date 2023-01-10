@@ -5,15 +5,15 @@ using Sindie.ApiService.Core.Requests.UserRequests.RegisterUser;
 using System.Diagnostics;
 using Witcher.MVC.Models;
 
-namespace Witcher.MVC.Controllers
+namespace Witcher.MVC.Areas.Login.Controllers
 {
-	public class HomeController : Controller
+	public class LoginController : Controller
 	{
-		private readonly ILogger<HomeController> _logger;
+		private readonly ILogger<LoginController> _logger;
 
 		private readonly IMediator _mediator;
 
-		public HomeController(ILogger<HomeController> logger, IMediator mediator)
+		public LoginController(ILogger<LoginController> logger, IMediator mediator)
 		{
 			_logger = logger;
 			_mediator = mediator;
