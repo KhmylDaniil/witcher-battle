@@ -31,7 +31,7 @@ namespace Witcher.MVC.Controllers
 			return View();
 		}
 
-		[Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
+		[Authorize]
 		public IActionResult Privacy()
 		{
 			return View();

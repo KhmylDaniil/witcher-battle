@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Sindie.ApiService.Core;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Services.Hasher;
-using Sindie.ApiService.Core.Services.Token;
 using Sindie.ApiService.Storage.Postgresql;
 
 namespace Witcher.MVC
@@ -29,21 +27,7 @@ namespace Witcher.MVC
 				authClient: configuration["Auth:AuthClient"],
 				authKey: configuration["Auth:AuthKey"]);
 
-			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-				.AddJwtBearer(options =>
-				{
-					options.RequireHttpsMetadata = true;
-					options.TokenValidationParameters = new TokenValidationParameters
-					{
-						ValidateIssuer = true,
-						ValidIssuer = configuration["Auth:AuthServer"],
-						ValidateAudience = true,
-						ValidAudience = configuration["Auth:AuthClient"],
-						ValidateLifetime = true,
-						IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-						ValidateIssuerSigningKey = true,
-					};
-				});
+			services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => options.LoginPath = "/login");
 
 			services.AddHttpContextAccessor();
 			services.AddTransient<IUserContext, UserContext>();

@@ -1,5 +1,6 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using System.Security.Claims;
 
 namespace Witcher.MVC
 {
@@ -30,7 +31,7 @@ namespace Witcher.MVC
 					return SystemUsers.SystemUserId;
 
 				var value = _httpContextAccessor.HttpContext.User.Claims
-					.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
+					.FirstOrDefault(c => c.Type == ClaimTypes.Name)
 					?.Value;
 				if (value == null)
 					throw new InvalidOperationException("Айди текущего пользователя не определено");
@@ -49,7 +50,7 @@ namespace Witcher.MVC
 					return SystemRoles.AndminRoleName;
 
 				var value = _httpContextAccessor.HttpContext.User.Claims
-					.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")
+					.FirstOrDefault(c => c.Type == ClaimTypes.Role)
 					?.Value;
 				if (value == null)
 					throw new InvalidOperationException("Роль текущего пользователя не определена");
