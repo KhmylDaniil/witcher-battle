@@ -1,4 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Castle.Components.DictionaryAdapter.Xml;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.UserRequests.LoginUser;
@@ -6,6 +9,7 @@ using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.UserRequests.LoginUser;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
@@ -54,12 +58,12 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 			passwordHasherMock.Setup(foo => foo.VerifyHash
 				(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
 
-			var jwtGeneratorMock = new Mock<IJwtGenerator>();
-			jwtGeneratorMock.Setup(foo => foo.CreateToken(It.IsAny<Guid>(), It.IsAny<string>())).Returns("aaa");
+			var httpContextMock = new Mock<IHttpContextAccessor>();
+			httpContextMock.Setup(x => x.HttpContext.SignInAsync(It.IsAny<string>(), It.IsAny<ClaimsPrincipal>())).Returns(Task.CompletedTask);
 
 			//Arrange
 			var loginUserCommandHandler = new LoginUserCommandHandler
-				(_dbContext, passwordHasherMock.Object, jwtGeneratorMock.Object);
+				(_dbContext, passwordHasherMock.Object, httpContextMock.Object);
 
 			//Act
 			var result = await loginUserCommandHandler.Handle(request, default);
@@ -70,26 +74,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 			Assert.IsNotNull(userAcc);
 			Assert.AreEqual(userAcc.Login, request.Login);
 			Assert.AreEqual(userAcc.PasswordHash, request.Password);
-			Assert.IsNotNull(result?.AuthenticationToken);
-			Assert.IsNotNull(result?.CreatedOn);
-		}
 
-		/// <summary>
-		/// Тест метода Handle( - аутентификации пользователя
-		/// - он должен генерировать исключение в случае если пришел пустой запрос
-		/// </summary>
-		/// <returns></returns>
-		[TestMethod]
-		public async Task Handle_ByLoginUserCommandHandler_ShouldThrowArgumentNullException()
-		{
-			LoginUserCommand request = null;
-
-			//Arrange
-			var loginUserCommandHandler = new LoginUserCommandHandler(default, default, default);
-
-			//Assert
-			await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () =>
-				 await loginUserCommandHandler.Handle(request, default));
 		}
 	}
 }

@@ -1,15 +1,18 @@
 ﻿using MediatR;
+using Sindie.ApiService.Core.Contracts.UserRequests.LoginUser;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser
 {
 	/// <summary>
 	/// Запрос регистрации пользователя
 	/// </summary>
-	public class RegisterUserRequest
+	public class RegisterUserCommand : IRequest<RegisterUserCommandResponse>
 	{
 		/// <summary>
 		/// Имя пользователя
 		/// </summary>
+		[Required]
 		public string Name { get; set; }
 
 		/// <summary>
@@ -25,11 +28,14 @@ namespace Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser
 		/// <summary>
 		/// Логин
 		/// </summary>
+		[Required]
 		public string Login { get; set; }
 
 		/// <summary>
 		/// Пароль
 		/// </summary>
+		[Required]
+		[MaxLength(25)]
 		public string Password { get; set; }
 	}
 }

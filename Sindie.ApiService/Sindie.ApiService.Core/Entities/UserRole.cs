@@ -61,7 +61,7 @@ namespace Sindie.ApiService.Core.Entities
 		public static UserRole CreateForTest(
 			SystemRole role = default,
 			User user = default)
-			=> new UserRole()
+			=> new()
 			{
 				SystemRole = role,
 				User = user
