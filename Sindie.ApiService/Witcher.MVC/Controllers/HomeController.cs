@@ -1,7 +1,7 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser;
-using Sindie.ApiService.Core.Requests.UserRequests.RegisterUser;
+using Sindie.ApiService.Core.Abstractions;
 using System.Diagnostics;
 using Witcher.MVC.Models;
 
@@ -11,61 +11,27 @@ namespace Witcher.MVC.Controllers
 	{
 		private readonly ILogger<HomeController> _logger;
 
+		private readonly IUserContext _userContext;
+		private readonly IAppDbContext _appDbContext;
 		private readonly IMediator _mediator;
 
-		public HomeController(ILogger<HomeController> logger, IMediator mediator)
+		public HomeController(ILogger<HomeController> logger, IMediator mediator, IUserContext userContext, IAppDbContext appDbContext)
 		{
 			_logger = logger;
 			_mediator = mediator;
+			_userContext = userContext;
+			_appDbContext = appDbContext;
 		}
 
 		public IActionResult Index()
 		{
+			var userName = _appDbContext.Users.FirstOrDefault(x => x.Id == _userContext.CurrentUserId).Name;
+			
+			ViewData["Name"] = userName;
 			return View();
 		}
 
-		public IActionResult RegisterUser()
-		{
-			return View();
-		}
-
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<ActionResult> RegisterUser(RegisterUserRequest request, CancellationToken cancellationToken)
-		{
-			try
-			{
-				await _mediator.Send(
-				request == null
-				? new RegisterUserCommand()
-				: new RegisterUserCommand(request)
-				{
-					Name = request.Name,
-					Email = request.Email,
-					Phone = request.Phone,
-					Login = request.Login,
-					Password = request.Password
-				},
-				cancellationToken);
-
-				return RedirectToAction(nameof(SuccessfulRegistration), new { name = request.Name });
-			}
-			catch
-			{
-				return View();
-			}
-		}
-
-		public IActionResult SuccessfulRegistration(string name)
-		{
-			return View(name);
-		}
-
-		public IActionResult Login()
-		{
-			return View();
-		}
-
+		[Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
 		public IActionResult Privacy()
 		{
 			return View();

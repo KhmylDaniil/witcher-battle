@@ -7,6 +7,9 @@
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
 
+
 <div class="container">
-    <a asp-area="Login" asp-controller="Login" asp-action="RegisterUser">Register</a>
+    <a asp-controller="Login" asp-action="Index">Login/Register</a>
 </div>
+
+<p>Hello, @ViewData["Name"]</p>

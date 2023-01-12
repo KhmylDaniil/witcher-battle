@@ -1,11 +1,14 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Sindie.ApiService.Core.Contracts.UserRequests.LoginUser;
 using Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using Sindie.ApiService.Core.Requests.UserRequests.RegisterUser;
 using System.Diagnostics;
+using Witcher.MVC.Areas.Login.ViewModels;
 using Witcher.MVC.Models;
 
-namespace Witcher.MVC.Areas.Login.Controllers
+namespace Witcher.MVC.Controllers
 {
 	public class LoginController : Controller
 	{
@@ -31,7 +34,7 @@ namespace Witcher.MVC.Areas.Login.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<ActionResult> RegisterUser(RegisterUserRequest request, CancellationToken cancellationToken)
+		public async Task<IActionResult> RegisterUser(RegisterUserRequest request, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -48,22 +51,40 @@ namespace Witcher.MVC.Areas.Login.Controllers
 				},
 				cancellationToken);
 
-				return RedirectToAction(nameof(SuccessfulRegistration), new { name = request.Name });
+				return RedirectToAction(nameof(SuccessfulRegistration), new SuccessfulRegistration() { Name = request!.Name });
 			}
-			catch
+			catch (Exception ex)
 			{
+				ViewData["ErrorMessage"] = ex.Message;
 				return View();
 			}
 		}
 
-		public IActionResult SuccessfulRegistration(string name)
+		public IActionResult SuccessfulRegistration(SuccessfulRegistration registration)
 		{
-			return View(name);
+			return View(registration);
 		}
 
 		public IActionResult Login()
 		{
 			return View();
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Login(LoginUserCommand request, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await _mediator.Send(request);
+
+				return RedirectToAction("Index", "Home");
+			}
+			catch (Exception ex)
+			{
+				ViewData["ErrorMessage"] = ex.Message;
+				return View();
+			}
 		}
 
 		public IActionResult Privacy()
