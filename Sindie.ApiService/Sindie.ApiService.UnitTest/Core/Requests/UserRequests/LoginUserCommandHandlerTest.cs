@@ -1,6 +1,4 @@
-﻿using Castle.Components.DictionaryAdapter.Xml;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Sindie.ApiService.Core.Abstractions;
@@ -15,7 +13,7 @@ using System.Threading.Tasks;
 namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 {
 	/// <summary>
-	/// Тест для <see cref="LoginUserCommandHandler" >
+	/// Тест для <see cref="LoginUserCommandHandler">
 	/// </summary>
 	[TestClass]
 	public class LoginUserCommandHandlerTest : UnitTestBase
@@ -24,9 +22,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 		private readonly User _user;
 		private readonly User _user2;
 
-		/// <summary>
-		/// Конструктор
-		/// </summary>
 		public LoginUserCommandHandlerTest()
 		{
 			var role = SystemRole.CreateForTest(name: "User");
@@ -37,12 +32,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 		}
 
 		/// <summary>
-		/// Тест метода Handle( - аутентификации пользователя
-		/// - должен возвращать айди пользователя равный ожидаемому айди
+		/// Тест метода Handle(аутентификации пользователя
+		/// должен возвращать айди пользователя равный ожидаемому айди
 		/// </summary>
-		/// /// <param name="login">Логин</param>
-		/// <param name="password">Пароль</param>
-		/// /// <param name="id">Айди</param>
 		/// <returns></returns>
 		[TestMethod]
 		public async Task Handle_ByLoginUserCommandHandler_ShouldLoginUser()
@@ -59,22 +51,38 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 				(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
 
 			var httpContextMock = new Mock<IHttpContextAccessor>();
-			httpContextMock.Setup(x => x.HttpContext.SignInAsync(It.IsAny<string>(), It.IsAny<ClaimsPrincipal>())).Returns(Task.CompletedTask);
 
-			//Arrange
-			var loginUserCommandHandler = new LoginUserCommandHandler
+			var loginUserCommandHandler = new TestLoginUserCommandHandler
 				(_dbContext, passwordHasherMock.Object, httpContextMock.Object);
 
-			//Act
 			var result = await loginUserCommandHandler.Handle(request, default);
 
-			//Assert
 			Assert.AreEqual(_user.Id, result?.UserId);
 			var userAcc = _user.UserAccounts.First();
 			Assert.IsNotNull(userAcc);
 			Assert.AreEqual(userAcc.Login, request.Login);
 			Assert.AreEqual(userAcc.PasswordHash, request.Password);
+		}
+	}
 
+	/// <summary>
+	/// Тестовый класс для обработчика
+	/// </summary>
+	class TestLoginUserCommandHandler : LoginUserCommandHandler
+	{
+		public TestLoginUserCommandHandler(IAppDbContext appDbContext, IPasswordHasher passwordHasher, IHttpContextAccessor httpContextAccessor) : base(appDbContext, passwordHasher, httpContextAccessor)
+		{
+		}
+
+		/// <summary>
+		/// Переопределенный метод для исключения из тестирования метода расширения
+		/// </summary>
+		/// <param name="httpContext"></param>
+		/// <param name="claimsPrincipal"></param>
+		/// <returns></returns>
+		protected override async Task SignCookiesAsync(HttpContext httpContext, ClaimsPrincipal claimsPrincipal)
+		{
+			await Task.CompletedTask;
 		}
 	}
 }

@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sindie.ApiService.Core.Abstractions;
 using System.Diagnostics;
@@ -10,15 +9,12 @@ namespace Witcher.MVC.Controllers
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
-
 		private readonly IUserContext _userContext;
 		private readonly IAppDbContext _appDbContext;
-		private readonly IMediator _mediator;
 
-		public HomeController(ILogger<HomeController> logger, IMediator mediator, IUserContext userContext, IAppDbContext appDbContext)
+		public HomeController(ILogger<HomeController> logger, IUserContext userContext, IAppDbContext appDbContext)
 		{
 			_logger = logger;
-			_mediator = mediator;
 			_userContext = userContext;
 			_appDbContext = appDbContext;
 		}

@@ -21,11 +21,7 @@ namespace Witcher.MVC
 				options: configuration.Get<PostgreSqlOptions>(),
 				sqlLoggerFactory: sqlLoggerFactory);
 
-			services.AddCore(
-				hasherOptions: configuration.Get<HasherOptions>(),
-				authServer: configuration["Auth:AuthServer"],
-				authClient: configuration["Auth:AuthClient"],
-				authKey: configuration["Auth:AuthKey"]);
+			services.AddCore(hasherOptions: configuration.Get<HasherOptions>());
 
 			services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => options.LoginPath = "/login");
 

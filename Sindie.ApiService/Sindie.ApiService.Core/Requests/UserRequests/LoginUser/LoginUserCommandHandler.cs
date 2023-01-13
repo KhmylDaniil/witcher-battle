@@ -32,7 +32,7 @@ namespace Sindie.ApiService.Core.Requests.UserRequests.LoginUser
 		/// <summary>
 		/// Доступ к Http контексту
 		/// </summary>
-		private readonly IHttpContextAccessor _httpContextAccessor;
+		protected readonly IHttpContextAccessor _httpContextAccessor;
 
 		/// <summary>
 		/// Конструктор обработчика команды аутентификации пользователя
@@ -71,18 +71,26 @@ namespace Sindie.ApiService.Core.Requests.UserRequests.LoginUser
 			if (!isPasswordCorrect)
 				throw new AuthenticationException("Неверный пароль");
 
-
 			var claims = new List<Claim>
 				{
 					new Claim(ClaimTypes.Name, existingUserAccount.UserId.ToString()),
 					new Claim(ClaimTypes.Role, existingUserAccount.User.UserRoles.FirstOrDefault().SystemRole.Name)
 				};
 
-			ClaimsIdentity claimsIdentity = new (claims, "Cookies");
+			ClaimsIdentity claimsIdentity = new(claims, "Cookies");
 
-			await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+			await SignCookiesAsync(_httpContextAccessor.HttpContext, new ClaimsPrincipal(claimsIdentity));
 
 			return new LoginUserCommandResponse { UserId = existingUserAccount.UserId };
 		}
+
+		/// <summary>
+		/// Выделение метода расширения для возожности переопределения его поведения в тестах 
+		/// </summary>
+		/// <param name="httpContext"></param>
+		/// <param name="claimsPrincipal"></param>
+		/// <returns></returns>
+		protected virtual async Task SignCookiesAsync(HttpContext httpContext, ClaimsPrincipal claimsPrincipal)
+			=> await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
 	}
 }

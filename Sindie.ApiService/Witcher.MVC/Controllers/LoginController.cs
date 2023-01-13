@@ -33,13 +33,15 @@ namespace Witcher.MVC.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Register(RegisterUserCommand request, CancellationToken cancellationToken)
+		public async Task<IActionResult> RegisterUser(RegisterUserCommand request, CancellationToken cancellationToken)
 		{
 			try
 			{
 				await _mediator.Send(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
 
-				return RedirectToAction(nameof(SuccessfulRegistration), new SuccessfulRegistration() { Name = request!.Name });
+				await _mediator.Send(new LoginUserCommand() { Login = request.Login, Password = request.Password }, cancellationToken);
+
+				return RedirectToAction(nameof(SuccessfulRegistration), new SuccessfulRegistration() { Name = request.Name });
 			}
 			catch (Exception ex)
 			{
