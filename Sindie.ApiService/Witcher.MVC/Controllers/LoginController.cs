@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Sindie.ApiService.Core.Contracts.UserRequests.LoginUser;
 using Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser;
 using System.Diagnostics;
-using Witcher.MVC.Areas.Login.ViewModels;
 using Witcher.MVC.Models;
-
+using Witcher.MVC.ViewModels.Login;
 
 namespace Witcher.MVC.Controllers
 {

@@ -1,4 +1,4 @@
-﻿namespace Witcher.MVC.Areas.Login.ViewModels
+﻿namespace Witcher.MVC.ViewModels.Login
 {
 	public class SuccessfulRegistration
 	{
