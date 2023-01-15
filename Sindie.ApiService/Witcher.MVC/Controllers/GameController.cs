@@ -14,13 +14,21 @@ namespace Witcher.MVC.Controllers
 		}
 
 		// GET: GameController
-		public async Task<IActionResult> Index(string? name, string? userName, CancellationToken cancellationToken)
+		public async Task<IActionResult> Index(string? name, string? userName, string? username2, CancellationToken cancellationToken)
 		{
 			var query = new GetGameQuery() { Name = name, AuthorName = userName };
 			
 			var response = await _mediator.Send(query, cancellationToken);
-			
-			return View(response.GamesList);
+
+			if (string.IsNullOrEmpty(username2))
+				return View(response.GamesList);
+
+			var query2 = new GetGameQuery() { Name = name, AuthorName = username2 };
+
+			var response2 = await _mediator.Send(query2, cancellationToken);
+
+			var totalResult = response.GamesList.Union(response2.GamesList);
+			return View(totalResult);	
 		}
 
 		// GET: GameController/Details/5

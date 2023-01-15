@@ -22,7 +22,7 @@ namespace Witcher.MVC.Controllers
 		public IActionResult Index()
 		{
 			var userName = _appDbContext.Users.FirstOrDefault(x => x.Id == _userContext.CurrentUserId).Name;
-			
+
 			ViewData["Name"] = userName;
 			return View();
 		}
