@@ -1,14 +1,14 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.UserRequests.LoginUser;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Exceptions;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Authentication;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,22 +30,21 @@ namespace Sindie.ApiService.Core.Requests.UserRequests.LoginUser
 		private readonly IPasswordHasher _passwordHasher;
 
 		/// <summary>
-		/// Генератор токенов
+		/// Доступ к Http контексту
 		/// </summary>
-		private readonly IJwtGenerator _jwtGenerator;
+		protected readonly IHttpContextAccessor _httpContextAccessor;
 
 		/// <summary>
 		/// Конструктор обработчика команды аутентификации пользователя
 		/// </summary>
 		/// <param name="appDbContext">Контекст базы данных</param>
 		/// <param name="passwordHasher">Хеширование пароля</param>
-		/// <param name="jwtGenerator">Генератор токенов</param>
-		public LoginUserCommandHandler(IAppDbContext appDbContext, IPasswordHasher passwordHasher,
-			IJwtGenerator jwtGenerator)
+		/// <param name="httpContextAccessor">Доступ к Http контексту</param>
+		public LoginUserCommandHandler(IAppDbContext appDbContext, IPasswordHasher passwordHasher, IHttpContextAccessor httpContextAccessor)
 		{
 			_appDbContext = appDbContext;
 			_passwordHasher = passwordHasher;
-			_jwtGenerator = jwtGenerator;
+			_httpContextAccessor = httpContextAccessor;
 		}
 
 		/// <summary>
@@ -57,40 +56,41 @@ namespace Sindie.ApiService.Core.Requests.UserRequests.LoginUser
 		public async Task<LoginUserCommandResponse> Handle
 			(LoginUserCommand request, CancellationToken cancellationToken)
 		{
-			if (request == null)
-				throw new ArgumentNullException($"Пришел пустой запрос {typeof(LoginUserCommand)}");
-			if (string.IsNullOrWhiteSpace(request.Password))
-				throw new ExceptionRequestFieldIncorrectData<LoginUserCommand>(nameof(request.Password));
-			if (string.IsNullOrWhiteSpace(request.Login))
-				throw new ExceptionRequestFieldIncorrectData<LoginUserCommand>(nameof(request.Login));
-
 			var existingUserAccount = await _appDbContext.UserAccounts
 				.Include(x => x.User)
 					.ThenInclude(x => x.UserRoles)
-					.ThenInclude(x => x.SystemRole)
+						.ThenInclude(x => x.SystemRole)
 				.FirstOrDefaultAsync(x => x.Login == request.Login, cancellationToken);
 
 			if (existingUserAccount == null)
-				throw new AuthenticationException("Не верный логин");
+				throw new AuthenticationException("Неверный логин");
 
 			bool isPasswordCorrect = _passwordHasher.VerifyHash
 				(request.Password, existingUserAccount.PasswordHash);
 
 			if (!isPasswordCorrect)
-				throw new AuthenticationException("Не верный пароль");
+				throw new AuthenticationException("Неверный пароль");
 
-			string authToken = _jwtGenerator.CreateToken(
-				existingUserAccount.UserId,
-				existingUserAccount.User.UserRoles.FirstOrDefault().SystemRole.Name
-				?? throw new ExceptionEntityNotFound<SystemRole>());
-			if (authToken == null)
-				throw new ExceptionUnauthorizedBase(request.Login); //TODO to do подобрать или сделать ошибку получше
+			var claims = new List<Claim>
+				{
+					new Claim(ClaimTypes.Name, existingUserAccount.UserId.ToString()),
+					new Claim(ClaimTypes.Role, existingUserAccount.User.UserRoles.FirstOrDefault().SystemRole.Name)
+				};
 
-			return new LoginUserCommandResponse
-			{
-				UserId = existingUserAccount.UserId,
-				AuthenticationToken = authToken
-			};
+			ClaimsIdentity claimsIdentity = new(claims, "Cookies");
+
+			await SignCookiesAsync(_httpContextAccessor.HttpContext, new ClaimsPrincipal(claimsIdentity));
+
+			return new LoginUserCommandResponse { UserId = existingUserAccount.UserId };
 		}
+
+		/// <summary>
+		/// Выделение метода расширения для возожности переопределения его поведения в тестах 
+		/// </summary>
+		/// <param name="httpContext"></param>
+		/// <param name="claimsPrincipal"></param>
+		/// <returns></returns>
+		protected virtual async Task SignCookiesAsync(HttpContext httpContext, ClaimsPrincipal claimsPrincipal)
+			=> await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
 	}
 }

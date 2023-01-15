@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 namespace Sindie.ApiService.Core.Contracts
 {
 	/// <summary>
@@ -9,12 +11,14 @@ namespace Sindie.ApiService.Core.Contracts
 		/// <summary>
 		/// Колоичество записей на одной странице 
 		/// </summary>
-		public int PageSize { get; set; }
+		[Range(1, 50)]
+		public int PageSize { get; set; } = 10;
 
 		/// <summary>
 		/// Номер страницы, с которой вывести записи
 		/// </summary>
-		public int PageNumber { get; set; }
+		[Range(1, int.MaxValue)]
+		public int PageNumber { get; set; } = 1;
 
 		/// <summary>
 		/// Сортировка по полю
