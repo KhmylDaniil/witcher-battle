@@ -56,14 +56,6 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 		/// <returns></returns>
 		public async Task<Unit> Handle(ChangeGameCommand request, CancellationToken cancellationToken)
 		{
-			///проверка запроса на нулл
-			if (request == null)
-				throw new ExceptionRequestNull<ChangeGameCommand>();
-
-			//проверка имени на нулл или пустую строку
-			if (string.IsNullOrWhiteSpace(request.Name))
-				throw new ExceptionRequestFieldNull<ChangeGameCommand>($"{nameof(request.Name)}");
-
 			var game = await _authorizationService
 				.RoleGameFilter(_appDbContext.Games, request.Id, GameRoles.MainMasterRoleId)
 				.Include(x => x.Avatar)

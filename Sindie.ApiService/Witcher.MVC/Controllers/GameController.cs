@@ -1,10 +1,14 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame;
 using Sindie.ApiService.Core.Contracts.GameRequests.CreateGame;
 using Sindie.ApiService.Core.Contracts.GameRequests.GetGame;
+using Sindie.ApiService.Core.Contracts.GameRequests.GetGameById;
 
 namespace Witcher.MVC.Controllers
 {
+	[Authorize]
 	public class GameController : Controller
 	{
 		private readonly IMediator _mediator;
@@ -14,7 +18,6 @@ namespace Witcher.MVC.Controllers
 			_mediator = mediator;
 		}
 
-		// GET: GameController
 		public async Task<IActionResult> Index(string name, string description, string authorName, CancellationToken cancellationToken)
 		{
 			var query = new GetGameQuery() { Name = name, Description = description, AuthorName = authorName};
@@ -24,19 +27,32 @@ namespace Witcher.MVC.Controllers
 			return View(response.GamesList);
 		}
 
-		// GET: GameController/Details/5
-		public ActionResult Enter(Guid id)
+		[Route("[controller]/{id}")]
+		public async Task<IActionResult> EnterAsync(Guid id, CancellationToken cancellationToken)
 		{
-			return View();
+			if (id == Guid.Empty && TempData["GameId"] is not null)
+				id = (Guid)TempData["GameId"];
+
+			var command = new GetGameByIdCommand() { Id = id };
+
+			try
+			{
+				var response = await _mediator.Send(command, cancellationToken);
+
+				return View(response);
+			}
+			catch
+			{
+				ViewData["ErrorMessage"] = "You`re not authorized to requested game.";
+				return View("Error");
+			}
 		}
 
-		// GET: GameController/Create
 		public ActionResult Create()
 		{
 			return View();
 		}
 
-		// POST: GameController/Create
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(CreateGameCommand command, CancellationToken cancellationToken)
@@ -53,7 +69,8 @@ namespace Witcher.MVC.Controllers
 		}
 
 		// GET: GameController/Edit/5
-		public ActionResult Edit(int id)
+		[Route("[controller]/[action]/{id}")]
+		public ActionResult Edit()
 		{
 			return View();
 		}
@@ -61,15 +78,21 @@ namespace Witcher.MVC.Controllers
 		// POST: GameController/Edit/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Edit(int id, IFormCollection collection)
+		[Route("[controller]/[action]/{id}")]
+		public async Task<IActionResult> Edit(ChangeGameCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
-				return RedirectToAction(nameof(Index));
+				await _mediator.Send(command ?? throw new ArgumentNullException(nameof(command)), cancellationToken);
+
+				TempData["GameId"] = command.Id;
+
+				return RedirectToAction(nameof(EnterAsync));
 			}
-			catch
+			catch (Exception ex)
 			{
-				return View();
+				ViewData["ErrorMessage"] = ex.Message ?? "You`re don`t have permission to make changes in requested game.";
+				return View("Error");
 			}
 		}
 
