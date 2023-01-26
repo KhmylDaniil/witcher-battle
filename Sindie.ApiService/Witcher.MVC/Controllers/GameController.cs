@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame;
 using Sindie.ApiService.Core.Contracts.GameRequests.CreateGame;
+using Sindie.ApiService.Core.Contracts.GameRequests.DeleteGame;
 using Sindie.ApiService.Core.Contracts.GameRequests.GetGame;
 using Sindie.ApiService.Core.Contracts.GameRequests.GetGameById;
 
@@ -48,6 +49,7 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
+		[Route("[controller]/[action]")]
 		public ActionResult Create()
 		{
 			return View();
@@ -55,6 +57,7 @@ namespace Witcher.MVC.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[Route("[controller]/[action]")]
 		public async Task<IActionResult> Create(CreateGameCommand command, CancellationToken cancellationToken)
 		{
 			try
@@ -70,9 +73,9 @@ namespace Witcher.MVC.Controllers
 
 		// GET: GameController/Edit/5
 		[Route("[controller]/[action]/{id}")]
-		public ActionResult Edit()
+		public ActionResult Edit(ChangeGameCommand command)
 		{
-			return View();
+			return View(command);
 		}
 
 		// POST: GameController/Edit/5
@@ -96,19 +99,23 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
-		// GET: GameController/Delete/5
-		public ActionResult Delete(int id)
+		[Route("[controller]/[action]/{id}")]
+		public ActionResult Delete(DeleteGameCommand command)
 		{
-			return View();
+			TempData["GameId"] = command.Id;
+			return View(command);
 		}
 
 		// POST: GameController/Delete/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Delete(int id, IFormCollection collection)
+		[Route("[controller]/[action]/{id}")]
+		public async Task<IActionResult> Delete(DeleteGameCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
+				await _mediator.Send(command ?? throw new ArgumentNullException(nameof(command)), cancellationToken);
+
 				return RedirectToAction(nameof(Index));
 			}
 			catch
