@@ -9,6 +9,39 @@ namespace Sindie.ApiService.Core.BaseData
 	public static class Enums
 	{
 		/// <summary>
+		/// Типы существ
+		/// </summary>
+		public enum CreatureType
+		{
+			Human,
+			Necrophage,
+			Specter,
+			Beast,
+			Cursed,
+			Hybrid,
+			Insectoid,
+			Elementa,
+			Relict,
+			Orgoid,
+			Draconid,
+			Vampire
+		}
+
+		/// <summary>
+		/// Типы частей тела
+		/// </summary>
+		public enum BodyPartType
+		{
+			Void,
+			Head,
+			Torso,
+			Arm,
+			Leg,
+			Wing,
+			Tail
+		}
+
+		/// <summary>
 		/// Тяжесть критического эффекта
 		/// </summary>
 		[Flags]
@@ -144,19 +177,5 @@ namespace Sindie.ApiService.Core.BaseData
 			{Skills.BleedingWoundId, Stats.Int},
 			{Skills.HealingHandsId, Stats.Cra}
 		};
-
-		/// <summary>
-		/// Части тела - перечисление
-		/// </summary>
-		public enum BodyPartType
-		{
-			Head = 1,
-			Torso,
-			Arm,
-			Leg,
-			Wing,
-			Tail,
-			Void
-		}
 	}
 }

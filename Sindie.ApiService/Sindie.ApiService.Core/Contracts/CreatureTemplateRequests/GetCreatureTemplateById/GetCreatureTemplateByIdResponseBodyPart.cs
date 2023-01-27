@@ -1,5 +1,5 @@
-﻿
-using System;
+﻿using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplateById
 {
@@ -26,7 +26,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// <summary>
 		/// Тип части тела
 		/// </summary>
-		public string BodyPartTypeName { get; set; }
+		public BodyPartType BodyPartType { get; set; }
 
 		/// <summary>
 		/// Модификатор урона

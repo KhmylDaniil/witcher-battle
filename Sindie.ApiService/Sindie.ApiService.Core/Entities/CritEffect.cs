@@ -45,7 +45,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Тип части тела
 		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; protected set; } 
+		public BodyPartType BodyPartLocation { get; protected set; } 
 
 		/// <summary>
 		/// Айди части тела

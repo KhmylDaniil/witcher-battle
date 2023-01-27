@@ -7,6 +7,7 @@ using Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 {
@@ -19,11 +20,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
 		private readonly Battle _instance;
-		private readonly BodyPartType _torso;
-		private readonly BodyPartType _head;
-		private readonly BodyPartType _leg;
-		private readonly BodyPartType _arm;
-
 		private readonly CreaturePart _headPart;
 		private readonly CreaturePart _torsoPart;
 		private readonly CreaturePart _leftArmPart;
@@ -38,7 +34,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
 		private readonly Creature _creature;
-		private readonly CreatureType _creatureType;
 		private readonly DamageType _damageType;
 		private readonly Condition _simpleLegCrit;
 		private readonly Condition _simpleArmCrit;
@@ -51,12 +46,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		public CreatureAttackHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_creatureType = CreatureType.CreateForTest(CreatureTypes.SpecterId, CreatureTypes.SpecterName);
 			_instance = Battle.CreateForTest(game: _game);
-			_torso = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
-			_head = BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName);
-			_leg = BodyPartType.CreateForTest(BodyPartTypes.LegId, BodyPartTypes.LegName);
-			_arm = BodyPartType.CreateForTest(BodyPartTypes.ArmId, BodyPartTypes.ArmName);
 
 			_bleedingWound = Condition.CreateForTest(id: Conditions.BleedingWoundId, name: Conditions.BleedingWoundName);
 			_simpleLegCrit = Condition.CreateForTest(id: Crit.SimpleLegId, name: Crit.SimpleLeg);
@@ -74,7 +64,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
 				bodyTemplate: BodyTemplate.CreateForTest(game: _game),
-				creatureType: _creatureType,
+				creatureType: CreatureType.Specter,
 				speed: 4);
 
 			_ability = Ability.CreateForTest(
@@ -92,7 +82,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_creature = Creature.CreateForTest(
 				battle: _instance,
 				creatureTemlpate: _creatureTemplate,
-				creatureType: _creatureType,
+				creatureType: CreatureType.Specter,
 				@int: 10,
 				@ref: 6,
 				dex: 6,
@@ -126,16 +116,14 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			_headPart = CreaturePart.CreateForTest(
 				creature: _creature,
-				bodyPartType: _head,
-				name: _head.Name,
+				bodyPartType: BodyPartType.Head,
 				damageModifier: 3,
 				hitPenalty: 6,
 				minToHit: 1,
 				maxToHit: 1);
 			_torsoPart = CreaturePart.CreateForTest(
 				creature: _creature,
-				bodyPartType: _torso,
-				name: _torso.Name,
+				bodyPartType: BodyPartType.Torso,
 				damageModifier: 1,
 				hitPenalty: 1,
 				minToHit: 2,
@@ -144,32 +132,28 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				startingArmor: 3);
 			_leftArmPart = CreaturePart.CreateForTest(
 				creature: _creature,
-				bodyPartType: _arm,
-				name: _arm.Name,
+				bodyPartType: BodyPartType.Arm,
 				damageModifier: 0.5,
 				hitPenalty: 3,
 				minToHit: 5,
 				maxToHit: 5);
 			_rightArmPart = CreaturePart.CreateForTest(
 				creature: _creature,
-				bodyPartType: _arm,
-				name: _arm.Name,
+				bodyPartType: BodyPartType.Arm,
 				damageModifier: 0.5,
 				hitPenalty: 3,
 				minToHit: 6,
 				maxToHit: 6);
 			_leftLegPart = CreaturePart.CreateForTest(
 				creature: _creature,
-				bodyPartType: _leg,
-				name: _leg.Name,
+				bodyPartType: BodyPartType.Leg,
 				damageModifier: 0.5,
 				hitPenalty: 2,
 				minToHit: 7,
 				maxToHit: 8);
 			_rightLegPart = CreaturePart.CreateForTest(
 				creature: _creature,
-				bodyPartType: _leg,
-				name: _leg.Name,
+				bodyPartType: BodyPartType.Leg,
 				damageModifier: 0.5,
 				hitPenalty: 2,
 				minToHit: 9,
@@ -180,10 +164,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
 				_instance,
-				_torso,
-				_head,
-				_leg,
-				_arm,
 				_bleedingWound,
 				_difficultLegCrit,
 				_deadlyLegCrit,
@@ -196,7 +176,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_creatureTemplate,
 				_ability,
 				_creature,
-				_creatureType,
 				_damageType));
 		}
 
@@ -228,7 +207,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
 			Assert.IsTrue(monster.HP < 50);
-			var torsoPart = monster.CreatureParts.FirstOrDefault(x => x.BodyPartTypeId == _torso.Id);
+			var torsoPart = monster.CreatureParts.FirstOrDefault(x => x.BodyPartType == BodyPartType.Torso);
 			Assert.IsNotNull(torsoPart);
 			Assert.AreEqual(torsoPart.CurrentArmor, 2);
 		}

@@ -42,20 +42,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Максимальное значение попадания")
 				.IsRequired();
 
-			builder.Property(x => x.BodyPartTypeId)
-				.HasColumnName("BodyPartTypeId")
+			builder.Property(x => x.BodyPartType)
+				.HasColumnName("BodyPartType")
 				.HasComment("Айди типа части тела")
 				.IsRequired();
-
-			builder.HasOne(x => x.BodyPartType)
-				.WithMany(x => x.BodyParts)
-				.HasForeignKey(x => x.BodyPartTypeId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			var bodyPartTypeeNavigation = builder.Metadata.FindNavigation(nameof(BodyPart.BodyPartType));
-			bodyPartTypeeNavigation.SetField(BodyPart.BodyPartTypeField);
-			bodyPartTypeeNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

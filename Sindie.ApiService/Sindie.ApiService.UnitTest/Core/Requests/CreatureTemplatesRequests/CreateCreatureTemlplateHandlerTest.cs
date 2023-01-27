@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 {
@@ -23,7 +24,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly BodyTemplatePart _bodyTemplatePart;
 		private readonly Condition _condition;
 		private readonly Skill _parameter;
-		private readonly CreatureType _creatureType;
 		private readonly Ability _ability;
 
 		/// <summary>
@@ -32,13 +32,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		public CreateCreatureTemlplateHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_imgFile = ImgFile.CreateForTest();
-			_creatureType = CreatureType.CreateForTest();
+			_imgFile = ImgFile.CreateForTest();;
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 			_bodyTemplatePart = BodyTemplatePart.CreateForTest(
 				bodyTemplate: _bodyTemplate,
-				bodyPartType: BodyPartType.CreateForTest(),
-				name: "void",
+				bodyPartType: BodyPartType.Void,
 				damageModifier: 1,
 				hitPenalty: 1,
 				minToHit: 1,
@@ -49,7 +47,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_ability = Ability.CreateForTest(game: _game, attackSkill: _parameter);
 			_condition = Condition.CreateForTest();
 			
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _parameter, _bodyTemplate, _bodyTemplatePart, _condition, _creatureType, _ability));
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _parameter, _bodyTemplate, _bodyTemplatePart, _condition, _ability));
 		}
 
 		/// <summary>
@@ -65,7 +63,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				bodyTemplateId: _bodyTemplate.Id,
 				name: "name",
 				description: "description",
-				creatureTypeId: _creatureType.Id,
+				creatureType: CreatureType.Human,
 				hp: 10,
 				sta: 10,
 				@int: 6,
@@ -110,7 +108,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(request.Description, creatureTemplate.Description);
 			Assert.AreEqual(request.ImgFileId, creatureTemplate.ImgFileId);
 			Assert.AreEqual(request.BodyTemplateId, creatureTemplate.BodyTemplateId);
-			Assert.AreEqual(request.CreatureTypeId, creatureTemplate.CreatureTypeId);
+			Assert.AreEqual(request.CreatureType, creatureTemplate.CreatureType);
 			Assert.AreEqual(request.HP, creatureTemplate.HP);
 			Assert.AreEqual(request.Sta, creatureTemplate.Sta);
 			Assert.AreEqual(request.Int, creatureTemplate.Int);
@@ -127,7 +125,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var creatureTemplatePart = creatureTemplate.CreatureTemplateParts.FirstOrDefault();
 			Assert.IsNotNull(creatureTemplatePart);
 			Assert.AreEqual(creatureTemplate.CreatureTemplateParts.Count, 1);
-			Assert.AreEqual(creatureTemplatePart.Name, "void");
+			Assert.AreEqual(creatureTemplatePart.Name, "Void");
 			Assert.AreEqual(creatureTemplatePart.HitPenalty, 1);
 			Assert.AreEqual(creatureTemplatePart.DamageModifier, 1);
 			Assert.AreEqual(creatureTemplatePart.MaxToHit, 10);

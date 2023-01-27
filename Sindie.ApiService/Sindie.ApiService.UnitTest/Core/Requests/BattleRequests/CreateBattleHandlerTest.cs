@@ -1,14 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.BattleRequests.CreateBattle;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 {
@@ -24,11 +22,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly CreatureTemplatePart _creatureTemplatePart;
-		private readonly BodyPartType _armPartType;
 		private readonly Ability _ability;
 		private readonly Condition _condition;
 		private readonly Skill _parameter;
-		private readonly CreatureType _creatureType;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="CreateBattleHandler"/>
@@ -37,15 +33,13 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		{
 			_game = Game.CreateForTest();
 			_imgFile = ImgFile.CreateForTest();
-			_armPartType = BodyPartType.CreateForTest(id: BodyPartTypes.ArmId);
-			_creatureType = CreatureType.CreateForTest();
 			_condition = Condition.CreateForTest();
 			_parameter = Skill.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
-			_creatureTemplate = CreatureTemplate.CreateForTest(game: _game, bodyTemplate: _bodyTemplate, creatureType: _creatureType);
+			_creatureTemplate = CreatureTemplate.CreateForTest(game: _game, bodyTemplate: _bodyTemplate, creatureType: CreatureType.Human);
 			_creatureTemplatePart = CreatureTemplatePart.CreateForTest(
 				creatureTemplate: _creatureTemplate,
-				bodyPartType: _armPartType,
+				bodyPartType: BodyPartType.Arm,
 				name: "arm",
 				armor: 5);
 			_creatureTemplate.CreatureTemplateParts.Add(_creatureTemplatePart);
@@ -74,7 +68,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_parameter,
 				_bodyTemplate,
 				_creatureTemplate,
-				_creatureType,
 				_ability));
 		}
 
@@ -123,7 +116,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			Assert.AreEqual(creature.Name, "monster1");
 			Assert.AreEqual(creature.Description, "newMonster");
 			Assert.AreEqual(_creatureTemplate.ImgFileId, creature.ImgFileId);
-			Assert.AreEqual(_creatureTemplate.CreatureTypeId, creature.CreatureTypeId);
+			Assert.AreEqual(_creatureTemplate.CreatureType, creature.CreatureType);
 			Assert.AreEqual(_creatureTemplate.HP, creature.HP);
 			Assert.AreEqual(_creatureTemplate.Sta, creature.Sta);
 			Assert.AreEqual(_creatureTemplate.Int, creature.Int);

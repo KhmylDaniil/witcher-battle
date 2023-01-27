@@ -6,6 +6,7 @@ using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTempl
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,8 +52,6 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
-					.ThenInclude(x => x.CreatureType)
-				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.CreatureTemplateSkills)
 					.ThenInclude(x => x.Skill)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
@@ -64,7 +63,6 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 					.ThenInclude(x => x.Condition)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.CreatureTemplateParts)
-					.ThenInclude(x => x.BodyPartType)
 				.SelectMany(x => x.CreatureTemplates);
 
 			var creatureTemplate = await filter.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
@@ -77,8 +75,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 				BodyTemplateId = creatureTemplate.BodyTemplateId,
 				Name = creatureTemplate.Name,
 				Description = creatureTemplate.Description,
-				Type = creatureTemplate.CreatureType.Name,
-				CreatureTypeId = creatureTemplate.CreatureTypeId,
+				CreatureType = creatureTemplate.CreatureType,
 				HP = creatureTemplate.HP,
 				Sta = creatureTemplate.Sta,
 				Int = creatureTemplate.Int,
@@ -99,7 +96,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 					{
 						Id = x.Id,
 						Name = x.Name,
-						BodyPartTypeName = x.BodyPartType.Name,
+						BodyPartType = x.BodyPartType,
 						HitPenalty = x.HitPenalty,
 						DamageModifier = x.DamageModifier,
 						MinToHit = x.MinToHit,

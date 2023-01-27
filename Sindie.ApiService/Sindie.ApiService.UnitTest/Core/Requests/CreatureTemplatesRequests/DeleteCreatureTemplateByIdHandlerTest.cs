@@ -5,6 +5,7 @@ using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.DeleteCreatureTemplateById;
 using System.Linq;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 {
@@ -26,7 +27,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		{
 			_game = Game.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
-			_creatureTemplate = CreatureTemplate.CreateForTest(game: _game, bodyTemplate: _bodyTemplate, creatureType: CreatureType.CreateForTest());
+			_creatureTemplate = CreatureTemplate.CreateForTest(game: _game, bodyTemplate: _bodyTemplate, creatureType: CreatureType.Human);
 			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _bodyTemplate, _creatureTemplate));
 		}
 

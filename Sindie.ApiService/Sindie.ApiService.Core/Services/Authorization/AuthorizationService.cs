@@ -27,7 +27,7 @@ namespace Sindie.ApiService.Core.Services.Authorization
 			if (query is null)
 				throw new ArgumentNullException(nameof(query));
 
-			if (string.Equals(_userContext.Role, SystemRoles.AndminRoleName, StringComparison.OrdinalIgnoreCase))
+			if (string.Equals(_userContext.Role, SystemRoles.AdminRoleName, StringComparison.OrdinalIgnoreCase))
 				return query;
 
 			return query.Where(x => x.Id == gameId
@@ -42,7 +42,7 @@ namespace Sindie.ApiService.Core.Services.Authorization
 			if (query is null)
 				throw new ArgumentNullException(nameof(query));
 
-			if (string.Equals(_userContext.Role, SystemRoles.AndminRoleName, StringComparison.OrdinalIgnoreCase))
+			if (string.Equals(_userContext.Role, SystemRoles.AdminRoleName, StringComparison.OrdinalIgnoreCase))
 				return query;
 
 			return query.Where(x => x.Id == gameId
@@ -56,7 +56,7 @@ namespace Sindie.ApiService.Core.Services.Authorization
 			if (query is null)
 				throw new ArgumentNullException(nameof(query));
 
-			if (string.Equals(_userContext.Role, SystemRoles.AndminRoleName, StringComparison.OrdinalIgnoreCase))
+			if (string.Equals(_userContext.Role, SystemRoles.AdminRoleName, StringComparison.OrdinalIgnoreCase))
 				return query;
 
 			return query.Where(i => i.Id == battleId

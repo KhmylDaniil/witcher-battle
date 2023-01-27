@@ -1,14 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplateById;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 {
@@ -37,8 +35,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 
 			_head = BodyTemplatePart.CreateForTest(
 				bodyTemplate: _bodyTemplate,
-				bodyPartType: BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName),
-				name: "head",
+				bodyPartType: BodyPartType.Head,
 				hitPenalty: 3,
 				damageModifier: 3,
 				minToHit: 1,
@@ -46,8 +43,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 
 			_torso = BodyTemplatePart.CreateForTest(
 				bodyTemplate: _bodyTemplate,
-				bodyPartType: BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName),
-				name: "torso",
+				bodyPartType: BodyPartType.Torso,
 				hitPenalty: 1,
 				damageModifier: 1,
 				minToHit: 4,
@@ -84,7 +80,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 
 			var head = result.GetBodyTemplateByIdResponseItems.FirstOrDefault(x => x.Id == _head.Id);
 			Assert.IsNotNull(head);
-			Assert.AreEqual(head.Name, "head");
+			Assert.AreEqual(head.Name, "Head");
 			Assert.AreEqual(head.DamageModifier, 3);
 			Assert.AreEqual(head.HitPenalty, 3);
 			Assert.AreEqual(head.MinToHit, 1);
@@ -92,7 +88,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 
 			var torso = result.GetBodyTemplateByIdResponseItems.FirstOrDefault(x => x.Id == _torso.Id);
 			Assert.IsNotNull(torso);
-			Assert.AreEqual(torso.Name, "torso");
+			Assert.AreEqual(torso.Name, "Torso");
 			Assert.AreEqual(torso.DamageModifier, 1);
 			Assert.AreEqual(torso.HitPenalty, 1);
 			Assert.AreEqual(torso.MinToHit, 4);
