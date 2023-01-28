@@ -1,9 +1,15 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame;
+using Sindie.ApiService.Core.Contracts.GameRequests.CreateGame;
+using Sindie.ApiService.Core.Contracts.GameRequests.DeleteGame;
 using Sindie.ApiService.Core.Contracts.GameRequests.GetGame;
+using Sindie.ApiService.Core.Contracts.GameRequests.GetGameById;
 
 namespace Witcher.MVC.Controllers
 {
+	[Authorize]
 	public class GameController : Controller
 	{
 		private readonly IMediator _mediator;
@@ -13,43 +19,50 @@ namespace Witcher.MVC.Controllers
 			_mediator = mediator;
 		}
 
-		// GET: GameController
-		public async Task<IActionResult> Index(string? name, string? userName, string? username2, CancellationToken cancellationToken)
+		public async Task<IActionResult> Index(string name, string description, string authorName, CancellationToken cancellationToken)
 		{
-			var query = new GetGameQuery() { Name = name, AuthorName = userName };
+			var query = new GetGameQuery() { Name = name, Description = description, AuthorName = authorName};
 			
 			var response = await _mediator.Send(query, cancellationToken);
 
-			if (string.IsNullOrEmpty(username2))
-				return View(response.GamesList);
-
-			var query2 = new GetGameQuery() { Name = name, AuthorName = username2 };
-
-			var response2 = await _mediator.Send(query2, cancellationToken);
-
-			var totalResult = response.GamesList.Union(response2.GamesList);
-			return View(totalResult);	
+			return View(response.GamesList);
 		}
 
-		// GET: GameController/Details/5
-		public ActionResult Details(int id)
+		[Route("[controller]/{id}")]
+		public async Task<IActionResult> EnterAsync(Guid id, CancellationToken cancellationToken)
 		{
-			return View();
+			if (id == Guid.Empty && TempData["GameId"] is not null)
+				id = (Guid)TempData["GameId"];
+
+			var command = new GetGameByIdCommand() { Id = id };
+
+			try
+			{
+				var response = await _mediator.Send(command, cancellationToken);
+
+				return View(response);
+			}
+			catch
+			{
+				ViewData["ErrorMessage"] = "You`re not authorized to requested game.";
+				return View("Error");
+			}
 		}
 
-		// GET: GameController/Create
+		[Route("[controller]/[action]")]
 		public ActionResult Create()
 		{
 			return View();
 		}
 
-		// POST: GameController/Create
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Create(IFormCollection collection)
+		[Route("[controller]/[action]")]
+		public async Task<IActionResult> Create(CreateGameCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
+				await _mediator.Send(command ?? throw new ArgumentNullException(nameof(command)), cancellationToken);
 				return RedirectToAction(nameof(Index));
 			}
 			catch
@@ -59,39 +72,50 @@ namespace Witcher.MVC.Controllers
 		}
 
 		// GET: GameController/Edit/5
-		public ActionResult Edit(int id)
+		[Route("[controller]/[action]/{id}")]
+		public ActionResult Edit(ChangeGameCommand command)
 		{
-			return View();
+			return View(command);
 		}
 
 		// POST: GameController/Edit/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Edit(int id, IFormCollection collection)
+		[Route("[controller]/[action]/{id}")]
+		public async Task<IActionResult> Edit(ChangeGameCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
-				return RedirectToAction(nameof(Index));
+				await _mediator.Send(command ?? throw new ArgumentNullException(nameof(command)), cancellationToken);
+
+				TempData["GameId"] = command.Id;
+
+				return RedirectToAction(nameof(EnterAsync));
 			}
-			catch
+			catch (Exception ex)
 			{
-				return View();
+				ViewData["ErrorMessage"] = ex.Message ?? "You`re don`t have permission to make changes in requested game.";
+				return View("Error");
 			}
 		}
 
-		// GET: GameController/Delete/5
-		public ActionResult Delete(int id)
+		[Route("[controller]/[action]/{id}")]
+		public ActionResult Delete(DeleteGameCommand command)
 		{
-			return View();
+			TempData["GameId"] = command.Id;
+			return View(command);
 		}
 
 		// POST: GameController/Delete/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Delete(int id, IFormCollection collection)
+		[Route("[controller]/[action]/{id}")]
+		public async Task<IActionResult> Delete(DeleteGameCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
+				await _mediator.Send(command ?? throw new ArgumentNullException(nameof(command)), cancellationToken);
+
 				return RedirectToAction(nameof(Index));
 			}
 			catch

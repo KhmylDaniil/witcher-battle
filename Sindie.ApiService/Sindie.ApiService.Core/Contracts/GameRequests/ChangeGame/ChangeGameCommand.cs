@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame
 {
@@ -9,6 +10,7 @@ namespace Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame
 		/// <summary>
 		/// Айди игры
 		/// </summary>
+		[Required]
 		public Guid Id { get; set; }
 
 		/// <summary>
@@ -19,6 +21,7 @@ namespace Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame
 		/// <summary>
 		/// Название игры
 		/// </summary>
+		[Required]
 		public string Name { get; set; }
 
 		/// <summary>

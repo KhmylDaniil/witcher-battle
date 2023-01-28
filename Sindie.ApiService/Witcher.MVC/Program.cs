@@ -33,10 +33,4 @@ app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}");
 
-app.MapControllerRoute(name: "Game", pattern: "{controller}/{action}/{name?}/{userName?}/{userName2?}");
-
-//app.MapControllerRoute(
-//	name: "Game",
-//	pattern: "{controller}/{action}/{name}/{userName?}");
-
 app.Run();
