@@ -47,7 +47,7 @@ namespace Witcher.MVC
 			get
 			{
 				if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
-					return SystemRoles.AndminRoleName;
+					return SystemRoles.AdminRoleName;
 
 				var value = _httpContextAccessor.HttpContext.User.Claims
 					.FirstOrDefault(c => c.Type == ClaimTypes.Role)
