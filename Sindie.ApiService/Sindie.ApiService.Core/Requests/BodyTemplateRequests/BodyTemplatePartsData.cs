@@ -1,4 +1,5 @@
-﻿using Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplate;
+﻿using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
+using Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplate;
 using System.Collections.Generic;
 using static Sindie.ApiService.Core.BaseData.Enums;
@@ -47,7 +48,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 		/// <param name="bodyPartTypes">Типы частей тела</param>
 		/// <returns>Данные для списка шаблонов частей тела</returns>
 		public static List<BodyTemplatePartsData>
-			CreateBodyTemplatePartsData(CreateBodyTemplateCommand request)
+			CreateBodyTemplatePartsData(CreateBodyTemplateRequest request)
 		{
 			var result = new List<BodyTemplatePartsData>();
 

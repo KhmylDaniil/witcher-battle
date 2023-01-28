@@ -17,7 +17,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 	/// <summary>
 	/// Обработчик создания шаблона тела
 	/// </summary>
-	public class CreateBodyTemplateHandler : IRequestHandler<CreateBodyTemplateCommand, Unit>
+	public class CreateBodyTemplateHandler : IRequestHandler<CreateBodyTemplateRequest, Unit>
 	{
 		/// <summary>
 		/// Контекст базы данных
@@ -46,7 +46,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		public async Task<Unit> Handle(CreateBodyTemplateCommand request, CancellationToken cancellationToken)
+		public async Task<Unit> Handle(CreateBodyTemplateRequest request, CancellationToken cancellationToken)
 		{
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.BodyTemplates)
@@ -70,34 +70,34 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 		/// Проверка запроса
 		/// </summary>
 		/// <param name="request">Запрос</param>
-		private void CheckRequest(CreateBodyTemplateCommand request, Game game)
+		private void CheckRequest(CreateBodyTemplateRequest request, Game game)
 		{
 			if (game.BodyTemplates.Any(x => x.Name == request.Name))
-				throw new ExceptionRequestNameNotUniq<CreateBodyTemplateCommand>(nameof(request.Name));
+				throw new ExceptionRequestNameNotUniq<CreateBodyTemplateRequest>(nameof(request.Name));
 
 			var sortedList = request.BodyTemplateParts.OrderBy(x => x.MinToHit).ToList();
 
 			foreach (var part in sortedList)
 			{
 				if (string.IsNullOrEmpty(part.Name))
-					throw new ExceptionRequestFieldNull<CreateBodyTemplateCommand>(nameof(CreateBodyTemplateRequestItem.Name));
+					throw new ExceptionRequestFieldNull<CreateBodyTemplateRequest>(nameof(CreateBodyTemplateRequestItem.Name));
 				if (request.BodyTemplateParts.Count(x => x.Name == part.Name) != 1)
 					throw new ArgumentException($"Значения в поле {nameof(part.Name)} повторяются");
 
 				if (!Enum.IsDefined(part.BodyPartType))
-					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateCommand>(nameof(part.BodyPartType));
+					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(part.BodyPartType));
 
 				if (part.DamageModifier <= 0)
-					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateCommand>(nameof(CreateBodyTemplateRequestItem.DamageModifier));
+					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(CreateBodyTemplateRequestItem.DamageModifier));
 
 				if (part.HitPenalty < 1)
-					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateCommand>(nameof(CreateBodyTemplateRequestItem.HitPenalty));
+					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(CreateBodyTemplateRequestItem.HitPenalty));
 
 				if (part.MinToHit < 1)
-					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateCommand>(nameof(CreateBodyTemplateRequestItem.MinToHit));
+					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(CreateBodyTemplateRequestItem.MinToHit));
 
 				if (part.MaxToHit > 10 || part.MaxToHit < part.MinToHit)
-					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateCommand>(nameof(CreateBodyTemplateRequestItem.MaxToHit));
+					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(CreateBodyTemplateRequestItem.MaxToHit));
 			}
 
 			if (sortedList.First().MinToHit != 1 || sortedList.Last().MaxToHit != 10)

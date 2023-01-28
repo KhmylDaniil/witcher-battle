@@ -35,11 +35,12 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 		[TestMethod]
 		public async Task Handle_CreateBodyTemplate_ShouldReturnUnit()
 		{
-			var request = new CreateBodyTemplateCommand(
-				gameId: _game.Id,
-				name: "name",
-				description: "description",
-				bodyTemplateParts: new List<CreateBodyTemplateRequestItem>
+			var request = new CreateBodyTemplateRequest()
+			{
+				GameId = _game.Id,
+				Name = "name",
+				Description = "description",
+				BodyTemplateParts = new List<CreateBodyTemplateRequestItem>
 				{
 					new CreateBodyTemplateRequestItem()
 					{
@@ -50,7 +51,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 						MinToHit = 1,
 						MaxToHit = 10
 					}
-				});
+				}
+			};
 
 			var newHandler = new CreateBodyTemplateHandler(_dbContext, AuthorizationService.Object);
 
