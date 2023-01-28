@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate
 {
@@ -14,9 +13,9 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTempla
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Айди типа части тела
+		/// Тип части тела
 		/// </summary>
-		public Guid BodyPartTypeId { get; set; }
+		public BodyPartType BodyPartType { get; set; }
 
 		/// <summary>
 		/// Модификатор урона

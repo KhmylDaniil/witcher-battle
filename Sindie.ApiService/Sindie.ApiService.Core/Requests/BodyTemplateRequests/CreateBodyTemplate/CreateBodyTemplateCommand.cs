@@ -3,8 +3,6 @@ using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplate
 {

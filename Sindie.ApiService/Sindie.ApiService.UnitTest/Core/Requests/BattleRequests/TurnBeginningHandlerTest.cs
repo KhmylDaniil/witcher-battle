@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.BattleRequests.TurnBeginning;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Entities.Effects;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 {
@@ -22,13 +22,10 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
 		private readonly Battle _battle;
-		private readonly BodyPartType _torso;
-		private readonly BodyPartType _head;
 		private readonly CreaturePart _headPart;
 		private readonly CreaturePart _torsoPart;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Creature _creature;
-		private readonly CreatureType _creatureType;
 
 		/// <summary>
 		/// Тест для <see cref="TurnBeginningHandler"/>
@@ -36,28 +33,24 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		public TurnBeginningHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_creatureType = CreatureType.CreateForTest();
 			_battle = Battle.CreateForTest(game: _game);
-			_torso = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
-			_head = BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
 				bodyTemplate: BodyTemplate.CreateForTest(game: _game),
-				creatureType: _creatureType);
+				creatureType: CreatureType.Human);
 
 			_creature = Creature.CreateForTest(
 				battle: _battle,
 				creatureTemlpate: _creatureTemplate,
-				creatureType: _creatureType,
+				creatureType: CreatureType.Human,
 				hp: 50,
 				@ref: 7,
 				speed: 7);
 
 			_headPart = CreaturePart.CreateForTest(
 				creature: _creature,
-				bodyPartType: _head,
-				name: _head.Name,
+				bodyPartType: BodyPartType.Head,
 				damageModifier: 3,
 				hitPenalty: 6,
 				minToHit: 1,
@@ -66,8 +59,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				currentArmor: 5);
 			_torsoPart = CreaturePart.CreateForTest(
 				creature: _creature,
-				bodyPartType: _torso,
-				name: _torso.Name,
+				bodyPartType: BodyPartType.Torso,
 				damageModifier: 1,
 				hitPenalty: 1,
 				minToHit: 4,
@@ -82,11 +74,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
 				_battle,
-				_torso,
-				_head,
 				_creatureTemplate,
-				_creature,
-				_creatureType));
+				_creature));
 		}
 
 		/// <summary>
@@ -116,7 +105,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
 			Assert.AreEqual(monster.HP, 45);
-			var torsoPart = monster.CreatureParts.FirstOrDefault(x => x.BodyPartTypeId == _torso.Id);
+			var torsoPart = monster.CreatureParts.FirstOrDefault(x => x.BodyPartType == BodyPartType.Torso);
 			Assert.IsNotNull(torsoPart);
 			Assert.AreEqual(torsoPart.CurrentArmor, 2);
 
@@ -130,7 +119,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
 			Assert.AreEqual(monster.HP, 38);
-			torsoPart = monster.CreatureParts.FirstOrDefault(x => x.BodyPartTypeId == _torso.Id);
+			torsoPart = monster.CreatureParts.FirstOrDefault(x => x.BodyPartType == BodyPartType.Torso);
 			Assert.IsNotNull(torsoPart);
 			Assert.AreEqual(torsoPart.CurrentArmor, 1);
 		}

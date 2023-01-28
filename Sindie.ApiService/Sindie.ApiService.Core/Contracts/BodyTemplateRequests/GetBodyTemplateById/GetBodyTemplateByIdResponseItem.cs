@@ -1,4 +1,5 @@
 ﻿using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById
 {
@@ -20,7 +21,7 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateB
 		/// <summary>
 		/// Тип части тела
 		/// </summary>
-		public string BodyPartTypeName { get; set; }
+		public BodyPartType BodyPartType { get; set; }
 
 		/// <summary>
 		/// Пенальти за прицеливание

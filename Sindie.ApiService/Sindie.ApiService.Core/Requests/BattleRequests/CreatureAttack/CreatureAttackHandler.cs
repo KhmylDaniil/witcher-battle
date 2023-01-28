@@ -61,7 +61,6 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 					.ThenInclude(cp => cp.Skill)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureParts)
-					.ThenInclude(cp => cp.BodyPartType)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
 					.ThenInclude(a => a.AppliedConditions)

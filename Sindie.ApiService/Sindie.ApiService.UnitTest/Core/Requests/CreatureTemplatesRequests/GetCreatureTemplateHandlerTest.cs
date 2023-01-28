@@ -5,10 +5,9 @@ using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTemplate;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 {
@@ -25,10 +24,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly Condition _condition;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly CreatureTemplatePart _creatureTemplatePart;
-		private readonly BodyPartType _bodyPartType;
 		private readonly Ability _ability;
 		private readonly Skill _parameter;
-		private readonly CreatureType _creatureType;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="GetCreatureTemplateHandler"/>
@@ -45,9 +42,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 					user: _user,
 					gameRole: GameRole.CreateForTest(GameRoles.MasterRoleId)));
 
-			_bodyPartType = BodyPartType.CreateForTest();
-			_creatureType = CreatureType.CreateForTest();
-
 			_parameter = Skill.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
 			_condition = Condition.CreateForTest(name: Conditions.BleedName);
@@ -55,7 +49,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				name: "testName",
 				game: _game,
-				creatureType: _creatureType,
+				creatureType: CreatureType.Human,
 				bodyTemplate: _bodyTemplate,
 				createdOn: DateTimeProvider.Object.TimeProvider,
 				modifiedOn: DateTimeProvider.Object.TimeProvider,
@@ -63,7 +57,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			_creatureTemplatePart = CreatureTemplatePart.CreateForTest(
 				creatureTemplate: _creatureTemplate,
-				bodyPartType: _bodyPartType,
+				bodyPartType: BodyPartType.Void,
 				damageModifier: 1,
 				hitPenalty: 1,
 				minToHit: 1,
@@ -85,10 +79,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				_user,
 				_game,
 				_bodyTemplate,
-				_bodyPartType,
 				_condition,
 				_creatureTemplate,
-				_creatureType,
 				_ability));
 		}
 
@@ -109,13 +101,13 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				gameId: _game.Id,
 				name: "testName",
 				userName: "Author",
-				creatureTypeId: _creatureType.Id,
+				creatureType: "Human",
 				creationMinTime: creationMinTime,
 				creationMaxTime: creationMaxTime,
 				modificationMinTime: modificationMinTime,
 				modificationMaxTime: modificationMaxTime,
 				bodyTemplateName: "human",
-				bodyPartTypeId: BodyPartTypes.VoidId,
+				bodyPartType: "Void",
 				conditionName: Conditions.BleedName,
 				pageSize: 2,
 				pageNumber: 1,
@@ -131,14 +123,13 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			var resultItem = result.CreatureTemplatesList.First();
 			Assert.IsTrue(resultItem.Name.Contains(request.Name));
-			Assert.AreEqual(resultItem.Type, _creatureType.Name);
+			Assert.IsTrue(Enum.GetName(resultItem.CreatureType).Contains(request.CreatureType));
 			Assert.IsTrue(resultItem.BodyTemplateName.Contains(request.BodyTemplateName));
 			Assert.IsTrue(resultItem.CreatedOn >= creationMinTime && resultItem.CreatedOn <= creationMaxTime);
 			Assert.IsTrue(resultItem.ModifiedOn >= modificationMinTime && resultItem.ModifiedOn <= modificationMaxTime);
 
 			var creatureTemplate = _dbContext.CreatureTemplates
 				.Include(x => x.CreatureTemplateParts)
-					.ThenInclude(x => x.BodyPartType)
 				.Include(x => x.Abilities)
 					.ThenInclude(x => x.AppliedConditions)
 					.ThenInclude(x => x.Condition)
@@ -150,7 +141,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsTrue(user.Name.Contains(request.UserName));
 
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateParts
-				.Any(x => x.BodyPartTypeId == request.BodyPartTypeId));
+				.Any(x => Enum.GetName(x.BodyPartType).Contains(request.BodyPartType)));
 			Assert.IsNotNull(creatureTemplate.Abilities
 				.Any(a => a.AppliedConditions.Any(ac => ac.Condition.Name.Contains(request.ConditionName))));
 		}

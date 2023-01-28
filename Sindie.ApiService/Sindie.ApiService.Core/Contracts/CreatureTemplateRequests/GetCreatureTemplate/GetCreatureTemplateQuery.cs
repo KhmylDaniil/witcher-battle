@@ -1,6 +1,6 @@
 ﻿using MediatR;
+using Sindie.ApiService.Core.BaseData;
 using System;
-using System.Collections.Generic;
 
 namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplate
 {
@@ -20,9 +20,9 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Фильтр по типу
+		/// Тип существа
 		/// </summary>
-		public Guid? CreatureTypeId { get; set; }
+		public string CreatureType { get; set; }
 
 		/// <summary>
 		/// Фильтр по автору
@@ -57,7 +57,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// <summary>
 		/// Фильтр по типу части тела
 		/// </summary>
-		public Guid? BodyPartTypeId { get; set; }
+		public string BodyPartType { get; set; }
 
 		/// <summary>
 		/// фильтр по названию накладываемого состояния

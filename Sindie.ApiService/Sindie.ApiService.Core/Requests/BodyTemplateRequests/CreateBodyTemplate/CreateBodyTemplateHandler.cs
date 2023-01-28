@@ -1,13 +1,13 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+using Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplate;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,15 +53,13 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
-			var bodyPartTypes = await _appDbContext.BodyPartTypes.ToListAsync(cancellationToken);
-
-			CheckRequest(request, game, bodyPartTypes);
+			CheckRequest(request, game);
 
 			var newBodyTemplate = new BodyTemplate(
 				game: game,
 				name: request.Name,
 				description: request.Description,
-				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request, bodyPartTypes));
+				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request));
 
 			_appDbContext.BodyTemplates.Add(newBodyTemplate);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
@@ -72,7 +70,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 		/// Проверка запроса
 		/// </summary>
 		/// <param name="request">Запрос</param>
-		private void CheckRequest(CreateBodyTemplateCommand request, Game game, List<BodyPartType> bodyPartTypes)
+		private void CheckRequest(CreateBodyTemplateCommand request, Game game)
 		{
 			if (game.BodyTemplates.Any(x => x.Name == request.Name))
 				throw new ExceptionRequestNameNotUniq<CreateBodyTemplateCommand>(nameof(request.Name));
@@ -83,11 +81,11 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 			{
 				if (string.IsNullOrEmpty(part.Name))
 					throw new ExceptionRequestFieldNull<CreateBodyTemplateCommand>(nameof(CreateBodyTemplateRequestItem.Name));
-				if (request.BodyTemplateParts.Where(x => x.Name == part.Name).Count() != 1)
-					throw new ApplicationException($"Значения в поле {nameof(part.Name)} повторяются");
+				if (request.BodyTemplateParts.Count(x => x.Name == part.Name) != 1)
+					throw new ArgumentException($"Значения в поле {nameof(part.Name)} повторяются");
 
-				_= bodyPartTypes.FirstOrDefault(x => x.Id == part.BodyPartTypeId)
-					?? throw new ExceptionEntityNotFound<BodyPartType>(nameof(CreateBodyTemplateRequestItem.BodyPartTypeId));					
+				if (!Enum.IsDefined(part.BodyPartType))
+					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateCommand>(nameof(part.BodyPartType));
 
 				if (part.DamageModifier <= 0)
 					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateCommand>(nameof(CreateBodyTemplateRequestItem.DamageModifier));
@@ -103,11 +101,11 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 			}
 
 			if (sortedList.First().MinToHit != 1 || sortedList.Last().MaxToHit != 10)
-				throw new ApplicationException($"Значения таблицы попаданий не охватывают необходимый диапазон");
+				throw new ArgumentException($"Значения таблицы попаданий не охватывают необходимый диапазон");
 
 			for (int i = 1; i < sortedList.Count; i++)
 				if (sortedList[i].MinToHit != sortedList[i - 1].MaxToHit + 1)
-					throw new ApplicationException($"Значения таблицы попаданий пересекаются");
+					throw new ArgumentException($"Значения таблицы попаданий пересекаются");
 		}
 	}
 }

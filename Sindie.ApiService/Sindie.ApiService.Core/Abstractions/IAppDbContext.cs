@@ -26,11 +26,6 @@ namespace Sindie.ApiService.Core.Abstractions
 		DbSet<BodyPart> BodyParts { get; }
 
 		/// <summary>
-		/// Типы частей тела
-		/// </summary>
-		DbSet<BodyPartType> BodyPartTypes { get; }
-
-		/// <summary>
 		/// Шаблоны тел
 		/// </summary>
 		DbSet<BodyTemplate> BodyTemplates { get; }
@@ -79,11 +74,6 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// Параметры шаблонов существ
 		/// </summary>
 		DbSet<CreatureTemplateSkill> CreatureTemplateParameters { get; }
-
-		/// <summary>
-		/// Типы существ
-		/// </summary>
-		DbSet<CreatureType> CreatureTypes { get; }
 
 		/// <summary>
 		/// Типы урона

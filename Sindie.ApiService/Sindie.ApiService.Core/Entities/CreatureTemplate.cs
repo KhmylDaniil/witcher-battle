@@ -3,6 +3,7 @@ using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -26,15 +27,9 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public const string BodyTemplateField = nameof(_bodyTemplate);
 
-		/// <summary>
-		/// Поле для <see cref="_creatureType"/>
-		/// </summary>
-		public const string CreatureTypeField = nameof(_creatureType);
-
 		private Game _game;
 		private ImgFile _imgFile;
 		private BodyTemplate _bodyTemplate;
-		private CreatureType _creatureType;
 
 		private int _hp;
 		private int _sta;
@@ -135,9 +130,9 @@ namespace Sindie.ApiService.Core.Entities
 		public Guid BodyTemplateId { get; protected set; }
 
 		/// <summary>
-		/// Айди типа существа
+		/// Тип существа
 		/// </summary>
-		public Guid CreatureTypeId { get; protected set; }
+		public CreatureType CreatureType { get; set; }
 
 		/// <summary>
 		/// Название шаблона
@@ -341,19 +336,6 @@ namespace Sindie.ApiService.Core.Entities
 			{
 				_bodyTemplate = value ?? throw new ApplicationException("Необходимо передать шаблон тела");
 				BodyTemplateId = value.Id;
-			}
-		}
-
-		/// <summary>
-		/// Тип существа
-		/// </summary>
-		public CreatureType CreatureType
-		{
-			get => _creatureType;
-			set
-			{
-				_creatureType = value ?? throw new ApplicationException($"Необходимо передать {nameof(CreatureType)}");
-				CreatureTypeId = value.Id;
 			}
 		}
 
@@ -591,7 +573,7 @@ namespace Sindie.ApiService.Core.Entities
 				Game = game,
 				ImgFile = imgFile,
 				BodyTemplate = bodyTemplate,
-				Name = name ?? "CreatureTemplate",
+				Name = name ?? Enum.GetName(creatureType),
 				Description = description,
 				CreatureType = creatureType,
 				HP = hp == default ? 10 : hp,

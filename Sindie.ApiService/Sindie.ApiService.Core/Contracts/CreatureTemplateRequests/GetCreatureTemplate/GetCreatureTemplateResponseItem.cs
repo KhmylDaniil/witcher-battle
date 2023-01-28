@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplate
 {
@@ -29,7 +26,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// <summary>
 		/// Тип шаблона существа
 		/// </summary>
-		public string Type { get; set; }
+		public CreatureType CreatureType { get; set; }
 
 		/// <summary>
 		/// Название шаблона тела

@@ -10,7 +10,7 @@ namespace Sindie.ApiService.Core.BaseData
 		/// <summary>
 		/// Гуид темной темы
 		/// </summary>
-		public static readonly Guid SystemDarkId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d7");
+		public static readonly Guid SystemDarkId = new("8094e0d0-3137-4791-9053-9667cbe107d7");
 
 		/// <summary>
 		/// Название темной темы
@@ -20,7 +20,7 @@ namespace Sindie.ApiService.Core.BaseData
 		/// <summary>
 		/// Гуид темной темы
 		/// </summary>
-		public static readonly Guid GameDarkId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6");
+		public static readonly Guid GameDarkId = new("8094e0d0-3137-4791-9053-9667cbe107d6");
 
 		/// <summary>
 		/// Название темной темы
@@ -30,7 +30,7 @@ namespace Sindie.ApiService.Core.BaseData
 		/// <summary>
 		/// Гуид темной темы
 		/// </summary>
-		public static readonly Guid CharacterDarkId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d5");
+		public static readonly Guid CharacterDarkId = new("8094e0d0-3137-4791-9053-9667cbe107d5");
 
 		/// <summary>
 		/// Название темной темы
@@ -40,7 +40,7 @@ namespace Sindie.ApiService.Core.BaseData
 		/// <summary>
 		/// Гуид светлой темы
 		/// </summary>
-		public static readonly Guid SystemLightId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d8");
+		public static readonly Guid SystemLightId = new("8094e0d0-3137-4791-9053-9667cbe107d8");
 
 		/// <summary>
 		/// Название светлой темы
@@ -50,7 +50,7 @@ namespace Sindie.ApiService.Core.BaseData
 		/// <summary>
 		/// Гуид светлой темы
 		/// </summary>
-		public static readonly Guid GameLightId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d9");
+		public static readonly Guid GameLightId = new("8094e0d0-3137-4791-9053-9667cbe107d9");
 
 		/// <summary>
 		/// Название светлой темы
@@ -60,7 +60,7 @@ namespace Sindie.ApiService.Core.BaseData
 		/// <summary>
 		/// Гуид светлой темы
 		/// </summary>
-		public static readonly Guid CharacterLightId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d0");
+		public static readonly Guid CharacterLightId = new("8094e0d0-3137-4791-9053-9667cbe107d0");
 
 		/// <summary>
 		/// Название светлой темы

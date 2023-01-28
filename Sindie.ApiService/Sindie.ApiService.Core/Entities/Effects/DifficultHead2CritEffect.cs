@@ -22,7 +22,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <summary>
 		/// Тип части тела
 		/// </summary
-		public Enums.BodyPartType BodyPartLocation { get; } = Enums.BodyPartType.Head;
+		public BodyPartType BodyPartLocation { get; } = BodyPartType.Head;
 
 		public DifficultHead2CritEffect() { }
 

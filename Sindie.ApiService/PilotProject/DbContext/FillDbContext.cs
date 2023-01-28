@@ -1,6 +1,7 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace PilotProject.DbContext
 {
@@ -8,13 +9,7 @@ namespace PilotProject.DbContext
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
-		private readonly CreatureType _creatureType;
 		private readonly DamageType _damageType;
-
-		private readonly BodyPartType _torso;
-		private readonly BodyPartType _head;
-		private readonly BodyPartType _leg;
-		private readonly BodyPartType _arm;
 
 		private readonly Condition _bleed;
 		private readonly Condition _poison;
@@ -63,13 +58,7 @@ namespace PilotProject.DbContext
 		public FillDbContext()
 		{
 			_game = Game.CreateForTest(id: GameId);
-			_creatureType = CreatureType.CreateForTest(CreatureTypes.HumanId, CreatureTypes.HumanName);
 			_damageType = DamageType.CreateForTest(DamageTypes.SlashingId, DamageTypes.SlashingName);
-
-			_torso = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
-			_head = BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName);
-			_leg = BodyPartType.CreateForTest(BodyPartTypes.LegId, BodyPartTypes.LegName);
-			_arm = BodyPartType.CreateForTest(BodyPartTypes.ArmId, BodyPartTypes.ArmName);
 
 			_bleed = Condition.CreateForTest(id: Conditions.BleedId, Conditions.BleedName);
 			_poison = Condition.CreateForTest(id: Conditions.PoisonId, Conditions.PoisonName);
@@ -153,8 +142,7 @@ namespace PilotProject.DbContext
 				BodyTemplatePart.CreateForTest(
 					id: HeadId,
 					bodyTemplate: _bodyTemplate,
-					bodyPartType: _head,
-					name: "Head",
+					bodyPartType: BodyPartType.Head,
 					damageModifier: 3,
 					hitPenalty: 6,
 					minToHit: 1,
@@ -163,8 +151,7 @@ namespace PilotProject.DbContext
 				BodyTemplatePart.CreateForTest(
 					id: TorsoId,
 					bodyTemplate: _bodyTemplate,
-					bodyPartType: _torso,
-					name: "Torso",
+					bodyPartType: BodyPartType.Torso,
 					damageModifier: 1,
 					hitPenalty: 1,
 					minToHit: 2,
@@ -173,7 +160,7 @@ namespace PilotProject.DbContext
 				BodyTemplatePart.CreateForTest(
 					id: LeftArmId,
 					bodyTemplate: _bodyTemplate,
-					bodyPartType: _arm,
+					bodyPartType: BodyPartType.Arm,
 					name: "Left Arm",
 					damageModifier: 0.5,
 					hitPenalty: 3,
@@ -183,7 +170,7 @@ namespace PilotProject.DbContext
 				BodyTemplatePart.CreateForTest(
 					id: RightArmId,
 					bodyTemplate: _bodyTemplate,
-					bodyPartType: _arm,
+					bodyPartType: BodyPartType.Arm,
 					name: "Right Arm",
 					damageModifier: 0.5,
 					hitPenalty: 3,
@@ -193,7 +180,7 @@ namespace PilotProject.DbContext
 				BodyTemplatePart.CreateForTest(
 					id: RightLegId,
 					bodyTemplate: _bodyTemplate,
-					bodyPartType: _leg,
+					bodyPartType: BodyPartType.Leg,
 					name: "Right Leg",
 					damageModifier: 0.5,
 					hitPenalty: 2,
@@ -203,7 +190,7 @@ namespace PilotProject.DbContext
 				BodyTemplatePart.CreateForTest(
 					id: LeftLegId,
 					bodyTemplate: _bodyTemplate,
-					bodyPartType: _leg,
+					bodyPartType: BodyPartType.Leg,
 					name: "Left Leg",
 					damageModifier: 0.5,
 					hitPenalty: 2,
@@ -213,16 +200,10 @@ namespace PilotProject.DbContext
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
-				_creatureType,
 				_damageType,
-				_torso,
-				_head,
-				_leg,
-				_arm,
 				_bleed,
 				_poison,
 				_stun,
-
 				_simpleLegCrit,
 				_simpleArmCrit,
 				_simpleHead1Crit,

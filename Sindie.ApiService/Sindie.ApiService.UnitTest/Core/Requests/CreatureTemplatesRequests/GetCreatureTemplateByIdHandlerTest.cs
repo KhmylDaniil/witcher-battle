@@ -7,6 +7,7 @@ using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTempla
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 {
@@ -25,8 +26,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly Skill _parameter;
 		private readonly CreatureTemplateSkill _creatureTemplateParameter;
 		private readonly CreatureTemplatePart _creatureTemplatePart;
-		private readonly BodyPartType _bodyPartType;
-		private readonly CreatureType _creatureType;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="GetCreatureTemplateByIdHandler"/>
@@ -35,8 +34,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		{
 
 			_game = Game.CreateForTest();
-			_bodyPartType = BodyPartType.CreateForTest();
-			_creatureType = CreatureType.CreateForTest();
 
 			_parameter = Skill.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
@@ -45,13 +42,12 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				name: "testName",
 				game: _game,
-				creatureType: _creatureType,
+				creatureType: CreatureType.Human,
 				bodyTemplate: _bodyTemplate);
 
 			_creatureTemplatePart = CreatureTemplatePart.CreateForTest(
 				creatureTemplate: _creatureTemplate,
-				bodyPartType: _bodyPartType,
-				name: "torso",
+				bodyPartType: BodyPartType.Torso,
 				damageModifier: 1,
 				hitPenalty: 1,
 				minToHit: 1,
@@ -77,11 +73,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
-				_bodyPartType,
 				_bodyTemplate,
 				_condition,
 				_creatureTemplate,
-				_creatureType,
 				_ability));
 		}
 
@@ -106,8 +100,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(result.ImgFileId, _creatureTemplate.ImgFileId);
 			Assert.AreEqual(result.BodyTemplateId, _bodyTemplate.Id);
 			Assert.AreEqual(result.Name, "testName");
-			Assert.AreEqual(result.CreatureTypeId, _creatureType.Id);
-			Assert.AreEqual(result.Type, _creatureType.Name);
+			Assert.AreEqual(result.CreatureType, CreatureType.Human);
 			Assert.AreEqual(result.Int, _creatureTemplate.Int);
 			Assert.AreEqual(result.Ref, _creatureTemplate.Ref);
 			Assert.AreEqual(result.Dex, _creatureTemplate.Dex);
@@ -127,7 +120,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var creatureTemplatePart = result.CreatureTemplateParts.First();
 			Assert.IsNotNull(creatureTemplatePart);
 			Assert.AreEqual(creatureTemplatePart.Id, _creatureTemplatePart.Id);
-			Assert.AreEqual(creatureTemplatePart.Name, "torso");
+			Assert.AreEqual(creatureTemplatePart.Name, "Torso");
 			Assert.AreEqual(creatureTemplatePart.HitPenalty, 1);
 			Assert.AreEqual(creatureTemplatePart.DamageModifier, 1);
 			Assert.AreEqual(creatureTemplatePart.MinToHit, 1);

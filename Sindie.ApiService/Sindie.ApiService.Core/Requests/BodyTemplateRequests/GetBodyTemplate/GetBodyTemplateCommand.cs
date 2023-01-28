@@ -1,4 +1,5 @@
-﻿using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate;
+﻿using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate;
 using System;
 
 namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
@@ -18,7 +19,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 		/// <param name="creationMaxTime">Максимальное время создания</param>
 		/// <param name="modificationMinTime">Минимальное время модификации</param>
 		/// <param name="modificationMaxTime">Максимальное время модификации</param>
-		/// <param name="bodyPartTypeId">Название части тела</param>
+		/// <param name="bodyPartType">Название типа части тела</param>
 		/// <param name="pageSize">Размер страницы</param>
 		/// <param name="pageNumber">Номер страниицы</param>
 		/// <param name="orderBy">Сортировка по полю</param>
@@ -31,7 +32,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 			DateTime creationMaxTime,
 			DateTime modificationMinTime,
 			DateTime modificationMaxTime,
-			Guid? bodyPartTypeId,
+			string bodyPartType,
 			int pageSize,
 			int pageNumber,
 			string orderBy,
@@ -44,7 +45,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 			CreationMaxTime = creationMaxTime;
 			ModificationMinTime = modificationMinTime;
 			ModificationMaxTime = modificationMaxTime;
-			BodyPartTypeId = bodyPartTypeId;
+			BodyPartType = bodyPartType;
 			PageSize = pageSize == default ? 10 : pageSize;
 			PageNumber = pageNumber == default ? 1 : pageNumber;
 			OrderBy = orderBy;

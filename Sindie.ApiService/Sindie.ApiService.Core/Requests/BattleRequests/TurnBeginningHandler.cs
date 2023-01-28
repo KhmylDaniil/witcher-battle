@@ -59,7 +59,6 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 					.ThenInclude(cp => cp.Skill)
 				.Include(i => i.Creatures.Where(c => c.Id == request.CreatureId))
 					.ThenInclude(c => c.CreatureParts)
-					.ThenInclude(cp => cp.BodyPartType)
 				.Include(i => i.Creatures.Where(c => c.Id == request.CreatureId))
 					.ThenInclude(c => c.Vulnerables)
 				.Include(i => i.Creatures.Where(c => c.Id == request.CreatureId))

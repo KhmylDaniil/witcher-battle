@@ -2,6 +2,7 @@
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
 using System.Collections.Generic;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatureTemplate
 {
@@ -17,7 +18,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 		/// <param name="gameId">Айди игры</param>
 		/// <param name="imgFileId">Айди графического файла</param>
 		/// <param name="bodyTemplateId">Айди шаблона тела</param>
-		/// <param name="creatureTypeId">Айди типа существа</param>
+		/// <param name="creatureType">Тип существа</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
 		/// <param name="hp">Хиты</param>
@@ -39,7 +40,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			Guid gameId,
 			Guid? imgFileId,
 			Guid bodyTemplateId,
-			Guid creatureTypeId,
+			CreatureType creatureType,
 			string name,
 			string description,
 			int hp,
@@ -61,7 +62,9 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			GameId = gameId;
 			ImgFileId = imgFileId;
 			BodyTemplateId = bodyTemplateId;
-			CreatureTypeId = creatureTypeId;
+			CreatureType = Enum.IsDefined(creatureType)
+				? creatureType
+				: throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateRequest>(nameof(creatureType));
 			Name = string.IsNullOrWhiteSpace(name)
 				? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(Name))
 				: name;
@@ -77,15 +80,9 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 			Will = will < 1 ? throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateRequest>(nameof(Will)) : will;
 			Speed = speed < 1 ? throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateRequest>(nameof(Speed)) : speed;
 			Luck = luck < 1 ? throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateRequest>(nameof(Luck)) : luck;
-			ArmorList = armorList == null 
-				? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(ArmorList))
-				: armorList;
-			Abilities = abilities == null
-				? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(Abilities))
-				: abilities;
-			CreatureTemplateSkills = creatureTemplateSkills == null
-				? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(CreatureTemplateSkills))
-				: creatureTemplateSkills;
+			ArmorList = armorList ?? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(ArmorList));
+			Abilities = abilities ?? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(Abilities));
+			CreatureTemplateSkills = creatureTemplateSkills ?? throw new ExceptionRequestFieldNull<ChangeCreatureTemplateRequest>(nameof(CreatureTemplateSkills));
 		}
 	}
 }

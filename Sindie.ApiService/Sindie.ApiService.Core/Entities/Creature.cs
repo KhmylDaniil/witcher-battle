@@ -3,6 +3,7 @@ using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -26,15 +27,10 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public const string CreatureTemplateField = nameof(_creatureTemplate);
 
-		/// <summary>
-		/// Поле для <see cref="_creatureType"/>
-		/// </summary>
-		public const string CreatureTypeField = nameof(_creatureType);
 
 		private Battle _battle;
 		private ImgFile _imgFile;
 		private CreatureTemplate _creatureTemplate;
-		private CreatureType _creatureType;
 		private Guid? _leadingArmId;
 
 		private int _sta;
@@ -71,7 +67,7 @@ namespace Sindie.ApiService.Core.Entities
 			Battle = battle;
 			ImgFile = creatureTemplate.ImgFile;
 			CreatureTemplate = creatureTemplate;
-			CreatureTypeId = creatureTemplate.CreatureTypeId;
+			CreatureType = creatureTemplate.CreatureType;
 
 			HP = creatureTemplate.HP;
 			Sta = creatureTemplate.Sta;
@@ -132,9 +128,9 @@ namespace Sindie.ApiService.Core.Entities
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Айди типа существа
+		/// Тип существа
 		/// </summary>
-		public Guid CreatureTypeId { get; protected set; }
+		public CreatureType CreatureType { get; set; }
 
 		#region starting stats
 
@@ -360,19 +356,6 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Тип существа
-		/// </summary>
-		public CreatureType CreatureType
-		{
-			get => _creatureType;
-			set
-			{
-				_creatureType = value ?? throw new ApplicationException($"Необходимо передать {nameof(CreatureType)}");
-				CreatureTypeId = value.Id;
-			}
-		}
-
-		/// <summary>
 		/// Способности
 		/// </summary>
 		public List<Ability> Abilities { get; protected set; }
@@ -516,7 +499,7 @@ namespace Sindie.ApiService.Core.Entities
 
 		private Guid DefineLeadingArm()
 		{
-			var arms = CreatureParts.Where(x => x.BodyPartTypeId == BodyPartTypes.ArmId).ToList();
+			var arms = CreatureParts.Where(x => x.BodyPartType == BodyPartType.Arm).ToList();
 
 			if (!arms.Any()) return Guid.Empty;
 
@@ -587,7 +570,7 @@ namespace Sindie.ApiService.Core.Entities
 				CreatureTemplate = creatureTemlpate,
 				ImgFile = imgFile,
 				CreatureType = creatureType,
-				Name = name ?? creatureType.Name,
+				Name = name ?? Enum.GetName(creatureType),
 				Description = description,
 				HP = hp == default ? 50 : hp,
 				MaxHP = maxHP == default ? 50 : maxHP,

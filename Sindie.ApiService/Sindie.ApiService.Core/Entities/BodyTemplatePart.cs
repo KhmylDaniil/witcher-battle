@@ -1,4 +1,5 @@
 ﻿using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -104,7 +105,7 @@ namespace Sindie.ApiService.Core.Entities
 			Id = id ?? Guid.NewGuid(),
 			BodyTemplate = bodyTemplate,
 			BodyPartType = bodyPartType,
-			Name = name ?? "name",
+			Name = name ?? Enum.GetName(bodyPartType),
 			DamageModifier = damageModifier,
 			HitPenalty = hitPenalty,
 			MinToHit = minToHit,

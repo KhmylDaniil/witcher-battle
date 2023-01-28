@@ -109,7 +109,7 @@ namespace Sindie.ApiService.UnitTest.Core
 
 			UserContext = new Mock<IUserContext>();
 			UserContext.Setup(x => x.CurrentUserId).Returns(UserId);
-			UserContext.Setup(x => x.Role).Returns(SystemRoles.AndminRoleName);
+			UserContext.Setup(x => x.Role).Returns(SystemRoles.AdminRoleName);
 
 			UserContextAsUser = new Mock<IUserContext>();
 			UserContextAsUser.Setup(x => x.CurrentUserId).Returns(UserId);

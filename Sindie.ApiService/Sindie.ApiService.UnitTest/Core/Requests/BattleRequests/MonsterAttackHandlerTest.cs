@@ -5,6 +5,7 @@ using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 {
@@ -17,8 +18,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
 		private readonly Battle _instance;
-		private readonly BodyPartType _torso;
-		private readonly BodyPartType _head;
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly CreaturePart _headPart;
 		private readonly CreaturePart _torsoPart;
@@ -27,7 +26,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
 		private readonly Creature _creature;
-		private readonly CreatureType _creatureType;
 		private readonly DamageType _damageType;
 		private readonly Condition _head1Crit;
 		private readonly Condition _head2Crit;
@@ -38,10 +36,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		public MonsterAttackHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_creatureType = CreatureType.CreateForTest(CreatureTypes.SpecterId, CreatureTypes.SpecterName);
 			_instance = Battle.CreateForTest(game: _game);
-			_torso = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
-			_head = BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName);
 			_condition = Condition.CreateForTest();
 			_damageType = DamageType.CreateForTest();
 
@@ -54,7 +49,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
 				bodyTemplate: _bodyTemplate,
-				creatureType: _creatureType);
+				creatureType: CreatureType.Specter);
 
 			_ability = Ability.CreateForTest(
 				game: _game,
@@ -71,7 +66,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_creature = Creature.CreateForTest(
 				battle: _instance,
 				creatureTemlpate: _creatureTemplate,
-				creatureType: _creatureType);
+				creatureType: CreatureType.Specter);
 			_creature.Abilities.Add(_ability);
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
 				creature: _creature,
@@ -80,16 +75,14 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			_headPart = CreaturePart.CreateForTest(
 				creature: _creature,
-				bodyPartType: _head,
-				name: _head.Name,
+				bodyPartType: BodyPartType.Head,
 				damageModifier: 3,
 				hitPenalty: 6,
 				minToHit: 1,
 				maxToHit: 3);
 			_torsoPart = CreaturePart.CreateForTest(
 				creature: _creature,
-				bodyPartType: _torso,
-				name: _torso.Name,
+				bodyPartType: BodyPartType.Torso,
 				damageModifier: 1,
 				hitPenalty: 1,
 				minToHit: 4,
@@ -100,14 +93,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_game,
 				_instance,
 				_bodyTemplate,
-				_torso,
-				_head,
 				_condition,
 				_parameter,
 				_creatureTemplate,
 				_ability,
 				_creature,
-				_creatureType,
 				_damageType,
 				_head1Crit,
 				_head2Crit));

@@ -49,7 +49,7 @@ namespace Sindie.ApiService.WebApi.Services
 			get
 			{
 				if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
-					return SystemRoles.AndminRoleName;
+					return SystemRoles.AdminRoleName;
 
 				var value = _httpContextAccessor.HttpContext.User.Claims
 					.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")
