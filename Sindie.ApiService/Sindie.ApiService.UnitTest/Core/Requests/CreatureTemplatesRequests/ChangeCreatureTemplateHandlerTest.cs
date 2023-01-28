@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatureTemplate;
@@ -8,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 {
@@ -30,9 +30,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly CreatureTemplateSkill _creatureTemplateParameter;
 		private readonly Ability _ability1;
 		private readonly Ability _ability2;
-		private readonly BodyPartType _torsoType;
-		private readonly CreatureType _creatureType1;
-		private readonly CreatureType _creatureType2;
 		private readonly DamageType _damageType;
 
 		/// <summary>
@@ -42,15 +39,12 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		{
 			_game = Game.CreateForTest();
 			_damageType = DamageType.CreateForTest();
-			_torsoType = BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName);
 			_imgFile = ImgFile.CreateForTest();
-			_creatureType1 = CreatureType.CreateForTest(CreatureTypes.BeastId, CreatureTypes.BeastName);
-			_creatureType2 = CreatureType.CreateForTest(CreatureTypes.CursedId, CreatureTypes.CursedName);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
 			_torso = BodyTemplatePart.CreateForTest(
 				bodyTemplate: _bodyTemplate,
-				bodyPartType: _torsoType,
+				bodyPartType: BodyPartType.Torso,
 				name: "torso1",
 				hitPenalty: 2,
 				damageModifier: 2,
@@ -65,12 +59,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
 				bodyTemplate: _bodyTemplate,
-				creatureType: _creatureType1);
+				creatureType: CreatureType.Beast);
 
 			_creatureTemplatePart = CreatureTemplatePart.CreateForTest(
 				creatureTemplate: _creatureTemplate,
-				bodyPartType: _torsoType,
-				name: "torso",
+				bodyPartType: BodyPartType.Torso,
 				damageModifier: 1,
 				hitPenalty: 1,
 				minToHit: 1,
@@ -95,13 +88,10 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				_parameter2,
 				_bodyTemplate,
 				_torso,
-				_torsoType,
 				_ability1,
 				_ability2,
 				_creatureTemplate,
 				_creatureTemplateParameter,
-				_creatureType1,
-				_creatureType2,
 				_condition));
 		}
 
@@ -119,7 +109,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				bodyTemplateId: _bodyTemplate.Id,
 				name: "newCT",
 				description: "description",
-				creatureTypeId: _creatureType2.Id,
+				creatureType: CreatureType.Cursed,
 				hp: 10,
 				sta: 10,
 				@int: 6,
@@ -171,7 +161,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(request.Description, creatureTemplate.Description);
 			Assert.AreEqual(request.ImgFileId, creatureTemplate.ImgFileId);
 			Assert.AreEqual(request.BodyTemplateId, creatureTemplate.BodyTemplateId);
-			Assert.AreEqual(request.CreatureTypeId, creatureTemplate.CreatureTypeId);
+			Assert.AreEqual(request.CreatureType, creatureTemplate.CreatureType);
 			Assert.AreEqual(request.HP, creatureTemplate.HP);
 			Assert.AreEqual(request.Sta, creatureTemplate.Sta);
 			Assert.AreEqual(request.Int, creatureTemplate.Int);

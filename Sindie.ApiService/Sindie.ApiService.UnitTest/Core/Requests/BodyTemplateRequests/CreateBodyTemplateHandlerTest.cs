@@ -1,12 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplate;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 {
@@ -17,7 +17,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 	public class CreateBodyTemplateHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
-		private readonly BodyPartType _bodyPartType;
 		private readonly Game _game;
 
 		/// <summary>
@@ -26,8 +25,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 		public CreateBodyTemplateHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_bodyPartType = BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName);
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _bodyPartType));
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game));
 		}
 
 		/// <summary>
@@ -46,7 +44,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 					new CreateBodyTemplateRequestItem()
 					{
 						Name = "head",
-						BodyPartTypeId = BodyPartTypes.HeadId,
+						BodyPartType = BodyPartType.Head,
 						HitPenalty = 3,
 						DamageModifier = 2,
 						MinToHit = 1,
@@ -71,7 +69,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 			var bodyTemplatePart = bodyTemplate.BodyTemplateParts.FirstOrDefault();
 			Assert.IsNotNull(bodyTemplatePart);
 			Assert.AreEqual(bodyTemplatePart.Name, "head");
-			Assert.AreEqual(bodyTemplatePart.BodyPartTypeId, BodyPartTypes.HeadId);
+			Assert.AreEqual(bodyTemplatePart.BodyPartType, BodyPartType.Head);
 			Assert.AreEqual(bodyTemplatePart.DamageModifier, 2);
 			Assert.AreEqual(bodyTemplatePart.HitPenalty, 3);
 			Assert.AreEqual(bodyTemplatePart.MinToHit, 1);

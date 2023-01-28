@@ -81,7 +81,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 						.Where(x => x.ModifiedOn >= request.ModificationMinTime)
 						.Where(x => (request.ModificationMaxTime == default && x.ModifiedOn <= _dateTimeProvider.TimeProvider)
 						|| x.ModifiedOn <= request.ModificationMaxTime))
-						.Where(x => request.BodyPartTypeId == null || x.BodyTemplateParts.Any(x => x.BodyPartTypeId == request.BodyPartTypeId));
+						.Where(x => request.BodyPartType == null || x.BodyTemplateParts.Any(x => Enum.GetName(x.BodyPartType).Contains(request.BodyPartType)));
 
 			var list = await filter
 				.OrderBy(request.OrderBy, request.IsAscending)

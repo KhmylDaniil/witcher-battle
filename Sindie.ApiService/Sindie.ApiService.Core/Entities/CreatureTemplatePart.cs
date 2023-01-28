@@ -1,4 +1,5 @@
 ﻿using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -119,12 +120,12 @@ namespace Sindie.ApiService.Core.Entities
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
-		=> new CreatureTemplatePart()
+		=> new()
 		{
 			Id = id ?? Guid.NewGuid(),
 			CreatureTemplate = creatureTemplate,
 			BodyPartType = bodyPartType,
-			Name = name ?? "name",
+			Name = name ?? Enum.GetName(bodyPartType),
 			DamageModifier = damageModifier == 0 ? 1 : damageModifier,
 			HitPenalty = hitPenalty == 0 ? 1 : hitPenalty,
 			MinToHit = minToHit == 0 ? 1 : minToHit,

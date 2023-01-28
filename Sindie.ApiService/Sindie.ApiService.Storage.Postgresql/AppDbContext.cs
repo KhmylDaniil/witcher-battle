@@ -29,11 +29,6 @@ namespace Sindie.ApiService.Storage.Postgresql
 		public DbSet<BodyPart> BodyParts { get; set; }
 
 		/// <summary>
-		/// Типы частей тела
-		/// </summary>
-		public DbSet<BodyPartType> BodyPartTypes { get; set; }
-
-		/// <summary>
 		/// Шаблоны тел
 		/// </summary>
 		public DbSet<BodyTemplate> BodyTemplates { get; set; }
@@ -82,11 +77,6 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// Параметры шаблонов существ
 		/// </summary>
 		public DbSet<CreatureTemplateSkill> CreatureTemplateParameters { get; set; }
-
-		/// <summary>
-		/// Типы существ
-		/// </summary>
-		public DbSet<CreatureType> CreatureTypes { get; set; }
 
 		/// <summary>
 		/// Типы урона
@@ -233,7 +223,7 @@ namespace Sindie.ApiService.Storage.Postgresql
 					}
 				}
 			}
-			return await base.SaveChangesAsync();
+			return await base.SaveChangesAsync(cancellationToken);
 		}
 	}
 }

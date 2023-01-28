@@ -59,10 +59,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 				.Include(g => g.CreatureTemplates)
 					.ThenInclude(ct => ct.BodyTemplate)
 				.Include(g => g.CreatureTemplates)
-					.ThenInclude(ct => ct.CreatureType)
-				.Include(g => g.CreatureTemplates)
 					.ThenInclude(ct => ct.CreatureTemplateParts)
-					.ThenInclude(ctp => ctp.BodyPartType)
 				.Include(g => g.CreatureTemplates)
 					.ThenInclude(ct => ct.Abilities)
 						.ThenInclude(a => a.AppliedConditions)
@@ -71,9 +68,9 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 					.Where(x => request.UserName == null || x.Game.UserGames
 						.Any(u => u.User.Name.Contains(request.UserName) && u.UserId == x.CreatedByUserId))
 					.Where(x => request.Name == null || x.Name.Contains(request.Name))
-					.Where(x => request.CreatureTypeId == null || x.CreatureType.Id == request.CreatureTypeId)
+					.Where(x => request.CreatureType == null || Enum.GetName(x.CreatureType).Contains(request.CreatureType))
 					.Where(x => request.BodyTemplateName == null || x.BodyTemplate.Name.Contains(request.BodyTemplateName))
-					.Where(x => request.BodyPartTypeId == null || x.CreatureTemplateParts.Any(x => x.BodyPartType.Id == request.BodyPartTypeId))
+					.Where(x => request.BodyPartType == null || x.CreatureTemplateParts.Any(x => Enum.GetName(x.BodyPartType).Contains(request.BodyPartType)))
 					.Where(x => x.CreatedOn >= request.CreationMinTime)
 					.Where(x => (request.CreationMaxTime == default && x.CreatedOn <= _dateTimeProvider.TimeProvider)
 					|| x.CreatedOn <= request.CreationMaxTime)
@@ -92,7 +89,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 					Name = x.Name,
 					Description = x.Description,
 					Id = x.Id,
-					Type = x.CreatureType.Name,
+					CreatureType = x.CreatureType,
 					BodyTemplateName = x.BodyTemplate.Name,
 					CreatedByUserId = x.CreatedByUserId,
 					ModifiedByUserId = x.ModifiedByUserId,

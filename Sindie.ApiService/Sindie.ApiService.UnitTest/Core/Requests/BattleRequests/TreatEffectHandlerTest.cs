@@ -5,9 +5,9 @@ using Sindie.ApiService.Core.Contracts.BattleRequests.TreatEffect;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Entities.Effects;
 using Sindie.ApiService.Core.Requests.BattleRequests;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 {
@@ -23,7 +23,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly FreezeEffect _freezeEffect;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Creature _creature;
-		private readonly CreatureType _creatureType;
 		private readonly Skill _skill;
 
 		/// <summary>
@@ -32,19 +31,18 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		public TreatEffectHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_creatureType = CreatureType.CreateForTest();
 			_battle = Battle.CreateForTest(game: _game);
 			_skill = Skill.CreateForTest(id: Skills.PhysiqueId, name: Skills.PhysiqueName, statName: Enums.Stats.Body);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
 				bodyTemplate: BodyTemplate.CreateForTest(game: _game),
-				creatureType: _creatureType);
+				creatureType: CreatureType.Human);
 
 			_creature = Creature.CreateForTest(
 				battle: _battle,
 				creatureTemlpate: _creatureTemplate,
-				creatureType: _creatureType,
+				creatureType: CreatureType.Human,
 				hp: 50,
 				@ref: 2,
 				speed: 2,
@@ -62,8 +60,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_skill,
 				_freezeEffect,
 				_creatureTemplate,
-				_creature,
-				_creatureType));
+				_creature));
 		}
 
 		/// <summary>

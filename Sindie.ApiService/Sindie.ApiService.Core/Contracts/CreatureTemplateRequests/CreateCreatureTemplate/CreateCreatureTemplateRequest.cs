@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using System;
 using System.Collections.Generic;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatureTemplate
 {
@@ -25,9 +26,9 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 		public Guid BodyTemplateId { get; set; }
 
 		/// <summary>
-		/// Айди типа существа
+		/// Тип существа
 		/// </summary>
-		public Guid CreatureTypeId { get; set; }
+		public CreatureType CreatureType { get; set; }
 
 		/// <summary>
 		/// Название

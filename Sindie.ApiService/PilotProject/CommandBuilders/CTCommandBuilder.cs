@@ -1,6 +1,5 @@
 ﻿using PilotProject.DbContext;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatureTemplate;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.DeleteCreatureTemplateById;
@@ -11,6 +10,7 @@ using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatureTemplate;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTemplate;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace PilotProject.CommandBuilders
 {
@@ -85,7 +85,7 @@ namespace PilotProject.CommandBuilders
 				GameId = TestDbContext.GameId,
 				ImgFileId = null,
 				BodyTemplateId = TestDbContext.BodyTemplateId,
-				CreatureTypeId = CreatureTypes.HumanId,
+				CreatureType = CreatureType.Human,
 				Name = name,
 				Description = description,
 				HP = hp,
@@ -168,7 +168,7 @@ namespace PilotProject.CommandBuilders
 						gameId: request.GameId,
 						imgFileId: request.ImgFileId,
 						bodyTemplateId: request.BodyTemplateId,
-						creatureTypeId: request.CreatureTypeId,
+						creatureType: request.CreatureType,
 						name: request.Name,
 						description: request.Description,
 						hp: request.HP,
@@ -202,14 +202,14 @@ namespace PilotProject.CommandBuilders
 						: new GetCreatureTemplateCommand(
 							gameId: request.GameId,
 							name: request.Name,
-							creatureTypeId: request.CreatureTypeId,
+							creatureType: request.CreatureType,
 							userName: request.UserName,
 							creationMaxTime: request.CreationMaxTime,
 							creationMinTime: request.CreationMinTime,
 							modificationMaxTime: request.ModificationMaxTime,
 							modificationMinTime: request.ModificationMinTime,
 							bodyTemplateName: request.BodyTemplateName,
-							bodyPartTypeId: request.BodyPartTypeId,
+							bodyPartType: request.BodyPartType,
 							conditionName: request.ConditionName,
 							pageNumber: request.PageNumber,
 							pageSize: request.PageSize,
@@ -295,7 +295,7 @@ namespace PilotProject.CommandBuilders
 				GameId = TestDbContext.GameId,
 				ImgFileId = null,
 				BodyTemplateId = TestDbContext.BodyTemplateId,
-				CreatureTypeId = CreatureTypes.HumanId,
+				CreatureType = CreatureType.Human,
 				Name = name,
 				Description = description,
 				HP = hp,
@@ -325,7 +325,7 @@ namespace PilotProject.CommandBuilders
 						gameId: request.GameId,
 						imgFileId: request.ImgFileId,
 						bodyTemplateId: request.BodyTemplateId,
-						creatureTypeId: request.CreatureTypeId,
+						creatureType: request.CreatureType,
 						name: request.Name,
 						description: request.Description,
 						hp: request.HP,

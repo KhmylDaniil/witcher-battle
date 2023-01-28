@@ -36,8 +36,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.HasData(new SystemRole
 			(
-				name: SystemRoles.AndminRoleName,
-				id: SystemRoles.AndminRoleId,
+				name: SystemRoles.AdminRoleName,
+				id: SystemRoles.AdminRoleId,
 				createdOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				modifiedOn: new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
 				createdByUserId: SystemUsers.SystemUserId,

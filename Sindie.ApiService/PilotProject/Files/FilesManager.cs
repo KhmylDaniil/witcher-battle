@@ -22,7 +22,7 @@ namespace PilotProject.Files
 				gameId: input.GameId,
 				imgFileId: null,
 				bodyTemplateId: input.BodyTemplateId,
-				creatureTypeId: input.CreatureTypeId,
+				creatureType: input.CreatureType,
 				name: input.Name,
 				description: input.Description,
 				hp: input.HP,

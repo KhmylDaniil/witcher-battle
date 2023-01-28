@@ -1,5 +1,6 @@
 ﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -12,12 +13,6 @@ namespace Sindie.ApiService.Core.Entities
 		private int _minToHit;
 		private double _damageModifier;
 		private int _hitPenalty;
-		private BodyPartType _bodyPartType;
-
-		/// <summary>
-		/// Поле для <see cref="_bodyPartType"/>
-		/// </summary>
-		public const string BodyPartTypeField = nameof(_bodyPartType);
 
 		/// <summary>
 		/// Пустой конструктор
@@ -53,9 +48,9 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Айди типа части тела
+		/// Тип части тела
 		/// </summary>
-		public Guid BodyPartTypeId { get; protected set; }
+		public BodyPartType BodyPartType { get; set; }
 
 		/// <summary>
 		/// Название
@@ -117,21 +112,5 @@ namespace Sindie.ApiService.Core.Entities
 				_maxToHit = value;
 			}
 		}
-
-		#region navigation properties
-
-		/// <summary>
-		/// Тип части тела
-		/// </summary>
-		public BodyPartType BodyPartType
-		{
-			get => _bodyPartType;
-			set
-			{
-				_bodyPartType = value ?? throw new ApplicationException("Необходимо передать тип части тела");
-				BodyPartTypeId = value.Id;
-			}
-		}
-		#endregion navigation properties
 	}
 }

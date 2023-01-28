@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Logic
 {
@@ -227,8 +228,8 @@ namespace Sindie.ApiService.Core.Logic
 
 			static string CritName(CreaturePart creaturePart, string critSeverity)
 			{
-				string critName = critSeverity + creaturePart.BodyPartType.Name;
-				if (creaturePart.BodyPartType.Name == BodyPartTypes.HeadName || creaturePart.BodyPartType.Name == BodyPartTypes.TorsoName)
+				string critName = critSeverity + Enum.GetName(creaturePart.BodyPartType);
+				if (creaturePart.BodyPartType == BodyPartType.Head || creaturePart.BodyPartType == BodyPartType.Torso)
 				{
 					Random random = new ();
 					var suffix = random.Next(1, 6) < 5 ? 1 : 2;
@@ -240,8 +241,8 @@ namespace Sindie.ApiService.Core.Logic
 
 			static bool isCritImmune(CreatureType creatureType, CreaturePart aimedPart)
 			{
-				return (creatureType?.Id == CreatureTypes.SpecterId || creatureType?.Id == CreatureTypes.ElementaId)
-					&& aimedPart.BodyPartTypeId == BodyPartTypes.TorsoId;
+				return (creatureType == CreatureType.Specter || creatureType == CreatureType.Elementa)
+					&& aimedPart.BodyPartType == BodyPartType.Torso;
 			}
 
 			static void AddBonusDamage(ref int bonusDamage, string critName)

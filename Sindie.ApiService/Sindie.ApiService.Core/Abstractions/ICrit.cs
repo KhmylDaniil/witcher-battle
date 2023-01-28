@@ -22,7 +22,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <summary>
 		/// Тип части тела
 		/// </summary>
-		public BaseData.Enums.BodyPartType BodyPartLocation { get; }
+		public BodyPartType BodyPartLocation { get; }
 
 		/// <summary>
 		/// Применить изменения характеристик

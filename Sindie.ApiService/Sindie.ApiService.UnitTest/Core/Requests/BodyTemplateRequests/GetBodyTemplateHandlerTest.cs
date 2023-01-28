@@ -4,9 +4,11 @@ using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 {
@@ -47,8 +49,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 
 			_head = BodyTemplatePart.CreateForTest(
 				bodyTemplate: _bodyTemplate,
-				bodyPartType: BodyPartType.CreateForTest(BodyPartTypes.HeadId, BodyPartTypes.HeadName),
-				name: "head",
+				bodyPartType: BodyPartType.Head,
 				hitPenalty: 3,
 				damageModifier: 3,
 				minToHit: 1,
@@ -56,8 +57,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 
 			_torso = BodyTemplatePart.CreateForTest(
 				bodyTemplate: _bodyTemplate,
-				bodyPartType: BodyPartType.CreateForTest(BodyPartTypes.TorsoId, BodyPartTypes.TorsoName),
-				name: "torso",
+				bodyPartType: BodyPartType.Torso,
 				hitPenalty: 1,
 				damageModifier: 1,
 				minToHit: 4,
@@ -90,7 +90,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 				creationMaxTime: creationMaxTime,
 				modificationMinTime: modificationMinTime,
 				modificationMaxTime: modificationMaxTime,
-				bodyPartTypeId: BodyPartTypes.HeadId,
+				bodyPartType: Enum.GetName(BodyPartType.Head),
 				pageSize: 2,
 				pageNumber: 1,
 				orderBy: null,
@@ -117,7 +117,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 			Assert.IsNotNull(user);
 			Assert.IsTrue(user.Name.Contains(request.UserName));
 
-			var bodyPart = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.BodyPartTypeId == BodyPartTypes.HeadId);
+			var bodyPart = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.BodyPartType == BodyPartType.Head);
 			Assert.IsNotNull(bodyPart);
 		}
 	}
