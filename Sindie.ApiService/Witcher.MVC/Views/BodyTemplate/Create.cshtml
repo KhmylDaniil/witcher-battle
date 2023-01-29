@@ -1,86 +1,61 @@
-﻿@model Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate.CreateBodyTemplateRequest
+﻿@model Witcher.MVC.ViewModels.BodyTemplate.CreateBodyTemplatePartForm
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Create2</h1>
 
-<h4>CreateBodyTemplateRequest</h4>
+<h4>CreateBodyTemplateForm</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsUsed" /> @Html.DisplayNameFor(model => model.IsUsed)
+                </label>
+            </div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.BodyTemplateParts.First().Name)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.BodyTemplateParts.First().BodyPartType)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.BodyTemplateParts.First().DamageModifier)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.BodyTemplateParts.First().HitPenalty)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.BodyTemplateParts.First().MinToHit)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.BodyTemplateParts.First().MaxToHit)
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @*<tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.BodyPartType)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.DamageModifier)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.HitPenalty)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.MinToHit)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.MaxToHit)
-                        </td>
-                    </tr>*@
-                </tbody>
-            </table>
 
 
             <div class="form-group">
-                <label asp-for="BodyTemplateParts" class="control-label"></label>
-                <input asp-for="BodyTemplateParts" class="form-control" />
-                <span asp-validation-for="BodyTemplateParts" class="text-danger"></span>
+                <label asp-for="BodyPartType" class="control-label"></label>
+                <select asp-for="BodyPartType"
+                        class="form-control"
+                        asp-items="Html.GetEnumSelectList<Sindie.ApiService.Core.BaseData.Enums.BodyPartType>()">
+                    <option>Select BodyPartType ...</option>
+                </select>
+                <span asp-validation-for="BodyPartType" class="text-danger"></span>
             </div>
-
-
+            <div class="form-group">
+                <label asp-for="DamageModifier" class="control-label"></label>
+                <input asp-for="DamageModifier" class="form-control" />
+                <span asp-validation-for="DamageModifier" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HitPenalty" class="control-label"></label>
+                <input asp-for="HitPenalty" class="form-control" />
+                <span asp-validation-for="HitPenalty" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MinToHit" class="control-label"></label>
+                <input asp-for="MinToHit" class="form-control" />
+                <span asp-validation-for="MinToHit" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaxToHit" class="control-label"></label>
+                <input asp-for="MaxToHit" class="form-control" />
+                <span asp-validation-for="MaxToHit" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
-
         </form>
     </div>
 </div>

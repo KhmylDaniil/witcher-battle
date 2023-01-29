@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTempla
 	/// <summary>
 	/// Элемент запроса создания шаблона тела
 	/// </summary>
-	public sealed class CreateBodyTemplateRequestItem
+	public class CreateBodyTemplateRequestItem
 	{
 		/// <summary>
 		/// Название части тела
