@@ -3,6 +3,7 @@ using Sindie.ApiService.Core.Requests.AbilityRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -17,17 +18,11 @@ namespace Sindie.ApiService.Core.Entities
 		public const string GameField = nameof(_game);
 
 		/// <summary>
-		/// Поле для <see cref="_attackSkill"/>
-		/// </summary>
-		public const string SkillField = nameof(_attackSkill);
-
-		/// <summary>
 		/// Поле для <see cref="_damageType"/>
 		/// </summary>
 		public const string DamageTypeField = nameof(_damageType);
 
 		private Game _game;
-		private Skill _attackSkill;
 		private int _attackDiceQuantity;
 		private int _attackSpeed;
 		private DamageType _damageType;
@@ -94,9 +89,9 @@ namespace Sindie.ApiService.Core.Entities
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Айди навыка атаки
+		/// Навык атаки
 		/// </summary>
-		public Guid AttackSkillId { get; protected set; }
+		public Skill AttackSkill { get; set; }
 
 		/// <summary>
 		/// Айди типа урона
@@ -141,6 +136,11 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Accuracy { get; set; }
 
+		/// <summary>
+		/// Навыки для защиты
+		/// </summary>
+		public List<Skill> DefensiveSkills { get; set; }
+
 		#region navigation properties
 
 		/// <summary>
@@ -155,24 +155,6 @@ namespace Sindie.ApiService.Core.Entities
 				GameId = value.Id;
 			}
 		}
-
-		/// <summary>
-		/// Навык атаки
-		/// </summary>
-		public Skill AttackSkill
-		{
-			get => _attackSkill;
-			protected set
-			{
-				_attackSkill = value ?? throw new ApplicationException("Необходимо передать навык");
-				AttackSkillId = value.Id;
-			}
-		}
-
-		/// <summary>
-		/// Навыки для защиты
-		/// </summary>
-		public List<Skill> DefensiveSkills { get; protected set; }
 
 		/// <summary>
 		/// Тип урона
@@ -216,7 +198,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="accuracy">Точность атаки</param>
 		/// <param name="attackSkill">Навык атаки</param>
 		/// <param name="defensiveSkills">Навыки для защиты</param>
-		/// <param name="damageTypes">Типы урона</param>
+		/// <param name="damageType">Типы урона</param>
 		/// <param name="appliedConditions">Накладываемые состояния</param>
 		/// <returns>Способность</returns>
 		public static Ability CreateAbility(
@@ -260,7 +242,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="attackSpeed">Скорость атаки</param>
 		/// <param name="accuracy">Точность атаки</param>
 		/// <param name="appliedConditions">Накладываемые состояния</param>
-		/// <param name="damageTypes">Типы урона</param>
+		/// <param name="damageType">Типы урона</param>
 		/// <param name="defensiveSkills">Защитные навыки</param>
 		public void ChangeAbility(
 			string name,

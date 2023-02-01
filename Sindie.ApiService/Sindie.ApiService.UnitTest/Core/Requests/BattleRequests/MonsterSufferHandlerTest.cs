@@ -23,8 +23,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly CreaturePart _headPart;
 		private readonly CreaturePart _torsoPart;
 		private readonly Condition _condition;
-		private readonly Skill _skill;
-		private readonly Skill _skillBleedingWound;
+
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
 		private readonly Creature _creature;
@@ -40,8 +39,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_condition = Condition.CreateForTest(id: Conditions.BleedingWoundId, name: Conditions.BleedingWoundName);
 			_damageType = DamageType.CreateForTest();
 
-			_skill = Skill.CreateForTest(id: Skills.MeleeId, statName: Enums.Stats.Ref);
-			_skillBleedingWound = Skill.CreateForTest(id: Skills.BleedingWoundId, statName: Enums.Stats.Int, name: Skills.BleedingWoundName);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
@@ -56,9 +53,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				damageModifier: 1,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkill: _skill,
+				attackSkill: Skill.Melee,
 				damageType: _damageType,
-				defensiveSkills: new List<Skill> { _skill });
+				defensiveSkills: new List<Skill> { Skill.Melee });
 			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 100));
 
 			_creature = Creature.CreateForTest(
@@ -72,12 +69,12 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
 				creature: _creature,
-				skill: _skill,
+				skill: Skill.Melee,
 				value: 10));
 
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
 				creature: _creature,
-				skill: _skillBleedingWound,
+				skill: Skill.BleedingWound,
 				value: 10));
 
 			_headPart = CreaturePart.CreateForTest(
@@ -103,8 +100,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_instance,
 				_bodyTemplate,
 				_condition,
-				_skill,
-				_skillBleedingWound,
 				_creatureTemplate,
 				_ability,
 				_creature,

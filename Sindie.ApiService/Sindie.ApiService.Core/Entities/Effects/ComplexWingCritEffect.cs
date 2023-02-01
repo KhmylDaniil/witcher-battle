@@ -16,7 +16,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	{
 		private const int Modifier = -3;
 		private const int AfterTreatModifier = -2;
-		private static readonly List<Guid> _affectedSkills = new() { Skills.DodgeId, Skills.AthleticsId };
+		private static readonly List<Guid> _affectedSkills = new() { Skill.DodgeId, Skill.AthleticsId };
 
 		private ComplexWingCritEffect() { }
 

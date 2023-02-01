@@ -3,6 +3,7 @@ using Sindie.ApiService.Core.BaseData;
 using System;
 using System.Linq;
 using System.Text;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities.Effects
 {
@@ -59,7 +60,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
 		{
-			if (rollService.BeatDifficulty(creature.SkillBase(Skills.PhysiqueId), 16))
+			if (rollService.BeatDifficulty(creature.SkillBase(Skill.Physique), 16))
 			{
 				RevertStatChanges(creature);
 				message.AppendFormat($"Эффект {Conditions.FreezeName} снят. Скорость равна {creature.Speed}, рефлексы равны {creature.Ref}.");

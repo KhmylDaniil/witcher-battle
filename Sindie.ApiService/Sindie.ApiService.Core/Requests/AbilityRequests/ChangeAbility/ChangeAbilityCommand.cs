@@ -2,6 +2,7 @@
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
 using System.Collections.Generic;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 {
@@ -17,7 +18,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 		/// <param name="gameId">Айди игры</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
-		/// <param name="attackSkillId">Айди навыка атаки</param>
+		/// <param name="attackSkill">Навык атаки</param>
 		/// <param name="attackDiceQuantity">Количество кубов атаки</param>
 		/// <param name="damageModifier">Модификатор атаки</param>
 		/// <param name="attackSpeed">Скорость атаки</param>
@@ -30,12 +31,12 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 			Guid gameId,
 			string name,
 			string description,
-			Guid attackSkillId,
+			Skill attackSkill,
 			int attackDiceQuantity,
 			int damageModifier,
 			int attackSpeed,
 			int accuracy,
-			List<Guid> defensiveSkills,
+			List<Skill> defensiveSkills,
 			Guid damageTypeId,
 			List<ChangeAbilityRequestAppliedCondition> appliedConditions
 			)
@@ -46,7 +47,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 				? throw new ExceptionRequestFieldNull<ChangeAbilityRequest>(nameof(Name))
 				: name;
 			Description = description;
-			AttackSkillId = attackSkillId;
+			AttackSkill = attackSkill;
 			AttackDiceQuantity = attackDiceQuantity < 0 ? throw new ExceptionRequestFieldIncorrectData<ChangeAbilityRequest>(nameof(AttackDiceQuantity)) : attackDiceQuantity;
 			DamageModifier = damageModifier;
 			AttackSpeed = attackSpeed < 1 ? throw new ExceptionRequestFieldIncorrectData<ChangeAbilityRequest>(nameof(AttackSpeed)) : attackSpeed;

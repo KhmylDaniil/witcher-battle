@@ -75,7 +75,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 						.Where(x => x.ModifiedOn >= request.ModificationMinTime)
 						.Where(x => (request.ModificationMaxTime == default && x.ModifiedOn <= _dateTimeProvider.TimeProvider)
 						|| x.ModifiedOn <= request.ModificationMaxTime))
-						.Where(x => request.AttackSkillId == null || x.AttackSkillId == request.AttackSkillId)
+						.Where(x => request.AttackSkillName == null || Enum.GetName(x.AttackSkill).Contains(request.AttackSkillName))
 						.Where(x => request.DamageTypeId == null || x.DamageTypeId == request.DamageTypeId)
 						.Where(x => request.ConditionId == null || x.AppliedConditions.Select(ac => ac.ConditionId).Contains(request.ConditionId.Value));
 
@@ -88,8 +88,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 					Id = x.Id,
 					Name = x.Name,
 					Description = x.Description,
-					AttackSkillId = x.AttackSkillId,
-					AttackSkillName = x.AttackSkill.Name,
+					AttackSkill = x.AttackSkill,
 					AttackDiceQuantity = x.AttackDiceQuantity,
 					DamageModifier = x.DamageModifier,
 					CreatedByUserId = x.CreatedByUserId,

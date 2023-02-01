@@ -18,13 +18,13 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		private const int AfterTreatSkillModifier = -1;
 		private static readonly List<Guid> affectedSkills = new()
 		{
-			Skills.CharismaId,
-			Skills.PersuasionId,
-			Skills.SeductionId,
-			Skills.LeadershipId,
-			Skills.DeceitId,
-			Skills.SocialEtiquetteId,
-			Skills.IntimidationId
+			Skill.CharismaId,
+			Skill.PersuasionId,
+			Skill.SeductionId,
+			Skill.LeadershipId,
+			Skill.DeceitId,
+			Skill.SocialEtiquetteId,
+			Skill.IntimidationId
 		};
 
 		private SimpleHead1CritEffect() { }

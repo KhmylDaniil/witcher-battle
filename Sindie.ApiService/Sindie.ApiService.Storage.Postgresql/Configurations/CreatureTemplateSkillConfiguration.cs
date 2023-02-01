@@ -24,9 +24,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Айди шаблона существа")
 				.IsRequired();
 
-			builder.Property(r => r.SkillId)
-				.HasColumnName("SkillId")
-				.HasComment("Айди навыка")
+			builder.Property(r => r.Skill)
+				.HasColumnName("Skill")
+				.HasComment("Навык")
+				.HasConversion(
+					v => v.ToString(),
+					v => (Skill)Enum.Parse(typeof(Skill), v))
 				.IsRequired();
 
 			builder.Property(r => r.SkillValue)
@@ -34,32 +37,15 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Значение навыка")
 				.IsRequired();
 
-			builder.Property(r => r.StatName)
-				.HasColumnName("StatName")
-				.HasComment("Название корреспондирующей характеристики")
-				.HasConversion(
-					v => v.ToString(),
-					v => (Stats)Enum.Parse(typeof(Stats), v));
-
 			builder.HasOne(x => x.CreatureTemplate)
 				.WithMany(x => x.CreatureTemplateSkills)
 				.HasForeignKey(x => x.CreatureTemplateId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasOne(x => x.Skill)
-				.WithMany(x => x.CreatureTemplateSkills)
-				.HasForeignKey(x => x.SkillId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
 			var creatureTemplateNavigation = builder.Metadata.FindNavigation(nameof(CreatureTemplateSkill.CreatureTemplate));
 			creatureTemplateNavigation.SetField(CreatureTemplateSkill.CreatureTemplateField);
 			creatureTemplateNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
-
-			var skillNavigation = builder.Metadata.FindNavigation(nameof(CreatureTemplateSkill.Skill));
-			skillNavigation.SetField(CreatureTemplateSkill.SkillField);
-			skillNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

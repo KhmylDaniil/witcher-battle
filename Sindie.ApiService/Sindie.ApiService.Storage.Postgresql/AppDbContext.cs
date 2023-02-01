@@ -109,11 +109,6 @@ namespace Sindie.ApiService.Storage.Postgresql
 		public DbSet<Interface> Interfaces { get; set; }
 
 		/// <summary>
-		/// Навыки
-		/// </summary>
-		public DbSet<Skill> Skills { get; set; }
-
-		/// <summary>
 		/// Роли в системе
 		/// </summary>
 		public DbSet<SystemRole> SystemRoles { get; set; }

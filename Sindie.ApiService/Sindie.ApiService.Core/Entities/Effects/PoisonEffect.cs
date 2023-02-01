@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities.Effects
 {
@@ -61,7 +62,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
 		{
-			if (rollService.BeatDifficulty(creature.SkillBase(Skills.PhysiqueId), 15))
+			if (rollService.BeatDifficulty(creature.SkillBase(Skill.Physique), 15))
 			{
 				message.AppendFormat($"Эффект {Conditions.PoisonName} снят.");
 				creature.Effects.Remove(this);

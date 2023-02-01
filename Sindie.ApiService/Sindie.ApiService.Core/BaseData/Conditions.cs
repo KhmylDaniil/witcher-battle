@@ -135,6 +135,6 @@ namespace Sindie.ApiService.Core.BaseData
 		/// <summary>
 		/// Названия состояния при смерти
 		/// </summary>
-		public static readonly string DyingName = "Blinded";
+		public static readonly string DyingName = "Dying";
 	}
 }

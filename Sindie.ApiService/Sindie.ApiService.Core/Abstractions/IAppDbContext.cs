@@ -106,11 +106,6 @@ namespace Sindie.ApiService.Core.Abstractions
 		DbSet<Interface> Interfaces { get; }
 
 		/// <summary>
-		/// Навыки
-		/// </summary>
-		DbSet<Skill> Skills { get; }
-
-		/// <summary>
 		/// Роли в системе
 		/// </summary>
 		DbSet<SystemRole> SystemRoles { get; }

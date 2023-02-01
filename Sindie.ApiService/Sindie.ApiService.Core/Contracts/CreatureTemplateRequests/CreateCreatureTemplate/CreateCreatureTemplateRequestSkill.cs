@@ -1,4 +1,4 @@
-﻿using System;
+﻿using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatureTemplate
 {
@@ -8,9 +8,9 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatu
 	public sealed class CreateCreatureTemplateRequestSkill
 	{
 		/// <summary>
-		/// Айди навыка
+		/// Навык
 		/// </summary>
-		public Guid SkillId { get; set; }
+		public Skill Skill { get; set; }
 
 		/// <summary>
 		/// Значение навыка

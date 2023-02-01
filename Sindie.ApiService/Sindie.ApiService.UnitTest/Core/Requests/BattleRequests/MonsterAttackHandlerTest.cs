@@ -22,7 +22,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly CreaturePart _headPart;
 		private readonly CreaturePart _torsoPart;
 		private readonly Condition _condition;
-		private readonly Skill _parameter;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
 		private readonly Creature _creature;
@@ -43,7 +42,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_head1Crit = Condition.CreateForTest(id: Crit.SimpleHead1Id, name: Crit.SimpleHead1);
 			_head2Crit = Condition.CreateForTest(id: Crit.SimpleHead2Id, name: Crit.SimpleHead2);
 
-			_parameter = Skill.CreateForTest(id: Skills.MeleeId, statName: Enums.Stats.Ref);
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
@@ -58,9 +56,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				damageModifier: 1,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkill: _parameter,
+				attackSkill: Skill.Melee,
 				damageType: _damageType,
-				defensiveSkills: new List<Skill> { _parameter });
+				defensiveSkills: new List<Skill> { Skill.Melee });
 			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 100));
 
 			_creature = Creature.CreateForTest(
@@ -70,7 +68,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_creature.Abilities.Add(_ability);
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
 				creature: _creature,
-				skill: _parameter,
+				skill: Skill.Melee,
 				value: 10));
 
 			_headPart = CreaturePart.CreateForTest(
@@ -94,7 +92,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_instance,
 				_bodyTemplate,
 				_condition,
-				_parameter,
 				_creatureTemplate,
 				_ability,
 				_creature,

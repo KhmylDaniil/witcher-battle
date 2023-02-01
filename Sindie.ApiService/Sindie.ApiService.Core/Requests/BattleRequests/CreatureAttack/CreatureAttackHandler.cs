@@ -120,13 +120,13 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 				: attacker.Abilities.FirstOrDefault(x => x.Id == request.AbilityId)
 					?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId.Value);
 
-			if (ability == null && request.DefensiveSkillId != null)
-				throw new ExceptionRequestFieldIncorrectData<CreatureAttackCommand>(nameof(request.DefensiveSkillId), null);
+			if (ability == null && request.DefensiveSkill != null)
+				throw new ExceptionRequestFieldIncorrectData<CreatureAttackCommand>(nameof(request.DefensiveSkill), null);
 
-			var defensiveSkill = request.DefensiveSkillId == null
+			var defensiveSkill = request.DefensiveSkill == null
 				? null
-				: target.CreatureSkills.FirstOrDefault(x => x.SkillId == ability.DefensiveSkills.First(a => a.Id == request.DefensiveSkillId).Id)
-					?? throw new ExceptionRequestFieldIncorrectData<CreatureAttackCommand>(nameof(request.DefensiveSkillId));
+				: target.CreatureSkills.FirstOrDefault(x => x.Skill == request.DefensiveSkill)
+					?? throw new ExceptionRequestFieldIncorrectData<CreatureAttackCommand>(nameof(request.DefensiveSkill));
 
 			return AttackData.CreateData(
 				attacker: attacker,

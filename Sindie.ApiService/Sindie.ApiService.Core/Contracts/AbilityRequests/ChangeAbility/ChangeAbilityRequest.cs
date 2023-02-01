@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using System;
 using System.Collections.Generic;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 {
@@ -30,9 +31,9 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Айди навыка атаки
+		/// Навык атаки
 		/// </summary>
-		public Guid AttackSkillId { get; set; }
+		public Skill AttackSkill { get; set; }
 
 		/// <summary>
 		/// Количество кубов атаки
@@ -62,7 +63,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		/// <summary>
 		/// Навыки для защиты
 		/// </summary>
-		public List<Guid> DefensiveSkills { get; set; }
+		public List<Skill> DefensiveSkills { get; set; }
 
 		/// <summary>
 		/// Накладываемые состояния

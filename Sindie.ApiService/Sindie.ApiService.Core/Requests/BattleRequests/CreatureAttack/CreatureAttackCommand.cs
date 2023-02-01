@@ -1,5 +1,6 @@
 ﻿using Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack;
 using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 {
@@ -16,16 +17,16 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 		/// <param name="abilityId">Айди способности</param>
 		/// <param name="targetCreatureId">Айди существа цели</param>
 		/// <param name="creaturePartId">Айди части тела при прицеливании</param>
-		/// <param name="defensiveSkillId">Способ защиты</param>
+		/// <param name="defensiveSkill">Способ защиты</param>
 		/// <param name="specialToHit">Специальный бонус к попаданию</param>
 		/// <param name="specialToDamage">Специальный бонус к урону</param>
 		public CreatureAttackCommand(
 			Guid battleId,
 			Guid attackerId,
 			Guid targetCreatureId,
+			Skill? defensiveSkill = default,
 			Guid? abilityId = default,
 			Guid? creaturePartId = default,
-			Guid? defensiveSkillId = default,
 			int? specialToHit = default,
 			int? specialToDamage = default)
 		{
@@ -34,7 +35,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 			AbilityId = abilityId;
 			TargetCreatureId = targetCreatureId;
 			CreaturePartId = creaturePartId;
-			DefensiveSkillId = defensiveSkillId;
+			DefensiveSkill = defensiveSkill;
 			SpecialToHit = specialToHit ?? default;
 			SpecialToDamage = specialToDamage ?? default;
 		}

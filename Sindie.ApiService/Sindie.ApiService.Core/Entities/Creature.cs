@@ -453,10 +453,10 @@ namespace Sindie.ApiService.Core.Entities
 			if (!ability.DefensiveSkills.Any())
 				throw new ApplicationException($"От способности {ability.Name} c айди {ability.Id} нет защиты.");
 
-			var creatureDefensiveSkills = CreatureSkills.Where(x => ability.DefensiveSkills.Any(a => a.Id == x.SkillId)).ToList();
+			var creatureDefensiveSkills = CreatureSkills.Where(x => ability.DefensiveSkills.Any(a => a == x.Skill)).ToList();
 
 			var sortedList = from x in creatureDefensiveSkills
-							 orderby SkillBase(x.SkillId)
+							 orderby SkillBase(x.Skill)
 							 select x;
 
 			return sortedList.Last();
@@ -467,20 +467,20 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		/// <param name="skillId">Айди навыка</param>
 		/// <returns></returns>
-		public int SkillBase(Guid skillId)
+		public int SkillBase(Skill skill)
 		{
-			var statName = Enums.SkillStats.First(x => x.Key == skillId).Value;
+			var statName = CorrespondingStat(skill);
 
-			var value = typeof(Creature).GetProperty(statName.ToString()).GetValue(this);
+			var value = typeof(Creature).GetProperty(Enum.GetName(statName)).GetValue(this);
 
-			var statBase = Enum.IsDefined(typeof(Enums.Stats), statName)
+			var statBase = Enum.IsDefined(statName)
 				? (int)value
 				: 0;
 
-			var skill = CreatureSkills.FirstOrDefault(x => x.SkillId == skillId);
+			var creatureSkill = CreatureSkills.FirstOrDefault(x => x.Skill == skill);
 
-			if (skill is not null)
-				statBase += skill.SkillValue;
+			if (creatureSkill is not null)
+				statBase += creatureSkill.SkillValue;
 
 			return statBase;
 		}
@@ -490,11 +490,11 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		/// <param name="skillId">Айди навыка</param>
 		/// <returns></returns>
-		public int GetSkillMax(Guid skillId)
+		public int GetSkillMax(Skill skill)
 		{
-			var skill = CreatureSkills.FirstOrDefault(x => x.SkillId == skillId);
+			var creatureSkill = CreatureSkills.FirstOrDefault(x => x.Skill == skill);
 
-			return skill is null ? 0 : skill.MaxValue;
+			return creatureSkill is null ? 0 : creatureSkill.MaxValue;
 		}
 
 		private Guid DefineLeadingArm()

@@ -107,8 +107,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 					.Select(x => new GetCreatureTemplateByIdResponseSkill()
 					{
 						Id = x.Id,
-						SkillId = x.SkillId,
-						SkillName = x.Skill.Name,
+						Skill = x.Skill,
 						SkillValue = x.SkillValue
 					}).ToList(),
 				Abilities = creatureTemplate.Abilities
@@ -117,8 +116,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 					Id = x.Id,
 					Name = x.Name,
 					Description = x.Description,
-					AttackParameterId = x.AttackSkillId,
-					AttackParameterName = x.AttackSkill.Name,
+					AttackSkill = x.AttackSkill,
 					AttackDiceQuantity = x.AttackDiceQuantity,
 					DamageModifier = x.DamageModifier,
 					Accuracy = x.Accuracy,

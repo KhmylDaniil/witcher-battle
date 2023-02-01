@@ -45,12 +45,6 @@ namespace PilotProject.DbContext
 
 		private readonly BodyTemplate _bodyTemplate;
 
-		private readonly Skill _meleeSkill;
-		private readonly Skill _dodgeSkill;
-		private readonly Skill _athleticsSkill;
-		private readonly Skill _swordmanship;
-		private readonly Skill _archery;
-
 		private readonly Ability _swordAttack;
 		private readonly Ability _archeryAttack;
 		private readonly Ability _clawsAttack;
@@ -92,12 +86,6 @@ namespace PilotProject.DbContext
 			_deadlyTorso1Crit = Condition.CreateForTest(id: Crit.DeadlyTorso1Id, name: Crit.DeadlyTorso1);
 			_deadlyTorso2Crit = Condition.CreateForTest(id: Crit.DeadlyTorso2Id, name: Crit.DeadlyTorso2);
 
-			_meleeSkill = Skill.CreateForTest(id: Skills.MeleeId, name: Skills.MeleeName, statName: Enums.Stats.Ref);
-			_dodgeSkill = Skill.CreateForTest(id: Skills.DodgeId, name: Skills.DodgeName, statName: Enums.Stats.Ref);
-			_athleticsSkill = Skill.CreateForTest(id: Skills.AthleticsId, name: Skills.AthleticsName, statName: Enums.Stats.Dex);
-			_swordmanship = Skill.CreateForTest(id: Skills.SwordId, name: Skills.SwordName, statName: Enums.Stats.Ref);
-			_archery = Skill.CreateForTest(id: Skills.ArcheryId, name: Skills.ArcheryName, statName: Enums.Stats.Dex);
-
 		_swordAttack = Ability.CreateForTest(
 				id: AbilitySwordId,
 				game: _game,
@@ -106,9 +94,9 @@ namespace PilotProject.DbContext
 				damageModifier: 2,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkill: _swordmanship,
+				attackSkill: Skill.Sword,
 				damageType: _damageType,
-				defensiveSkills: new List<Skill> { _meleeSkill, _dodgeSkill, _athleticsSkill });
+				defensiveSkills: new List<Skill> { Skill.Melee, Skill.Dodge, Skill.Athletics });
 			_swordAttack.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_swordAttack, _bleed, 50));
 
 			_clawsAttack = Ability.CreateForTest(
@@ -119,9 +107,9 @@ namespace PilotProject.DbContext
 				damageModifier: 0,
 				attackSpeed: 1,
 				accuracy: 0,
-				attackSkill: _meleeSkill,
+				attackSkill: Skill.Melee,
 				damageType: _damageType,
-				defensiveSkills: new List<Skill> { _meleeSkill, _dodgeSkill, _athleticsSkill });
+				defensiveSkills: new List<Skill> { Skill.Melee, Skill.Dodge, Skill.Athletics });
 			_clawsAttack.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_clawsAttack, _poison, 50));
 
 			_archeryAttack = Ability.CreateForTest(
@@ -132,9 +120,9 @@ namespace PilotProject.DbContext
 				damageModifier: 0,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkill: _archery,
+				attackSkill: Skill.Archery,
 				damageType: _damageType,
-				defensiveSkills: new List<Skill> { _dodgeSkill, _athleticsSkill });
+				defensiveSkills: new List<Skill> { Skill.Dodge, Skill.Athletics });
 
 			_bodyTemplate = BodyTemplate.CreateForTest(id: BodyTemplateId, name: "TestBodyTemplate", game: _game);
 			_bodyTemplate.BodyTemplateParts.AddRange(new List<BodyTemplatePart>
@@ -230,12 +218,6 @@ namespace PilotProject.DbContext
 				_deadlyTorso2Crit,
 
 				_bodyTemplate,
-
-				_meleeSkill,
-				_dodgeSkill,
-				_athleticsSkill,
-				_swordmanship,
-				_archery,
 
 				_swordAttack,
 				_archeryAttack,

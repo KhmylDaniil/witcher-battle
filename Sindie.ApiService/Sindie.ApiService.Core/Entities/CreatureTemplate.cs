@@ -413,7 +413,7 @@ namespace Sindie.ApiService.Core.Entities
 				throw new ExceptionEntityNotIncluded<Skill>(nameof(CreatureTemplateSkills));
 
 			var entitiesToDelete = CreatureTemplateSkills
-					.Where(x => !data.Any(y => y.Skill.Id == x.SkillId)).ToList();
+					.Where(x => !data.Any(y => y.Skill == x.Skill)).ToList();
 
 			if (entitiesToDelete.Any())
 				foreach (var entity in entitiesToDelete)

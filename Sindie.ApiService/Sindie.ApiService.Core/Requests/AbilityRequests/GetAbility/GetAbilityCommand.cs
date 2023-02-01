@@ -1,10 +1,7 @@
 ﻿using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 {
@@ -18,7 +15,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 		/// </summary>
 		/// <param name="gameId">Айди игры</param>
 		/// <param name="name">Название</param>
-		/// <param name="attackSkillId">Айди навыка атаки</param>
+		/// <param name="attackSkillName">Навык атаки</param>
 		/// <param name="damageTypeId">Айди типа атаки</param>
 		/// <param name="conditionId">Айди состояния</param>
 		/// <param name="minAttackDiceQuantity">Минимальное количество кубов атаки</param>
@@ -35,7 +32,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 		public GetAbilityCommand(
 			Guid gameId,
 			string name,
-			Guid? attackSkillId,
+			string attackSkillName,
 			Guid? damageTypeId,
 			Guid? conditionId,
 			int minAttackDiceQuantity,
@@ -52,7 +49,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 		{
 			GameId = gameId;
 			Name = name;
-			AttackSkillId = attackSkillId;
+			AttackSkillName = attackSkillName;
 			DamageTypeId = damageTypeId;
 			ConditionId = conditionId;
 			MinAttackDiceQuantity = minAttackDiceQuantity < 0 

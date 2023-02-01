@@ -31,8 +31,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasColumnName("Description")
 				.HasComment("Описание способности");
 
-			builder.Property(r => r.AttackSkillId)
-				.HasColumnName("AttackSkillId")
+			builder.Property(r => r.AttackSkill)
+				.HasColumnName("AttackSkill")
 				.HasComment("Навык атаки")
 				.IsRequired();
 
@@ -79,23 +79,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasOne(x => x.AttackSkill)
-				.WithMany(x => x.AbilitiesForAttack)
-				.HasForeignKey(x => x.AttackSkillId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			builder.HasMany(x => x.DefensiveSkills)
-				.WithMany(x => x.AbilitiesForDefense)
-				.UsingEntity(x => x.ToTable("DefensiveSkills", "GameRules"));
-
 			var gameNavigation = builder.Metadata.FindNavigation(nameof(Ability.Game));
 			gameNavigation.SetField(Ability.GameField);
 			gameNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
-
-			var parameterNavigation = builder.Metadata.FindNavigation(nameof(Ability.AttackSkill));
-			parameterNavigation.SetField(Ability.SkillField);
-			parameterNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
 			var damageTypeNavigation = builder.Metadata.FindNavigation(nameof(Ability.DamageType));
 			damageTypeNavigation.SetField(Ability.DamageTypeField);

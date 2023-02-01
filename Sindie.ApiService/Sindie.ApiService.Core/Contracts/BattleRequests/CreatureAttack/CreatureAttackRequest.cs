@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack
 {
@@ -36,7 +37,7 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack
 		/// <summary>
 		/// Способ защиты
 		/// </summary>
-		public Guid? DefensiveSkillId { get; set; }
+		public Skill? DefensiveSkill { get; set; }
 
 		/// <summary>
 		/// Специальный бонус к попаданию

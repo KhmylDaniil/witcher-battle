@@ -4,6 +4,7 @@ using Sindie.ApiService.Core.Logic;
 using System;
 using System.Linq;
 using System.Text;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities.Effects
 {
@@ -46,7 +47,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <returns>Эффект</returns>
 		public static BleedingWoundEffect Create(IRollService rollService, Creature attacker, Creature target, string name)
 		{
-			if (!rollService.BeatDifficulty(attacker.SkillBase(Skills.BleedingWoundId), 15, out int severity))
+			if (!rollService.BeatDifficulty(attacker.SkillBase(Skill.BleedingWound), 15, out int severity))
 				return null;
 
 			var existingEffect = target.Effects.FirstOrDefault(x => x is BleedingWoundEffect) as BleedingWoundEffect;

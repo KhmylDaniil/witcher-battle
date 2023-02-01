@@ -23,7 +23,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly FreezeEffect _freezeEffect;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Creature _creature;
-		private readonly Skill _skill;
 
 		/// <summary>
 		/// Тест для <see cref="TreatEffectHandler"/>
@@ -32,7 +31,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		{
 			_game = Game.CreateForTest();
 			_battle = Battle.CreateForTest(game: _game);
-			_skill = Skill.CreateForTest(id: Skills.PhysiqueId, name: Skills.PhysiqueName, statName: Enums.Stats.Body);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
@@ -52,12 +50,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			_creature.Effects.Add(_freezeEffect);
 			
-			_creature.CreatureSkills.Add(new CreatureSkill(7, _creature, _skill));
+			_creature.CreatureSkills.Add(new CreatureSkill(7, _creature, Skill.Physique));
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
 				_battle,
-				_skill,
 				_freezeEffect,
 				_creatureTemplate,
 				_creature));
@@ -89,7 +86,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			Assert.IsNotNull(result);
 
 			var message = result.Message;
-			Assert.IsNotNull(message); ;
+			Assert.IsNotNull(message);
 			Assert.IsTrue(message.Contains(Conditions.FreezeName));
 			Assert.IsTrue(message.Contains("снят"));
 
