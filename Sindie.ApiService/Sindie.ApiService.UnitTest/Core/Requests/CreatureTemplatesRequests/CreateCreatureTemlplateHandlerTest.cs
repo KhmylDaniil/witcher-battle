@@ -23,7 +23,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly BodyTemplatePart _bodyTemplatePart;
 		private readonly Condition _condition;
-		private readonly Skill _parameter;
 		private readonly Ability _ability;
 
 		/// <summary>
@@ -43,11 +42,10 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				maxToHit: 10);
 			_bodyTemplate.BodyTemplateParts = new List<BodyTemplatePart> { _bodyTemplatePart};
 
-			_parameter = Skill.CreateForTest();
-			_ability = Ability.CreateForTest(game: _game, attackSkill: _parameter);
+			_ability = Ability.CreateForTest(game: _game, attackSkill: Skill.Melee);
 			_condition = Condition.CreateForTest();
 			
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _parameter, _bodyTemplate, _bodyTemplatePart, _condition, _ability));
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _bodyTemplate, _bodyTemplatePart, _condition, _ability));
 		}
 
 		/// <summary>
@@ -88,7 +86,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				{
 					new CreateCreatureTemplateRequestSkill()
 					{
-						SkillId = _parameter.Id,
+						Skill = Skill.Melee,
 						Value = 5
 					}
 				});
@@ -142,7 +140,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var creatureTemplateParameter = _dbContext.CreatureTemplateParameters
 				.FirstOrDefault(x => x.CreatureTemplateId == creatureTemplate.Id);
 
-			Assert.IsTrue(creatureTemplateParameter.SkillId == _parameter.Id);
+			Assert.IsTrue(creatureTemplateParameter.Skill == Skill.Melee);
 			Assert.IsTrue(creatureTemplateParameter.SkillValue == 5);
 		}
 	}

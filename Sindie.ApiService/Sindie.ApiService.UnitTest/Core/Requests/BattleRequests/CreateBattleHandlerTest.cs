@@ -24,7 +24,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly CreatureTemplatePart _creatureTemplatePart;
 		private readonly Ability _ability;
 		private readonly Condition _condition;
-		private readonly Skill _parameter;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="CreateBattleHandler"/>
@@ -34,7 +33,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_game = Game.CreateForTest();
 			_imgFile = ImgFile.CreateForTest();
 			_condition = Condition.CreateForTest();
-			_parameter = Skill.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 			_creatureTemplate = CreatureTemplate.CreateForTest(game: _game, bodyTemplate: _bodyTemplate, creatureType: CreatureType.Human);
 			_creatureTemplatePart = CreatureTemplatePart.CreateForTest(
@@ -47,7 +45,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_creatureTemplate.CreatureTemplateSkills
 				.Add(CreatureTemplateSkill.CreateForTest(
 					creatureTemplate: _creatureTemplate,
-					skill: _parameter,
+					skill: Skill.Melee,
 					value: 5));
 			_ability = Ability.CreateForTest(
 				game: _game,
@@ -57,7 +55,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				damageModifier: 4,
 				accuracy: -1,
 				attackSpeed: 1,
-				attackSkill: _parameter);
+				attackSkill: Skill.Melee);
 			_ability.AppliedConditions.Add(new AppliedCondition(_ability, _condition, 50));
 			_creatureTemplate.Abilities.Add(_ability);
 
@@ -65,7 +63,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_game,
 				_imgFile,
 				_condition,
-				_parameter,
 				_bodyTemplate,
 				_creatureTemplate,
 				_ability));
@@ -154,7 +151,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			Assert.AreEqual(ability.Accuracy, -1);
 			Assert.AreEqual(ability.AttackSpeed, 1);
 			Assert.AreEqual(ability.AttackDiceQuantity, 2);
-			Assert.AreEqual(ability.AttackSkillId, _parameter.Id);
+			Assert.AreEqual(ability.AttackSkill, Skill.Melee);
 			Assert.AreEqual(ability.DamageModifier, 4);
 
 			Assert.IsNotNull(ability.AppliedConditions);
@@ -169,7 +166,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			var creatureParameter = _dbContext.CreatureParameters
 				.FirstOrDefault(x => x.CreatureId == creature.Id);
 
-			Assert.IsTrue(creatureParameter.SkillId == _parameter.Id);
+			Assert.IsTrue(creatureParameter.Skill == Skill.Melee);
 			Assert.IsTrue(creatureParameter.SkillValue == 5);
 		}
 	}

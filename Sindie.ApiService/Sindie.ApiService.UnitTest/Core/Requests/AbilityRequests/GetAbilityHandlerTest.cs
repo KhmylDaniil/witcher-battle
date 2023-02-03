@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 {
@@ -22,7 +23,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		private readonly User _user;
 		private readonly Game _game;
 		private readonly Condition _condition;
-		private readonly Skill _parameter;
 		private readonly Ability _ability;
 		private readonly DamageType _damageType;
 
@@ -41,7 +41,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 					user: _user,
 					gameRole: GameRole.CreateForTest(GameRoles.MasterRoleId)));
 
-			_parameter = Skill.CreateForTest(name: "attackParameter");
 			_condition = Condition.CreateForTest(id: Conditions.BleedId);
 			_damageType = DamageType.CreateForTest(id: DamageTypes.SilverId);
 
@@ -49,7 +48,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 				game: _game,
 				name: "test",
 				attackDiceQuantity: 3,
-				attackSkill: _parameter,
+				attackSkill: Skill.Melee,
 				damageType: _damageType,
 				createdOn: DateTimeProvider.Object.TimeProvider,
 				modifiedOn: DateTimeProvider.Object.TimeProvider,
@@ -65,7 +64,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 				_game,
 				_damageType,
 				_condition,
-				_parameter,
 				_ability));
 		}
 
@@ -85,7 +83,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			var request = new GetAbilityCommand(
 				gameId: _game.Id,
 				name: "test",
-				attackSkillId: _parameter.Id,
+				attackSkillName: "Melee",
 				damageTypeId: _damageType.Id,
 				conditionId: _condition.Id,
 				minAttackDiceQuantity: 2,
@@ -110,8 +108,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			var resultItem = result.AbilitiesList.First();
 			
 			var ability = _dbContext.Abilities
-				.Include(x => x.AttackSkill)
-
 				.Include(x => x.AppliedConditions)
 				.FirstOrDefault(x => x.Id == resultItem.Id);
 			Assert.IsNotNull(ability);
@@ -122,7 +118,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			Assert.IsTrue(ability.CreatedOn >= creationMinTime && resultItem.CreatedOn <= creationMaxTime);
 			Assert.IsTrue(ability.ModifiedOn >= modificationMinTime && resultItem.ModifiedOn <= modificationMaxTime);
 
-			Assert.AreEqual(ability.AttackSkillId, _parameter.Id);
+			Assert.AreEqual(ability.AttackSkill, Skill.Melee);
 			Assert.AreEqual(ability.DamageTypeId, _damageType.Id);
 			Assert.IsTrue(ability.AppliedConditions.Any(x => x.ConditionId == _condition.Id));
 

@@ -138,7 +138,7 @@ namespace Sindie.ApiService.Core.Logic
 				? 0
 				: BlindedEffect.AttackAndDefenseModifier;
 
-			var result = attacker.SkillBase(ability.AttackSkillId) + ability.Accuracy + toHit + staggeredModifier + blindedModifier;
+			var result = attacker.SkillBase(ability.AttackSkill) + ability.Accuracy + toHit + staggeredModifier + blindedModifier;
 
 			return result < 0 ? 0 : result;
 		}
@@ -159,7 +159,7 @@ namespace Sindie.ApiService.Core.Logic
 				? 0
 				: BlindedEffect.AttackAndDefenseModifier;
 
-			var result = defender.SkillBase(defensiveParameter.SkillId) + staggeredModifier + blindedModifier;
+			var result = defender.SkillBase(defensiveParameter.Skill) + staggeredModifier + blindedModifier;
 
 			if (defender.Effects.Any(x => x is StunEffect))
 				result = 10;

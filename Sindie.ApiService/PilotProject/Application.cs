@@ -16,6 +16,7 @@ using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatureTem
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.DeleteCreatureTemplateById;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTemplate;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTemplateById;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace PilotProject
 {
@@ -165,7 +166,7 @@ namespace PilotProject
 
 				foreach (var ability in result.Abilities)
 				{
-					Console.WriteLine($"{ability.Name} brings {ability.AttackDiceQuantity}d6+{ability.DamageModifier} damage. Attacking skill is {ability.AttackParameterName}.");
+					Console.WriteLine($"{ability.Name} brings {ability.AttackDiceQuantity}d6+{ability.DamageModifier} damage. Attacking skill is {Enum.GetName(ability.AttackSkill)}.");
 
 					if (ability.AppliedConditions.Any())
 					{
@@ -180,7 +181,7 @@ namespace PilotProject
 			{
 				Console.WriteLine($"This creature template has {result.CreatureTemplateSkills.Count} skills");
 				foreach (var skill in result.CreatureTemplateSkills)
-					Console.WriteLine($"{skill.SkillName} value: {skill.SkillValue}.");
+					Console.WriteLine($"{Enum.GetName(skill.Skill)} value: {skill.SkillValue}.");
 			}
 
 			static void ViewResult(GetCreatureTemplateByIdResponse result)
@@ -330,7 +331,7 @@ namespace PilotProject
 						abilityId: request.AbilityId,
 						targetCreatureId: request.TargetCreatureId,
 						creaturePartId: request.CreaturePartId,
-						defensiveSkillId: request.DefensiveSkillId,
+						defensiveSkill: request.DefensiveSkill,
 						specialToHit: request.SpecialToHit,
 						specialToDamage: request.SpecialToDamage);
 		}

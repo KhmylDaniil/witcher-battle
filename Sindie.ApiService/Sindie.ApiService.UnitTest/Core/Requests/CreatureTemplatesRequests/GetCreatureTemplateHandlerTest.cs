@@ -25,7 +25,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly CreatureTemplatePart _creatureTemplatePart;
 		private readonly Ability _ability;
-		private readonly Skill _parameter;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="GetCreatureTemplateHandler"/>
@@ -42,7 +41,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 					user: _user,
 					gameRole: GameRole.CreateForTest(GameRoles.MasterRoleId)));
 
-			_parameter = Skill.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
 			_condition = Condition.CreateForTest(name: Conditions.BleedName);
 
@@ -68,7 +66,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			_ability = Ability.CreateForTest(
 				game: _game,
-				attackSkill: _parameter);
+				attackSkill: Skill.Melee);
 			_ability.AppliedConditions.Add(new AppliedCondition(
 				ability: _ability,
 				condition: _condition,

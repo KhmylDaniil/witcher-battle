@@ -56,14 +56,14 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			SpeedModifier = (int)Math.Floor(creature.MaxSpeed * -0.75);
 			AfterTreatSpeedModifier = (int)Math.Floor(creature.MaxSpeed * -0.5);
 
-			DodgeModifier = (int)Math.Floor(creature.GetSkillMax(Skill.DodgeId) * -0.75);
-			AfterTreatDodgeModifier = (int)Math.Floor(creature.GetSkillMax(Skill.DodgeId) * -0.5);
+			DodgeModifier = (int)Math.Floor(creature.GetSkillMax(Skill.Dodge) * -0.75);
+			AfterTreatDodgeModifier = (int)Math.Floor(creature.GetSkillMax(Skill.Dodge) * -0.5);
 
-			AthleticsModifier = (int)Math.Floor(creature.GetSkillMax(Skill.AthleticsId) * -0.75);
-			AfterTreatAthleticsModifier = (int)Math.Floor(creature.GetSkillMax(Skill.AthleticsId) * -0.5);
+			AthleticsModifier = (int)Math.Floor(creature.GetSkillMax(Skill.Athletics) * -0.75);
+			AfterTreatAthleticsModifier = (int)Math.Floor(creature.GetSkillMax(Skill.Athletics) * -0.5);
 
 			Severity = Severity.Difficult | Severity.Unstabilizied;
-			BodyPartLocation = Enums.BodyPartType.Wing;
+			BodyPartLocation = BodyPartType.Wing;
 		}
 
 		/// <summary>
@@ -120,14 +120,14 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			creature.Speed = creature.GetSpeed() - SpeedModifier;
 			creature.Speed = creature.GetSpeed() + AfterTreatSpeedModifier;
 
-			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skill.DodgeId);
+			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
 			if (dodge is not null)
 			{
 				dodge.SkillValue = dodge.GetValue() - DodgeModifier;
 				dodge.SkillValue = dodge.GetValue() + AfterTreatDodgeModifier;
 			}
 
-			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skill.AthleticsId);
+			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
 			if (athletics is not null)
 			{
 				athletics.SkillValue = athletics.GetValue() - AthleticsModifier;
@@ -160,11 +160,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			creature.Speed = creature.GetSpeed() + SpeedModifier;
 
-			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skill.DodgeId);
+			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
 			if (dodge is not null)
 				dodge.SkillValue = dodge.GetValue() + DodgeModifier;
 
-			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skill.AthleticsId);
+			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
 			if (athletics is not null)
 				athletics.SkillValue = athletics.GetValue() + AthleticsModifier;
 		}
@@ -177,8 +177,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			PenaltyApplied = false;
 
-			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skill.DodgeId);
-			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skill.AthleticsId);
+			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
+			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
 
 			if (Severity == Severity.Difficult)
 			{

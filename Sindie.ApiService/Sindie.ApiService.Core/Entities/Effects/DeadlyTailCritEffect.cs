@@ -33,9 +33,9 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="aimedPart">Часть тела</param>
 		private DeadlyTailCritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
 		{
-			DodgeModifier = (int)Math.Floor(creature.GetSkillMax(Skill.DodgeId) * -0.75);
+			DodgeModifier = (int)Math.Floor(creature.GetSkillMax(Skill.Dodge) * -0.75);
 
-			AthleticsModifier = (int)Math.Floor(creature.GetSkillMax(Skill.AthleticsId) * -0.75);
+			AthleticsModifier = (int)Math.Floor(creature.GetSkillMax(Skill.Athletics) * -0.75);
 
 			Severity = Severity.Deadly | Severity.Unstabilizied;
 			BodyPartLocation = Enums.BodyPartType.Tail;
@@ -113,11 +113,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			PenaltyApplied = true;
 
-			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skill.DodgeId);
+			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
 			if (dodge is not null)
 				dodge.SkillValue = dodge.GetValue() + DodgeModifier;
 
-			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skill.AthleticsId);
+			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
 			if (athletics is not null)
 				athletics.SkillValue = athletics.GetValue() + AthleticsModifier;
 		}
@@ -130,11 +130,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			PenaltyApplied = false;
 
-			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skill.DodgeId);
+			var dodge = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
 			if (dodge is not null)
 				dodge.SkillValue = dodge.GetValue() - DodgeModifier;
 
-			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skill.AthleticsId);
+			var athletics = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
 			if (athletics is not null)
 				athletics.SkillValue = athletics.GetValue() - AthleticsModifier;
 		}

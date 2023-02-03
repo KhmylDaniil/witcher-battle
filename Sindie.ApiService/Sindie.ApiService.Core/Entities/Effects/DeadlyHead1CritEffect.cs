@@ -82,7 +82,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			creature.Dex = creature.GetDex() + DexModifier;
 
-			var awareness = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skill.AwarenessId);
+			var awareness = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Awareness);
 
 			if (awareness != null)
 				awareness.SkillValue = awareness.GetValue() + AwarenessModifier;
@@ -94,7 +94,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void RevertStatChanges(Creature creature)
 		{
-			var awareness = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skill.AwarenessId);
+			var awareness = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Awareness);
 
 			if (IsStabile(Severity))
 			{
@@ -124,7 +124,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			creature.Dex = creature.GetDex() - DexModifier + AfterTreatDexModifier;
 
-			var awareness = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skill.AwarenessId);
+			var awareness = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Awareness);
 
 			if (awareness != null)
 				awareness.SkillValue = awareness.GetValue() - AwarenessModifier + AfterTreatAwarenessModifier;

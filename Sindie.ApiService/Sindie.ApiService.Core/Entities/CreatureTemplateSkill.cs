@@ -50,11 +50,6 @@ namespace Sindie.ApiService.Core.Entities
 		public Skill Skill { get; set; }
 
 		/// <summary>
-		/// Название корреспондирующей характеристики
-		/// </summary>
-		public Stats StatName { get; protected set; }
-
-		/// <summary>
 		/// Значение навыка у шаблона существа
 		/// </summary>
 		public int SkillValue
