@@ -453,7 +453,7 @@ namespace Sindie.ApiService.Core.Entities
 			if (!ability.DefensiveSkills.Any())
 				throw new ApplicationException($"От способности {ability.Name} c айди {ability.Id} нет защиты.");
 
-			var creatureDefensiveSkills = CreatureSkills.Where(x => ability.DefensiveSkills.Any(a => a == x.Skill)).ToList();
+			var creatureDefensiveSkills = CreatureSkills.Where(cs => ability.DefensiveSkills.Any(ds => ds.Skill == cs.Skill)).ToList();
 
 			var sortedList = from x in creatureDefensiveSkills
 							 orderby SkillBase(x.Skill)

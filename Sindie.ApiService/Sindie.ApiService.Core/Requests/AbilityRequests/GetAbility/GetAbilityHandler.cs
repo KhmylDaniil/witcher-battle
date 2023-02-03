@@ -61,8 +61,6 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(g => g.Abilities)
-					.ThenInclude(a => a.AttackSkill)
-				.Include(g => g.Abilities)
 					.ThenInclude(a => a.AppliedConditions)
 					.SelectMany(g => g.Abilities
 						.Where(x => x.AttackDiceQuantity <= request.MaxAttackDiceQuantity && x.AttackDiceQuantity >= request.MinAttackDiceQuantity)

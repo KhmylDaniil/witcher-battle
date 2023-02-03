@@ -56,6 +56,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Точность атаки")
 				.IsRequired();
 
+			builder.OwnsMany(x => x.DefensiveSkills)
+				.HasKey(r => r.Id);
+
 			builder.HasOne(x => x.Game)
 				.WithMany(x => x.Abilities)
 				.HasForeignKey(x => x.GameId)

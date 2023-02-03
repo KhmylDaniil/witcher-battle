@@ -84,8 +84,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 
 			Assert.IsNotNull(ability.DefensiveSkills);
 			Assert.AreEqual(ability.DefensiveSkills.Count, 1);
-			var defensiveParameter = ability.DefensiveSkills.First();
-			Assert.AreEqual(defensiveParameter, Skill.Dodge);
+			var defensiveSkill = ability.DefensiveSkills.First();
+			Assert.AreEqual(defensiveSkill.Skill, Skill.Dodge);
 
 			var damageType = _dbContext.DamageTypes.First(x => x.Id == ability.DamageTypeId);
 			Assert.IsNotNull(damageType);
