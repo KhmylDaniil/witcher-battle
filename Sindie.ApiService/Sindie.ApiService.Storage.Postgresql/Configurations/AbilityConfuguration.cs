@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.Entities;
+using static Sindie.ApiService.Core.BaseData.Enums;
+using System;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -34,6 +36,17 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			builder.Property(r => r.AttackSkill)
 				.HasColumnName("AttackSkill")
 				.HasComment("Навык атаки")
+				.HasConversion(
+					v => v.ToString(),
+					v => Enum.Parse<Skill>(v))
+				.IsRequired();
+
+			builder.Property(r => r.DamageType)
+				.HasColumnName("DamageType")
+				.HasComment("Тип урона")
+				.HasConversion(
+					v => v.ToString(),
+					v => Enum.Parse<DamageType>(v))
 				.IsRequired();
 
 			builder.Property(r => r.AttackDiceQuantity)
@@ -65,13 +78,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-
-			builder.HasOne(x => x.DamageType)
-				.WithMany(x => x.Abilities)
-				.HasForeignKey(x => x.DamageTypeId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
 			builder.HasMany(x => x.Creatures)
 				.WithMany(x => x.Abilities)
 				.UsingEntity(x => x.ToTable("CreatureAbilities", "Battles"));
@@ -85,10 +91,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			var gameNavigation = builder.Metadata.FindNavigation(nameof(Ability.Game));
 			gameNavigation.SetField(Ability.GameField);
 			gameNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
-
-			var damageTypeNavigation = builder.Metadata.FindNavigation(nameof(Ability.DamageType));
-			damageTypeNavigation.SetField(Ability.DamageTypeField);
-			damageTypeNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

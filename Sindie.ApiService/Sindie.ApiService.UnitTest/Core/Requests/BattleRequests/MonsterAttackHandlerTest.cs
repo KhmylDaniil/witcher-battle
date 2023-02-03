@@ -25,7 +25,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
 		private readonly Creature _creature;
-		private readonly DamageType _damageType;
 		private readonly Condition _head1Crit;
 		private readonly Condition _head2Crit;
 
@@ -37,7 +36,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_game = Game.CreateForTest();
 			_instance = Battle.CreateForTest(game: _game);
 			_condition = Condition.CreateForTest();
-			_damageType = DamageType.CreateForTest();
 
 			_head1Crit = Condition.CreateForTest(id: Crit.SimpleHead1Id, name: Crit.SimpleHead1);
 			_head2Crit = Condition.CreateForTest(id: Crit.SimpleHead2Id, name: Crit.SimpleHead2);
@@ -56,8 +54,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				damageModifier: 1,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkill: Skill.Melee,
-				damageType: _damageType,
 				defensiveSkills: new List<Skill> { Skill.Melee });
 			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 100));
 
@@ -95,7 +91,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_creatureTemplate,
 				_ability,
 				_creature,
-				_damageType,
 				_head1Crit,
 				_head2Crit));
 		}

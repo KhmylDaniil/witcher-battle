@@ -55,9 +55,8 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
 			var conditions = await _appDbContext.Conditions.ToListAsync(cancellationToken);
-			var damageTypes = await _appDbContext.DamageTypes.ToListAsync(cancellationToken);
 
-			CheckRequest(request, game, conditions, damageTypes);
+			CheckRequest(request, game, conditions);
 
 			var ability = game.Abilities.FirstOrDefault(x => x.Id == request.Id);
 
@@ -70,7 +69,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 				accuracy: request.Accuracy,
 				attackSkill: request.AttackSkill,
 				defensiveSkills: request.DefensiveSkills,
-				damageType: damageTypes.First(x => x.Id == request.DamageTypeId),
+				damageType: request.DamageType,
 				appliedConditions: AppliedConditionData.CreateAbilityData(request, conditions));
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
@@ -85,7 +84,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 		/// <param name="conditions">Состояния</param>
 		/// <param name="damageTypes">Типы урона</param>
 		/// <param name="skills">Навыки</param>
-		private void CheckRequest(ChangeAbilityCommand request, Game game, List<Condition> conditions, List<DamageType> damageTypes)
+		private void CheckRequest(ChangeAbilityCommand request, Game game, List<Condition> conditions)
 		{
 			var ability = game.Abilities.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<Ability>(request.Id);
@@ -96,8 +95,8 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 			if (!Enum.IsDefined(request.AttackSkill))
 				throw new ExceptionRequestFieldIncorrectData<ChangeAbilityCommand>(nameof(request.AttackSkill));
 
-			_ = damageTypes.FirstOrDefault(x => x.Id == request.DamageTypeId)
-				?? throw new ExceptionEntityNotFound<DamageType>(request.DamageTypeId);
+			if (!Enum.IsDefined(request.DamageType))
+				throw new ExceptionRequestFieldIncorrectData<ChangeAbilityCommand>(nameof(request.DamageType));
 
 			foreach (var item in request.DefensiveSkills)
 				if (!Enum.IsDefined(item))

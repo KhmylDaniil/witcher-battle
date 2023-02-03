@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.Entities;
+using static Sindie.ApiService.Core.BaseData.Enums;
+using System;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -44,7 +46,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.Property(x => x.BodyPartType)
 				.HasColumnName("BodyPartType")
-				.HasComment("Айди типа части тела")
+				.HasComment("Тип части тела")
+				.HasConversion(
+					v => v.ToString(),
+					v => Enum.Parse<BodyPartType>(v))
 				.IsRequired();
 		}
 	}

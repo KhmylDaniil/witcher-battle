@@ -56,7 +56,7 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// <summary>
 		/// Параметры существ
 		/// </summary>
-		public DbSet<CreatureSkill> CreatureParameters { get; set; }
+		public DbSet<CreatureSkill> CreatureSkills { get; set; }
 
 		/// <summary>
 		/// Части тел существ
@@ -76,12 +76,7 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// <summary>
 		/// Параметры шаблонов существ
 		/// </summary>
-		public DbSet<CreatureTemplateSkill> CreatureTemplateParameters { get; set; }
-
-		/// <summary>
-		/// Типы урона
-		/// </summary>
-		public DbSet<DamageType> DamageTypes { get; set; }
+		public DbSet<CreatureTemplateSkill> CreatureTemplateSkills { get; set; }
 
 		/// <summary>
 		/// Игры

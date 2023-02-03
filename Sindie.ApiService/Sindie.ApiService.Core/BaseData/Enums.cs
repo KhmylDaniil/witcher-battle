@@ -1,5 +1,4 @@
-﻿using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
 
@@ -29,6 +28,27 @@ namespace Sindie.ApiService.Core.BaseData
 			Vampire
 		}
 
+		public enum DamageType
+		{
+			Slashing,
+			Piercing,
+			Bludgeoning,
+			Elemental,
+			Fire,
+			Silver
+		}
+
+		/// <summary>
+		/// Модификатор в зависимости от типа урона
+		/// </summary>
+		public enum DamageTypeModifier
+		{
+			Normal,
+			Vulnerability,
+			Resistance,
+			Immunity
+		}
+		
 		/// <summary>
 		/// Типы частей тела
 		/// </summary>

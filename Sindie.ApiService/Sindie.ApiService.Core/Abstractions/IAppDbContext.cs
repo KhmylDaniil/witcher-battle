@@ -53,7 +53,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <summary>
 		/// Параметры существ
 		/// </summary>
-		DbSet<CreatureSkill> CreatureParameters { get; }
+		DbSet<CreatureSkill> CreatureSkills { get; }
 
 		/// <summary>
 		/// Части тел существ
@@ -73,12 +73,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <summary>
 		/// Параметры шаблонов существ
 		/// </summary>
-		DbSet<CreatureTemplateSkill> CreatureTemplateParameters { get; }
-
-		/// <summary>
-		/// Типы урона
-		/// </summary>
-		DbSet<DamageType> DamageTypes { get; }
+		DbSet<CreatureTemplateSkill> CreatureTemplateSkills { get; }
 
 		/// <summary>
 		/// Игры

@@ -29,7 +29,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Навык")
 				.HasConversion(
 					v => v.ToString(),
-					v => (Skill)Enum.Parse(typeof(Skill), v))
+					v => Enum.Parse<Skill>(v))
 				.IsRequired();
 
 			builder.Property(r => r.SkillValue)

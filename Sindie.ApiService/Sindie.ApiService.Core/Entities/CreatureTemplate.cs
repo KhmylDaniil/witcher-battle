@@ -360,14 +360,9 @@ namespace Sindie.ApiService.Core.Entities
 		public List<Creature> Creatures { get; set; }
 
 		/// <summary>
-		/// Сопротивления
+		/// Модификаторы типа урона
 		/// </summary>
-		public List<DamageType> Resistances { get; protected set; }
-
-		/// <summary>
-		/// Уязвимости
-		/// </summary>
-		public List<DamageType> Vulnerables { get; protected set; }
+		public List<CreatureTemplateDamageTypeModifier> DamageTypeModifiers { get; protected set; }
 
 		#endregion navigation properties
 
@@ -594,8 +589,7 @@ namespace Sindie.ApiService.Core.Entities
 				CreatureTemplateSkills = new List<CreatureTemplateSkill>(),
 				Abilities = new List<Ability>(),
 				CreatureTemplateParts = new List<CreatureTemplatePart>(),
-				Vulnerables = new List<DamageType>(),
-				Resistances = new List<DamageType>()
+				DamageTypeModifiers = new List<CreatureTemplateDamageTypeModifier>()
 			};
 	}
 }

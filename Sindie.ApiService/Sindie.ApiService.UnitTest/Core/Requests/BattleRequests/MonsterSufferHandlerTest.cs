@@ -27,7 +27,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
 		private readonly Creature _creature;
-		private readonly DamageType _damageType;
 
 		/// <summary>
 		/// Тест для <see cref="MonsterSufferHandler"/>
@@ -37,7 +36,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_game = Game.CreateForTest();
 			_instance = Battle.CreateForTest(game: _game);
 			_condition = Condition.CreateForTest(id: Conditions.BleedingWoundId, name: Conditions.BleedingWoundName);
-			_damageType = DamageType.CreateForTest();
 
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
@@ -53,8 +51,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				damageModifier: 1,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkill: Skill.Melee,
-				damageType: _damageType,
 				defensiveSkills: new List<Skill> { Skill.Melee });
 			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 100));
 
@@ -102,8 +98,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_condition,
 				_creatureTemplate,
 				_ability,
-				_creature,
-				_damageType));
+				_creature));
 		}
 
 		/// <summary>

@@ -53,7 +53,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility
 		/// <summary>
 		/// Тип урона
 		/// </summary>
-		public Guid DamageTypeId { get; set; }
+		public DamageType DamageType { get; set; }
 
 		/// <summary>
 		/// Навыки для защиты

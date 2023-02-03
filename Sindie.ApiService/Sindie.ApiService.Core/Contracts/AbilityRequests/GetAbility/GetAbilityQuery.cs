@@ -28,7 +28,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 		/// <summary>
 		/// Фильтр по типу урона
 		/// </summary>
-		public Guid? DamageTypeId { get; set; }
+		public string DamageType { get; set; }
 
 		/// <summary>
 		/// фильтр по названию накладываемого состояния

@@ -37,7 +37,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 			int attackSpeed,
 			int accuracy,
 			List<Skill> defensiveSkills,
-			Guid damageTypeId,
+			DamageType damageType,
 			List<ChangeAbilityRequestAppliedCondition> appliedConditions
 			)
 		{
@@ -55,7 +55,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 			DefensiveSkills = defensiveSkills == null
 				? throw new ExceptionRequestFieldIncorrectData<ChangeAbilityRequest>(nameof(DefensiveSkills))
 				: defensiveSkills;
-			DamageTypeId = damageTypeId;
+			DamageType = damageType;
 			AppliedConditions = appliedConditions == null
 				? throw new ExceptionRequestFieldIncorrectData<ChangeAbilityRequest>(nameof(AppliedConditions))
 				: appliedConditions;

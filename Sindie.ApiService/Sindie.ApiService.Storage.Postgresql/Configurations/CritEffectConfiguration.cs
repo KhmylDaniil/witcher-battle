@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.Entities;
+using static Sindie.ApiService.Core.BaseData.Enums;
+using System;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -20,6 +22,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			builder.Property(x => x.Severity)
 				.HasColumnName("Severity")
 				.HasComment("Тяжесть критического эффекта")
+				.HasConversion(
+					v => v.ToString(),
+					v => Enum.Parse<Severity>(v))
 				.IsRequired();
 
 			builder.Property(x => x.CreaturePartId)
@@ -30,6 +35,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			builder.Property(x => x.BodyPartLocation)
 				.HasColumnName("BodyPartLocation")
 				.HasComment("Тип части тела")
+				.HasConversion(
+					v => v.ToString(),
+					v => Enum.Parse<BodyPartType>(v))
 				.IsRequired();
 
 			var creaturePartNavigation = builder.Metadata.FindNavigation(nameof(CritEffect.CreaturePart));

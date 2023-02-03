@@ -18,15 +18,9 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public const string GameField = nameof(_game);
 
-		/// <summary>
-		/// Поле для <see cref="_damageType"/>
-		/// </summary>
-		public const string DamageTypeField = nameof(_damageType);
-
 		private Game _game;
 		private int _attackDiceQuantity;
 		private int _attackSpeed;
-		private DamageType _damageType;
 
 		/// <summary>
 		/// Пустой конструктор
@@ -46,7 +40,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="attackSpeed">Скорость атаки</param>
 		/// <param name="accuracy">Точность атаки</param>
 		/// <param name="attackSkill">Навык атаки</param>
-		/// <param name="defensiveSkills">Навыки для защиты</param>
 		/// <param name="damageType">Типы урона</param>
 		public Ability(
 			Game game,
@@ -94,9 +87,9 @@ namespace Sindie.ApiService.Core.Entities
 		public Skill AttackSkill { get; set; }
 
 		/// <summary>
-		/// Айди типа урона
+		/// Тип урона
 		/// </summary>
-		public Guid DamageTypeId { get; protected set; }
+		public DamageType DamageType { get; set; }
 
 		/// <summary>
 		/// Количество кубов атаки
@@ -148,19 +141,6 @@ namespace Sindie.ApiService.Core.Entities
 			{
 				_game = value ?? throw new ApplicationException("Необходимо передать игру");
 				GameId = value.Id;
-			}
-		}
-
-		/// <summary>
-		/// Тип урона
-		/// </summary>
-		public DamageType DamageType
-		{
-			get => _damageType;
-			protected set
-			{
-				_damageType = value ?? throw new ApplicationException("Необходимо передать тип урона");
-				DamageTypeId = value.Id;
 			}
 		}
 
@@ -343,9 +323,9 @@ namespace Sindie.ApiService.Core.Entities
 			int damageModifier = default,
 			int attackSpeed = default,
 			int accuracy = default,
-			Skill attackSkill = default,
+			Skill attackSkill = Skill.Melee,
 			List<Skill> defensiveSkills = default,
-			DamageType damageType = default,
+			DamageType damageType = DamageType.Slashing,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
@@ -362,7 +342,7 @@ namespace Sindie.ApiService.Core.Entities
 				Accuracy = accuracy,
 				AttackSkill = attackSkill,
 				DefensiveSkills = new List<DefensiveSkill>(),
-				DamageType = damageType ?? DamageType.CreateForTest(),
+				DamageType = damageType,
 				CreatedOn = createdOn,
 				ModifiedOn = modifiedOn,
 				CreatedByUserId = createdByUserId,

@@ -30,7 +30,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
 		private readonly Creature _creature;
-		private readonly DamageType _damageType;
 		private readonly Condition _simpleLegCrit;
 		private readonly Condition _simpleArmCrit;
 		private readonly Condition _difficultLegCrit;
@@ -50,8 +49,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_difficultLegCrit = Condition.CreateForTest(id: Crit.DifficultLegId, name: Crit.DifficultLeg);
 			_deadlyLegCrit = Condition.CreateForTest(id: Crit.DeadlyLegId, name: Crit.DeadlyLeg);
 
-			_damageType = DamageType.CreateForTest();
-
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
 				bodyTemplate: BodyTemplate.CreateForTest(game: _game),
@@ -65,8 +62,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				damageModifier: 2,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkill: Skill.Melee,
-				damageType: _damageType,
 				defensiveSkills: new List<Skill> { Skill.Melee, Skill.Dodge, Skill.Athletics });
 			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _bleedingWound, 100));
 
@@ -162,8 +157,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_simpleLegCrit,
 				_creatureTemplate,
 				_ability,
-				_creature,
-				_damageType));
+				_creature));
 		}
 
 		/// <summary>
