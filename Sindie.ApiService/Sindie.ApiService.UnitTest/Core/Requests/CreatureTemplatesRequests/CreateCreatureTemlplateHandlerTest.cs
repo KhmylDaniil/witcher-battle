@@ -137,11 +137,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateSkills);
 			Assert.AreEqual(creatureTemplate.CreatureTemplateSkills.Count(), 1);
-			var creatureTemplateParameter = _dbContext.CreatureTemplateParameters
+			var creatureTemplateSkill = _dbContext.CreatureTemplateSkills
 				.FirstOrDefault(x => x.CreatureTemplateId == creatureTemplate.Id);
 
-			Assert.IsTrue(creatureTemplateParameter.Skill == Skill.Melee);
-			Assert.IsTrue(creatureTemplateParameter.SkillValue == 5);
+			Assert.IsTrue(creatureTemplateSkill.Skill == Skill.Melee);
+			Assert.IsTrue(creatureTemplateSkill.SkillValue == 5);
 		}
 	}
 }

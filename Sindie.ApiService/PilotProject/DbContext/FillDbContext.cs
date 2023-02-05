@@ -9,7 +9,6 @@ namespace PilotProject.DbContext
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
-		private readonly DamageType _damageType;
 
 		private readonly Condition _bleed;
 		private readonly Condition _poison;
@@ -52,7 +51,6 @@ namespace PilotProject.DbContext
 		public FillDbContext()
 		{
 			_game = Game.CreateForTest(id: GameId);
-			_damageType = DamageType.CreateForTest(DamageTypes.SlashingId, DamageTypes.SlashingName);
 
 			_bleed = Condition.CreateForTest(id: Conditions.BleedId, Conditions.BleedName);
 			_poison = Condition.CreateForTest(id: Conditions.PoisonId, Conditions.PoisonName);
@@ -95,7 +93,6 @@ namespace PilotProject.DbContext
 				attackSpeed: 1,
 				accuracy: 1,
 				attackSkill: Skill.Sword,
-				damageType: _damageType,
 				defensiveSkills: new List<Skill> { Skill.Melee, Skill.Dodge, Skill.Athletics });
 			_swordAttack.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_swordAttack, _bleed, 50));
 
@@ -108,7 +105,6 @@ namespace PilotProject.DbContext
 				attackSpeed: 1,
 				accuracy: 0,
 				attackSkill: Skill.Melee,
-				damageType: _damageType,
 				defensiveSkills: new List<Skill> { Skill.Melee, Skill.Dodge, Skill.Athletics });
 			_clawsAttack.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_clawsAttack, _poison, 50));
 
@@ -121,7 +117,6 @@ namespace PilotProject.DbContext
 				attackSpeed: 1,
 				accuracy: 1,
 				attackSkill: Skill.Archery,
-				damageType: _damageType,
 				defensiveSkills: new List<Skill> { Skill.Dodge, Skill.Athletics });
 
 			_bodyTemplate = BodyTemplate.CreateForTest(id: BodyTemplateId, name: "TestBodyTemplate", game: _game);
@@ -188,7 +183,6 @@ namespace PilotProject.DbContext
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
-				_damageType,
 				_bleed,
 				_poison,
 				_stun,

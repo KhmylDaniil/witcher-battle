@@ -4,10 +4,7 @@ using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static Sindie.ApiService.Core.BaseData.Enums;
 
@@ -24,7 +21,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		private readonly Game _game;
 		private readonly Condition _condition;
 		private readonly Ability _ability;
-		private readonly DamageType _damageType;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="GetAbilityHandler"/>
@@ -42,14 +38,12 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 					gameRole: GameRole.CreateForTest(GameRoles.MasterRoleId)));
 
 			_condition = Condition.CreateForTest(id: Conditions.BleedId);
-			_damageType = DamageType.CreateForTest(id: DamageTypes.SilverId);
 
 			_ability = Ability.CreateForTest(
 				game: _game,
 				name: "test",
 				attackDiceQuantity: 3,
 				attackSkill: Skill.Melee,
-				damageType: _damageType,
 				createdOn: DateTimeProvider.Object.TimeProvider,
 				modifiedOn: DateTimeProvider.Object.TimeProvider,
 				createdByUserId: _user.Id);
@@ -62,7 +56,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_user,
 				_game,
-				_damageType,
 				_condition,
 				_ability));
 		}
@@ -84,7 +77,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 				gameId: _game.Id,
 				name: "test",
 				attackSkillName: "Melee",
-				damageTypeId: _damageType.Id,
+				damageType: "Slashing",
 				conditionId: _condition.Id,
 				minAttackDiceQuantity: 2,
 				maxAttackDiceQuantity: 3,
@@ -119,7 +112,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			Assert.IsTrue(ability.ModifiedOn >= modificationMinTime && resultItem.ModifiedOn <= modificationMaxTime);
 
 			Assert.AreEqual(ability.AttackSkill, Skill.Melee);
-			Assert.AreEqual(ability.DamageTypeId, _damageType.Id);
+			Assert.AreEqual(ability.DamageType, DamageType.Slashing);
 			Assert.IsTrue(ability.AppliedConditions.Any(x => x.ConditionId == _condition.Id));
 
 

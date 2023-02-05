@@ -62,7 +62,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 					attackSpeed: request.AttackSpeed,
 					accuracy: request.Accuracy,
 					defensiveSkills: request.DefensiveSkills,
-					damageTypeId: request.DamageTypeId,
+					damageType: request.DamageType,
 					appliedConditions: request.AppliedConditions), cancellationToken);
 		}
 
@@ -91,7 +91,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 					attackSpeed: request.AttackSpeed,
 					accuracy: request.Accuracy,
 					defensiveSkills: request.DefensiveSkills,
-					damageTypeId: request.DamageTypeId,
+					damageType: request.DamageType,
 					appliedConditions: request.AppliedConditions), cancellationToken);
 		}
 
@@ -113,7 +113,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 					gameId: request.GameId,
 					name: request.Name,
 					attackSkillName: request.AttackSkillName,
-					damageTypeId: request?.DamageTypeId,
+					damageType: request?.DamageType,
 					conditionId: request?.ConditionId,
 					minAttackDiceQuantity: request.MinAttackDiceQuantity,
 					maxAttackDiceQuantity: request.MaxAttackDiceQuantity,

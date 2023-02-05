@@ -380,18 +380,24 @@ namespace Sindie.ApiService.Core.Logic
 
 			damage -= data.AimedPart.CurrentArmor--;
 			message.AppendLine($"Броня повреждена. Осталось {data.AimedPart.CurrentArmor} брони");
-			return;
 		}
 
 		private static void CheckModifiers(AttackData data, ref int damage)
 		{
-			if (data.Target.Resistances.Any(x => x.Id == data.Ability.DamageTypeId))
-				damage /= 2;
-
-			if (data.Target.Vulnerables.Any(x => x.Id == data.Ability.DamageTypeId))
-				damage *= 2;
-
 			damage = (int)Math.Truncate(damage * data.AimedPart.DamageModifier);
+
+			var damageTypeModifier = data.Target.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == data.Ability.DamageType);
+
+			if (damageTypeModifier is null) return;
+
+			damage = damageTypeModifier.DamageTypeModifier switch
+			{
+				DamageTypeModifier.Vulnerability => damage * 2,
+				DamageTypeModifier.Resistance => damage / 2,
+				DamageTypeModifier.Immunity => 0,
+				DamageTypeModifier.Normal => damage,
+				_ => throw new ArgumentException("DamageType enum value is not defined"),
+			};
 		}
 
 		/// <summary>

@@ -56,9 +56,8 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
 			var conditions =  await _appDbContext.Conditions.ToListAsync(cancellationToken);
-			var damageTypes = await _appDbContext.DamageTypes.ToListAsync(cancellationToken);
 
-			CheckRequest(request, game, conditions, damageTypes);
+			CheckRequest(request, game, conditions);
 
 			var newAbility = Ability.CreateAbility(
 				game: game,
@@ -70,7 +69,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 				accuracy: request.Accuracy,
 				attackSkill: request.AttackSkill,
 				defensiveSkills: request.DefensiveSkills,
-				damageType: damageTypes.First(x => x.Id == request.DamageTypeId),
+				damageType: request.DamageType,
 				appliedConditions: AppliedConditionData.CreateAbilityData(request, conditions));
 
 			_appDbContext.Abilities.Add(newAbility);
@@ -85,7 +84,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 		/// <param name="game">Игра</param>
 		/// <param name="conditions">Состояния</param>
 		/// <param name="damageTypes">Типы урона</param>
-		private void CheckRequest(CreateAbilityCommand request, Game game, List<Condition> conditions, List<DamageType> damageTypes)
+		private void CheckRequest(CreateAbilityCommand request, Game game, List<Condition> conditions)
 		{
 			if (game.Abilities.Any(x => x.Name == request.Name))
 				throw new ExceptionRequestNameNotUniq<CreateAbilityCommand>(nameof(request.Name));
@@ -93,8 +92,8 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 			if (!Enum.IsDefined(request.AttackSkill))
 				throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(request.AttackSkill));
 
-			_ = damageTypes.FirstOrDefault(x => x.Id == request.DamageTypeId)
-				?? throw new ExceptionEntityNotFound<DamageType>(request.DamageTypeId);
+			if (!Enum.IsDefined(request.DamageType))
+				throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(request.DamageType));
 
 			foreach (var item in request.DefensiveSkills)
 				if (!Enum.IsDefined(item))

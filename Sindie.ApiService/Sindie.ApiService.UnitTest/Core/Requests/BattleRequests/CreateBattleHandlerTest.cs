@@ -163,11 +163,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			Assert.IsNotNull(creature.CreatureSkills);
 			Assert.AreEqual(creature.CreatureSkills.Count, 1);
-			var creatureParameter = _dbContext.CreatureParameters
+			var creatureSkill = _dbContext.CreatureSkills
 				.FirstOrDefault(x => x.CreatureId == creature.Id);
 
-			Assert.IsTrue(creatureParameter.Skill == Skill.Melee);
-			Assert.IsTrue(creatureParameter.SkillValue == 5);
+			Assert.IsTrue(creatureSkill.Skill == Skill.Melee);
+			Assert.IsTrue(creatureSkill.SkillValue == 5);
 		}
 	}
 }

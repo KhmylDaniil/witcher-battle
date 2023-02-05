@@ -19,7 +19,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 	public class CreateAbilityHandlerTest: UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
-		private readonly DamageType _damageType;
 		private readonly Condition _condition;
 		private readonly Game _game;
 
@@ -30,9 +29,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		{
 			_game = Game.CreateForTest();
 			_condition = Condition.CreateForTest();
-			_damageType = DamageType.CreateForTest();
 
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _condition, _damageType));
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _condition));
 		}
 
 		/// <summary>
@@ -52,7 +50,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 				accuracy: 1,
 				attackSkill: Skill.Melee,
 				defensiveSkills: new List<Skill> { Skill.Melee },
-				damageTypeId: _damageType.Id,
+				damageType: DamageType.Slashing,
 				appliedConditions: new List<CreateAbilityRequestAppliedCondition>
 				{
 					new CreateAbilityRequestAppliedCondition()
@@ -84,9 +82,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			Assert.AreEqual(ability.DefensiveSkills.Count, 1);
 			var defensiveSkill = ability.DefensiveSkills.First();
 			Assert.AreEqual(Skill.Melee, defensiveSkill.Skill);
-
-			var damageType = _dbContext.DamageTypes.First(x => x.Id == ability.DamageTypeId);
-			Assert.IsNotNull(damageType);
+			Assert.AreEqual(DamageType.Slashing, ability.DamageType);
 
 			Assert.IsNotNull(ability.AppliedConditions);
 			Assert.AreEqual(ability.AppliedConditions.Count, 1);
