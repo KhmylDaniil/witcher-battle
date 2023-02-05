@@ -1,11 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -18,12 +15,15 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 
 			builder.Property(r => r.AbilityId)
 				.HasColumnName("AbilityId")
-				.HasComment("Айди способнности")
+				.HasComment("Айди способности")
 				.IsRequired();
 
-			builder.Property(r => r.ConditionId)
-				.HasColumnName("ConditionId")
-				.HasComment("Айди состояния")
+			builder.Property(r => r.Condition)
+				.HasColumnName("Condition")
+				.HasComment("Тип состояния")
+								.HasConversion(
+					v => v.ToString(),
+					v => Enum.Parse<Condition>(v))
 				.IsRequired();
 
 			builder.Property(r => r.ApplyChance)
@@ -37,19 +37,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasOne(x => x.Condition)
-				.WithMany(x => x.AppliedConditions)
-				.HasForeignKey(x => x.ConditionId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
 			var abilityNavigation = builder.Metadata.FindNavigation(nameof(AppliedCondition.Ability));
 			abilityNavigation.SetField(AppliedCondition.AbilityField);
 			abilityNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
-
-			var conditionNavigation = builder.Metadata.FindNavigation(nameof(AppliedCondition.Condition));
-			conditionNavigation.SetField(AppliedCondition.ConditionField);
-			conditionNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

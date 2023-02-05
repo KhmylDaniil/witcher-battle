@@ -73,9 +73,9 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="target">Цель</param>
 		/// <param name="crit">Критический эффект</param>
 		/// <returns>Критический эффект нужного типа</returns>
-		public static T CreateCritEffect<T>(Creature target, CreaturePart aimedPart, Condition crit) where T : Effect
+		public static T CreateCritEffect<T>(Creature target, CreaturePart aimedPart, string critName) where T : Effect
 		{
-			var name = "Sindie.ApiService.Core.Entities.Effects." + crit.Name + "CritEffect";
+			var name = "Sindie.ApiService.Core.Entities.Effects." + critName + "CritEffect";
 
 			Type type = Type.GetType(name);
 
@@ -94,9 +94,6 @@ namespace Sindie.ApiService.Core.Entities
 					);
 
 			Func<Creature, CreaturePart, string, T> func = lambda.Compile();
-
-			if (!Enums.CritNames.TryGetValue(crit.Name, out string critName))
-				throw new Exception("Нет такого крита");
 
 			return func(target, aimedPart, critName);
 		}

@@ -44,11 +44,6 @@ namespace Sindie.ApiService.Storage.Postgresql
 		public DbSet<Character> Characters { get; set; }
 
 		/// <summary>
-		/// Состояния
-		/// </summary>
-		public DbSet<Condition> Conditions { get; set; }
-
-		/// <summary>
 		/// Существа
 		/// </summary>
 		public DbSet<Creature> Creatures { get; set; }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Sindie.ApiService.Core.BaseData;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 {
@@ -13,13 +15,14 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		public Guid? Id { get; set; }
 		
 		/// <summary>
-		/// Айди состояния
+		/// Тип состояния
 		/// </summary>
-		public Guid ConditionId { get; set; }
+		public Condition Condition { get; set; }
 
 		/// <summary>
 		/// Шанс применения
 		/// </summary>
+		[Range(1, 100)]
 		public int ApplyChance { get; set; }
 	}
 }

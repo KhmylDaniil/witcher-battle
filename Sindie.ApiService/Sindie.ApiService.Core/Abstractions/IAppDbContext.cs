@@ -41,11 +41,6 @@ namespace Sindie.ApiService.Core.Abstractions
 		DbSet<Character> Characters { get; }
 
 		/// <summary>
-		/// Состояния
-		/// </summary>
-		DbSet<Condition> Conditions { get; }
-
-		/// <summary>
 		/// Существа
 		/// </summary>
 		DbSet<Creature> Creatures { get; }

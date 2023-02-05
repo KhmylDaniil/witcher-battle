@@ -55,9 +55,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
-			var conditions =  await _appDbContext.Conditions.ToListAsync(cancellationToken);
-
-			CheckRequest(request, game, conditions);
+			CheckRequest(request, game);
 
 			var newAbility = Ability.CreateAbility(
 				game: game,
@@ -70,7 +68,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 				attackSkill: request.AttackSkill,
 				defensiveSkills: request.DefensiveSkills,
 				damageType: request.DamageType,
-				appliedConditions: AppliedConditionData.CreateAbilityData(request, conditions));
+				appliedConditions: AppliedConditionData.CreateAbilityData(request));
 
 			_appDbContext.Abilities.Add(newAbility);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
@@ -82,9 +80,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="game">Игра</param>
-		/// <param name="conditions">Состояния</param>
-		/// <param name="damageTypes">Типы урона</param>
-		private void CheckRequest(CreateAbilityCommand request, Game game, List<Condition> conditions)
+		private void CheckRequest(CreateAbilityCommand request, Game game)
 		{
 			if (game.Abilities.Any(x => x.Name == request.Name))
 				throw new ExceptionRequestNameNotUniq<CreateAbilityCommand>(nameof(request.Name));
@@ -99,14 +95,9 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 				if (!Enum.IsDefined(item))
 					throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(request.DefensiveSkills));
 
-			foreach (var appliedCondition in request.AppliedConditions)
-			{
-				_ = conditions.FirstOrDefault(x => x.Id == appliedCondition.ConditionId)
-					?? throw new ExceptionEntityNotFound<Condition>(appliedCondition.ConditionId);
-
-				if (appliedCondition.ApplyChance < 0 || appliedCondition.ApplyChance > 100)
-					throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(appliedCondition.ApplyChance));
-			}
+			foreach (var appliedCondition in request.AppliedConditions.Select(x => x.Condition))
+				if (!Enum.IsDefined(appliedCondition))
+					throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(appliedCondition));
 		}
 	}
 }

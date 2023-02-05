@@ -1,140 +1,122 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Sindie.ApiService.Core.BaseData
 {
+	public static class CritNames
+	{
+		/// <summary>
+		/// Названия критических эффектов
+		/// </summary>
+		public static readonly Dictionary<Condition, string> Names = new Dictionary<Condition, string>
+		{
+			{Condition.SimpleHead1, "Уродующий шрам" },
+			{Condition.SimpleHead2, "Треснувшая челюсть" },
+			{Condition.SimpleTorso1, "Инородный объект" },
+			{Condition.SimpleTorso2, "Треснувшие ребра" },
+			{Condition.SimpleArm, "Вывих руки" },
+			{Condition.SimpleLeg, "Вывих ноги" },
+			{Condition.SimpleWing, "Вывих крыла" },
+			{Condition.SimpleTail, "Вывих хвоста" },
+			{Condition.ComplexHead1, "Выбитые зубы" },
+			{Condition.ComplexHead2, "Небольшая травма головы" },
+			{Condition.ComplexTorso1, "Сломанные ребра" },
+			{Condition.ComplexTorso2, "Разрыв селезенки" },
+			{Condition.ComplexArm, "Перелом руки" },
+			{Condition.ComplexLeg, "Перелом ноги" },
+			{Condition.ComplexWing, "Перелом крыла" },
+			{Condition.ComplexTail, "Перелом хвоста" },
+			{Condition.DifficultHead1, "Контузия" },
+			{Condition.DifficultHead2, "Проломленный череп" },
+			{Condition.DifficultTorso1, "Сосущая рана грудной клетки" },
+			{Condition.DifficultTorso2, "Рана в живот" },
+			{Condition.DifficultArm, "Открытый перелом руки" },
+			{Condition.DifficultLeg, "Открытый перелом ноги" },
+			{Condition.DifficultWing, "Открытый перелом крыла" },
+			{Condition.DifficultTail, "Открытый перелом хвоста" },
+			{Condition.DeadlyHead1, "Повреждение глаза" },
+			{Condition.DeadlyHead2, "Потеря головы" },
+			{Condition.DeadlyTorso1, "Септический шок" },
+			{Condition.DeadlyTorso2, "Травма сердца" },
+			{Condition.DeadlyArm, "Потеря руки" },
+			{Condition.DeadlyLeg, "Потеря ноги" },
+			{Condition.DeadlyWing, "Потеря крыла" },
+			{Condition.DeadlyTail, "Потеря хвоста" },
+			{Condition.Bleed, "Кровотечение" },
+			{Condition.BleedingWound, "Кровавая рана" },
+			{Condition.Blinded, "Ослепление" },
+			{Condition.Dying, "При смерти" },
+			{Condition.Fire, "Горение" },
+			{Condition.Freeze, "Заморозка" },
+			{Condition.Hallutination, "Галлюцинации" },
+			{Condition.Intoxication, "Опьянение" },
+			{Condition.Nausea, "Тошнота" },
+			{Condition.Poison, "Отравление" },
+			{Condition.Staggered, "Ошеломление" },
+			{Condition.Stun, "Дизориентация" },
+			{Condition.Sufflocation, "Удушье" }
+		};
+
+		public static string GetConditionFullName(Condition condition)
+			=> Names.TryGetValue(condition, out string result)
+			? result
+			: throw new ArgumentException("No such condition");
+	}
+
+
 	/// <summary>
 	/// Состояния (справочник)
 	/// </summary>
-	public static class Conditions
+	public enum Condition
 	{
-		/// <summary>
-		/// Айди состояния кровотечение
-		/// </summary>
-		public static readonly Guid BleedId = new Guid("9994e0d0-3147-4791-9053-9667cbe127d7");
+		Bleed,
+		BleedingWound,
+		Poison,
+		Fire,
+		Freeze,
+		Stun,
+		Staggered,
+		Intoxication,
+		Hallutination,
+		Nausea,
+		Sufflocation,
+		Blinded,
+		Dying,
 
-		/// <summary>
-		/// Названия состояния кровотечение
-		/// </summary>
-		public static readonly string BleedName = "Bleed";
+		SimpleLeg,
+		SimpleArm,
+		SimpleWing,
+		SimpleTail,
+		SimpleHead1,
+		SimpleHead2,
+		SimpleTorso1,
+		SimpleTorso2,
 
-		/// <summary>
-		/// Айди состояния кровавая рана
-		/// </summary>
-		public static readonly Guid BleedingWoundId = new Guid("7794e0d0-3147-4791-9053-9667cbe127d7");
+		ComplexLeg,
+		ComplexArm,
+		ComplexWing,
+		ComplexTail,
+		ComplexHead1,
+		ComplexHead2,
+		ComplexTorso1,
+		ComplexTorso2,
 
-		/// <summary>
-		/// Названия состояния кровавая рана
-		/// </summary>
-		public static readonly string BleedingWoundName = "BleedingWound";
+		DifficultLeg,
+		DifficultArm,
+		DifficultWing,
+		DifficultTail,
+		DifficultHead1,
+		DifficultHead2,
+		DifficultTorso1,
+		DifficultTorso2,
 
-		/// <summary>
-		/// Айди состояния отравление
-		/// </summary>
-		public static readonly Guid PoisonId = new Guid("8894e0d0-3147-4791-9053-9667cbe127d7");
-
-		/// <summary>
-		/// Названия состояния отравление
-		/// </summary>
-		public static readonly string PoisonName = "Poison";
-
-		/// <summary>
-		/// Айди состояния горение
-		/// </summary>
-		public static readonly Guid FireId = new Guid("8895e0d0-3147-4791-9053-9667cbe127d7");
-
-		/// <summary>
-		/// Названия состояния горение
-		/// </summary>
-		public static readonly string FireName = "Fire";
-
-		/// <summary>
-		/// Айди состояния горение
-		/// </summary>
-		public static readonly Guid FreezeId = new Guid("8895e0d1-3147-4791-9053-9667cbe127d7");
-
-		/// <summary>
-		/// Названия состояния горение
-		/// </summary>
-		public static readonly string FreezeName = "Freeze";
-
-		/// <summary>
-		/// Айди состояния дизориентация
-		/// </summary>
-		public static readonly Guid StunId = new Guid("afb1c2ac-f6ab-435e-aedd-011da6f5ea9a");
-
-		/// <summary>
-		/// Названия состояния дизориентация
-		/// </summary>
-		public static readonly string StunName = "Stun";
-
-		/// <summary>
-		/// Айди состояния ошеломление
-		/// </summary>
-		public static readonly Guid StaggeredId = new Guid("afb1c2ac-f6ab-535e-aedd-011da6f5ea9a");
-
-		/// <summary>
-		/// Названия состояния ошеломление
-		/// </summary>
-		public static readonly string StaggeredName = "Staggered";
-
-		/// <summary>
-		/// Айди состояния опьянение
-		/// </summary>
-		public static readonly Guid IntoxicationId = new Guid("afb1c2ac-f6ab-635e-aedd-011da6f5ea9a");
-
-		/// <summary>
-		/// Названия состояния опьянение
-		/// </summary>
-		public static readonly string IntoxicationName = "Intoxication";
-
-		/// <summary>
-		/// Айди состояния галлюцинация
-		/// </summary>
-		public static readonly Guid HallutinationId = new Guid("afb1c2ac-f6ab-735e-aedd-011da6f5ea9a");
-
-		/// <summary>
-		/// Названия состояния галлюцинация
-		/// </summary>
-		public static readonly string HallutinationName = "Hallutination";
-
-		/// <summary>
-		/// Айди состояния тошнота
-		/// </summary>
-		public static readonly Guid NauseaId = new Guid("afb1c2ac-f6ab-835e-aedd-011da6f5ea9a");
-
-		/// <summary>
-		/// Названия состояния тошнота
-		/// </summary>
-		public static readonly string NauseaName = "Nausea";
-
-		/// <summary>
-		/// Айди состояния удушье
-		/// </summary>
-		public static readonly Guid SufflocationId = new Guid("afb1c2ac-f6ab-935e-aedd-011da6f5ea9a");
-
-		/// <summary>
-		/// Названия состояния удушье
-		/// </summary>
-		public static readonly string SufflocationName = "Sufflocation";
-
-		/// <summary>
-		/// Айди состояния слепота
-		/// </summary>
-		public static readonly Guid BlindedId = new Guid("afb1c2ac-f6ab-035e-aedd-011da6f5ea9a");
-
-		/// <summary>
-		/// Названия состояния слепота
-		/// </summary>
-		public static readonly string BlindedName = "Blinded";
-
-		/// <summary>
-		/// Айди состояния при смерти
-		/// </summary>
-		public static readonly Guid DyingId = new Guid("afb1c2ac-f6ab-035e-aedd-011da6f5ea9b");
-
-		/// <summary>
-		/// Названия состояния при смерти
-		/// </summary>
-		public static readonly string DyingName = "Dying";
+		DeadlyLeg,
+		DeadlyArm,
+		DeadlyWing,
+		DeadlyTail,
+		DeadlyHead1,
+		DeadlyHead2,
+		DeadlyTorso1,
+		DeadlyTorso2
 	}
 }

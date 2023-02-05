@@ -1,6 +1,5 @@
 ﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
-using System.Collections.Generic;
 
 namespace Sindie.ApiService.Core.BaseData
 {
@@ -224,46 +223,6 @@ namespace Sindie.ApiService.Core.BaseData
 			Skill.BleedingWound => Stats.Int,
 			Skill.HealingHands => Stats.Cra,
 			_ => throw new ExceptionFieldOutOfRange<Skill>(nameof(skill)),
-		};
-
-
-		/// <summary>
-		/// Названия критических эффектов
-		/// </summary>
-		public static readonly Dictionary<string, string> CritNames = new Dictionary<string, string>
-		{
-			{"SimpleHead1", "Уродующий шрам" },
-			{"SimpleHead2", "Треснувшая челюсть" },
-			{"SimpleTorso1", "Инородный объект" },
-			{"SimpleTorso2", "Треснувшие ребра" },
-			{"SimpleArm", "Вывих руки" },
-			{"SimpleLeg", "Вывих ноги" },
-			{"SimpleWing", "Вывих крыла" },
-			{"SimpleTail", "Вывих хвоста" },
-			{"ComplexHead1", "Выбитые зубы" },
-			{"ComplexHead2", "Небольшая травма головы" },
-			{"ComplexTorso1", "Сломанные ребра" },
-			{"ComplexTorso2", "Разрыв селезенки" },
-			{"ComplexArm", "Перелом руки" },
-			{"ComplexLeg", "Перелом ноги" },
-			{"ComplexWing", "Перелом крыла" },
-			{"ComplexTail", "Перелом хвоста" },
-			{"DifficultHead1", "Контузия" },
-			{"DifficultHead2", "Проломленный череп" },
-			{"DifficultTorso1", "Сосущая рана грудной клетки" },
-			{"DifficultTorso2", "Рана в живот" },
-			{"DifficultArm", "Открытый перелом руки" },
-			{"DifficultLeg", "Открытый перелом ноги" },
-			{"DifficultWing", "Открытый перелом крыла" },
-			{"DifficultTail", "Открытый перелом хвоста" },
-			{"DeadlyHead1", "Потеря головы" },
-			{"DeadlyHead2", "Повреждение глаза" },
-			{"DeadlyTorso1", "Септический шок" },
-			{"DeadlyTorso2", "Травма сердца" },
-			{"DeadlyArm", "Потеря руки" },
-			{"DeadlyLeg", "Потеря ноги" },
-			{"DeadlyWing", "Потеря крыла" },
-			{"DeadlyTail", "Потеря хвоста" }
 		};
 	}
 }

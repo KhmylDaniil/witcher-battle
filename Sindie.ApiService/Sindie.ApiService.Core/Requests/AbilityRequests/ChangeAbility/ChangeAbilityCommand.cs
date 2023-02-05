@@ -52,13 +52,9 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 			DamageModifier = damageModifier;
 			AttackSpeed = attackSpeed < 1 ? throw new ExceptionRequestFieldIncorrectData<ChangeAbilityRequest>(nameof(AttackSpeed)) : attackSpeed;
 			Accuracy = accuracy;
-			DefensiveSkills = defensiveSkills == null
-				? throw new ExceptionRequestFieldIncorrectData<ChangeAbilityRequest>(nameof(DefensiveSkills))
-				: defensiveSkills;
+			DefensiveSkills = defensiveSkills ?? throw new ExceptionRequestFieldIncorrectData<ChangeAbilityRequest>(nameof(DefensiveSkills));
 			DamageType = damageType;
-			AppliedConditions = appliedConditions == null
-				? throw new ExceptionRequestFieldIncorrectData<ChangeAbilityRequest>(nameof(AppliedConditions))
-				: appliedConditions;
+			AppliedConditions = appliedConditions ?? throw new ExceptionRequestFieldIncorrectData<ChangeAbilityRequest>(nameof(AppliedConditions));
 		}
 	}
 }

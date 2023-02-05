@@ -33,7 +33,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 		/// <summary>
 		/// фильтр по названию накладываемого состояния
 		/// </summary>
-		public Guid? ConditionId { get; set; }
+		public string ConditionName { get; set; }
 
 		/// <summary>
 		/// Минимальное количество кубов атаки

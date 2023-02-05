@@ -17,7 +17,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 		/// <param name="name">Название</param>
 		/// <param name="attackSkillName">Навык атаки</param>
 		/// <param name="damageType">Тип атаки</param>
-		/// <param name="conditionId">Айди состояния</param>
+		/// <param name="conditionName">Название состояния</param>
 		/// <param name="minAttackDiceQuantity">Минимальное количество кубов атаки</param>
 		/// <param name="maxAttackDiceQuantity">Максимальное количество кубов атаки</param>
 		/// <param name="userName">Имя Автора</param>
@@ -34,7 +34,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 			string name,
 			string attackSkillName,
 			string damageType,
-			Guid? conditionId,
+			string сonditionName,
 			int minAttackDiceQuantity,
 			int maxAttackDiceQuantity,
 			string userName,
@@ -51,7 +51,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 			Name = name;
 			AttackSkillName = attackSkillName;
 			DamageType = damageType;
-			ConditionId = conditionId;
+			ConditionName = сonditionName;
 			MinAttackDiceQuantity = minAttackDiceQuantity < 0 
 				? throw new ExceptionRequestFieldIncorrectData<GetAbilityQuery>(nameof(MinAttackDiceQuantity))
 				: minAttackDiceQuantity;

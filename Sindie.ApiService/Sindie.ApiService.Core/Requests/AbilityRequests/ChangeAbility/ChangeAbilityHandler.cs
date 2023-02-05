@@ -6,6 +6,7 @@ using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+using Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,9 +55,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
-			var conditions = await _appDbContext.Conditions.ToListAsync(cancellationToken);
-
-			CheckRequest(request, game, conditions);
+			CheckRequest(request, game);
 
 			var ability = game.Abilities.FirstOrDefault(x => x.Id == request.Id);
 
@@ -70,7 +69,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 				attackSkill: request.AttackSkill,
 				defensiveSkills: request.DefensiveSkills,
 				damageType: request.DamageType,
-				appliedConditions: AppliedConditionData.CreateAbilityData(request, conditions));
+				appliedConditions: AppliedConditionData.CreateAbilityData(request));
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
@@ -81,10 +80,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="game">Игра</param>
-		/// <param name="conditions">Состояния</param>
-		/// <param name="damageTypes">Типы урона</param>
-		/// <param name="skills">Навыки</param>
-		private void CheckRequest(ChangeAbilityCommand request, Game game, List<Condition> conditions)
+		private void CheckRequest(ChangeAbilityCommand request, Game game)
 		{
 			var ability = game.Abilities.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<Ability>(request.Id);
@@ -108,11 +104,8 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 					_ = ability.AppliedConditions.FirstOrDefault(x => x.Id == appliedCondition.Id)
 							?? throw new ExceptionEntityNotFound<AppliedCondition>(appliedCondition.Id.Value);
 
-				_ = conditions.FirstOrDefault(x => x.Id == appliedCondition.ConditionId)
-					?? throw new ExceptionEntityNotFound<Condition>(appliedCondition.ConditionId);
-
-				if (appliedCondition.ApplyChance < 0 || appliedCondition.ApplyChance > 100)
-					throw new ExceptionRequestFieldIncorrectData<ChangeAbilityCommand>(nameof(appliedCondition.ApplyChance));
+				if (!Enum.IsDefined(appliedCondition.Condition))
+					throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(appliedCondition.Condition));
 			}
 		}
 	}

@@ -75,7 +75,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 						|| x.ModifiedOn <= request.ModificationMaxTime))
 						.Where(x => request.AttackSkillName == null || Enum.GetName(x.AttackSkill).Contains(request.AttackSkillName))
 						.Where(x => request.DamageType == null || Enum.GetName(x.DamageType).Contains(request.DamageType))
-						.Where(x => request.ConditionId == null || x.AppliedConditions.Select(ac => ac.ConditionId).Contains(request.ConditionId.Value));
+						.Where(x => request.ConditionName == null || x.AppliedConditions.Select(ac => Enum.GetName(ac.Condition)).Contains(request.ConditionName));
 
 			var list = await filter
 				.OrderBy(request.OrderBy, request.IsAscending)

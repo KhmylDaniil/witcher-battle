@@ -62,7 +62,6 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
 					.ThenInclude(a => a.AppliedConditions)
-					.ThenInclude(ac => ac.Condition)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
 					.ThenInclude(a => a.DefensiveSkills)
@@ -73,10 +72,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Battle>();
 
-			var conditions = await _appDbContext.Conditions.ToListAsync(cancellationToken)
-				?? throw new ExceptionEntityNotFound<Condition>();
-
-			var data = CheckAndFormData(request, battle, conditions);
+			var data = CheckAndFormData(request, battle);
 
 			var attack = new Attack(_rollService);
 			
@@ -96,8 +92,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="battle">Бой</param>
-		/// <param name="conditions">Состояния</param>
-		private AttackData CheckAndFormData(MonsterAttackCommand request, Battle battle, List<Condition> conditions)
+		private AttackData CheckAndFormData(MonsterAttackCommand request, Battle battle)
 		{
 			var monster = battle.Creatures.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<Creature>(request.Id);
@@ -118,7 +113,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 				: monster.Abilities.FirstOrDefault(x => x.Id == request.AbilityId)
 					?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId.Value);
 
-			return AttackData.CreateData(monster, target, aimedPart, ability, null, request.SpecialToHit, request.SpecialToDamage, conditions);
+			return AttackData.CreateData(monster, target, aimedPart, ability, null, request.SpecialToHit, request.SpecialToDamage);
 		}
 	}
 }

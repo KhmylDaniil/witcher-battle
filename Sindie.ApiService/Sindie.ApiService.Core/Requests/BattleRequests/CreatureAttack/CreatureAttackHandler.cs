@@ -63,7 +63,6 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
 					.ThenInclude(a => a.AppliedConditions)
-					.ThenInclude(ac => ac.Condition)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
 					.ThenInclude(a => a.DefensiveSkills)
@@ -74,10 +73,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Battle>();
 
-			var conditions = await _appDbContext.Conditions.ToListAsync(cancellationToken)
-				?? throw new ExceptionEntityNotFound<Condition>();
-
-			var attackData = CheckAndFormData(request, battle, conditions);
+			var attackData = CheckAndFormData(request, battle);
 
 			var attack = new Attack(_rollService);
 
@@ -94,9 +90,8 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="battle">Бой</param>
-		/// <param name="conditions">Состояния</param>
 		/// <returns>Данные для расчета атаки</returns>
-		private AttackData CheckAndFormData(CreatureAttackCommand request, Battle battle, List<Condition> conditions)
+		private AttackData CheckAndFormData(CreatureAttackCommand request, Battle battle)
 		{
 			var attacker = battle.Creatures.FirstOrDefault(x => x.Id == request.AttackerId)
 				?? throw new ExceptionEntityNotFound<Creature>(request.AttackerId);
@@ -132,8 +127,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack
 				ability: ability,
 				defensiveSkill: defensiveSkill,
 				specialToHit: request.SpecialToHit,
-				specialToDamage: request.SpecialToDamage,
-				conditions: conditions);
+				specialToDamage: request.SpecialToDamage);
 		}
 	}
 }
