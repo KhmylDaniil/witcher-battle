@@ -7,7 +7,7 @@
 <h1>Body Templates</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" asp-route-gameId=@ViewData["GameId"]>Create New</a>
 </p>
 
 <form asp-action="Index">
@@ -45,7 +45,7 @@
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Details", "Details", new { gameId = item.GameId, id=item.Id }) |
+                @Html.ActionLink("Details", "Details", new { gameId = item.GameId, id=item.Id }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>
         </tr>

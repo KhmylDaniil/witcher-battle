@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Sindie.ApiService.Core.Entities;
 using System;
 using System.Collections.Generic;
 
@@ -7,7 +8,7 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTempla
 	/// <summary>
 	/// Запрос на создание шаблона тела
 	/// </summary>
-	public class CreateBodyTemplateRequest: IRequest
+	public class CreateBodyTemplateRequest: IRequest<BodyTemplate>
 	{
 		/// <summary>
 		/// Айди игры

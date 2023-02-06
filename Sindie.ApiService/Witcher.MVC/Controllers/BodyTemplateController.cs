@@ -1,9 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById;
-using Witcher.MVC.ViewModels.BodyTemplate;
+using Witcher.MVC.ViewModels.Drafts;
 
 namespace Witcher.MVC.Controllers
 {
@@ -19,7 +20,7 @@ namespace Witcher.MVC.Controllers
 		[Route("[controller]/{gameId}")]
 		public async Task<IActionResult> Index(Guid gameId, string name, string authorName, string bodyPartName, CancellationToken cancellationToken)
 		{
-			TempData["GameId"] = gameId;
+			ViewData["GameId"] = gameId;
 
 			var request = new GetBodyTemplateQuery() { GameId = gameId, Name = name, UserName = authorName, BodyPartName = bodyPartName};
 
@@ -36,57 +37,22 @@ namespace Witcher.MVC.Controllers
 			return View(response);
 		}
 
-		[Route("[controller]/[action]")]
-		public ActionResult Create()
+		[Route("[controller]/[action]/{gameId}")]
+		public async Task<IActionResult> Create(Guid gameId)
 		{
-			return View();
+			var draft = await _mediator.Send(CreateBodyTemplateDraft.CreateDraft(gameId));
+			
+			return View(draft);
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Route("[controller]/[action]")]
-		public ActionResult Create(CreateBodyTemplatePartForm form)
+		[Route("[controller]/[action]/{gameId}")]
+		public async Task<IActionResult> Create(ChangeBodyTemplateRequest request)
 		{
 			try
 			{
-				if (form.IsUsed)
-				{
-					var completedForm = new List<CreateBodyTemplatePartForm> { form };
-
-					if (TempData.TryGetValue("form", out object getForm) && getForm is List<CreateBodyTemplatePartForm> list && list.Count > 0)
-						completedForm.AddRange(list);
-					
-					TempData["form"] = completedForm;
-
-					return View();
-				}
-
-				return RedirectToAction(nameof(Create2));
-			}
-			catch
-			{
-				return View();
-			}
-		}
-
-		[Route("[controller]/[action]")]
-		public ActionResult Create2()
-		{
-			return View();
-		}
-
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		[Route("[controller]/[action]")]
-		public async Task<IActionResult> Create2(CreateBodyTemplateRequest request, CancellationToken cancellationToken)
-		{
-			try
-			{
-				request.BodyTemplateParts = (List<CreateBodyTemplateRequestItem>)TempData["form"];
-				request.GameId = (Guid)TempData["GameId"];
-
-				await _mediator.Send(request, cancellationToken);
-
+				await _mediator.Send(request);
 				return RedirectToAction(nameof(Index));
 			}
 			catch

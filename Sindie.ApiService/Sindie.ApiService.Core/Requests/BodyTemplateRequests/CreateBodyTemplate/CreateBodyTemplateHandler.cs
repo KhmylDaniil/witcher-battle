@@ -1,12 +1,10 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
-using Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplate;
 using System;
 using System.Linq;
 using System.Threading;
@@ -17,7 +15,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 	/// <summary>
 	/// Обработчик создания шаблона тела
 	/// </summary>
-	public class CreateBodyTemplateHandler : IRequestHandler<CreateBodyTemplateRequest, Unit>
+	public class CreateBodyTemplateHandler : IRequestHandler<CreateBodyTemplateRequest, BodyTemplate>
 	{
 		/// <summary>
 		/// Контекст базы данных
@@ -46,7 +44,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		public async Task<Unit> Handle(CreateBodyTemplateRequest request, CancellationToken cancellationToken)
+		public async Task<BodyTemplate> Handle(CreateBodyTemplateRequest request, CancellationToken cancellationToken)
 		{
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.BodyTemplates)
@@ -63,7 +61,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 
 			_appDbContext.BodyTemplates.Add(newBodyTemplate);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
-			return Unit.Value;
+			return newBodyTemplate;
 		}
 
 		/// <summary>

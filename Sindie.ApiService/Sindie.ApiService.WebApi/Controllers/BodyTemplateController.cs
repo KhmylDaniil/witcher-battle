@@ -60,27 +60,27 @@ namespace Sindie.ApiService.WebApi.Controllers
 		//			bodyTemplateParts: request.BodyTemplateParts), cancellationToken);
 		//}
 
-		/// <summary>
-		/// Изменить шаблон тела
-		/// </summary>
-		/// <param name="request">Запрос на изменение шаблона тела</param>
-		/// <param name="cancellationToken">Токен отмены</param>
-		/// <returns></returns>
-		[HttpPut]
-		[SwaggerResponse(StatusCodes.Status200OK)]
-		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task ChangeBodyTemplateAsync([FromBody] ChangeBodyTemplateRequest request, CancellationToken cancellationToken)
-		{
-			await _mediator.Send(
-				request == null
-				? throw new ArgumentNullException(nameof(request))
-				: new ChangeBodyTemplateCommand(
-					id: request.Id,
-					gameId: request.GameId,
-					name: request.Name,
-					description: request.Description,
-					bodyTemplateParts: request.BodyTemplateParts), cancellationToken);
-		}
+		///// <summary>
+		///// Изменить шаблон тела
+		///// </summary>
+		///// <param name="request">Запрос на изменение шаблона тела</param>
+		///// <param name="cancellationToken">Токен отмены</param>
+		///// <returns></returns>
+		//[HttpPut]
+		//[SwaggerResponse(StatusCodes.Status200OK)]
+		//[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
+		//public async Task ChangeBodyTemplateAsync([FromBody] ChangeBodyTemplateRequest request, CancellationToken cancellationToken)
+		//{
+		//	await _mediator.Send(
+		//		request == null
+		//		? throw new ArgumentNullException(nameof(request))
+		//		: new ChangeBodyTemplateCommand(
+		//			id: request.Id,
+		//			gameId: request.GameId,
+		//			name: request.Name,
+		//			description: request.Description,
+		//			bodyTemplateParts: request.BodyTemplateParts), cancellationToken);
+		//}
 
 		///// <summary>
 		///// Предоставить список шаблонов тела
