@@ -16,15 +16,15 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	{
 		private const int SkillModifier = -3;
 		private const int AfterTreatSkillModifier = -1;
-		private static readonly List<Guid> affectedSkills = new()
+		private static readonly List<Skill> affectedSkills = new()
 		{
-			Skills.CharismaId,
-			Skills.PersuasionId,
-			Skills.SeductionId,
-			Skills.LeadershipId,
-			Skills.DeceitId,
-			Skills.SocialEtiquetteId,
-			Skills.IntimidationId
+			Skill.Charisma,
+			Skill.Persuasion,
+			Skill.Seduction,
+			Skill.Leadership,
+			Skill.Deceit,
+			Skill.SocialEtiquette,
+			Skill.Intimidation
 		};
 
 		private SimpleHead1CritEffect() { }
@@ -87,7 +87,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void ApplyStatChanges(Creature creature)
 		{
-			var creatureSkills = creature.CreatureSkills.Where(x => affectedSkills.Contains(x.SkillId));
+			var creatureSkills = creature.CreatureSkills.Where(x => affectedSkills.Contains(x.Skill));
 
 			foreach (var skill in creatureSkills)
 				skill.SkillValue = skill.GetValue() + SkillModifier;
@@ -104,7 +104,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			Severity = Severity.Simple;
 
-			var creatureSkills = creature.CreatureSkills.Where(x => affectedSkills.Contains(x.SkillId));
+			var creatureSkills = creature.CreatureSkills.Where(x => affectedSkills.Contains(x.Skill));
 
 			foreach (var skill in creatureSkills)
 			{
@@ -119,7 +119,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void RevertStatChanges(Creature creature)
 		{
-			var creatureSkills = creature.CreatureSkills.Where(x => affectedSkills.Contains(x.SkillId));
+			var creatureSkills = creature.CreatureSkills.Where(x => affectedSkills.Contains(x.Skill));
 
 			foreach (var skill in creatureSkills)
 				if (Severity == Severity.Simple)

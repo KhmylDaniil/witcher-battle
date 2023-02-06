@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAbilitybyId;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.AbilityRequests.DeleteAbilityById;
@@ -17,7 +18,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
 		private readonly Ability _ability;
-		private readonly Skill _parameter;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="DeleteAbilityByIdHandler"/>
@@ -25,10 +25,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		public DeleteAbilityByIdHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_parameter = Skill.CreateForTest();
-			_ability = Ability.CreateForTest(game: _game, attackSkill: _parameter);
+			_ability = Ability.CreateForTest(game: _game, attackSkill: Enums.Skill.Melee);
 
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _ability, _parameter));
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _ability));
 		}
 
 		/// <summary>

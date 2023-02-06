@@ -20,11 +20,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly IAppDbContext _dbContext;
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly Game _game;
-		private readonly Condition _condition;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
-		private readonly Skill _parameter;
-		private readonly CreatureTemplateSkill _creatureTemplateParameter;
+		private readonly CreatureTemplateSkill _creatureTemplateSkill;
 		private readonly CreatureTemplatePart _creatureTemplatePart;
 
 		/// <summary>
@@ -35,9 +33,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			_game = Game.CreateForTest();
 
-			_parameter = Skill.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
-			_condition = Condition.CreateForTest(name: Conditions.BleedName);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				name: "testName",
@@ -54,27 +50,26 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				maxToHit: 10,
 				armor: 5);
 
-			_creatureTemplateParameter = CreatureTemplateSkill.CreateForTest(
+			_creatureTemplateSkill = CreatureTemplateSkill.CreateForTest(
 				creatureTemplate: _creatureTemplate,
-				skill: _parameter,
+				skill: Skill.Melee,
 				value: 5);
 
 			_ability = Ability.CreateForTest(
 				game: _game,
-				attackSkill: _parameter);
+				attackSkill: Skill.Melee);
 			_ability.AppliedConditions.Add(new AppliedCondition(
 				ability: _ability,
-				condition: _condition,
+				condition: Condition.Bleed,
 				applyChance: 100));
 
-			_creatureTemplate.CreatureTemplateSkills.Add(_creatureTemplateParameter);
+			_creatureTemplate.CreatureTemplateSkills.Add(_creatureTemplateSkill);
 			_creatureTemplate.CreatureTemplateParts.Add(_creatureTemplatePart);
 			_creatureTemplate.Abilities.Add(_ability);
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
 				_bodyTemplate,
-				_condition,
 				_creatureTemplate,
 				_ability));
 		}
@@ -130,9 +125,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsNotNull(result.CreatureTemplateSkills);
 			var creatureTemplateParameter = result.CreatureTemplateSkills.First();
 			Assert.IsNotNull(creatureTemplateParameter);
-			Assert.AreEqual(creatureTemplateParameter.Id, _creatureTemplateParameter.Id);
-			Assert.AreEqual(creatureTemplateParameter.SkillName, _parameter.Name);
-			Assert.AreEqual(creatureTemplateParameter.SkillId, _parameter.Id);
+			Assert.AreEqual(creatureTemplateParameter.Id, _creatureTemplateSkill.Id);
+			Assert.AreEqual(creatureTemplateParameter.Skill, Skill.Melee);
 			Assert.AreEqual(creatureTemplateParameter.SkillValue, 5);
 
 			Assert.IsNotNull(result.Abilities);
@@ -140,10 +134,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsNotNull(ability);
 			Assert.AreEqual(ability.Name, _ability.Name);
 			Assert.AreEqual(ability.Id, _ability.Id);
-			Assert.AreEqual(ability.AttackParameterName, _parameter.Name);
+			Assert.AreEqual(ability.AttackSkill, Skill.Melee);
 			Assert.AreEqual(ability.Description, _ability.Description);
 			Assert.AreEqual(ability.Accuracy, _ability.Accuracy);
-			Assert.AreEqual(ability.AttackParameterId, _parameter.Id);
 			Assert.AreEqual(ability.AttackDiceQuantity, _ability.AttackDiceQuantity);
 			Assert.AreEqual(ability.DamageModifier, _ability.DamageModifier);
 			Assert.AreEqual(ability.AttackSpeed, _ability.AttackSpeed);
@@ -151,8 +144,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsNotNull(ability.AppliedConditions);
 			var appliedCondition = ability.AppliedConditions.First();
 			Assert.IsNotNull(appliedCondition);
-			Assert.AreEqual(appliedCondition.ConditionName, _condition.Name);
-			Assert.AreEqual(appliedCondition.ConditionId, _condition.Id);
+			Assert.AreEqual(appliedCondition.Condition, Condition.Bleed);
 			Assert.AreEqual(appliedCondition.ApplyChance, 100);
 		}
 	}

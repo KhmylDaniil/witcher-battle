@@ -44,7 +44,7 @@ namespace PilotProject.Files
 				abilities: input.Abilities.Select(x => x.Id).ToList(),
 				creatureTemplateSkills: input.CreatureTemplateSkills.Select(x => new CreateCreatureTemplateRequestSkill
 				{
-					SkillId = x.SkillId,
+					Skill = x.Skill,
 					Value = x.SkillValue
 				}).ToList());
 

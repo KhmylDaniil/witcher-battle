@@ -56,10 +56,8 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle
 				.Include(x => x.CreatureTemplates)
 					.ThenInclude(x => x.Abilities)
 					.ThenInclude(x => x.AppliedConditions)
-					.ThenInclude(x => x.Condition)
 				.Include(x => x.CreatureTemplates)
 					.ThenInclude(x => x.CreatureTemplateSkills)
-					.ThenInclude(x => x.Skill)
 				.Include(x => x.Battles)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();

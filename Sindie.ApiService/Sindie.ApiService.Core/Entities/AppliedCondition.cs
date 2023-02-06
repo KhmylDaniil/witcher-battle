@@ -1,27 +1,16 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using Sindie.ApiService.Core.BaseData;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Entities
 {
 	public class AppliedCondition: EntityBase
 	{
 		/// <summary>
-		/// Поле для <see cref="_condition"/>
-		/// </summary>
-		public const string ConditionField = nameof(_condition);
-
-		/// <summary>
 		/// Поле для <see cref="_ability"/>
 		/// </summary>
 		public const string AbilityField = nameof(_ability);
 
-
 		private Ability _ability;
-		private Condition _condition;
 
 		/// <summary>
 		/// Пустой конструктор
@@ -54,9 +43,9 @@ namespace Sindie.ApiService.Core.Entities
 		public int ApplyChance { get; set; }
 
 		/// <summary>
-		/// Айди состояния
+		/// Тип состояния
 		/// </summary>
-		public Guid ConditionId { get; set; }
+		public Condition Condition { get; set; }
 
 		#region navigation properties
 
@@ -69,21 +58,10 @@ namespace Sindie.ApiService.Core.Entities
 			set
 			{
 				_ability = value ?? throw new ApplicationException("Необходимо передать способность");
-				ConditionId = value.Id;
+				AbilityId = value.Id;
 			}
 		}
-		/// <summary>
-		/// Состояние
-		/// </summary>
-		public Condition Condition
-		{
-			get => _condition;
-			set
-			{
-				_condition = value ?? throw new ApplicationException("Необходимо передать состояние");
-				ConditionId = value.Id;
-			}
-		}
+
 		#endregion navigation properties
 
 		/// <summary>

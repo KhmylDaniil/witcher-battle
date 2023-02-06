@@ -1,4 +1,5 @@
 ﻿using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 {
@@ -23,14 +24,9 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Айди навыка атаки
+		/// Навык атаки
 		/// </summary>
-		public Guid AttackSkillId { get; set; }
-
-		/// <summary>
-		/// Название навыка атаки
-		/// </summary>
-		public string AttackSkillName { get; set; }
+		public Skill AttackSkill { get; set; }
 		
 		/// <summary>
 		/// Количество кубов атаки

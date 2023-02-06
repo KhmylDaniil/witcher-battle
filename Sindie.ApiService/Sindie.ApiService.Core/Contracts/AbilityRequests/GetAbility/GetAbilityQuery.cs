@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using System;
 using System.Collections.Generic;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 {
@@ -20,19 +21,19 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Фильтр по навыку атаки
+		/// Навык атаки
 		/// </summary>
-		public Guid? AttackSkillId { get; set; }
+		public string AttackSkillName { get; set; }
 
 		/// <summary>
 		/// Фильтр по типу урона
 		/// </summary>
-		public Guid? DamageTypeId { get; set; }
+		public string DamageType { get; set; }
 
 		/// <summary>
 		/// фильтр по названию накладываемого состояния
 		/// </summary>
-		public Guid? ConditionId { get; set; }
+		public string ConditionName { get; set; }
 
 		/// <summary>
 		/// Минимальное количество кубов атаки

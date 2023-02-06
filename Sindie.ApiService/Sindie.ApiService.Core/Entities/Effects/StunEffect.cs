@@ -43,11 +43,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			Random random = new ();
 			if (random.Next() < creature.Stun)
 			{
-				message.AppendFormat($"Эффект {Conditions.StunName} снят.");
+				message.AppendFormat($"Эффект {Name} снят.");
 				creature.Effects.Remove(this);
 			}
 			else
-				message.AppendLine($"Не удалось снять эффект {Conditions.StunName}.");
+				message.AppendLine($"Не удалось снять эффект {Name}.");
 		}
 
 		/// <summary>

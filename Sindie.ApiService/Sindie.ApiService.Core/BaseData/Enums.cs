@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+using System;
 
 namespace Sindie.ApiService.Core.BaseData
 {
@@ -27,6 +27,27 @@ namespace Sindie.ApiService.Core.BaseData
 			Vampire
 		}
 
+		public enum DamageType
+		{
+			Slashing,
+			Piercing,
+			Bludgeoning,
+			Elemental,
+			Fire,
+			Silver
+		}
+
+		/// <summary>
+		/// Модификатор в зависимости от типа урона
+		/// </summary>
+		public enum DamageTypeModifier
+		{
+			Normal,
+			Vulnerability,
+			Resistance,
+			Immunity
+		}
+		
 		/// <summary>
 		/// Типы частей тела
 		/// </summary>
@@ -62,6 +83,67 @@ namespace Sindie.ApiService.Core.BaseData
 		public static bool IsStabile(Severity severity)
 			=> severity == Severity.Simple || severity == Severity.Complex || severity == Severity.Difficult || severity == Severity.Deadly;
 
+		
+		public enum Skill
+		{
+			Awareness,
+			Business,
+			Deduction,
+			Education,
+			CommonLanguage,
+			ElderLanguage,
+			DwarfenLanguage,
+			MonsterLore,
+			SocialEtiquette,
+			Streetwise,
+			Tactics,
+			Teaching,
+			WildernessSurvival,
+			Brawling,
+			Dodge,
+			Melee,
+			Riding,
+			Sailing,
+			SmallBlades,
+			Staff,
+			Sword,
+			Archery,
+			Athletics,
+			Crossbow,
+			SleightOfHand,
+			Stealth,
+			Endurance,
+			Physique,
+			Charisma,
+			Deceit,
+			FineArts,
+			Gambling,
+			Style,
+			HumanPerception,
+			Leadership,
+			Persuasion,
+			Perfomance,
+			Seduction,
+			Alchemy,
+			Crafting,
+			Disguise,
+			Forgery,
+			PickLock,
+			TrapCrafting,
+			FirstAid,
+			Courage,
+			HexWeaving,
+			Intimidation,
+			Spell,
+			ResistMagic,
+			ResistCoercion,
+			RitualCrafting,
+			Needling,
+			EyeGouge,
+			BleedingWound,
+			HealingHands
+		}
+		
 		/// <summary>
 		/// Характеристики
 		/// </summary>
@@ -78,104 +160,69 @@ namespace Sindie.ApiService.Core.BaseData
 		};
 
 		/// <summary>
-		/// Названия критических эффектов
+		/// Соответствие скилла и характеристики
 		/// </summary>
-		public static readonly Dictionary<string, string> CritNames = new Dictionary<string, string>
+		/// <param name="skill">Скилл</param>
+		/// <returns>Соответствующая характеристика</returns>
+		public static Stats CorrespondingStat(Skill skill) => skill switch
 		{
-			{"SimpleHead1", "Уродующий шрам" },
-			{"SimpleHead2", "Треснувшая челюсть" },
-			{"SimpleTorso1", "Инородный объект" },
-			{"SimpleTorso2", "Треснувшие ребра" },
-			{"SimpleArm", "Вывих руки" },
-			{"SimpleLeg", "Вывих ноги" },
-			{"SimpleWing", "Вывих крыла" },
-			{"SimpleTail", "Вывих хвоста" },
-			{"ComplexHead1", "Выбитые зубы" },
-			{"ComplexHead2", "Небольшая травма головы" },
-			{"ComplexTorso1", "Сломанные ребра" },
-			{"ComplexTorso2", "Разрыв селезенки" },
-			{"ComplexArm", "Перелом руки" },
-			{"ComplexLeg", "Перелом ноги" },
-			{"ComplexWing", "Перелом крыла" },
-			{"ComplexTail", "Перелом хвоста" },
-			{"DifficultHead1", "Контузия" },
-			{"DifficultHead2", "Проломленный череп" },
-			{"DifficultTorso1", "Сосущая рана грудной клетки" },
-			{"DifficultTorso2", "Рана в живот" },
-			{"DifficultArm", "Открытый перелом руки" },
-			{"DifficultLeg", "Открытый перелом ноги" },
-			{"DifficultWing", "Открытый перелом крыла" },
-			{"DifficultTail", "Открытый перелом хвоста" },
-			{"DeadlyHead1", "Потеря головы" },
-			{"DeadlyHead2", "Повреждение глаза" },
-			{"DeadlyTorso1", "Септический шок" },
-			{"DeadlyTorso2", "Травма сердца" },
-			{"DeadlyArm", "Потеря руки" },
-			{"DeadlyLeg", "Потеря ноги" },
-			{"DeadlyWing", "Потеря крыла" },
-			{"DeadlyTail", "Потеря хвоста" }
-	};
-
-		/// <summary>
-		/// Соотношение навыков и характеристик
-		/// </summary>
-		public static readonly Dictionary<Guid, Stats> SkillStats = new Dictionary<Guid, Stats>
-		{
-			{Skills.AwarenessId, Stats.Int},
-			{Skills.BusinessId, Stats.Int},
-			{Skills.DeductionId, Stats.Int},
-			{Skills.EducationId, Stats.Int},
-			{Skills.CommonLanguageId, Stats.Int},
-			{Skills.ElderLanguageId, Stats.Int},
-			{Skills.DwarfenLanguageId, Stats.Int},
-			{Skills.MonsterLoreId, Stats.Int},
-			{Skills.SocialEtiquetteId, Stats.Int},
-			{Skills.TacticsId, Stats.Int},
-			{Skills.TeachingId, Stats.Int},
-			{Skills.WildernessSurvivalId, Stats.Int},
-			{Skills.BrawlingId, Stats.Ref},
-			{Skills.DodgeId, Stats.Ref},
-			{Skills.MeleeId, Stats.Ref},
-			{Skills.RidingId, Stats.Ref},
-			{Skills.SailingId, Stats.Ref},
-			{Skills.SmallBladesId, Stats.Ref},
-			{Skills.StaffId, Stats.Ref},
-			{Skills.SwordId, Stats.Ref},
-			{Skills.ArcheryId, Stats.Dex},
-			{Skills.AthleticsId, Stats.Dex},
-			{Skills.CrossbowId, Stats.Dex},
-			{Skills.SleightOfHandId, Stats.Dex},
-			{Skills.StealthId, Stats.Dex},
-			{Skills.PhysiqueId, Stats.Body},
-			{Skills.EnduranceId, Stats.Body},
-			{Skills.CharismaId, Stats.Emp},
-			{Skills.DeceitId, Stats.Emp},
-			{Skills.FineArtsId, Stats.Emp},
-			{Skills.GamblingId, Stats.Emp},
-			{Skills.StyleId, Stats.Emp},
-			{Skills.HumanPerceptionId, Stats.Emp},
-			{Skills.LeadershipId, Stats.Emp},
-			{Skills.PersuasionId, Stats.Emp},
-			{Skills.PerfomanceId, Stats.Emp},
-			{Skills.SeductionId, Stats.Emp},
-			{Skills.AlchemyId, Stats.Cra},
-			{Skills.CraftingId, Stats.Cra},
-			{Skills.DiguiseId, Stats.Cra},
-			{Skills.FirstAidId, Stats.Cra},
-			{Skills.ForgeryId, Stats.Cra},
-			{Skills.PickLockId, Stats.Cra},
-			{Skills.TrapCraftingId, Stats.Cra},
-			{Skills.CourageId, Stats.Will},
-			{Skills.HexWeavingId, Stats.Will},
-			{Skills.IntimidationId, Stats.Will},
-			{Skills.SpellId, Stats.Will},
-			{Skills.ResistMagicId, Stats.Will},
-			{Skills.ResistCoercionId, Stats.Will},
-			{Skills.RitualCraftingId, Stats.Will},
-			{Skills.NeedlingId, Stats.Emp},
-			{Skills.EyeGougeId, Stats.Dex},
-			{Skills.BleedingWoundId, Stats.Int},
-			{Skills.HealingHandsId, Stats.Cra}
+			Skill.Awareness => Stats.Int,
+			Skill.Business => Stats.Int,
+			Skill.Deduction => Stats.Int,
+			Skill.Education => Stats.Int,
+			Skill.CommonLanguage => Stats.Int,
+			Skill.ElderLanguage => Stats.Int,
+			Skill.DwarfenLanguage => Stats.Int,
+			Skill.MonsterLore => Stats.Int,
+			Skill.SocialEtiquette => Stats.Int,
+			Skill.Streetwise => Stats.Int,
+			Skill.Tactics => Stats.Int,
+			Skill.Teaching => Stats.Int,
+			Skill.WildernessSurvival => Stats.Int,
+			Skill.Brawling => Stats.Ref,
+			Skill.Dodge => Stats.Ref,
+			Skill.Melee => Stats.Ref,
+			Skill.Riding => Stats.Ref,
+			Skill.Sailing => Stats.Ref,
+			Skill.SmallBlades => Stats.Ref,
+			Skill.Staff => Stats.Ref,
+			Skill.Sword => Stats.Ref,
+			Skill.Archery => Stats.Dex,
+			Skill.Athletics => Stats.Dex,
+			Skill.Crossbow => Stats.Dex,
+			Skill.SleightOfHand => Stats.Dex,
+			Skill.Stealth => Stats.Dex,
+			Skill.Endurance => Stats.Body,
+			Skill.Physique => Stats.Body,
+			Skill.Charisma => Stats.Emp,
+			Skill.Deceit => Stats.Emp,
+			Skill.FineArts => Stats.Emp,
+			Skill.Gambling => Stats.Emp,
+			Skill.Style => Stats.Emp,
+			Skill.HumanPerception => Stats.Emp,
+			Skill.Leadership => Stats.Emp,
+			Skill.Persuasion => Stats.Emp,
+			Skill.Perfomance => Stats.Emp,
+			Skill.Seduction => Stats.Emp,
+			Skill.Alchemy => Stats.Cra,
+			Skill.Crafting => Stats.Cra,
+			Skill.Disguise => Stats.Cra,
+			Skill.Forgery => Stats.Cra,
+			Skill.PickLock => Stats.Cra,
+			Skill.TrapCrafting => Stats.Cra,
+			Skill.FirstAid => Stats.Cra,
+			Skill.Courage => Stats.Will,
+			Skill.HexWeaving => Stats.Will,
+			Skill.Intimidation => Stats.Will,
+			Skill.Spell => Stats.Will,
+			Skill.ResistMagic => Stats.Will,
+			Skill.ResistCoercion => Stats.Will,
+			Skill.RitualCrafting => Stats.Will,
+			Skill.Needling => Stats.Emp,
+			Skill.EyeGouge => Stats.Dex,
+			Skill.BleedingWound => Stats.Int,
+			Skill.HealingHands => Stats.Cra,
+			_ => throw new ExceptionFieldOutOfRange<Skill>(nameof(skill)),
 		};
 	}
 }
