@@ -132,7 +132,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 					abilityId: request.AbilityId,
 					targetCreatureId: request.TargetCreatureId,
 					creaturePartId: request.CreaturePartId,
-					defensiveSkillId: request.DefensiveSkillId,
+					defensiveSkill: request.DefensiveSkill,
 					specialToHit: request.SpecialToHit,
 					specialToDamage: request.SpecialToDamage), cancellationToken);
 		}

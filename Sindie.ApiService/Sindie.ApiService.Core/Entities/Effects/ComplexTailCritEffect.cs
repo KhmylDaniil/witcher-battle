@@ -16,7 +16,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 	{
 		private const int Modifier = -3;
 		private const int AfterTreatModifier = -2;
-		private static readonly List<Guid> _affectedSkills = new() { Skills.DodgeId, Skills.AthleticsId };
+		private static readonly List<Skill> _affectedSkills = new() { Skill.Dodge, Skill.Athletics };
 
 		private ComplexTailCritEffect() { }
 
@@ -80,7 +80,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			Severity = Severity.Complex;
 
-			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.SkillId));
+			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.Skill));
 
 			foreach (var skill in creatureSkills)
 			{
@@ -112,7 +112,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			PenaltyApplied = true;
 
-			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.SkillId));
+			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.Skill));
 
 			foreach (var skill in creatureSkills)
 				skill.SkillValue = skill.GetValue() + Modifier;
@@ -126,7 +126,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			PenaltyApplied = false;
 
-			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.SkillId));
+			var creatureSkills = creature.CreatureSkills.Where(x => _affectedSkills.Contains(x.Skill));
 
 			foreach (var skill in creatureSkills)
 				if (Severity == Severity.Complex)

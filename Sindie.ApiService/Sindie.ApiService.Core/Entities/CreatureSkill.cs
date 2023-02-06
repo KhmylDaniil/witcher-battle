@@ -13,13 +13,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public const string CreatureField = nameof(_creature);
 
-		/// <summary>
-		/// Поле для <see cref="_skill"/>
-		/// </summary>
-		public const string SkillField = nameof(_skill);
-
 		private Creature _creature;
-		private Skill _skill;
 		private int _skillValue;
 
 		/// <summary>
@@ -52,14 +46,9 @@ namespace Sindie.ApiService.Core.Entities
 		public Guid CreatureId { get; protected set; }
 
 		/// <summary>
-		/// Айди навыка
+		/// Навык
 		/// </summary>
-		public Guid SkillId { get; protected set; }
-
-		/// <summary>
-		/// Название корреспондирующей характеристики
-		/// </summary>
-		public Stats StatName { get; protected set; }
+		public Skill Skill { get; set; }
 
 		/// <summary>
 		/// Максималальное значение навыка
@@ -87,20 +76,6 @@ namespace Sindie.ApiService.Core.Entities
 			{
 				_creature = value ?? throw new ApplicationException("Необходимо передать существо");
 				CreatureId = value.Id;
-			}
-		}
-
-		/// <summary>
-		/// Навык
-		/// </summary>
-		public Skill Skill
-		{
-			get => _skill;
-			set
-			{
-				_skill = value ?? throw new ApplicationException("Необходимо передать навык");
-				SkillId = value.Id;
-				StatName = value.StatName;
 			}
 		}
 
@@ -134,7 +109,6 @@ namespace Sindie.ApiService.Core.Entities
 			Skill = skill,
 			SkillValue = value == 0 ? 1 : value,
 			MaxValue = maxValue == 0 ? 1 : maxValue,
-			StatName = skill.StatName,
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId

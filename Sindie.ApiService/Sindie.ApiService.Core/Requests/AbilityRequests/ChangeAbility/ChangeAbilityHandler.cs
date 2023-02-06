@@ -6,10 +6,10 @@ using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+using Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -55,11 +55,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
-			var skills = await _appDbContext.Skills.ToListAsync(cancellationToken);
-			var conditions = await _appDbContext.Conditions.ToListAsync(cancellationToken);
-			var damageTypes = await _appDbContext.DamageTypes.ToListAsync(cancellationToken);
-
-			CheckRequest(request, game, conditions, damageTypes, skills);
+			CheckRequest(request, game);
 
 			var ability = game.Abilities.FirstOrDefault(x => x.Id == request.Id);
 
@@ -70,10 +66,10 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 				damageModifier: request.DamageModifier,
 				attackSpeed: request.AttackSpeed,
 				accuracy: request.Accuracy,
-				attackSkill: skills.First(x => x.Id == request.AttackSkillId),
-				defensiveSkills: CreateDefensiveSkills(request, skills),
-				damageType: damageTypes.First(x => x.Id == request.DamageTypeId),
-				appliedConditions: AppliedConditionData.CreateAbilityData(request, conditions));
+				attackSkill: request.AttackSkill,
+				defensiveSkills: request.DefensiveSkills,
+				damageType: request.DamageType,
+				appliedConditions: AppliedConditionData.CreateAbilityData(request));
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
@@ -84,10 +80,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="game">Игра</param>
-		/// <param name="conditions">Состояния</param>
-		/// <param name="damageTypes">Типы урона</param>
-		/// <param name="skills">Навыки</param>
-		private void CheckRequest(ChangeAbilityCommand request, Game game, List<Condition> conditions, List<DamageType> damageTypes, List<Skill> skills)
+		private void CheckRequest(ChangeAbilityCommand request, Game game)
 		{
 			var ability = game.Abilities.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<Ability>(request.Id);
@@ -95,15 +88,15 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 			if (game.Abilities.Any(x => x.Name == request.Name && x.Id != ability.Id))
 				throw new ExceptionRequestNameNotUniq<ChangeAbilityCommand>(nameof(request.Name));
 
-			_ = skills.FirstOrDefault(x => x.Id == request.AttackSkillId)
-				?? throw new ExceptionEntityNotFound<Skill>(request.AttackSkillId);
+			if (!Enum.IsDefined(request.AttackSkill))
+				throw new ExceptionRequestFieldIncorrectData<ChangeAbilityCommand>(nameof(request.AttackSkill));
 
-			_ = damageTypes.FirstOrDefault(x => x.Id == request.DamageTypeId)
-				?? throw new ExceptionEntityNotFound<DamageType>(request.DamageTypeId);
+			if (!Enum.IsDefined(request.DamageType))
+				throw new ExceptionRequestFieldIncorrectData<ChangeAbilityCommand>(nameof(request.DamageType));
 
-			foreach (var id in request.DefensiveSkills)
-				_ = skills.FirstOrDefault(x => x.Id == id)
-					?? throw new ExceptionEntityNotFound<Skill>(id);
+			foreach (var item in request.DefensiveSkills)
+				if (!Enum.IsDefined(item))
+					throw new ExceptionRequestFieldIncorrectData<ChangeAbilityCommand>(nameof(request.DefensiveSkills));
 
 			foreach (var appliedCondition in request.AppliedConditions)
 			{
@@ -111,28 +104,9 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 					_ = ability.AppliedConditions.FirstOrDefault(x => x.Id == appliedCondition.Id)
 							?? throw new ExceptionEntityNotFound<AppliedCondition>(appliedCondition.Id.Value);
 
-				_ = conditions.FirstOrDefault(x => x.Id == appliedCondition.ConditionId)
-					?? throw new ExceptionEntityNotFound<Condition>(appliedCondition.ConditionId);
-
-				if (appliedCondition.ApplyChance < 0 || appliedCondition.ApplyChance > 100)
-					throw new ExceptionRequestFieldIncorrectData<ChangeAbilityCommand>(nameof(appliedCondition.ApplyChance));
+				if (!Enum.IsDefined(appliedCondition.Condition))
+					throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(appliedCondition.Condition));
 			}
-		}
-
-		/// <summary>
-		/// Создание списка защитных навыков
-		/// </summary>
-		/// <param name="request">Запрос</param>
-		/// <param name="skills">Список навыков из БД</param>
-		/// <returns>Список защитных навыков</returns>
-		private List<Skill> CreateDefensiveSkills(ChangeAbilityCommand request, List<Skill> skills)
-		{
-			var defensiveSkills = new List<Skill>();
-
-			foreach (var id in request.DefensiveSkills)
-				defensiveSkills.Add(skills.FirstOrDefault(x => x.Id == id));
-
-			return defensiveSkills;
 		}
 	}
 }

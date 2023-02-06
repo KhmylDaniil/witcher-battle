@@ -57,29 +57,22 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureSkills)
-					.ThenInclude(cp => cp.Skill)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureParts)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
 					.ThenInclude(a => a.AppliedConditions)
-					.ThenInclude(ac => ac.Condition)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
 					.ThenInclude(a => a.DefensiveSkills)
 				.Include(i => i.Creatures)
-					.ThenInclude(c => c.Vulnerables)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.Resistances)
+					.ThenInclude(c => c.DamageTypeModifiers)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Effects)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Battle>();
 
-			var conditions = await _appDbContext.Conditions.ToListAsync(cancellationToken)
-				?? throw new ExceptionEntityNotFound<Condition>();
-
-			var data = CheckAndFormData(request, battle, conditions);
+			var data = CheckAndFormData(request, battle);
 
 			var attack = new Attack(_rollService);
 			
@@ -99,8 +92,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="battle">Бой</param>
-		/// <param name="conditions">Состояния</param>
-		private AttackData CheckAndFormData(MonsterAttackCommand request, Battle battle, List<Condition> conditions)
+		private AttackData CheckAndFormData(MonsterAttackCommand request, Battle battle)
 		{
 			var monster = battle.Creatures.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<Creature>(request.Id);
@@ -121,7 +113,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 				: monster.Abilities.FirstOrDefault(x => x.Id == request.AbilityId)
 					?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId.Value);
 
-			return AttackData.CreateData(monster, target, aimedPart, ability, null, request.SpecialToHit, request.SpecialToDamage, conditions);
+			return AttackData.CreateData(monster, target, aimedPart, ability, null, request.SpecialToHit, request.SpecialToDamage);
 		}
 	}
 }

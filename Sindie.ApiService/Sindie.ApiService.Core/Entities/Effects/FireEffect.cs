@@ -63,7 +63,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
 		{
-			message.AppendLine($"Эффект {Conditions.FireName} снят.");
+			message.AppendLine($"Эффект {Name} снят.");
 			creature.Effects.Remove(this);
 		}
 
@@ -104,7 +104,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			Id = id ?? Guid.NewGuid(),
 			Creature = creature,
-			Name = name ?? Conditions.FireName,
+			Name = name ?? Enum.GetName(Condition.Fire),
 			CreatedOn = createdOn,
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId

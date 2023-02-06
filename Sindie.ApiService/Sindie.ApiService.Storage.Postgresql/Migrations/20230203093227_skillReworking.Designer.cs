@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Sindie.ApiService.Storage.Postgresql;
@@ -11,9 +12,10 @@ using Sindie.ApiService.Storage.Postgresql;
 namespace Sindie.ApiService.Storage.Postgresql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230203093227_skillReworking")]
+    partial class skillReworking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,6 +52,66 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.HasIndex("CreatureTemplatesId");
 
                     b.ToTable("CreatureTemplateAbilities", "GameRules");
+                });
+
+            modelBuilder.Entity("CreatureDamageType", b =>
+                {
+                    b.Property<Guid>("VulnerableCreaturesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("VulnerablesId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("VulnerableCreaturesId", "VulnerablesId");
+
+                    b.HasIndex("VulnerablesId");
+
+                    b.ToTable("CreatureVulnerables", "Battles");
+                });
+
+            modelBuilder.Entity("CreatureDamageType1", b =>
+                {
+                    b.Property<Guid>("ResistancesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ResistantCreaturesId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ResistancesId", "ResistantCreaturesId");
+
+                    b.HasIndex("ResistantCreaturesId");
+
+                    b.ToTable("CreatureResistances", "Battles");
+                });
+
+            modelBuilder.Entity("CreatureTemplateDamageType", b =>
+                {
+                    b.Property<Guid>("VulnerableCreatureTemplatesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("VulnerablesId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("VulnerableCreatureTemplatesId", "VulnerablesId");
+
+                    b.HasIndex("VulnerablesId");
+
+                    b.ToTable("CreatureTemplateVulnerables", "GameRules");
+                });
+
+            modelBuilder.Entity("CreatureTemplateDamageType1", b =>
+                {
+                    b.Property<Guid>("ResistancesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ResistantCreatureTemplatesId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ResistancesId", "ResistantCreatureTemplatesId");
+
+                    b.HasIndex("ResistantCreatureTemplatesId");
+
+                    b.ToTable("CreatureTemplateResistances", "GameRules");
                 });
 
             modelBuilder.Entity("GameImgFile", b =>
@@ -114,9 +176,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("AttackDiceQuantity")
                         .HasComment("Количество кубов атаки");
 
-                    b.Property<string>("AttackSkill")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("AttackSkill")
+                        .HasColumnType("integer")
                         .HasColumnName("AttackSkill")
                         .HasComment("Навык атаки");
 
@@ -138,11 +199,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("DamageModifier")
                         .HasComment("Модификатор атаки");
 
-                    b.Property<string>("DamageType")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("DamageType")
-                        .HasComment("Тип урона");
+                    b.Property<Guid>("DamageTypeId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .HasColumnType("text")
@@ -173,6 +231,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DamageTypeId");
 
                     b.HasIndex("GameId");
 
@@ -316,11 +376,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
 
-                    b.Property<string>("BodyPartType")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("BodyPartType")
+                        .HasColumnType("integer")
                         .HasColumnName("BodyPartType")
-                        .HasComment("Тип части тела");
+                        .HasComment("Айди типа части тела");
 
                     b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
@@ -988,9 +1047,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("CreatureTemplateId")
                         .HasComment("Айди шаблона существа");
 
-                    b.Property<string>("CreatureType")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("CreatureType")
+                        .HasColumnType("integer")
                         .HasColumnName("CreatureType")
                         .HasComment("Тип существа");
 
@@ -1233,9 +1291,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now() at time zone 'utc'");
 
-                    b.Property<string>("CreatureType")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("CreatureType")
+                        .HasColumnType("integer")
                         .HasColumnName("CreatureType")
                         .HasComment("Тип существа");
 
@@ -1381,6 +1438,114 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.ToTable("CreatureTemplateSkills", "GameRules");
 
                     b.HasComment("Навыки шаблона существа");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.DamageType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<Guid>("ModifiedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Name")
+                        .HasComment("Название");
+
+                    b.Property<string>("RoleCreatedUser")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleModifiedUser")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DamageTypes", "GameRules");
+
+                    b.HasComment("Типы урона");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("42e5a598-f6e6-4ccd-8de3-d0e0963d1a33"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Slashing",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("43e5a598-f6e6-4ccd-8de3-d0e0963d1a33"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Piercing",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("44e5a598-f6e6-4ccd-8de3-d0e0963d1a33"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Bludgeoning",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("45e5a598-f6e6-4ccd-8de3-d0e0963d1a33"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Elemental",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("46e5a598-f6e6-4ccd-8de3-d0e0963d1a33"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Fire",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        },
+                        new
+                        {
+                            Id = new Guid("47e5a598-f6e6-4ccd-8de3-d0e0963d1a33"),
+                            CreatedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            CreatedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ModifiedByUserId = new Guid("8094e0d0-3137-4791-9053-9667cbe107d6"),
+                            ModifiedOn = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Silver",
+                            RoleCreatedUser = "Default",
+                            RoleModifiedUser = "Default"
+                        });
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effect", b =>
@@ -2262,9 +2427,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                 {
                     b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
 
-                    b.Property<string>("BodyPartLocation")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("BodyPartLocation")
+                        .HasColumnType("integer")
                         .HasColumnName("BodyPartLocation")
                         .HasComment("Тип части тела");
 
@@ -2274,9 +2438,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("CreaturePartId")
                         .HasComment("Айди части тела");
 
-                    b.Property<string>("Severity")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("Severity")
+                        .HasColumnType("integer")
                         .HasColumnName("Severity")
                         .HasComment("Тяжесть критического эффекта");
 
@@ -2965,6 +3128,66 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CreatureDamageType", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.Creature", null)
+                        .WithMany()
+                        .HasForeignKey("VulnerableCreaturesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Sindie.ApiService.Core.Entities.DamageType", null)
+                        .WithMany()
+                        .HasForeignKey("VulnerablesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CreatureDamageType1", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.DamageType", null)
+                        .WithMany()
+                        .HasForeignKey("ResistancesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Sindie.ApiService.Core.Entities.Creature", null)
+                        .WithMany()
+                        .HasForeignKey("ResistantCreaturesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CreatureTemplateDamageType", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.CreatureTemplate", null)
+                        .WithMany()
+                        .HasForeignKey("VulnerableCreatureTemplatesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Sindie.ApiService.Core.Entities.DamageType", null)
+                        .WithMany()
+                        .HasForeignKey("VulnerablesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CreatureTemplateDamageType1", b =>
+                {
+                    b.HasOne("Sindie.ApiService.Core.Entities.DamageType", null)
+                        .WithMany()
+                        .HasForeignKey("ResistancesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Sindie.ApiService.Core.Entities.CreatureTemplate", null)
+                        .WithMany()
+                        .HasForeignKey("ResistantCreatureTemplatesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("GameImgFile", b =>
                 {
                     b.HasOne("Sindie.ApiService.Core.Entities.Game", null)
@@ -3012,6 +3235,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Ability", b =>
                 {
+                    b.HasOne("Sindie.ApiService.Core.Entities.DamageType", "DamageType")
+                        .WithMany("Abilities")
+                        .HasForeignKey("DamageTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
                         .WithMany("Abilities")
                         .HasForeignKey("GameId")
@@ -3057,6 +3286,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("AbilityId");
                         });
+
+                    b.Navigation("DamageType");
 
                     b.Navigation("DefensiveSkills");
 
@@ -3137,57 +3368,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasForeignKey("Sindie.ApiService.Core.Entities.Creature", "ImgFileId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.OwnsMany("Sindie.ApiService.Core.Entities.CreatureDamageTypeModifier", "DamageTypeModifiers", b1 =>
-                        {
-                            b1.Property<Guid>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid>("CreatedByUserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("CreatedOn")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<Guid>("CreatureId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<int>("DamageType")
-                                .HasColumnType("integer");
-
-                            b1.Property<int>("DamageTypeModifier")
-                                .HasColumnType("integer");
-
-                            b1.Property<Guid>("ModifiedByUserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("ModifiedOn")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<Guid>("PrimaryEntityid")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("RoleCreatedUser")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("RoleModifiedUser")
-                                .HasColumnType("text");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("CreatureId");
-
-                            b1.ToTable("CreatureDamageTypeModifier", "Battles");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CreatureId");
-                        });
-
                     b.Navigation("Battle");
 
                     b.Navigation("CreatureTemplate");
-
-                    b.Navigation("DamageTypeModifiers");
 
                     b.Navigation("ImgFile");
                 });
@@ -3222,55 +3405,7 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasForeignKey("Sindie.ApiService.Core.Entities.CreatureTemplate", "ImgFileId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.OwnsMany("Sindie.ApiService.Core.Entities.CreatureTemplateDamageTypeModifier", "DamageTypeModifiers", b1 =>
-                        {
-                            b1.Property<Guid>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid>("CreatedByUserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("CreatedOn")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<Guid>("CreatureTemplateId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<int>("DamageType")
-                                .HasColumnType("integer");
-
-                            b1.Property<int>("DamageTypeModifier")
-                                .HasColumnType("integer");
-
-                            b1.Property<Guid>("ModifiedByUserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("ModifiedOn")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<Guid>("PrimaryEntityid")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("RoleCreatedUser")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("RoleModifiedUser")
-                                .HasColumnType("text");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("CreatureTemplateId");
-
-                            b1.ToTable("CreatureTemplateDamageTypeModifier", "GameRules");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CreatureTemplateId");
-                        });
-
                     b.Navigation("BodyTemplate");
-
-                    b.Navigation("DamageTypeModifiers");
 
                     b.Navigation("Game");
 
@@ -3934,6 +4069,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                     b.Navigation("CreatureTemplateSkills");
 
                     b.Navigation("Creatures");
+                });
+
+            modelBuilder.Entity("Sindie.ApiService.Core.Entities.DamageType", b =>
+                {
+                    b.Navigation("Abilities");
                 });
 
             modelBuilder.Entity("Sindie.ApiService.Core.Entities.Game", b =>

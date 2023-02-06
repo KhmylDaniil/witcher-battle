@@ -9,47 +9,8 @@ namespace PilotProject.DbContext
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
-		private readonly DamageType _damageType;
-
-		private readonly Condition _bleed;
-		private readonly Condition _poison;
-		private readonly Condition _stun;
-
-		private readonly Condition _simpleLegCrit;
-		private readonly Condition _simpleArmCrit;
-		private readonly Condition _simpleHead1Crit;
-		private readonly Condition _simpleHead2Crit;
-		private readonly Condition _simpleTorso1Crit;
-		private readonly Condition _simpleTorso2Crit;
-
-		private readonly Condition _complexLegCrit;
-		private readonly Condition _complexArmCrit;
-		private readonly Condition _complexHead1Crit;
-		private readonly Condition _complexHead2Crit;
-		private readonly Condition _complexTorso1Crit;
-		private readonly Condition _complexTorso2Crit;
-
-		private readonly Condition _difficultLegCrit;
-		private readonly Condition _difficultArmCrit;
-		private readonly Condition _difficultHead1Crit;
-		private readonly Condition _difficultHead2Crit;
-		private readonly Condition _difficultTorso1Crit;
-		private readonly Condition _difficultTorso2Crit;
-
-		private readonly Condition _deadlyLegCrit;
-		private readonly Condition _deadlyArmCrit;
-		private readonly Condition _deadlyHead1Crit;
-		private readonly Condition _deadlyHead2Crit;
-		private readonly Condition _deadlyTorso1Crit;
-		private readonly Condition _deadlyTorso2Crit;
 
 		private readonly BodyTemplate _bodyTemplate;
-
-		private readonly Skill _meleeSkill;
-		private readonly Skill _dodgeSkill;
-		private readonly Skill _athleticsSkill;
-		private readonly Skill _swordmanship;
-		private readonly Skill _archery;
 
 		private readonly Ability _swordAttack;
 		private readonly Ability _archeryAttack;
@@ -58,45 +19,6 @@ namespace PilotProject.DbContext
 		public FillDbContext()
 		{
 			_game = Game.CreateForTest(id: GameId);
-			_damageType = DamageType.CreateForTest(DamageTypes.SlashingId, DamageTypes.SlashingName);
-
-			_bleed = Condition.CreateForTest(id: Conditions.BleedId, Conditions.BleedName);
-			_poison = Condition.CreateForTest(id: Conditions.PoisonId, Conditions.PoisonName);
-			_stun = Condition.CreateForTest(id: Conditions.StunId, Conditions.StunName);
-
-			_simpleLegCrit = Condition.CreateForTest(id: Crit.SimpleLegId, name: Crit.SimpleLeg);
-			_simpleArmCrit = Condition.CreateForTest(id: Crit.SimpleArmId, name: Crit.SimpleArm);
-			_simpleHead1Crit = Condition.CreateForTest(id: Crit.SimpleHead1Id, name: Crit.SimpleHead1);
-			_simpleHead2Crit = Condition.CreateForTest(id: Crit.SimpleHead2Id, name: Crit.SimpleHead2);
-			_simpleTorso1Crit = Condition.CreateForTest(id: Crit.SimpleTorso1Id, name: Crit.SimpleTorso1);
-			_simpleTorso2Crit = Condition.CreateForTest(id: Crit.SimpleTorso2Id, name: Crit.SimpleTorso2);
-
-			_complexLegCrit = Condition.CreateForTest(id: Crit.ComplexLegId, name: Crit.ComplexLeg);
-			_complexArmCrit = Condition.CreateForTest(id: Crit.ComplexArmId, name: Crit.ComplexArm);
-			_complexHead1Crit = Condition.CreateForTest(id: Crit.ComplexHead1Id, name: Crit.ComplexHead1);
-			_complexHead2Crit = Condition.CreateForTest(id: Crit.ComplexHead2Id, name: Crit.ComplexHead2);
-			_complexTorso1Crit = Condition.CreateForTest(id: Crit.ComplexTorso1Id, name: Crit.ComplexTorso1);
-			_complexTorso2Crit = Condition.CreateForTest(id: Crit.ComplexTorso2Id, name: Crit.ComplexTorso2);
-
-			_difficultLegCrit = Condition.CreateForTest(id: Crit.DifficultLegId, name: Crit.DifficultLeg);
-			_difficultArmCrit = Condition.CreateForTest(id: Crit.DifficultArmId, name: Crit.DifficultArm);
-			_difficultHead1Crit = Condition.CreateForTest(id: Crit.DifficultHead1Id, name: Crit.DifficultHead1);
-			_difficultHead2Crit = Condition.CreateForTest(id: Crit.DifficultHead2Id, name: Crit.DifficultHead2);
-			_difficultTorso1Crit = Condition.CreateForTest(id: Crit.DifficultTorso1Id, name: Crit.DifficultTorso1);
-			_difficultTorso2Crit = Condition.CreateForTest(id: Crit.DifficultTorso2Id, name: Crit.DifficultTorso2);
-
-			_deadlyLegCrit = Condition.CreateForTest(id: Crit.DeadlyLegId, name: Crit.DeadlyLeg);
-			_deadlyArmCrit = Condition.CreateForTest(id: Crit.DeadlyArmId, name: Crit.DeadlyArm);
-			_deadlyHead1Crit = Condition.CreateForTest(id: Crit.DeadlyHead1Id, name: Crit.DeadlyHead1);
-			_deadlyHead2Crit = Condition.CreateForTest(id: Crit.DeadlyHead2Id, name: Crit.DeadlyHead2);
-			_deadlyTorso1Crit = Condition.CreateForTest(id: Crit.DeadlyTorso1Id, name: Crit.DeadlyTorso1);
-			_deadlyTorso2Crit = Condition.CreateForTest(id: Crit.DeadlyTorso2Id, name: Crit.DeadlyTorso2);
-
-			_meleeSkill = Skill.CreateForTest(id: Skills.MeleeId, name: Skills.MeleeName, statName: Enums.Stats.Ref);
-			_dodgeSkill = Skill.CreateForTest(id: Skills.DodgeId, name: Skills.DodgeName, statName: Enums.Stats.Ref);
-			_athleticsSkill = Skill.CreateForTest(id: Skills.AthleticsId, name: Skills.AthleticsName, statName: Enums.Stats.Dex);
-			_swordmanship = Skill.CreateForTest(id: Skills.SwordId, name: Skills.SwordName, statName: Enums.Stats.Ref);
-			_archery = Skill.CreateForTest(id: Skills.ArcheryId, name: Skills.ArcheryName, statName: Enums.Stats.Dex);
 
 		_swordAttack = Ability.CreateForTest(
 				id: AbilitySwordId,
@@ -106,10 +28,9 @@ namespace PilotProject.DbContext
 				damageModifier: 2,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkill: _swordmanship,
-				damageType: _damageType,
-				defensiveSkills: new List<Skill> { _meleeSkill, _dodgeSkill, _athleticsSkill });
-			_swordAttack.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_swordAttack, _bleed, 50));
+				attackSkill: Skill.Sword,
+				defensiveSkills: new List<Skill> { Skill.Melee, Skill.Dodge, Skill.Athletics });
+			_swordAttack.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_swordAttack, Condition.Bleed, 50));
 
 			_clawsAttack = Ability.CreateForTest(
 				id: AbilityclawsId,
@@ -119,10 +40,9 @@ namespace PilotProject.DbContext
 				damageModifier: 0,
 				attackSpeed: 1,
 				accuracy: 0,
-				attackSkill: _meleeSkill,
-				damageType: _damageType,
-				defensiveSkills: new List<Skill> { _meleeSkill, _dodgeSkill, _athleticsSkill });
-			_clawsAttack.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_clawsAttack, _poison, 50));
+				attackSkill: Skill.Melee,
+				defensiveSkills: new List<Skill> { Skill.Melee, Skill.Dodge, Skill.Athletics });
+			_clawsAttack.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_clawsAttack, Condition.Poison, 50));
 
 			_archeryAttack = Ability.CreateForTest(
 				id: AbilityBowId,
@@ -132,9 +52,8 @@ namespace PilotProject.DbContext
 				damageModifier: 0,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkill: _archery,
-				damageType: _damageType,
-				defensiveSkills: new List<Skill> { _dodgeSkill, _athleticsSkill });
+				attackSkill: Skill.Archery,
+				defensiveSkills: new List<Skill> { Skill.Dodge, Skill.Athletics });
 
 			_bodyTemplate = BodyTemplate.CreateForTest(id: BodyTemplateId, name: "TestBodyTemplate", game: _game);
 			_bodyTemplate.BodyTemplateParts.AddRange(new List<BodyTemplatePart>
@@ -200,43 +119,7 @@ namespace PilotProject.DbContext
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
-				_damageType,
-				_bleed,
-				_poison,
-				_stun,
-				_simpleLegCrit,
-				_simpleArmCrit,
-				_simpleHead1Crit,
-				_simpleHead2Crit,
-				_simpleTorso1Crit,
-				_simpleTorso2Crit,
-				_complexLegCrit,
-				_complexArmCrit,
-				_complexHead1Crit,
-				_complexHead2Crit,
-				_complexTorso1Crit,
-				_complexTorso2Crit,
-				_difficultLegCrit,
-				_difficultArmCrit,
-				_difficultHead1Crit,
-				_difficultHead2Crit,
-				_difficultTorso1Crit,
-				_difficultTorso2Crit,
-				_deadlyLegCrit,
-				_deadlyArmCrit,
-				_deadlyHead1Crit,
-				_deadlyHead2Crit,
-				_deadlyTorso1Crit,
-				_deadlyTorso2Crit,
-
 				_bodyTemplate,
-
-				_meleeSkill,
-				_dodgeSkill,
-				_athleticsSkill,
-				_swordmanship,
-				_archery,
-
 				_swordAttack,
 				_archeryAttack,
 				_clawsAttack

@@ -6,6 +6,7 @@ using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatureTemplate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,9 +62,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 				: await _appDbContext.ImgFiles.FirstOrDefaultAsync(x => x.Id == request.ImgFileId, cancellationToken)
 				?? throw new ExceptionEntityNotFound<ImgFile>(request.ImgFileId.Value);
 
-			var skills = await _appDbContext.Skills.ToListAsync(cancellationToken);
-
-			CheckRequest(request, game, skills);
+			CheckRequest(request, game);
 
 			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId);
 
@@ -89,7 +88,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 
 			newCreatureTemplate.UpdateAlibilities(CreateAbilityList(request, game));
 			newCreatureTemplate.UpdateCreatureTemplateSkills(
-				CreatureTemplateSkillData.CreateCreatureTemplateSkillData(request, skills));
+				CreatureTemplateSkillData.CreateCreatureTemplateSkillData(request));
 
 			_appDbContext.CreatureTemplates.Add(newCreatureTemplate);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
@@ -103,7 +102,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 		/// <param name="game">Игра</param>
 		/// <param name="creatureTypes">Типы существ</param>
 		/// <param name="skills">Навыки</param>
-		private void CheckRequest(CreateCreatureTemplateCommand request, Game game, List<Skill> skills)
+		private void CheckRequest(CreateCreatureTemplateCommand request, Game game)
 		{
 			if (game.CreatureTemplates.Any(x => string.Equals(x.Name, request.Name, StringComparison.Ordinal)))
 				throw new ExceptionRequestNameNotUniq<CreateCreatureTemplateCommand>(nameof(request.Name));
@@ -122,8 +121,8 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 
 			foreach (var skill in request.CreatureTemplateSkills)
 			{
-				_ = skills.FirstOrDefault(x => x.Id == skill.SkillId)
-					?? throw new ExceptionEntityNotFound<Skill>(skill.SkillId);
+				if (!Enum.IsDefined(skill.Skill))
+					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateCommand>(nameof(skill.Skill));
 
 				if (skill.Value < 0 || skill.Value > BaseData.DiceValue.Value)
 					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateCommand>(nameof(skill.Value));

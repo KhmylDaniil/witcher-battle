@@ -107,7 +107,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			PenaltyApplied = true;
 
-			var creatureSkills = creature.CreatureSkills.Where(x => AffectedStats.Contains(x.StatName));
+			var creatureSkills = creature.CreatureSkills.Where(x => AffectedStats.Contains(CorrespondingStat(x.Skill)));
 
 			foreach (var skill in creatureSkills)
 				skill.SkillValue = skill.GetValue() - skill.MaxValue / 2;
@@ -124,7 +124,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 
 			PenaltyApplied = false;
 
-			var creatureSkills = creature.CreatureSkills.Where(x => AffectedStats.Contains(x.StatName));
+			var creatureSkills = creature.CreatureSkills.Where(x => AffectedStats.Contains(CorrespondingStat(x.Skill)));
 
 			foreach (var skill in creatureSkills)
 				skill.SkillValue = skill.GetValue() + skill.MaxValue / 2;

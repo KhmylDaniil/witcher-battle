@@ -3,6 +3,7 @@ using Sindie.ApiService.Core.Requests.AbilityRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -16,21 +17,9 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public const string GameField = nameof(_game);
 
-		/// <summary>
-		/// Поле для <see cref="_attackSkill"/>
-		/// </summary>
-		public const string SkillField = nameof(_attackSkill);
-
-		/// <summary>
-		/// Поле для <see cref="_damageType"/>
-		/// </summary>
-		public const string DamageTypeField = nameof(_damageType);
-
 		private Game _game;
-		private Skill _attackSkill;
 		private int _attackDiceQuantity;
 		private int _attackSpeed;
-		private DamageType _damageType;
 
 		/// <summary>
 		/// Пустой конструктор
@@ -50,7 +39,6 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="attackSpeed">Скорость атаки</param>
 		/// <param name="accuracy">Точность атаки</param>
 		/// <param name="attackSkill">Навык атаки</param>
-		/// <param name="defensiveSkills">Навыки для защиты</param>
 		/// <param name="damageType">Типы урона</param>
 		public Ability(
 			Game game,
@@ -61,8 +49,7 @@ namespace Sindie.ApiService.Core.Entities
 			int attackSpeed,
 			int accuracy,
 			Skill attackSkill,
-			DamageType damageType,
-			List<Skill> defensiveSkills)
+			DamageType damageType)
 		{
 			Game = game;
 			Name = name;
@@ -74,7 +61,7 @@ namespace Sindie.ApiService.Core.Entities
 			AttackSkill = attackSkill;
 			AppliedConditions = new List<AppliedCondition>();
 			Creatures = new List<Creature>();
-			DefensiveSkills = defensiveSkills;
+			DefensiveSkills = new List<DefensiveSkill>();
 			DamageType = damageType;
 		}
 
@@ -94,14 +81,14 @@ namespace Sindie.ApiService.Core.Entities
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Айди навыка атаки
+		/// Навык атаки
 		/// </summary>
-		public Guid AttackSkillId { get; protected set; }
+		public Skill AttackSkill { get; set; }
 
 		/// <summary>
-		/// Айди типа урона
+		/// Тип урона
 		/// </summary>
-		public Guid DamageTypeId { get; protected set; }
+		public DamageType DamageType { get; set; }
 
 		/// <summary>
 		/// Количество кубов атаки
@@ -157,37 +144,6 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
-		/// Навык атаки
-		/// </summary>
-		public Skill AttackSkill
-		{
-			get => _attackSkill;
-			protected set
-			{
-				_attackSkill = value ?? throw new ApplicationException("Необходимо передать навык");
-				AttackSkillId = value.Id;
-			}
-		}
-
-		/// <summary>
-		/// Навыки для защиты
-		/// </summary>
-		public List<Skill> DefensiveSkills { get; protected set; }
-
-		/// <summary>
-		/// Тип урона
-		/// </summary>
-		public DamageType DamageType
-		{
-			get => _damageType;
-			protected set
-			{
-				_damageType = value ?? throw new ApplicationException("Необходимо передать тип урона");
-				DamageTypeId = value.Id;
-			}
-		}
-
-		/// <summary>
 		/// Шаблоны существ
 		/// </summary>
 		public List<CreatureTemplate> CreatureTemplates { get; protected set; }
@@ -201,6 +157,11 @@ namespace Sindie.ApiService.Core.Entities
 		/// Накладываемые состояния
 		/// </summary>
 		public List<AppliedCondition> AppliedConditions { get; set; }
+
+		/// <summary>
+		/// Навыки для защиты
+		/// </summary>
+		public List<DefensiveSkill> DefensiveSkills { get; set; }
 
 		#endregion navigation properties
 
@@ -216,7 +177,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="accuracy">Точность атаки</param>
 		/// <param name="attackSkill">Навык атаки</param>
 		/// <param name="defensiveSkills">Навыки для защиты</param>
-		/// <param name="damageTypes">Типы урона</param>
+		/// <param name="damageType">Типы урона</param>
 		/// <param name="appliedConditions">Накладываемые состояния</param>
 		/// <returns>Способность</returns>
 		public static Ability CreateAbility(
@@ -241,9 +202,9 @@ namespace Sindie.ApiService.Core.Entities
 				damageModifier: damageModifier,
 				attackSpeed: attackSpeed,
 				accuracy: accuracy,
-				defensiveSkills: defensiveSkills,
 				damageType: damageType);
 
+			ability.UpdateDefensiveSkills(defensiveSkills);
 			ability.UpdateAplliedConditions(appliedConditions);
 
 			return ability;
@@ -260,7 +221,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="attackSpeed">Скорость атаки</param>
 		/// <param name="accuracy">Точность атаки</param>
 		/// <param name="appliedConditions">Накладываемые состояния</param>
-		/// <param name="damageTypes">Типы урона</param>
+		/// <param name="damageType">Типы урона</param>
 		/// <param name="defensiveSkills">Защитные навыки</param>
 		public void ChangeAbility(
 			string name,
@@ -281,8 +242,8 @@ namespace Sindie.ApiService.Core.Entities
 			DamageModifier = damageModifier;
 			AttackSpeed = attackSpeed;
 			Accuracy = accuracy;
-			DefensiveSkills = defensiveSkills;
 			DamageType = damageType;
+			UpdateDefensiveSkills(defensiveSkills);
 			UpdateAplliedConditions(appliedConditions);
 		}
 
@@ -325,6 +286,15 @@ namespace Sindie.ApiService.Core.Entities
 		}
 
 		/// <summary>
+		/// Обновление списка защитных навыков
+		/// </summary>
+		/// <param name="data">Защитные навыки</param>
+		private void UpdateDefensiveSkills(List<Skill> data)
+			=> DefensiveSkills = data is null
+			? throw new ArgumentNullException(nameof(data))
+			:data.Select(x => new DefensiveSkill(Id, x)).ToList();
+
+		/// <summary>
 		/// Создание тестовой сущности
 		/// </summary>
 		/// <param name="id">айди</param>
@@ -352,30 +322,63 @@ namespace Sindie.ApiService.Core.Entities
 			int damageModifier = default,
 			int attackSpeed = default,
 			int accuracy = default,
-			Skill attackSkill = default,
+			Skill attackSkill = Skill.Melee,
 			List<Skill> defensiveSkills = default,
-			DamageType damageType = default,
+			DamageType damageType = DamageType.Slashing,
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
-		=> new ()
 		{
-			Id = id ?? Guid.NewGuid(),
-			Game = game,
-			Name = name ?? "name",
-			Description = description,
-			AttackDiceQuantity = attackDiceQuantity,
-			DamageModifier = damageModifier,
-			AttackSpeed = attackSpeed,
-			Accuracy = accuracy,
-			AttackSkill = attackSkill,
-			DefensiveSkills = defensiveSkills ?? new List<Skill>(),
-			DamageType = damageType ?? DamageType.CreateForTest(),
-			CreatedOn = createdOn,
-			ModifiedOn = modifiedOn,
-			CreatedByUserId = createdByUserId,
-			Creatures = new List<Creature>(),
-			AppliedConditions = new List<AppliedCondition>()
-		};
+			Ability ability = new()
+			{
+				Id = id ?? Guid.NewGuid(),
+				Game = game,
+				Name = name ?? "name",
+				Description = description,
+				AttackDiceQuantity = attackDiceQuantity,
+				DamageModifier = damageModifier,
+				AttackSpeed = attackSpeed,
+				Accuracy = accuracy,
+				AttackSkill = attackSkill,
+				DefensiveSkills = new List<DefensiveSkill>(),
+				DamageType = damageType,
+				CreatedOn = createdOn,
+				ModifiedOn = modifiedOn,
+				CreatedByUserId = createdByUserId,
+				Creatures = new List<Creature>(),
+				AppliedConditions = new List<AppliedCondition>()
+			};
+			ability.UpdateDefensiveSkills(defensiveSkills ?? new List<Skill>() { Skill.Melee });
+			return ability;
+		}
+	}
+
+	/// <summary>
+	/// Защитный навык
+	/// </summary>
+	public class DefensiveSkill : EntityBase
+	{
+		/// <summary>
+		/// Айди способности
+		/// </summary>
+		public Guid AbilityId { get; set; }
+
+		/// <summary>
+		/// Навык
+		/// </summary>
+		public Skill Skill { get; set; }
+
+		public DefensiveSkill(Guid id, Skill skill)
+		{
+			AbilityId = id;
+			Skill = skill;
+		}
+
+		/// <summary>
+		/// Пустой конструктор
+		/// </summary>
+		protected DefensiveSkill()
+		{
+		}
 	}
 }

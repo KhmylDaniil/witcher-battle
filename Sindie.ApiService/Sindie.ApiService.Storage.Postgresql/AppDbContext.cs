@@ -44,11 +44,6 @@ namespace Sindie.ApiService.Storage.Postgresql
 		public DbSet<Character> Characters { get; set; }
 
 		/// <summary>
-		/// Состояния
-		/// </summary>
-		public DbSet<Condition> Conditions { get; set; }
-
-		/// <summary>
 		/// Существа
 		/// </summary>
 		public DbSet<Creature> Creatures { get; set; }
@@ -56,7 +51,7 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// <summary>
 		/// Параметры существ
 		/// </summary>
-		public DbSet<CreatureSkill> CreatureParameters { get; set; }
+		public DbSet<CreatureSkill> CreatureSkills { get; set; }
 
 		/// <summary>
 		/// Части тел существ
@@ -76,12 +71,7 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// <summary>
 		/// Параметры шаблонов существ
 		/// </summary>
-		public DbSet<CreatureTemplateSkill> CreatureTemplateParameters { get; set; }
-
-		/// <summary>
-		/// Типы урона
-		/// </summary>
-		public DbSet<DamageType> DamageTypes { get; set; }
+		public DbSet<CreatureTemplateSkill> CreatureTemplateSkills { get; set; }
 
 		/// <summary>
 		/// Игры
@@ -107,11 +97,6 @@ namespace Sindie.ApiService.Storage.Postgresql
 		/// Интерфейсы
 		/// </summary>
 		public DbSet<Interface> Interfaces { get; set; }
-
-		/// <summary>
-		/// Навыки
-		/// </summary>
-		public DbSet<Skill> Skills { get; set; }
 
 		/// <summary>
 		/// Роли в системе

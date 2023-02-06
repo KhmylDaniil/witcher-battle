@@ -4,9 +4,8 @@ using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Entities.Effects;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Logic
 {
@@ -52,7 +51,7 @@ namespace Sindie.ApiService.Core.Logic
 				message.AppendLine($"Не удалось стабилизировать эффект {effect.ToString()}.");
 
 			static int CalculateHealingBase(Creature healer)
-				=> Math.Max(healer.SkillBase(Skills.HealingHandsId), healer.SkillBase(Skills.FirstAidId));
+				=> Math.Max(healer.SkillBase(Skill.HealingHands), healer.SkillBase(Skill.FirstAid));
 
 			int CalculateStabilizationDifficulty(Effect effect)
 			{

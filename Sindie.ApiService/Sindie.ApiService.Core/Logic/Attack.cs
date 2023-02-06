@@ -138,7 +138,7 @@ namespace Sindie.ApiService.Core.Logic
 				? 0
 				: BlindedEffect.AttackAndDefenseModifier;
 
-			var result = attacker.SkillBase(ability.AttackSkillId) + ability.Accuracy + toHit + staggeredModifier + blindedModifier;
+			var result = attacker.SkillBase(ability.AttackSkill) + ability.Accuracy + toHit + staggeredModifier + blindedModifier;
 
 			return result < 0 ? 0 : result;
 		}
@@ -159,7 +159,7 @@ namespace Sindie.ApiService.Core.Logic
 				? 0
 				: BlindedEffect.AttackAndDefenseModifier;
 
-			var result = defender.SkillBase(defensiveParameter.SkillId) + staggeredModifier + blindedModifier;
+			var result = defender.SkillBase(defensiveParameter.Skill) + staggeredModifier + blindedModifier;
 
 			if (defender.Effects.Any(x => x is StunEffect))
 				result = 10;
@@ -172,8 +172,6 @@ namespace Sindie.ApiService.Core.Logic
 		/// </summary>
 		/// <param name="message">Сообщение</param>
 		/// <param name="successValue">Успешность атаки</param>
-		/// <param name="creaturePart">Часть тела существа</param>
-		/// <param name="creatureType">Тип существа</param>
 		private static void CheckCrit(AttackData data, ref StringBuilder message, int successValue, ref int damage)
 		{
 			if (successValue < 7)
@@ -181,18 +179,16 @@ namespace Sindie.ApiService.Core.Logic
 
 			SetCritSeverity(successValue, ref damage, out string critSeverity);
 
-			string critName = CritName(data.AimedPart, critSeverity);
+			Condition crit = DefineCrit(data.AimedPart, critSeverity);
 
 			if (isCritImmune(data.Target.CreatureType, data.AimedPart))
 			{
 				message.AppendLine($"Критическое повреждение не может быть нанесено из-за особенностей существа.");
-				AddBonusDamage(ref damage, critName);
+				AddBonusDamage(ref damage, crit);
 			}	
 			else
 			{
-				var condition = data.Conditions.FirstOrDefault(x => x.Name.Equals(critName));
-
-				var effect = CritEffect.CreateCritEffect<Effect>(data.Target, data.AimedPart, condition);
+				var effect = CritEffect.CreateCritEffect<Effect>(data.Target, data.AimedPart, crit);
 
 				if (effect != null)
 					data.Target.Effects.Add(effect);
@@ -204,29 +200,28 @@ namespace Sindie.ApiService.Core.Logic
 
 			static void SetCritSeverity(int successValue, ref int bonusDamage, out string critSeverity)
 			{
-				if (successValue < 10)
+				switch (successValue)
 				{
-					critSeverity = Enums.Severity.Simple.ToString();
-					bonusDamage += 3;
-				}
-				else if (successValue < 13)
-				{
-					critSeverity = Enums.Severity.Complex.ToString();
-					bonusDamage += 5;
-				}
-				else if (successValue < 15)
-				{
-					critSeverity = Enums.Severity.Difficult.ToString();
-					bonusDamage += 8;
-				}
-				else
-				{
-					critSeverity = Enums.Severity.Deadly.ToString();
-					bonusDamage += 10;
+					case < 10:
+						critSeverity = Severity.Simple.ToString();
+						bonusDamage += 3;
+						break;
+					case < 13:
+						critSeverity = Severity.Complex.ToString();
+						bonusDamage += 5;
+						break;
+					case < 15:
+						critSeverity = Severity.Difficult.ToString();
+						bonusDamage += 8;
+						break;
+					default:
+						critSeverity = Severity.Deadly.ToString();
+						bonusDamage += 10;
+						break;
 				}
 			}
 
-			static string CritName(CreaturePart creaturePart, string critSeverity)
+			static Condition DefineCrit(CreaturePart creaturePart, string critSeverity)
 			{
 				string critName = critSeverity + Enum.GetName(creaturePart.BodyPartType);
 				if (creaturePart.BodyPartType == BodyPartType.Head || creaturePart.BodyPartType == BodyPartType.Torso)
@@ -236,7 +231,7 @@ namespace Sindie.ApiService.Core.Logic
 					critName += suffix;
 				}
 
-				return critName;
+				return Enum.TryParse(critName, out Condition crit) ? crit : throw new ArgumentException("No crit with this name");
 			}
 
 			static bool isCritImmune(CreatureType creatureType, CreaturePart aimedPart)
@@ -245,16 +240,24 @@ namespace Sindie.ApiService.Core.Logic
 					&& aimedPart.BodyPartType == BodyPartType.Torso;
 			}
 
-			static void AddBonusDamage(ref int bonusDamage, string critName)
+			static void AddBonusDamage(ref int bonusDamage, Condition crit)
 			{
-				if (critName.Equals("SimpleTorso1", StringComparison.OrdinalIgnoreCase))
-					bonusDamage += 5;
-				else if (critName.Equals("ComplexTorso2", StringComparison.OrdinalIgnoreCase))
-					bonusDamage += 10;
-				else if (critName.Equals("DifficultTorso", StringComparison.OrdinalIgnoreCase))
-					bonusDamage += 15;
-				else if (critName.Equals("DeadlyTorso1", StringComparison.OrdinalIgnoreCase))
-					bonusDamage += 20;
+				switch (crit)
+				{
+					case Condition.SimpleTorso1:
+						bonusDamage += 5;
+						break;
+					case Condition.ComplexTorso2:
+						bonusDamage += 10;
+						break;
+					case Condition.DifficultTorso1:
+					case Condition.DifficultTorso2:
+						bonusDamage += 15;
+						break;
+					case Condition.DeadlyTorso1:
+						bonusDamage += 20;
+						break;
+				}
 			}
 
 			void StunCheck(Creature creature, ref StringBuilder message)
@@ -268,7 +271,7 @@ namespace Sindie.ApiService.Core.Logic
 						return;
 
 					creature.Effects.Add(stun);
-					message.AppendLine($"Из-за наложения критического эффекта наложен эффект {Conditions.StunName}.");
+					message.AppendLine($"Из-за наложения критического эффекта наложен эффект {CritNames.GetConditionFullName(Condition.Stun)}.");
 				}	
 			}
 		}
@@ -357,7 +360,7 @@ namespace Sindie.ApiService.Core.Logic
 
 			if (data.Target is Character)
 			{
-				data.Target.Effects.Add(DyingEffect.Create(null, null, data.Target, Conditions.DyingName));
+				data.Target.Effects.Add(DyingEffect.Create(null, null, data.Target, Enum.GetName(Condition.Dying)));
 				message.AppendLine($"Существо {data.Target.Name} при смерти");
 				return false;
 			}
@@ -380,18 +383,24 @@ namespace Sindie.ApiService.Core.Logic
 
 			damage -= data.AimedPart.CurrentArmor--;
 			message.AppendLine($"Броня повреждена. Осталось {data.AimedPart.CurrentArmor} брони");
-			return;
 		}
 
 		private static void CheckModifiers(AttackData data, ref int damage)
 		{
-			if (data.Target.Resistances.Any(x => x.Id == data.Ability.DamageTypeId))
-				damage /= 2;
-
-			if (data.Target.Vulnerables.Any(x => x.Id == data.Ability.DamageTypeId))
-				damage *= 2;
-
 			damage = (int)Math.Truncate(damage * data.AimedPart.DamageModifier);
+
+			var damageTypeModifier = data.Target.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == data.Ability.DamageType);
+
+			if (damageTypeModifier is null) return;
+
+			damage = damageTypeModifier.DamageTypeModifier switch
+			{
+				DamageTypeModifier.Vulnerability => damage * 2,
+				DamageTypeModifier.Resistance => damage / 2,
+				DamageTypeModifier.Immunity => 0,
+				DamageTypeModifier.Normal => damage,
+				_ => throw new ArgumentException("DamageType enum value is not defined"),
+			};
 		}
 
 		/// <summary>

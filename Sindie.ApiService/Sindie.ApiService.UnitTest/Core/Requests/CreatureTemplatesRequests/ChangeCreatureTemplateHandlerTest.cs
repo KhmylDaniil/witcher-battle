@@ -22,15 +22,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly ImgFile _imgFile;
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly BodyTemplatePart _torso;
-		private readonly Condition _condition;
-		private readonly Skill _parameter1;
-		private readonly Skill _parameter2;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly CreatureTemplatePart _creatureTemplatePart;
-		private readonly CreatureTemplateSkill _creatureTemplateParameter;
+		private readonly CreatureTemplateSkill _creatureTemplateSkill;
 		private readonly Ability _ability1;
 		private readonly Ability _ability2;
-		private readonly DamageType _damageType;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="CreateCreatureTemlplateHandler"/>
@@ -38,7 +34,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		public ChangeCreatureTemplateHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_damageType = DamageType.CreateForTest();
 			_imgFile = ImgFile.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
@@ -51,10 +46,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				minToHit: 1,
 				maxToHit: 10);
 			_bodyTemplate.BodyTemplateParts = new List<BodyTemplatePart> { _torso };
-
-			_condition = Condition.CreateForTest();
-			_parameter1 = Skill.CreateForTest();
-			_parameter2 = Skill.CreateForTest();
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
@@ -71,28 +62,25 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				armor: 0);
 			_creatureTemplate.CreatureTemplateParts.Add(_creatureTemplatePart);
 
-			_ability1 = Ability.CreateForTest(game: _game, attackSkill: _parameter1, damageType: _damageType);
+			_ability1 = Ability.CreateForTest(game: _game, attackSkill: Skill.Melee);
 			_creatureTemplate.Abilities.Add(_ability1);
 
-			_ability2 = Ability.CreateForTest(game: _game, attackSkill: _parameter2, damageType: _damageType);
+			_ability2 = Ability.CreateForTest(game: _game, attackSkill: Skill.Staff, damageType: DamageType.Piercing);
 
-			_creatureTemplateParameter = CreatureTemplateSkill.CreateForTest(
+			_creatureTemplateSkill = CreatureTemplateSkill.CreateForTest(
 				creatureTemplate: _creatureTemplate,
-				skill: _parameter1,
+				skill: Skill.Melee,
 				value: 6);
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
 				_imgFile,
-				_parameter1,
-				_parameter2,
 				_bodyTemplate,
 				_torso,
 				_ability1,
 				_ability2,
 				_creatureTemplate,
-				_creatureTemplateParameter,
-				_condition));
+				_creatureTemplateSkill));
 		}
 
 		/// <summary>
@@ -134,13 +122,13 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				{
 					new ChangeCreatureTemplateRequestSkill()
 					{
-						Id = _creatureTemplateParameter.Id,
-						SkillId = _parameter1.Id,
+						Id = _creatureTemplateSkill.Id,
+						Skill = Skill.Melee,
 						Value = 9
 					},
 					new ChangeCreatureTemplateRequestSkill()
 					{
-						SkillId = _parameter2.Id,
+						Skill = Skill.Staff,
 						Value = 3
 					}
 				});
@@ -153,7 +141,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			var creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault(x => x.Id == request.Id);
 			Assert.IsNotNull(creatureTemplate);
-			Assert.AreEqual(_dbContext.CreatureTemplates.Count(), 1);
+			Assert.IsTrue(_dbContext.CreatureTemplates.Count() == 1);
 
 			Assert.AreEqual(request.GameId, creatureTemplate.GameId);
 			Assert.IsNotNull(creatureTemplate.Name);
@@ -186,18 +174,18 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(creatureTemplatePart.Armor, 4);
 
 			Assert.IsNotNull(creatureTemplate.Abilities);
-			Assert.AreEqual(creatureTemplate.Abilities.Count(), 1);
+			Assert.IsTrue(creatureTemplate.Abilities.Count == 1);
 			var ability = creatureTemplate.Abilities.FirstOrDefault(x => x.Id == _ability2.Id);
 			Assert.IsNotNull(ability);
 
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateSkills);
-			Assert.AreEqual(creatureTemplate.CreatureTemplateSkills.Count(), 2);
+			Assert.IsTrue(creatureTemplate.CreatureTemplateSkills.Count == 2);
 			var creatureTemplateParameter1 = creatureTemplate.CreatureTemplateSkills
-				.FirstOrDefault(x => x.SkillId == _parameter1.Id);
+				.FirstOrDefault(x => x.Skill == Skill.Melee);
 			Assert.IsTrue(creatureTemplateParameter1.SkillValue == 9);
 
 			var creatureTemplateParameter2 = creatureTemplate.CreatureTemplateSkills
-				.FirstOrDefault(x => x.SkillId == _parameter2.Id);
+				.FirstOrDefault(x => x.Skill == Skill.Staff);
 			Assert.IsTrue(creatureTemplateParameter2.SkillValue == 3);
 		}
 	}

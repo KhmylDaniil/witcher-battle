@@ -3,6 +3,7 @@ using Sindie.ApiService.Core.BaseData;
 using System;
 using System.Linq;
 using System.Text;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities.Effects
 {
@@ -60,7 +61,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
 		{
-			message.AppendFormat($"Эффект {Conditions.BlindedName} снят.");
+			message.AppendFormat($"Эффект {Name} снят.");
 			RevertStatChanges(creature);
 			creature.Effects.Remove(this);
 		}
@@ -71,7 +72,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		private void ApplyStatChanges(Creature creature)
 		{
-			var awareness = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AwarenessId);
+			var awareness = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Awareness);
 
 			if (awareness != null)
 				awareness.SkillValue = awareness.GetValue() + AwarenessModifier;
@@ -83,7 +84,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		private void RevertStatChanges(Creature creature)
 		{
-			var awareness = creature.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AwarenessId);
+			var awareness = creature.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Awareness);
 
 			if (awareness != null)
 				awareness.SkillValue = awareness.GetValue() - AwarenessModifier;

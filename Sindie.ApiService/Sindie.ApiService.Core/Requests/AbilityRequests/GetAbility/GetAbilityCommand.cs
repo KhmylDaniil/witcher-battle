@@ -1,10 +1,7 @@
 ﻿using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 {
@@ -18,9 +15,9 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 		/// </summary>
 		/// <param name="gameId">Айди игры</param>
 		/// <param name="name">Название</param>
-		/// <param name="attackSkillId">Айди навыка атаки</param>
-		/// <param name="damageTypeId">Айди типа атаки</param>
-		/// <param name="conditionId">Айди состояния</param>
+		/// <param name="attackSkillName">Навык атаки</param>
+		/// <param name="damageType">Тип атаки</param>
+		/// <param name="conditionName">Название состояния</param>
 		/// <param name="minAttackDiceQuantity">Минимальное количество кубов атаки</param>
 		/// <param name="maxAttackDiceQuantity">Максимальное количество кубов атаки</param>
 		/// <param name="userName">Имя Автора</param>
@@ -35,9 +32,9 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 		public GetAbilityCommand(
 			Guid gameId,
 			string name,
-			Guid? attackSkillId,
-			Guid? damageTypeId,
-			Guid? conditionId,
+			string attackSkillName,
+			string damageType,
+			string conditionName,
 			int minAttackDiceQuantity,
 			int maxAttackDiceQuantity,
 			string userName,
@@ -52,9 +49,9 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 		{
 			GameId = gameId;
 			Name = name;
-			AttackSkillId = attackSkillId;
-			DamageTypeId = damageTypeId;
-			ConditionId = conditionId;
+			AttackSkillName = attackSkillName;
+			DamageType = damageType;
+			ConditionName = conditionName;
 			MinAttackDiceQuantity = minAttackDiceQuantity < 0 
 				? throw new ExceptionRequestFieldIncorrectData<GetAbilityQuery>(nameof(MinAttackDiceQuantity))
 				: minAttackDiceQuantity;

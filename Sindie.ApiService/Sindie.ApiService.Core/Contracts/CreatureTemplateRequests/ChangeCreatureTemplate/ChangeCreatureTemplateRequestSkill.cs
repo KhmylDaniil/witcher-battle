@@ -1,4 +1,5 @@
 ﻿using System;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate
 {
@@ -13,9 +14,9 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatu
 		public Guid? Id { get; set; }
 		
 		/// <summary>
-		/// Айди навыка
+		/// Навык
 		/// </summary>
-		public Guid SkillId { get; set; }
+		public Skill Skill { get; set; }
 
 		/// <summary>
 		/// Значение навыка
