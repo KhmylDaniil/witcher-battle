@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sindie.ApiService.Core.BaseData;
+using System;
 
 namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplateById
 {
@@ -13,14 +14,9 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		public Guid Id { get; set; }
 
 		/// <summary>
-		/// Айди состояния
+		/// Тип состояния
 		/// </summary>
-		public Guid ConditionId { get; set; }
-
-		/// <summary>
-		/// Название состояния
-		/// </summary>
-		public string ConditionName { get; set; }
+		public Condition Condition { get; set; }
 
 		/// <summary>
 		/// Шанс применения

@@ -152,7 +152,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 					return;
 
 				creature.Effects.Add(stun);
-				message.AppendLine($"Из-за контузии наложен эффект {Conditions.StunName}.");
+				message.AppendLine($"Из-за контузии наложен эффект {stun.Name}.");
 			}
 		}
 	}

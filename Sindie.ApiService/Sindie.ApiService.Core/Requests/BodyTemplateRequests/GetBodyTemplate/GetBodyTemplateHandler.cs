@@ -53,11 +53,6 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 		/// <returns>Ответ на запрос списка шаблонов тела</returns>
 		public async Task<GetBodyTemplateResponse> Handle(GetBodyTemplateCommand request, CancellationToken cancellationToken)
 		{
-			if (request.PageSize < 1)
-				throw new ArgumentOutOfRangeException(nameof(request.PageSize));
-			if (request.PageNumber < 1)
-				throw new ArgumentOutOfRangeException(nameof(request.PageNumber));
-
 			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
 				throw new ArgumentOutOfRangeException(nameof(request.CreationMinTime));
 			if (request.ModificationMinTime > _dateTimeProvider.TimeProvider)

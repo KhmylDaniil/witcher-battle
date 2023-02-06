@@ -41,11 +41,6 @@ namespace Sindie.ApiService.Core.Abstractions
 		DbSet<Character> Characters { get; }
 
 		/// <summary>
-		/// Состояния
-		/// </summary>
-		DbSet<Condition> Conditions { get; }
-
-		/// <summary>
 		/// Существа
 		/// </summary>
 		DbSet<Creature> Creatures { get; }
@@ -53,7 +48,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <summary>
 		/// Параметры существ
 		/// </summary>
-		DbSet<CreatureSkill> CreatureParameters { get; }
+		DbSet<CreatureSkill> CreatureSkills { get; }
 
 		/// <summary>
 		/// Части тел существ
@@ -73,12 +68,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <summary>
 		/// Параметры шаблонов существ
 		/// </summary>
-		DbSet<CreatureTemplateSkill> CreatureTemplateParameters { get; }
-
-		/// <summary>
-		/// Типы урона
-		/// </summary>
-		DbSet<DamageType> DamageTypes { get; }
+		DbSet<CreatureTemplateSkill> CreatureTemplateSkills { get; }
 
 		/// <summary>
 		/// Игры
@@ -104,11 +94,6 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// Интерфейсы
 		/// </summary>
 		DbSet<Interface> Interfaces { get; }
-
-		/// <summary>
-		/// Навыки
-		/// </summary>
-		DbSet<Skill> Skills { get; }
 
 		/// <summary>
 		/// Роли в системе

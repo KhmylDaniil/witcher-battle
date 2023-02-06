@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.Entities;
+using static Sindie.ApiService.Core.BaseData.Enums;
+using System;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -35,6 +37,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			builder.Property(r => r.CreatureType)
 				.HasColumnName("CreatureType")
 				.HasComment("Тип существа")
+				.HasConversion(
+					v => v.ToString(),
+					v => Enum.Parse<CreatureType>(v))
 				.IsRequired();
 
 			builder.Property(r => r.Name)
@@ -141,13 +146,8 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasMany(x => x.Vulnerables)
-				.WithMany(x => x.VulnerableCreatureTemplates)
-				.UsingEntity(x => x.ToTable("CreatureTemplateVulnerables", "GameRules"));
-
-			builder.HasMany(x => x.Resistances)
-				.WithMany(x => x.ResistantCreatureTemplates)
-				.UsingEntity(x => x.ToTable("CreatureTemplateResistances", "GameRules"));
+			builder.OwnsMany(x => x.DamageTypeModifiers)
+				.HasKey(r => r.Id);
 
 			var gameNavigation = builder.Metadata.FindNavigation(nameof(CreatureTemplate.Game));
 			gameNavigation.SetField(CreatureTemplate.GameField);

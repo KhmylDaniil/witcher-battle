@@ -107,18 +107,17 @@ namespace PilotProject.CommandBuilders
 
 			static List<CreateCreatureTemplateRequestSkill> CreateCreatureTemplateSkills(IAppDbContext appDbContext)
 			{
-				var skills = appDbContext.Skills.ToList();
 				var createCreatureTemplateRequestSkills = new List<CreateCreatureTemplateRequestSkill>();
 
 				Console.WriteLine("You need to add some skills.");
 
-				foreach (var skill in skills)
+				foreach (Skill skill in Enum.GetValues(typeof(Skill)))
 				{
-					Console.WriteLine($"Enter value to {skill.Name} skill. Please do not enter more then ten.");
+					Console.WriteLine($"Enter value to {Enum.GetName(skill)} skill. Please do not enter more then ten.");
 					int value = 0;
 					while (!int.TryParse(Console.ReadLine(), out value) || value < 0) ;
 
-					createCreatureTemplateRequestSkills.Add(new CreateCreatureTemplateRequestSkill { SkillId = skill.Id, Value = value });
+					createCreatureTemplateRequestSkills.Add(new CreateCreatureTemplateRequestSkill { Skill = skill, Value = value });
 				}
 
 				return createCreatureTemplateRequestSkills;
@@ -346,23 +345,22 @@ namespace PilotProject.CommandBuilders
 
 			static List<ChangeCreatureTemplateRequestSkill> FormSkillData(IAppDbContext appDbContext, CreatureTemplate creatureTemplate)
 			{
-				var skills = appDbContext.Skills.ToList();
 				var changeCreatureTemplateRequestSkills = new List<ChangeCreatureTemplateRequestSkill>();
 
 				Console.WriteLine("You need to add some skills.");
 
-				foreach (var skill in skills)
+				foreach (Skill skill in Enum.GetValues(typeof(Skill)))
 				{
-					var existingCTSkill = creatureTemplate.CreatureTemplateSkills.FirstOrDefault(x => x.SkillId == skill.Id);
+					var existingCTSkill = creatureTemplate.CreatureTemplateSkills.FirstOrDefault(x => x.Skill == skill);
 
-					Console.WriteLine($"Enter value to {skill.Name} skill. Please do not enter more then ten.");
+					Console.WriteLine($"Enter value to {Enum.GetName(skill)} skill. Please do not enter more then ten.");
 					int value = 0;
 					while (!int.TryParse(Console.ReadLine(), out value) || value < 0) ;
 
 					changeCreatureTemplateRequestSkills.Add(new ChangeCreatureTemplateRequestSkill
 					{
 						Id = existingCTSkill?.Id,
-						SkillId = skill.Id,
+						Skill = skill,
 						Value = value
 					});
 				}

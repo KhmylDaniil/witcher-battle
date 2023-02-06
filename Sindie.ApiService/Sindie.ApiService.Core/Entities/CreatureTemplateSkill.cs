@@ -13,13 +13,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public const string CreatureTemplateField = nameof(_creatureTemplate);
 
-		/// <summary>
-		/// Поле для <see cref="_skill"/>
-		/// </summary>
-		public const string SkillField = nameof(_skill);
-
 		private CreatureTemplate _creatureTemplate;
-		private Skill _skill;
 		private int _skillValue;
 
 		/// <summary>
@@ -51,14 +45,9 @@ namespace Sindie.ApiService.Core.Entities
 		public Guid CreatureTemplateId { get; protected set; }
 
 		/// <summary>
-		/// Айди навыка
+		/// Навык
 		/// </summary>
-		public Guid SkillId { get; protected set; }
-
-		/// <summary>
-		/// Название корреспондирующей характеристики
-		/// </summary>
-		public Stats StatName { get; protected set; }
+		public Skill Skill { get; set; }
 
 		/// <summary>
 		/// Значение навыка у шаблона существа
@@ -85,20 +74,6 @@ namespace Sindie.ApiService.Core.Entities
 			{
 				_creatureTemplate = value ?? throw new ApplicationException("Необходимо передать шаблон существа");
 				CreatureTemplateId = value.Id;
-			}
-		}
-
-		/// <summary>
-		/// Навык
-		/// </summary>
-		public Skill Skill
-		{
-			get => _skill;
-			set
-			{
-				_skill = value ?? throw new ApplicationException("Необходимо передать навык");
-				SkillId = value.Id;
-				StatName = value.StatName;
 			}
 		}
 

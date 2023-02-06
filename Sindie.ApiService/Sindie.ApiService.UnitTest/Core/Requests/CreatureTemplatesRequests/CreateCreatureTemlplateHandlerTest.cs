@@ -22,8 +22,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly ImgFile _imgFile;
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly BodyTemplatePart _bodyTemplatePart;
-		private readonly Condition _condition;
-		private readonly Skill _parameter;
 		private readonly Ability _ability;
 
 		/// <summary>
@@ -43,11 +41,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				maxToHit: 10);
 			_bodyTemplate.BodyTemplateParts = new List<BodyTemplatePart> { _bodyTemplatePart};
 
-			_parameter = Skill.CreateForTest();
-			_ability = Ability.CreateForTest(game: _game, attackSkill: _parameter);
-			_condition = Condition.CreateForTest();
+			_ability = Ability.CreateForTest(game: _game, attackSkill: Skill.Melee);
 			
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _parameter, _bodyTemplate, _bodyTemplatePart, _condition, _ability));
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _bodyTemplate, _bodyTemplatePart, _ability));
 		}
 
 		/// <summary>
@@ -88,7 +84,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				{
 					new CreateCreatureTemplateRequestSkill()
 					{
-						SkillId = _parameter.Id,
+						Skill = Skill.Melee,
 						Value = 5
 					}
 				});
@@ -139,11 +135,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateSkills);
 			Assert.AreEqual(creatureTemplate.CreatureTemplateSkills.Count(), 1);
-			var creatureTemplateParameter = _dbContext.CreatureTemplateParameters
+			var creatureTemplateSkill = _dbContext.CreatureTemplateSkills
 				.FirstOrDefault(x => x.CreatureTemplateId == creatureTemplate.Id);
 
-			Assert.IsTrue(creatureTemplateParameter.SkillId == _parameter.Id);
-			Assert.IsTrue(creatureTemplateParameter.SkillValue == 5);
+			Assert.IsTrue(creatureTemplateSkill.Skill == Skill.Melee);
+			Assert.IsTrue(creatureTemplateSkill.SkillValue == 5);
 		}
 	}
 }

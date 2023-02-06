@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sindie.ApiService.Core.Entities;
+using static Sindie.ApiService.Core.BaseData.Enums;
+using System;
 
 namespace Sindie.ApiService.Storage.Postgresql.Configurations
 {
@@ -31,9 +33,20 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasColumnName("Description")
 				.HasComment("Описание способности");
 
-			builder.Property(r => r.AttackSkillId)
-				.HasColumnName("AttackSkillId")
+			builder.Property(r => r.AttackSkill)
+				.HasColumnName("AttackSkill")
 				.HasComment("Навык атаки")
+				.HasConversion(
+					v => v.ToString(),
+					v => Enum.Parse<Skill>(v))
+				.IsRequired();
+
+			builder.Property(r => r.DamageType)
+				.HasColumnName("DamageType")
+				.HasComment("Тип урона")
+				.HasConversion(
+					v => v.ToString(),
+					v => Enum.Parse<DamageType>(v))
 				.IsRequired();
 
 			builder.Property(r => r.AttackDiceQuantity)
@@ -56,16 +69,12 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasComment("Точность атаки")
 				.IsRequired();
 
+			builder.OwnsMany(x => x.DefensiveSkills)
+				.HasKey(r => r.Id);
+
 			builder.HasOne(x => x.Game)
 				.WithMany(x => x.Abilities)
 				.HasForeignKey(x => x.GameId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
-
-			builder.HasOne(x => x.DamageType)
-				.WithMany(x => x.Abilities)
-				.HasForeignKey(x => x.DamageTypeId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
@@ -79,27 +88,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasOne(x => x.AttackSkill)
-				.WithMany(x => x.AbilitiesForAttack)
-				.HasForeignKey(x => x.AttackSkillId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			builder.HasMany(x => x.DefensiveSkills)
-				.WithMany(x => x.AbilitiesForDefense)
-				.UsingEntity(x => x.ToTable("DefensiveSkills", "GameRules"));
-
 			var gameNavigation = builder.Metadata.FindNavigation(nameof(Ability.Game));
 			gameNavigation.SetField(Ability.GameField);
 			gameNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
-
-			var parameterNavigation = builder.Metadata.FindNavigation(nameof(Ability.AttackSkill));
-			parameterNavigation.SetField(Ability.SkillField);
-			parameterNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
-
-			var damageTypeNavigation = builder.Metadata.FindNavigation(nameof(Ability.DamageType));
-			damageTypeNavigation.SetField(Ability.DamageTypeField);
-			damageTypeNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

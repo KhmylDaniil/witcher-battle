@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility
 {
@@ -13,10 +15,11 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility
 		/// Ацди игры
 		/// </summary>
 		public Guid GameId { get; set; }
-		
+
 		/// <summary>
 		/// Наазвание способности
 		/// </summary>
+		[Required]
 		public string Name { get; set; }
 
 		/// <summary>
@@ -25,13 +28,14 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Айди навыка атаки
+		/// Навык атаки
 		/// </summary>
-		public Guid AttackSkillId { get; set; }
+		public Skill AttackSkill { get; set; }
 
 		/// <summary>
 		/// Количество кубов атаки
 		/// </summary>
+		[Range(0, int.MaxValue)]
 		public int AttackDiceQuantity { get; set; }
 
 		/// <summary>
@@ -52,12 +56,12 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility
 		/// <summary>
 		/// Тип урона
 		/// </summary>
-		public Guid DamageTypeId { get; set; }
+		public DamageType DamageType { get; set; }
 
 		/// <summary>
 		/// Навыки для защиты
 		/// </summary>
-		public List<Guid> DefensiveSkills { get; set; }
+		public List<Skill> DefensiveSkills { get; set; }
 
 		/// <summary>
 		/// Накладываемые состояния

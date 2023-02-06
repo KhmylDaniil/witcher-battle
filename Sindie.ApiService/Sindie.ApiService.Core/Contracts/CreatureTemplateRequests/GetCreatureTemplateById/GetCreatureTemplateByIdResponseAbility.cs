@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplateById
 {
@@ -24,14 +25,9 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Айди параметра атаки
+		/// Навык атаки
 		/// </summary>
-		public Guid AttackParameterId { get; set; }
-
-		/// <summary>
-		/// Название параметра атаки
-		/// </summary>
-		public string AttackParameterName { get; set; }
+		public Skill AttackSkill { get; set; }
 
 		/// <summary>
 		/// Количество кубов атаки

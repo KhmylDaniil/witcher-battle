@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 {
@@ -17,11 +19,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 	public class ChangeAbilityHandlerTest: UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
-		private readonly DamageType _damageType;
-		private readonly Condition _condition;
 		private readonly Game _game;
-		private readonly Skill _skill1;
-		private readonly Skill _skill2;
 		private readonly Ability _ability;
 
 		/// <summary>
@@ -30,13 +28,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		public ChangeAbilityHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_condition = Condition.CreateForTest();
-			_damageType = DamageType.CreateForTest();
-			_skill1 = Skill.CreateForTest();
-			_skill2 = Skill.CreateForTest();
-			_ability = Ability.CreateForTest(game: _game, attackSkill: _skill1, damageType: _damageType);
+			_ability = Ability.CreateForTest(game: _game, attackSkill: Skill.Melee);
 
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _condition, _damageType, _ability, _skill1, _skill2));
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _ability));
 		}
 
 		/// <summary>
@@ -55,14 +49,14 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 				damageModifier: 4,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkillId: _skill2.Id,
-				defensiveSkills: new List<Guid> { _skill2.Id },
-				damageTypeId: _damageType.Id,
+				attackSkill: Skill.Staff,
+				defensiveSkills: new List<Skill> { Skill.Dodge },
+				damageType: DamageType.Piercing,
 				appliedConditions: new List<ChangeAbilityRequestAppliedCondition>
 				{
 					new ChangeAbilityRequestAppliedCondition()
 					{
-						ConditionId = _condition.Id,
+						Condition = Condition.Bleed,
 						ApplyChance = 50
 					}
 				});
@@ -83,20 +77,18 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			Assert.AreEqual(ability.DamageModifier, 4);
 			Assert.AreEqual(ability.AttackSpeed, 1);
 			Assert.AreEqual(ability.Accuracy, 1);
-			Assert.AreEqual(ability.AttackSkillId, _skill2.Id);
+			Assert.AreEqual(ability.AttackSkill, Skill.Staff);
 
 			Assert.IsNotNull(ability.DefensiveSkills);
 			Assert.AreEqual(ability.DefensiveSkills.Count, 1);
-			var defensiveParameter = ability.DefensiveSkills.First();
-			Assert.AreEqual(_skill2.Id, defensiveParameter.Id);
-
-			var damageType = _dbContext.DamageTypes.First(x => x.Id == ability.DamageTypeId);
-			Assert.IsNotNull(damageType);
+			var defensiveSkill = ability.DefensiveSkills.First();
+			Assert.AreEqual(defensiveSkill.Skill, Skill.Dodge);
+			Assert.AreEqual(ability.DamageType, DamageType.Piercing);
 
 			Assert.IsNotNull(ability.AppliedConditions);
 			Assert.AreEqual(ability.AppliedConditions.Count, 1);
 			var appliedCondition = ability.AppliedConditions.First();
-			Assert.AreEqual(_condition.Id, appliedCondition.ConditionId);
+			Assert.AreEqual(Condition.Bleed, appliedCondition.Condition);
 			Assert.AreEqual(appliedCondition.ApplyChance, 50);
 		}
 	}

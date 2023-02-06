@@ -26,19 +26,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly CreaturePart _rightArmPart;
 		private readonly CreaturePart _leftLegPart;
 		private readonly CreaturePart _rightLegPart;
-		private readonly Condition _bleedingWound;
-		private readonly Skill _meleeSkill;
-		private readonly Skill _skillBleedingWound;
-		private readonly Skill _dodgeSkill;
-		private readonly Skill _athleticsSkill;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
 		private readonly Creature _creature;
-		private readonly DamageType _damageType;
-		private readonly Condition _simpleLegCrit;
-		private readonly Condition _simpleArmCrit;
-		private readonly Condition _difficultLegCrit;
-		private readonly Condition _deadlyLegCrit;
 
 		/// <summary>
 		/// Тест для <see cref="CreatureAttackHandler"/>
@@ -47,19 +37,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		{
 			_game = Game.CreateForTest();
 			_instance = Battle.CreateForTest(game: _game);
-
-			_bleedingWound = Condition.CreateForTest(id: Conditions.BleedingWoundId, name: Conditions.BleedingWoundName);
-			_simpleLegCrit = Condition.CreateForTest(id: Crit.SimpleLegId, name: Crit.SimpleLeg);
-			_simpleArmCrit = Condition.CreateForTest(id: Crit.SimpleArmId, name: Crit.SimpleArm);
-			_difficultLegCrit = Condition.CreateForTest(id: Crit.DifficultLegId, name: Crit.DifficultLeg);
-			_deadlyLegCrit = Condition.CreateForTest(id: Crit.DeadlyLegId, name: Crit.DeadlyLeg);
-
-			_damageType = DamageType.CreateForTest();
-
-			_meleeSkill = Skill.CreateForTest(id: Skills.MeleeId, statName: Enums.Stats.Ref);
-			_skillBleedingWound = Skill.CreateForTest(id: Skills.BleedingWoundId, statName: Enums.Stats.Int, name: Skills.BleedingWoundName);
-			_dodgeSkill = Skill.CreateForTest(id: Skills.DodgeId, statName: Enums.Stats.Ref, name: Skills.DodgeName);
-			_athleticsSkill = Skill.CreateForTest(id: Skills.AthleticsId, statName: Enums.Stats.Dex, name: Skills.AthleticsName);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
@@ -74,10 +51,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				damageModifier: 2,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkill: _meleeSkill,
-				damageType: _damageType,
-				defensiveSkills: new List<Skill> { _meleeSkill, _dodgeSkill, _athleticsSkill });
-			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _bleedingWound, 100));
+				defensiveSkills: new List<Skill> { Skill.Melee, Skill.Dodge, Skill.Athletics });
+			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, Condition.BleedingWound, 100));
 
 			_creature = Creature.CreateForTest(
 				battle: _instance,
@@ -94,23 +69,23 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
 				creature: _creature,
-				skill: _meleeSkill,
+				skill: Skill.Melee,
 				value: 10));
 
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
 				creature: _creature,
-				skill: _skillBleedingWound,
+				skill: Skill.BleedingWound,
 				value: 10));
 
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
 				creature: _creature,
-				skill: _dodgeSkill,
+				skill: Skill.Dodge,
 				value: 6,
 				maxValue: 6));
 
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
 				creature: _creature,
-				skill: _athleticsSkill,
+				skill: Skill.Athletics,
 				value: 5,
 				maxValue: 5));
 
@@ -164,19 +139,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
 				_instance,
-				_bleedingWound,
-				_difficultLegCrit,
-				_deadlyLegCrit,
-				_simpleArmCrit,
-				_simpleLegCrit,
-				_meleeSkill,
-				_skillBleedingWound,
-				_dodgeSkill,
-				_athleticsSkill,
 				_creatureTemplate,
 				_ability,
-				_creature,
-				_damageType));
+				_creature));
 		}
 
 		/// <summary>
@@ -202,7 +167,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			var message = result.Message;
 			Assert.IsNotNull(message);
 			Assert.IsTrue(message.Contains("повреждена"));
-			Assert.IsTrue(message.Contains(Conditions.BleedingWoundName));
+			Assert.IsTrue(message.Contains(CritNames.GetConditionFullName(Condition.BleedingWound)));
 
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
@@ -229,7 +194,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			var message = result.Message;
 			Assert.IsNotNull(message);
-			Assert.IsTrue(message.Contains(Conditions.BleedingWoundName));
+			Assert.IsTrue(message.Contains(CritNames.GetConditionFullName(Condition.BleedingWound)));
 
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
@@ -241,7 +206,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			var message2 = result2.Message;
 			Assert.IsNotNull(message2);
-			Assert.IsTrue(!message2.Contains(Conditions.BleedingWoundName));
+			Assert.IsTrue(!message2.Contains(CritNames.GetConditionFullName(Condition.BleedingWound)));
 
 			var monster2 = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster2);
@@ -302,7 +267,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			var message = result.Message;
 			Assert.IsNotNull(message);
-			Assert.IsTrue(message.Contains(Conditions.StunName));
+			Assert.IsTrue(message.Contains(CritNames.GetConditionFullName(Condition.Stun)));
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
 			var stun = monster.Effects.FirstOrDefault(x => x is StunEffect);
@@ -315,11 +280,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			Assert.AreEqual(monster.Speed, 2);
 
-			var dodge = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.DodgeId);
+			var dodge = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
 			Assert.IsNotNull(dodge);
 			Assert.AreEqual(dodge.SkillValue, 4);
 
-			var athletics = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AthleticsId);
+			var athletics = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
 			Assert.IsNotNull(athletics);
 			Assert.AreEqual(athletics.SkillValue, 3);
 
@@ -348,11 +313,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			Assert.AreEqual(monster.Speed, 2);
 
-			dodge = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.DodgeId);
+			dodge = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
 			Assert.IsNotNull(dodge);
 			Assert.AreEqual(dodge.SkillValue, 4);
 
-			athletics = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AthleticsId);
+			athletics = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
 			Assert.IsNotNull(athletics);
 			Assert.AreEqual(athletics.SkillValue, 3);
 
@@ -363,11 +328,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			Assert.IsNotNull(monster);
 			Assert.AreEqual(monster.Speed, 2);
 
-			dodge = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.DodgeId);
+			dodge = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
 			Assert.IsNotNull(dodge);
 			Assert.AreEqual(dodge.SkillValue, 4);
 
-			athletics = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AthleticsId);
+			athletics = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
 			Assert.IsNotNull(athletics);
 			Assert.AreEqual(athletics.SkillValue, 3);
 
@@ -394,11 +359,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			Assert.AreEqual(monster.Speed, 1);
 
-			dodge = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.DodgeId);
+			dodge = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
 			Assert.IsNotNull(dodge);
 			Assert.AreEqual(dodge.SkillValue, 1);
 
-			athletics = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AthleticsId);
+			athletics = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
 			Assert.IsNotNull(athletics);
 			Assert.AreEqual(athletics.SkillValue, 1);
 
@@ -422,11 +387,11 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			Assert.AreEqual(monster.Speed, 1);
 
-			dodge = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.DodgeId);
+			dodge = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
 			Assert.IsNotNull(dodge);
 			Assert.AreEqual(dodge.SkillValue, 1);
 
-			athletics = monster.CreatureSkills.FirstOrDefault(x => x.SkillId == Skills.AthleticsId);
+			athletics = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
 			Assert.IsNotNull(athletics);
 			Assert.AreEqual(athletics.SkillValue, 1);
 		}

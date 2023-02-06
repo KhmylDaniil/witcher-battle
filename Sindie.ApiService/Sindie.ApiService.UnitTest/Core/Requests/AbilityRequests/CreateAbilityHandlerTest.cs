@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 {
@@ -18,10 +20,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 	public class CreateAbilityHandlerTest: UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
-		private readonly DamageType _damageType;
-		private readonly Condition _condition;
 		private readonly Game _game;
-		private readonly Skill _skill;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="CreateAbilityHandler"/>
@@ -29,11 +28,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		public CreateAbilityHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_condition = Condition.CreateForTest();
-			_damageType = DamageType.CreateForTest();
-			_skill = Skill.CreateForTest();
 
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _condition, _damageType, _skill));
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game));
 		}
 
 		/// <summary>
@@ -51,14 +47,14 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 				damageModifier: 4,
 				attackSpeed: 1,
 				accuracy: 1,
-				attackSkillId: _skill.Id,
-				defensiveSkills: new List<Guid> { _skill.Id },
-				damageTypeId: _damageType.Id,
+				attackSkill: Skill.Melee,
+				defensiveSkills: new List<Skill> { Skill.Melee },
+				damageType: DamageType.Slashing,
 				appliedConditions: new List<CreateAbilityRequestAppliedCondition>
 				{
 					new CreateAbilityRequestAppliedCondition()
 					{
-						ConditionId = _condition.Id,
+						Condition = Condition.Bleed,
 						ApplyChance = 50
 					}
 				});
@@ -79,20 +75,18 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			Assert.AreEqual(ability.DamageModifier, 4);
 			Assert.AreEqual(ability.AttackSpeed, 1);
 			Assert.AreEqual(ability.Accuracy, 1);
-			Assert.AreEqual(ability.AttackSkillId, _skill.Id);
+			Assert.AreEqual(ability.AttackSkill, Skill.Melee);
 
 			Assert.IsNotNull(ability.DefensiveSkills);
 			Assert.AreEqual(ability.DefensiveSkills.Count, 1);
-			var defensiveParameter = ability.DefensiveSkills.First();
-			Assert.AreEqual(_skill.Id, defensiveParameter.Id);
-
-			var damageType = _dbContext.DamageTypes.First(x => x.Id == ability.DamageTypeId);
-			Assert.IsNotNull(damageType);
+			var defensiveSkill = ability.DefensiveSkills.First();
+			Assert.AreEqual(Skill.Melee, defensiveSkill.Skill);
+			Assert.AreEqual(DamageType.Slashing, ability.DamageType);
 
 			Assert.IsNotNull(ability.AppliedConditions);
 			Assert.AreEqual(ability.AppliedConditions.Count, 1);
 			var appliedCondition = ability.AppliedConditions.First();
-			Assert.AreEqual(_condition.Id, appliedCondition.ConditionId);
+			Assert.AreEqual(Condition.Bleed, appliedCondition.Condition);
 			Assert.AreEqual(appliedCondition.ApplyChance, 50);
 		}
 	}

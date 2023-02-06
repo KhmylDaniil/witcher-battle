@@ -53,14 +53,9 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.CreatureTemplateSkills)
-					.ThenInclude(x => x.Skill)
-				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
-					.ThenInclude(x => x.Abilities)
-					.ThenInclude(x => x.AttackSkill)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.Abilities)
 					.ThenInclude(x => x.AppliedConditions)
-					.ThenInclude(x => x.Condition)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.CreatureTemplateParts)
 				.SelectMany(x => x.CreatureTemplates);
@@ -107,8 +102,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 					.Select(x => new GetCreatureTemplateByIdResponseSkill()
 					{
 						Id = x.Id,
-						SkillId = x.SkillId,
-						SkillName = x.Skill.Name,
+						Skill = x.Skill,
 						SkillValue = x.SkillValue
 					}).ToList(),
 				Abilities = creatureTemplate.Abilities
@@ -117,8 +111,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 					Id = x.Id,
 					Name = x.Name,
 					Description = x.Description,
-					AttackParameterId = x.AttackSkillId,
-					AttackParameterName = x.AttackSkill.Name,
+					AttackSkill = x.AttackSkill,
 					AttackDiceQuantity = x.AttackDiceQuantity,
 					DamageModifier = x.DamageModifier,
 					Accuracy = x.Accuracy,
@@ -127,8 +120,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 					.Select(x => new GetCreatureTemplateByIdResponseAppliedCondition()
 					{
 						Id = x.Id,
-						ConditionId = x.ConditionId,
-						ConditionName = x.Condition.Name,
+						Condition = x.Condition,
 						ApplyChance = x.ApplyChance
 					}).ToList()
 				}).ToList(),
