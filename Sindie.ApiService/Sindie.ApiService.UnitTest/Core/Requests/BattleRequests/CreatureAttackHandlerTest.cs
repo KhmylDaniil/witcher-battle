@@ -26,14 +26,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly CreaturePart _rightArmPart;
 		private readonly CreaturePart _leftLegPart;
 		private readonly CreaturePart _rightLegPart;
-		private readonly Condition _bleedingWound;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
 		private readonly Creature _creature;
-		private readonly Condition _simpleLegCrit;
-		private readonly Condition _simpleArmCrit;
-		private readonly Condition _difficultLegCrit;
-		private readonly Condition _deadlyLegCrit;
 
 		/// <summary>
 		/// Тест для <see cref="CreatureAttackHandler"/>
@@ -42,12 +37,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		{
 			_game = Game.CreateForTest();
 			_instance = Battle.CreateForTest(game: _game);
-
-			_bleedingWound = Condition.CreateForTest(id: Conditions.BleedingWoundId, name: Conditions.BleedingWoundName);
-			_simpleLegCrit = Condition.CreateForTest(id: Crit.SimpleLegId, name: Crit.SimpleLeg);
-			_simpleArmCrit = Condition.CreateForTest(id: Crit.SimpleArmId, name: Crit.SimpleArm);
-			_difficultLegCrit = Condition.CreateForTest(id: Crit.DifficultLegId, name: Crit.DifficultLeg);
-			_deadlyLegCrit = Condition.CreateForTest(id: Crit.DeadlyLegId, name: Crit.DeadlyLeg);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
@@ -63,7 +52,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				attackSpeed: 1,
 				accuracy: 1,
 				defensiveSkills: new List<Skill> { Skill.Melee, Skill.Dodge, Skill.Athletics });
-			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _bleedingWound, 100));
+			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, Condition.BleedingWound, 100));
 
 			_creature = Creature.CreateForTest(
 				battle: _instance,
@@ -150,11 +139,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
 				_instance,
-				_bleedingWound,
-				_difficultLegCrit,
-				_deadlyLegCrit,
-				_simpleArmCrit,
-				_simpleLegCrit,
 				_creatureTemplate,
 				_ability,
 				_creature));
@@ -183,7 +167,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			var message = result.Message;
 			Assert.IsNotNull(message);
 			Assert.IsTrue(message.Contains("повреждена"));
-			Assert.IsTrue(message.Contains(Conditions.BleedingWoundName));
+			Assert.IsTrue(message.Contains(CritNames.GetConditionFullName(Condition.BleedingWound)));
 
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
@@ -210,7 +194,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			var message = result.Message;
 			Assert.IsNotNull(message);
-			Assert.IsTrue(message.Contains(Conditions.BleedingWoundName));
+			Assert.IsTrue(message.Contains(CritNames.GetConditionFullName(Condition.BleedingWound)));
 
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
@@ -222,7 +206,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			var message2 = result2.Message;
 			Assert.IsNotNull(message2);
-			Assert.IsTrue(!message2.Contains(Conditions.BleedingWoundName));
+			Assert.IsTrue(!message2.Contains(CritNames.GetConditionFullName(Condition.BleedingWound)));
 
 			var monster2 = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster2);
@@ -283,7 +267,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			var message = result.Message;
 			Assert.IsNotNull(message);
-			Assert.IsTrue(message.Contains(Conditions.StunName));
+			Assert.IsTrue(message.Contains(CritNames.GetConditionFullName(Condition.Stun)));
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
 			var stun = monster.Effects.FirstOrDefault(x => x is StunEffect);

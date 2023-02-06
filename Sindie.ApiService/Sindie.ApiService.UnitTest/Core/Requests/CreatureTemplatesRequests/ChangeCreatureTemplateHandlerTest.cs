@@ -22,7 +22,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly ImgFile _imgFile;
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly BodyTemplatePart _torso;
-		private readonly Condition _condition;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly CreatureTemplatePart _creatureTemplatePart;
 		private readonly CreatureTemplateSkill _creatureTemplateSkill;
@@ -47,8 +46,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				minToHit: 1,
 				maxToHit: 10);
 			_bodyTemplate.BodyTemplateParts = new List<BodyTemplatePart> { _torso };
-
-			_condition = Condition.CreateForTest();
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
@@ -83,8 +80,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				_ability1,
 				_ability2,
 				_creatureTemplate,
-				_creatureTemplateSkill,
-				_condition));
+				_creatureTemplateSkill));
 		}
 
 		/// <summary>

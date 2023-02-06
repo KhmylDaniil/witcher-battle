@@ -22,7 +22,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly ImgFile _imgFile;
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly BodyTemplatePart _bodyTemplatePart;
-		private readonly Condition _condition;
 		private readonly Ability _ability;
 
 		/// <summary>
@@ -43,9 +42,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_bodyTemplate.BodyTemplateParts = new List<BodyTemplatePart> { _bodyTemplatePart};
 
 			_ability = Ability.CreateForTest(game: _game, attackSkill: Skill.Melee);
-			_condition = Condition.CreateForTest();
 			
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _bodyTemplate, _bodyTemplatePart, _condition, _ability));
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _imgFile, _bodyTemplate, _bodyTemplatePart, _ability));
 		}
 
 		/// <summary>

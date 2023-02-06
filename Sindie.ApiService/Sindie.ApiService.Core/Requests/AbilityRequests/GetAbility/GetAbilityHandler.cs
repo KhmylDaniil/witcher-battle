@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
 using Sindie.ApiService.Core.ExtensionMethods;
 using System;
@@ -44,11 +45,6 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 
 		public async Task<GetAbilityResponse> Handle(GetAbilityCommand request, CancellationToken cancellationToken)
 		{
-			if(request.PageSize < 1)
-				throw new ArgumentOutOfRangeException(nameof(GetAbilityCommand.PageSize));
-			if (request.PageNumber < 1)
-				throw new ArgumentOutOfRangeException(nameof(GetAbilityCommand.PageNumber));
-
 			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
 				throw new ArgumentOutOfRangeException(nameof(GetAbilityCommand.CreationMinTime));
 			if (request.ModificationMinTime > _dateTimeProvider.TimeProvider)
@@ -75,7 +71,8 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 						|| x.ModifiedOn <= request.ModificationMaxTime))
 						.Where(x => request.AttackSkillName == null || Enum.GetName(x.AttackSkill).Contains(request.AttackSkillName))
 						.Where(x => request.DamageType == null || Enum.GetName(x.DamageType).Contains(request.DamageType))
-						.Where(x => request.ConditionName == null || x.AppliedConditions.Select(ac => Enum.GetName(ac.Condition)).Contains(request.ConditionName));
+						.Where(x => request.ConditionName == null
+						|| x.AppliedConditions.Select(ac => CritNames.GetConditionFullName(ac.Condition)).Contains(request.ConditionName));
 
 			var list = await filter
 				.OrderBy(request.OrderBy, request.IsAscending)

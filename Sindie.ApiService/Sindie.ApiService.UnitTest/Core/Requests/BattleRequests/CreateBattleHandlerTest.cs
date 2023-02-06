@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.BattleRequests.CreateBattle;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle;
@@ -23,7 +24,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly CreatureTemplatePart _creatureTemplatePart;
 		private readonly Ability _ability;
-		private readonly Condition _condition;
 
 		/// <summary>
 		/// Конструктор для теста <see cref="CreateBattleHandler"/>
@@ -32,7 +32,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		{
 			_game = Game.CreateForTest();
 			_imgFile = ImgFile.CreateForTest();
-			_condition = Condition.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 			_creatureTemplate = CreatureTemplate.CreateForTest(game: _game, bodyTemplate: _bodyTemplate, creatureType: CreatureType.Human);
 			_creatureTemplatePart = CreatureTemplatePart.CreateForTest(
@@ -56,13 +55,12 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				accuracy: -1,
 				attackSpeed: 1,
 				attackSkill: Skill.Melee);
-			_ability.AppliedConditions.Add(new AppliedCondition(_ability, _condition, 50));
+			_ability.AppliedConditions.Add(new AppliedCondition(_ability, Condition.Bleed, 50));
 			_creatureTemplate.Abilities.Add(_ability);
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
 				_imgFile,
-				_condition,
 				_bodyTemplate,
 				_creatureTemplate,
 				_ability));
@@ -159,7 +157,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 			var appliedCondition = ability.AppliedConditions.FirstOrDefault();
 
 			Assert.AreEqual(appliedCondition.ApplyChance, 50);
-			Assert.AreEqual(appliedCondition.ConditionId, _condition.Id);
+			Assert.AreEqual(appliedCondition.Condition, Condition.Bleed);
 
 			Assert.IsNotNull(creature.CreatureSkills);
 			Assert.AreEqual(creature.CreatureSkills.Count, 1);

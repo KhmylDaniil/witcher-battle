@@ -64,11 +64,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			if (rollService.BeatDifficulty(creature.SkillBase(Skill.Physique), 15))
 			{
-				message.AppendFormat($"Эффект {Conditions.PoisonName} снят.");
+				message.AppendFormat($"Эффект {Name} снят.");
 				creature.Effects.Remove(this);
 			}
 			else
-				message.AppendLine($"Не удалось снять эффект {Conditions.PoisonName}.");
+				message.AppendLine($"Не удалось снять эффект {Name}.");
 		}
 	}
 }

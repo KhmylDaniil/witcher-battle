@@ -19,7 +19,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		private readonly IAppDbContext _dbContext;
 		private readonly User _user;
 		private readonly Game _game;
-		private readonly Condition _condition;
 		private readonly Ability _ability;
 
 		/// <summary>
@@ -37,8 +36,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 					user: _user,
 					gameRole: GameRole.CreateForTest(GameRoles.MasterRoleId)));
 
-			_condition = Condition.CreateForTest(id: Conditions.BleedId);
-
 			_ability = Ability.CreateForTest(
 				game: _game,
 				name: "test",
@@ -50,13 +47,12 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 
 			_ability.AppliedConditions.Add(new AppliedCondition(
 				ability: _ability,
-				condition: _condition,
+				condition: Condition.Bleed,
 				applyChance: 100));
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_user,
 				_game,
-				_condition,
 				_ability));
 		}
 
@@ -78,7 +74,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 				name: "test",
 				attackSkillName: "Melee",
 				damageType: "Slashing",
-				conditionId: _condition.Id,
+				conditionName: "Кровотечение",
 				minAttackDiceQuantity: 2,
 				maxAttackDiceQuantity: 3,
 				userName: "Author",
@@ -113,8 +109,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 
 			Assert.AreEqual(ability.AttackSkill, Skill.Melee);
 			Assert.AreEqual(ability.DamageType, DamageType.Slashing);
-			Assert.IsTrue(ability.AppliedConditions.Any(x => x.ConditionId == _condition.Id));
-
+			Assert.IsTrue(ability.AppliedConditions.Any(x => x.Condition == Condition.Bleed));
 
 			var user = _dbContext.Users.FirstOrDefault(x => x.Id == ability.CreatedByUserId);
 			Assert.IsNotNull(user);

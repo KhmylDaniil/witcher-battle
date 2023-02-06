@@ -1,4 +1,5 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -89,9 +90,9 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="target">Цель</param>
 		/// <param name="condition">Состояние</param>
 		/// <returns>Эффект нужного типа</returns>
-		public static T CreateEffect<T>(IRollService rollService, Creature attacker, Creature target, string conditionName) where T : Effect
+		public static T CreateEffect<T>(IRollService rollService, Creature attacker, Creature target, Condition condition) where T : Effect
 		{
-			var name = "Sindie.ApiService.Core.Entities.Effects." + conditionName + "Effect";
+			var name = "Sindie.ApiService.Core.Entities.Effects." + Enum.GetName(condition) + "Effect";
 
 			Type type = Type.GetType(name);
 
@@ -112,7 +113,7 @@ namespace Sindie.ApiService.Core.Entities
 
 			Func<IRollService, Creature, Creature, string, T> func = lambda.Compile();
 
-			return func(rollService, attacker, target, conditionName);
+			return func(rollService, attacker, target, CritNames.GetConditionFullName(condition));
 		}
 	}
 }

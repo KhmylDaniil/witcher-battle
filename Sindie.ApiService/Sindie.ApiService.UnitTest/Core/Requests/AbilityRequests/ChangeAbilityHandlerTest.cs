@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility;
@@ -18,7 +19,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 	public class ChangeAbilityHandlerTest: UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
-		private readonly Condition _condition;
 		private readonly Game _game;
 		private readonly Ability _ability;
 
@@ -28,10 +28,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		public ChangeAbilityHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_condition = Condition.CreateForTest();
 			_ability = Ability.CreateForTest(game: _game, attackSkill: Skill.Melee);
 
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _condition, _ability));
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _ability));
 		}
 
 		/// <summary>
@@ -57,7 +56,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 				{
 					new ChangeAbilityRequestAppliedCondition()
 					{
-						ConditionId = _condition.Id,
+						Condition = Condition.Bleed,
 						ApplyChance = 50
 					}
 				});
@@ -89,7 +88,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			Assert.IsNotNull(ability.AppliedConditions);
 			Assert.AreEqual(ability.AppliedConditions.Count, 1);
 			var appliedCondition = ability.AppliedConditions.First();
-			Assert.AreEqual(_condition.Id, appliedCondition.ConditionId);
+			Assert.AreEqual(Condition.Bleed, appliedCondition.Condition);
 			Assert.AreEqual(appliedCondition.ApplyChance, 50);
 		}
 	}

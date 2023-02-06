@@ -20,7 +20,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly IAppDbContext _dbContext;
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly Game _game;
-		private readonly Condition _condition;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
 		private readonly CreatureTemplateSkill _creatureTemplateSkill;
@@ -35,7 +34,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_game = Game.CreateForTest();
 
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
-			_condition = Condition.CreateForTest(name: Conditions.BleedName);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				name: "testName",
@@ -62,7 +60,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				attackSkill: Skill.Melee);
 			_ability.AppliedConditions.Add(new AppliedCondition(
 				ability: _ability,
-				condition: _condition,
+				condition: Condition.Bleed,
 				applyChance: 100));
 
 			_creatureTemplate.CreatureTemplateSkills.Add(_creatureTemplateSkill);
@@ -72,7 +70,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
 				_bodyTemplate,
-				_condition,
 				_creatureTemplate,
 				_ability));
 		}
@@ -147,8 +144,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsNotNull(ability.AppliedConditions);
 			var appliedCondition = ability.AppliedConditions.First();
 			Assert.IsNotNull(appliedCondition);
-			Assert.AreEqual(appliedCondition.ConditionName, _condition.Name);
-			Assert.AreEqual(appliedCondition.ConditionId, _condition.Id);
+			Assert.AreEqual(appliedCondition.Condition, Condition.Bleed);
 			Assert.AreEqual(appliedCondition.ApplyChance, 100);
 		}
 	}

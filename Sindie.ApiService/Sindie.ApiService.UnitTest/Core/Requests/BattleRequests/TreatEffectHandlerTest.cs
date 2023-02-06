@@ -46,7 +46,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				speed: 2,
 				body: 10);
 
-			_freezeEffect = FreezeEffect.CreateForTest(creature: _creature);
+			_freezeEffect = FreezeEffect.CreateForTest(creature: _creature, name: CritNames.GetConditionFullName(Condition.Freeze));
 
 			_creature.Effects.Add(_freezeEffect);
 			
@@ -87,7 +87,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 
 			var message = result.Message;
 			Assert.IsNotNull(message);
-			Assert.IsTrue(message.Contains(Conditions.FreezeName));
+			Assert.IsTrue(message.Contains(CritNames.GetConditionFullName(Condition.Freeze)));
 			Assert.IsTrue(message.Contains("снят"));
 
 			monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);

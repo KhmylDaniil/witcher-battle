@@ -62,7 +62,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		}
 
 		public override string ToString()
-			=> $"effect {Conditions.BleedingWoundName} with severity {Severity} and {Damage} damage";
+			=> $"effect {Name} with severity {Severity} and {Damage} damage";
 
 		/// <summary>
 		/// Применить эффект
@@ -119,7 +119,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		{
 			Id = id ?? Guid.NewGuid(),
 			Creature = creature,
-			Name = name ?? Conditions.BleedingWoundName,
+			Name = name ?? Enum.GetName(Condition.BleedingWound),
 			Severity = severity,
 			Damage = damage,
 			CreatedOn = createdOn,

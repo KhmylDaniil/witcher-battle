@@ -56,7 +56,6 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.Abilities)
 					.ThenInclude(x => x.AppliedConditions)
-					.ThenInclude(x => x.Condition)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.CreatureTemplateParts)
 				.SelectMany(x => x.CreatureTemplates);
@@ -121,8 +120,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 					.Select(x => new GetCreatureTemplateByIdResponseAppliedCondition()
 					{
 						Id = x.Id,
-						ConditionId = x.ConditionId,
-						ConditionName = x.Condition.Name,
+						Condition = x.Condition,
 						ApplyChance = x.ApplyChance
 					}).ToList()
 				}).ToList(),

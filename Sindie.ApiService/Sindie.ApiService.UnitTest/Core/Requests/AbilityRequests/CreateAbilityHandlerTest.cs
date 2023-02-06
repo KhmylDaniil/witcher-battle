@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility;
@@ -19,7 +20,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 	public class CreateAbilityHandlerTest: UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
-		private readonly Condition _condition;
 		private readonly Game _game;
 
 		/// <summary>
@@ -28,9 +28,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		public CreateAbilityHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_condition = Condition.CreateForTest();
 
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _condition));
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game));
 		}
 
 		/// <summary>
@@ -55,7 +54,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 				{
 					new CreateAbilityRequestAppliedCondition()
 					{
-						ConditionId = _condition.Id,
+						Condition = Condition.Bleed,
 						ApplyChance = 50
 					}
 				});
@@ -87,7 +86,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			Assert.IsNotNull(ability.AppliedConditions);
 			Assert.AreEqual(ability.AppliedConditions.Count, 1);
 			var appliedCondition = ability.AppliedConditions.First();
-			Assert.AreEqual(_condition.Id, appliedCondition.ConditionId);
+			Assert.AreEqual(Condition.Bleed, appliedCondition.Condition);
 			Assert.AreEqual(appliedCondition.ApplyChance, 50);
 		}
 	}

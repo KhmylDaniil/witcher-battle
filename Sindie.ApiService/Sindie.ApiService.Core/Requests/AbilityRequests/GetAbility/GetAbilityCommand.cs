@@ -34,7 +34,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 			string name,
 			string attackSkillName,
 			string damageType,
-			string сonditionName,
+			string conditionName,
 			int minAttackDiceQuantity,
 			int maxAttackDiceQuantity,
 			string userName,
@@ -51,7 +51,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 			Name = name;
 			AttackSkillName = attackSkillName;
 			DamageType = damageType;
-			ConditionName = сonditionName;
+			ConditionName = conditionName;
 			MinAttackDiceQuantity = minAttackDiceQuantity < 0 
 				? throw new ExceptionRequestFieldIncorrectData<GetAbilityQuery>(nameof(MinAttackDiceQuantity))
 				: minAttackDiceQuantity;

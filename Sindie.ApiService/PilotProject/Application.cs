@@ -1,6 +1,7 @@
 ﻿using PilotProject.CommandBuilders;
 using PilotProject.Files;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack;
 using Sindie.ApiService.Core.Contracts.BattleRequests.TurnBeginning;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.DeleteCreatureTemplateById;
@@ -172,7 +173,7 @@ namespace PilotProject
 					{
 						Console.WriteLine("This ablity can apply:");
 						foreach (var appliedCondition in ability.AppliedConditions)
-							Console.WriteLine($"{appliedCondition.ConditionName} with {appliedCondition.ApplyChance}% chance.");
+							Console.WriteLine($"{CritNames.GetConditionFullName(appliedCondition.Condition)} with {appliedCondition.ApplyChance}% chance.");
 					}
 				}
 			}

@@ -21,7 +21,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly User _user;
 		private readonly Game _game;
-		private readonly Condition _condition;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly CreatureTemplatePart _creatureTemplatePart;
 		private readonly Ability _ability;
@@ -42,7 +41,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 					gameRole: GameRole.CreateForTest(GameRoles.MasterRoleId)));
 
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game, name: "human");
-			_condition = Condition.CreateForTest(name: Conditions.BleedName);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				name: "testName",
@@ -69,7 +67,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				attackSkill: Skill.Melee);
 			_ability.AppliedConditions.Add(new AppliedCondition(
 				ability: _ability,
-				condition: _condition,
+				condition: Condition.Bleed,
 				applyChance: 100));
 			_creatureTemplate.Abilities.Add(_ability);
 				
@@ -77,7 +75,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				_user,
 				_game,
 				_bodyTemplate,
-				_condition,
 				_creatureTemplate,
 				_ability));
 		}
@@ -106,7 +103,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				modificationMaxTime: modificationMaxTime,
 				bodyTemplateName: "human",
 				bodyPartType: "Void",
-				conditionName: Conditions.BleedName,
+				conditionName: CritNames.GetConditionFullName(Condition.Bleed),
 				pageSize: 2,
 				pageNumber: 1,
 				orderBy: null,
@@ -130,7 +127,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 				.Include(x => x.CreatureTemplateParts)
 				.Include(x => x.Abilities)
 					.ThenInclude(x => x.AppliedConditions)
-					.ThenInclude(x => x.Condition)
 				.FirstOrDefault(x => x.Id == resultItem.Id);
 			Assert.IsNotNull(creatureTemplate);
 
@@ -141,7 +137,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateParts
 				.Any(x => Enum.GetName(x.BodyPartType).Contains(request.BodyPartType)));
 			Assert.IsNotNull(creatureTemplate.Abilities
-				.Any(a => a.AppliedConditions.Any(ac => ac.Condition.Name.Contains(request.ConditionName))));
+				.Any(a => a.AppliedConditions.Any(ac => Enum.GetName(ac.Condition).Contains(request.ConditionName))));
 		}
 	}
 }

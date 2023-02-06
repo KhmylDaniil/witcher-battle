@@ -188,7 +188,7 @@ namespace Sindie.ApiService.Core.Logic
 			}	
 			else
 			{
-				var effect = CritEffect.CreateCritEffect<Effect>(data.Target, data.AimedPart, Enum.GetName(crit));
+				var effect = CritEffect.CreateCritEffect<Effect>(data.Target, data.AimedPart, crit);
 
 				if (effect != null)
 					data.Target.Effects.Add(effect);
@@ -425,7 +425,7 @@ namespace Sindie.ApiService.Core.Logic
 		{
 			foreach (var condition in RollConditions(data.Ability))
 			{
-				var effect = Effect.CreateEffect<Effect>(rollService: _rollService, data.Attacker, data.Target, Enum.GetName(condition));
+				var effect = Effect.CreateEffect<Effect>(rollService: _rollService, data.Attacker, data.Target, condition);
 
 				if (effect == null)
 					continue;

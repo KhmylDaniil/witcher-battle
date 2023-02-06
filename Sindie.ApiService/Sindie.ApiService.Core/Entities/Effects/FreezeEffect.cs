@@ -63,11 +63,11 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			if (rollService.BeatDifficulty(creature.SkillBase(Skill.Physique), 16))
 			{
 				RevertStatChanges(creature);
-				message.AppendFormat($"Эффект {Conditions.FreezeName} снят. Скорость равна {creature.Speed}, рефлексы равны {creature.Ref}.");
+				message.AppendFormat($"Эффект {Name} снят. Скорость равна {creature.Speed}, рефлексы равны {creature.Ref}.");
 				creature.Effects.Remove(this);
 			}
 			else
-				message.AppendLine($"Не удалось снять эффект {Conditions.FreezeName}.");
+				message.AppendLine($"Не удалось снять эффект {Name}.");
 		}
 
 		/// <summary>
@@ -113,7 +113,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			{
 				Id = id ?? Guid.NewGuid(),
 				Creature = creature,
-				Name = name ?? Conditions.FreezeName,
+				Name = name ?? Enum.GetName(Condition.Freeze),
 				CreatedOn = createdOn,
 				ModifiedOn = modifiedOn,
 				CreatedByUserId = createdByUserId

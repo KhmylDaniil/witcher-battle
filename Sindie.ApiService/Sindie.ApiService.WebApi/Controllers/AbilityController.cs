@@ -114,7 +114,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 					name: request.Name,
 					attackSkillName: request.AttackSkillName,
 					damageType: request?.DamageType,
-					conditionId: request?.ConditionId,
+					conditionName: request.ConditionName,
 					minAttackDiceQuantity: request.MinAttackDiceQuantity,
 					maxAttackDiceQuantity: request.MaxAttackDiceQuantity,
 					userName: request.UserName,				

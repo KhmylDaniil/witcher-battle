@@ -21,12 +21,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly CreaturePart _headPart;
 		private readonly CreaturePart _torsoPart;
-		private readonly Condition _condition;
 		private readonly CreatureTemplate _creatureTemplate;
 		private readonly Ability _ability;
 		private readonly Creature _creature;
-		private readonly Condition _head1Crit;
-		private readonly Condition _head2Crit;
 
 		/// <summary>
 		/// Тест для <see cref="MonsterAttackHandler"/>
@@ -35,10 +32,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 		{
 			_game = Game.CreateForTest();
 			_instance = Battle.CreateForTest(game: _game);
-			_condition = Condition.CreateForTest();
-
-			_head1Crit = Condition.CreateForTest(id: Crit.SimpleHead1Id, name: Crit.SimpleHead1);
-			_head2Crit = Condition.CreateForTest(id: Crit.SimpleHead2Id, name: Crit.SimpleHead2);
 
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
@@ -55,7 +48,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				attackSpeed: 1,
 				accuracy: 1,
 				defensiveSkills: new List<Skill> { Skill.Melee });
-			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, _condition, 100));
 
 			_creature = Creature.CreateForTest(
 				battle: _instance,
@@ -87,12 +79,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
 				_game,
 				_instance,
 				_bodyTemplate,
-				_condition,
 				_creatureTemplate,
 				_ability,
-				_creature,
-				_head1Crit,
-				_head2Crit));
+				_creature));
 		}
 
 		/// <summary>

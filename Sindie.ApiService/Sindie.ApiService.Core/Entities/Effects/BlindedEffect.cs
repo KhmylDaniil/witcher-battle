@@ -61,7 +61,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
 		{
-			message.AppendFormat($"Эффект {Conditions.BlindedName} снят.");
+			message.AppendFormat($"Эффект {Name} снят.");
 			RevertStatChanges(creature);
 			creature.Effects.Remove(this);
 		}

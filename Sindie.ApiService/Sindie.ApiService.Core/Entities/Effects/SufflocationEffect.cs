@@ -59,7 +59,7 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		/// <param name="message">Сообщение</param>
 		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
 		{
-			message.AppendFormat($"Эффект {Conditions.SufflocationName} снят.");
+			message.AppendFormat($"Эффект {Name} снят.");
 				creature.Effects.Remove(this);
 		}
 	}
