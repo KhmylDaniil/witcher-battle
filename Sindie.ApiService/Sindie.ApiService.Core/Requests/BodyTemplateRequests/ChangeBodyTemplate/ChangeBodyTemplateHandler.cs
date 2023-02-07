@@ -71,23 +71,15 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplat
 			_ = game.BodyTemplates.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.Id);
 
+			if (request.BodyTemplateParts == null)
+				return;
+
 			var sortedList = request.BodyTemplateParts.OrderBy(x => x.MinToHit).ToList();
 
 			foreach (var part in sortedList)
 			{
-				if (string.IsNullOrEmpty(part.Name))
-					throw new ExceptionRequestFieldNull<ChangeBodyTemplateRequest>(nameof(ChangeBodyTemplateRequestItem.Name));
-				if (request.BodyTemplateParts.Count(x => x.Name == part.Name) != 1)
-					throw new ArgumentException($"Значения в поле {nameof(part.Name)} повторяются");
-
 				if (!Enum.IsDefined(part.BodyPartType))
 					throw new ExceptionRequestFieldIncorrectData<ChangeBodyTemplateRequest>(nameof(part.BodyPartType));
-
-				if (part.DamageModifier <= 0)
-					throw new ExceptionRequestFieldIncorrectData<ChangeBodyTemplateRequest>(nameof(ChangeBodyTemplateRequestItem.DamageModifier));
-
-				if (part.HitPenalty < 1)
-					throw new ExceptionRequestFieldIncorrectData<ChangeBodyTemplateRequest>(nameof(ChangeBodyTemplateRequestItem.HitPenalty));
 
 				if (part.MinToHit < 1)
 					throw new ExceptionRequestFieldIncorrectData<ChangeBodyTemplateRequest>(nameof(ChangeBodyTemplateRequestItem.MinToHit));

@@ -1,4 +1,4 @@
-﻿using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
+﻿using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
 using System.Collections.Generic;
 using static Sindie.ApiService.Core.BaseData.Enums;
 
@@ -6,57 +6,57 @@ namespace Sindie.ApiService.Core.Drafts.BodyTemplateDrafts
 {
 	public static class CreateBodyTemplatePartsDraft
 	{
-		public static List<CreateBodyTemplateRequestItem> CreateBodyPartsDraft()
+		public static List<BodyTemplatePartsData> CreateBodyPartsDraft()
 			=> new()
 			{
-				new CreateBodyTemplateRequestItem()
+				new BodyTemplatePartsData()
 				{
-					Name = "head",
+					Name = "Head",
 					BodyPartType = BodyPartType.Head,
 					HitPenalty = 4,
 					DamageModifier = 3,
 					MinToHit = 1,
 					MaxToHit = 1
 				},
-				new CreateBodyTemplateRequestItem()
+				new BodyTemplatePartsData()
 				{
-					Name = "torso",
+					Name = "Torso",
 					BodyPartType = BodyPartType.Torso,
 					HitPenalty = 1,
 					DamageModifier = 1,
 					MinToHit = 2,
 					MaxToHit = 4
 				},
-				new CreateBodyTemplateRequestItem()
+				new BodyTemplatePartsData()
 				{
-					Name = "rarm",
+					Name = "Right arm",
 					BodyPartType = BodyPartType.Arm,
 					HitPenalty = 3,
 					DamageModifier = 0.5,
 					MinToHit = 5,
 					MaxToHit = 5
 				},
-				new CreateBodyTemplateRequestItem()
+				new BodyTemplatePartsData()
 				{
-					Name = "larm",
+					Name = "Left arm",
 					BodyPartType = BodyPartType.Arm,
 					HitPenalty = 3,
 					DamageModifier = 0.5,
 					MinToHit = 6,
 					MaxToHit = 6
 				},
-				new CreateBodyTemplateRequestItem()
+				new BodyTemplatePartsData()
 				{
-					Name = "rleg",
+					Name = "Right leg",
 					BodyPartType = BodyPartType.Leg,
 					HitPenalty = 2,
 					DamageModifier = 0.5,
 					MinToHit = 7,
 					MaxToHit = 8
 				},
-				new CreateBodyTemplateRequestItem()
+				new BodyTemplatePartsData()
 				{
-					Name = "lleg",
+					Name = "Left leg",
 					BodyPartType = BodyPartType.Leg,
 					HitPenalty = 2,
 					DamageModifier = 0.5,

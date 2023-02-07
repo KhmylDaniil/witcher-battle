@@ -50,7 +50,6 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				request.BodyTemplateParts = CreateBodyTemplatePartsDraft.CreateBodyPartsDraft();
 				var draft = await _mediator.Send(request, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { GameId = draft.GameId, Id = draft.Id });
 			}

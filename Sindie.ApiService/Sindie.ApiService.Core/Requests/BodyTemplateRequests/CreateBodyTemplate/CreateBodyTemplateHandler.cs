@@ -73,12 +73,13 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 			if (game.BodyTemplates.Any(x => x.Name == request.Name))
 				throw new ExceptionRequestNameNotUniq<CreateBodyTemplateRequest>(nameof(request.Name));
 
+			if (request.BodyTemplateParts == null)
+				return;
+
 			var sortedList = request.BodyTemplateParts.OrderBy(x => x.MinToHit).ToList();
 
 			foreach (var part in sortedList)
 			{
-				if (string.IsNullOrEmpty(part.Name))
-					throw new ExceptionRequestFieldNull<CreateBodyTemplateRequest>(nameof(CreateBodyTemplateRequestItem.Name));
 				if (request.BodyTemplateParts.Count(x => x.Name == part.Name) != 1)
 					throw new ArgumentException($"Значения в поле {nameof(part.Name)} повторяются");
 
@@ -87,12 +88,6 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 
 				if (part.DamageModifier <= 0)
 					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(CreateBodyTemplateRequestItem.DamageModifier));
-
-				if (part.HitPenalty < 1)
-					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(CreateBodyTemplateRequestItem.HitPenalty));
-
-				if (part.MinToHit < 1)
-					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(CreateBodyTemplateRequestItem.MinToHit));
 
 				if (part.MaxToHit > 10 || part.MaxToHit < part.MinToHit)
 					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(CreateBodyTemplateRequestItem.MaxToHit));
