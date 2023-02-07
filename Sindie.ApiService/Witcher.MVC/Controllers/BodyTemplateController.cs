@@ -1,13 +1,16 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
+using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.DeleteBodyTemplateById;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById;
-using Witcher.MVC.ViewModels.Drafts;
+using Sindie.ApiService.Core.Drafts.BodyTemplateDrafts;
 
 namespace Witcher.MVC.Controllers
 {
+	[Authorize]
 	public class BodyTemplateController : Controller
 	{
 		private readonly IMediator _mediator;
@@ -38,22 +41,18 @@ namespace Witcher.MVC.Controllers
 		}
 
 		[Route("[controller]/[action]/{gameId}")]
-		public async Task<IActionResult> Create(Guid gameId)
-		{
-			var draft = await _mediator.Send(CreateBodyTemplateDraft.CreateDraft(gameId));
-			
-			return View(draft);
-		}
+		public ActionResult Create(Guid gameId) => View(new CreateBodyTemplateRequest() { GameId = gameId} );
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{gameId}")]
-		public async Task<IActionResult> Create(ChangeBodyTemplateRequest request)
+		public async Task<IActionResult> Create(CreateBodyTemplateRequest request, CancellationToken cancellationToken)
 		{
 			try
 			{
-				await _mediator.Send(request);
-				return RedirectToAction(nameof(Index));
+				request.BodyTemplateParts = CreateBodyTemplatePartsDraft.CreateBodyPartsDraft();
+				var draft = await _mediator.Send(request, cancellationToken);
+				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { GameId = draft.GameId, Id = draft.Id });
 			}
 			catch
 			{
@@ -61,20 +60,21 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
-		// GET: BodyTemplateController/Edit/5
-		public ActionResult Edit(int id)
+		[Route("[controller]/[action]{gameId}/{id}")]
+		public ActionResult Edit(Guid gameId, Guid id)
 		{
-			return View();
+			return View(new ChangeBodyTemplateRequest() { GameId = gameId, Id = id });
 		}
 
-		// POST: BodyTemplateController/Edit/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Edit(int id, IFormCollection collection)
+		[Route("[controller]/[action]{gameId}/{id}")]
+		public async Task<IActionResult> Edit(ChangeBodyTemplateRequest request, CancellationToken cancellationToken)
 		{
 			try
 			{
-				return RedirectToAction(nameof(Index));
+				await _mediator.Send(request, cancellationToken);
+				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { GameId = request.GameId, Id = request.Id });
 			}
 			catch
 			{
@@ -82,20 +82,18 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
-		// GET: BodyTemplateController/Delete/5
-		public ActionResult Delete(int id)
-		{
-			return View();
-		}
+		[Route("[controller]/[action]{gameId}/{id}")]
+		public ActionResult Delete(Guid gameId, Guid id) => View(new DeleteBodyTemplateByIdCommand() { GameId = gameId, Id = id });
 
-		// POST: BodyTemplateController/Delete/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Delete(int id, IFormCollection collection)
+		[Route("[controller]/[action]{gameId}/{id}")]
+		public async Task<IActionResult> Delete(DeleteBodyTemplateByIdCommand request, CancellationToken cancellationToken)
 		{
 			try
 			{
-				return RedirectToAction(nameof(Index));
+				await _mediator.Send(request, cancellationToken);
+				return RedirectToAction(nameof(Index), new GetBodyTemplateQuery { GameId = request.GameId });
 			}
 			catch
 			{
