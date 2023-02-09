@@ -115,17 +115,5 @@ namespace Sindie.ApiService.Core.Entities
 			ModifiedOn = modifiedOn,
 			CreatedByUserId = createdByUserId,
 		};
-
-		/// <summary>
-		/// Изменение отдельной части шаблона тела без изменения остальных частей шаблона тела
-		/// </summary>
-		/// <param name="request">Запрос</param>
-		internal void ChangeBodyTemplatePart(ChangeBodyTemplatePartCommand request)
-		{
-			Name = request.Name;
-			BodyPartType = request.BodyPartType;
-			DamageModifier = request.DamageModifier;
-			HitPenalty = request.HitPenalty;
-		}
 	}
 }

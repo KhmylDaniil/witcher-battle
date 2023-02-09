@@ -2,16 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,15 +41,9 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplatePartRequests
 				.FirstOrDefaultAsync(cancellationToken)
 						?? throw new ExceptionNoAccessToEntity<Game>();
 
-			CheckRequest(request, bodyTemplate);
+			CheckRequest(request);
 
-			var correspondingBodyPart = bodyTemplate.BodyTemplateParts.First(x => x.Id == request.Id)
-				?? throw new  ExceptionEntityNotFound<BodyTemplatePart>(request.Id);
-
-			if (request.MaxToHit == correspondingBodyPart.MaxToHit && request.MinToHit == correspondingBodyPart.MinToHit)
-				correspondingBodyPart.ChangeBodyTemplatePart(request);
-			else
-				bodyTemplate.CreateBodyTemplateParts(BodyTemplatePartsData.CreateBodyTemplatePartsData(bodyTemplate.BodyTemplateParts, request));
+			bodyTemplate.CreateBodyTemplateParts(BodyTemplatePartsData.CreateBodyTemplatePartsData(bodyTemplate.BodyTemplateParts, request));
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
@@ -62,12 +53,9 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplatePartRequests
 		/// Проверка запроса
 		/// </summary>
 		/// <param name="request">Запрос</param>
-		private void CheckRequest(ChangeBodyTemplatePartCommand request, BodyTemplate bodyTemplate)
+		private void CheckRequest(ChangeBodyTemplatePartCommand request)
 		{
 			if (request == null) throw new ArgumentNullException(nameof(request));
-
-			if (bodyTemplate.BodyTemplateParts?.FirstOrDefault(x => x.Id == request.Id) == null)
-				throw new ExceptionEntityNotIncluded<BodyTemplatePart>(nameof(bodyTemplate));
 
 			if (!Enum.IsDefined(request.BodyPartType))
 				throw new ExceptionRequestFieldIncorrectData<ChangeBodyTemplatePartCommand>(nameof(request.BodyPartType));

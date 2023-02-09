@@ -1,12 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Sindie.ApiService.Core.Abstractions;
+using System;
+using System.ComponentModel.DataAnnotations;
 using static Sindie.ApiService.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate
+namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests
 {
 	/// <summary>
-	/// Элемент запроса создания шаблона тела
+	/// Элемент запроса создания или изменения шаблона тела
 	/// </summary>
-	public class CreateBodyTemplateRequestItem
+	public class UpdateBodyTemplateRequestItem : IBodyTemplatePartData
 	{
 		/// <summary>
 		/// Название части тела

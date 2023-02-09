@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
@@ -82,10 +83,10 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplat
 					throw new ExceptionRequestFieldIncorrectData<ChangeBodyTemplateRequest>(nameof(part.BodyPartType));
 
 				if (part.MinToHit < 1)
-					throw new ExceptionRequestFieldIncorrectData<ChangeBodyTemplateRequest>(nameof(ChangeBodyTemplateRequestItem.MinToHit));
+					throw new ExceptionRequestFieldIncorrectData<ChangeBodyTemplateRequest>(nameof(UpdateBodyTemplateRequestItem.MinToHit));
 
 				if (part.MaxToHit > 10 || part.MaxToHit < part.MinToHit)
-					throw new ExceptionRequestFieldIncorrectData<ChangeBodyTemplateRequest>(nameof(ChangeBodyTemplateRequestItem.MaxToHit));
+					throw new ExceptionRequestFieldIncorrectData<ChangeBodyTemplateRequest>(nameof(UpdateBodyTemplateRequestItem.MaxToHit));
 			}
 
 			if (sortedList.First().MinToHit != 1 || sortedList.Last().MaxToHit != 10)

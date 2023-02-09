@@ -1,47 +1,39 @@
-﻿using Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests;
+﻿using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests;
+using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
 using Sindie.ApiService.Core.Entities;
-using System;
 using System.Collections.Generic;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using System.Linq;
 
 namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 {
 	/// <summary>
 	/// Данные для обновления частей шаблона тела
 	/// </summary>
-	public class BodyTemplatePartsData
+	public class BodyTemplatePartsData : UpdateBodyTemplateRequestItem
 	{
 		/// <summary>
-		/// Название части тела
+		/// Конструктор
 		/// </summary>
-		public string Name { get; set; }
+		/// <param name="data">Данные о части шаблона тела</param>
+		private BodyTemplatePartsData(IBodyTemplatePartData data)
+		{
+			Name = data.Name;
+			BodyPartType = data.BodyPartType;
+			DamageModifier = data.DamageModifier;
+			HitPenalty = data.HitPenalty;
+			MaxToHit = data.MaxToHit;
+			MinToHit = data.MinToHit;
+		}
 
 		/// <summary>
-		/// Тип части тела
+		/// Пустой конструктор для драфта
 		/// </summary>
-		public BodyPartType BodyPartType { get; set; }
-
-		/// <summary>
-		/// Модификатор урона
-		/// </summary>
-		public double DamageModifier { get; set; }
-
-		/// <summary>
-		/// Пенальти за прицеливание
-		/// </summary>
-		public int HitPenalty { get; set; }
-
-		/// <summary>
-		/// Минимум на попадание
-		/// </summary>
-		public int MinToHit { get; set; }
-
-		/// <summary>
-		/// Максимум на попадание
-		/// </summary>
-		public int MaxToHit { get; set; }
+		public BodyTemplatePartsData()
+		{
+		}
 
 		/// <summary>
 		/// Создание данных для списка шаблонов частей тела
@@ -51,21 +43,9 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 		public static List<BodyTemplatePartsData>
 			CreateBodyTemplatePartsData(CreateBodyTemplateRequest request)
 		{
-			if (request == null) return Drafts.BodyTemplateDrafts.CreateBodyTemplatePartsDraft.CreateBodyPartsDraft();
-
-			var result = new List<BodyTemplatePartsData>();
-
-			foreach (var part in request.BodyTemplateParts)
-				result.Add(new BodyTemplatePartsData()
-				{
-					Name = part.Name,
-					BodyPartType = part.BodyPartType,
-					DamageModifier = part.DamageModifier,
-					HitPenalty = part.HitPenalty,
-					MinToHit = part.MinToHit,
-					MaxToHit = part.MaxToHit
-				});
-			return result;
+			return request == null
+				? Drafts.BodyTemplateDrafts.CreateBodyTemplatePartsDraft.CreateBodyPartsDraft()
+				: request.BodyTemplateParts.Select(x => new BodyTemplatePartsData(x)).ToList();
 		}
 
 		/// <summary>
@@ -76,21 +56,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 		public static List<BodyTemplatePartsData>
 			CreateBodyTemplatePartsData(ChangeBodyTemplateRequest request)
 		{
-			if (request == null) return null;
-			
-			var result = new List<BodyTemplatePartsData>();
-
-			foreach (var part in request.BodyTemplateParts)
-				result.Add(new BodyTemplatePartsData()
-				{
-					Name = part.Name,
-					BodyPartType = part.BodyPartType,
-					DamageModifier = part.DamageModifier,
-					HitPenalty = part.HitPenalty,
-					MinToHit = part.MinToHit,
-					MaxToHit = part.MaxToHit
-				});
-			return result;
+			return request?.BodyTemplateParts.Select(x => new BodyTemplatePartsData(x)).ToList();
 		}
 
 		/// <summary>
@@ -101,7 +67,27 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 		/// <returns>Данные для списка шаблонов частей тела</returns>
 		public static List<BodyTemplatePartsData> CreateBodyTemplatePartsData(List<BodyTemplatePart> bodyTemplateParts, ChangeBodyTemplatePartCommand request)
 		{
-			throw new NotImplementedException();
+			var result = new List<BodyTemplatePartsData>() { new BodyTemplatePartsData(request) };
+
+			foreach(var part in bodyTemplateParts)
+
+				if (part.MinToHit < request.MinToHit && part.MaxToHit > request.MaxToHit)
+					{
+						result.Add(new BodyTemplatePartsData(part) { MaxToHit = request.MinToHit - 1 });
+						result.Add(new BodyTemplatePartsData(part) { MinToHit = request.MaxToHit + 1 });
+					}
+
+				else if (part.MaxToHit > request.MaxToHit && part.MinToHit <= request.MaxToHit)
+					result.Add(new BodyTemplatePartsData(part) { MinToHit = request.MaxToHit + 1 });
+
+				else if (part.MinToHit < request.MinToHit && part.MaxToHit >= request.MinToHit)
+
+					result.Add(new BodyTemplatePartsData(part) { MaxToHit = request.MinToHit - 1 });
+
+				else if (part.MinToHit > request.MaxToHit || part.MaxToHit > request.MinToHit)
+					result.Add(new BodyTemplatePartsData(part));
+
+			return result;
 		}
 	}
 }

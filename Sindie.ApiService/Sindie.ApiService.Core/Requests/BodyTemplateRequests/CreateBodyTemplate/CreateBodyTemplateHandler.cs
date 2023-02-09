@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
@@ -87,10 +88,10 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(part.BodyPartType));
 
 				if (part.DamageModifier <= 0)
-					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(CreateBodyTemplateRequestItem.DamageModifier));
+					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(UpdateBodyTemplateRequestItem.DamageModifier));
 
 				if (part.MaxToHit > 10 || part.MaxToHit < part.MinToHit)
-					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(CreateBodyTemplateRequestItem.MaxToHit));
+					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(UpdateBodyTemplateRequestItem.MaxToHit));
 			}
 
 			if (sortedList.First().MinToHit != 1 || sortedList.Last().MaxToHit != 10)

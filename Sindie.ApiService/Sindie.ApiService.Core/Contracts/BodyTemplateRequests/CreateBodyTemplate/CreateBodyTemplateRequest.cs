@@ -32,6 +32,6 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTempla
 		/// Список частей тела
 		/// </summary>
 		[Required]
-		public List<CreateBodyTemplateRequestItem> BodyTemplateParts { get; set; }
+		public List<UpdateBodyTemplateRequestItem> BodyTemplateParts { get; set; }
 	}
 }
