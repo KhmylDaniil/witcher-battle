@@ -13,8 +13,7 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests
 		/// <summary>
 		/// Айди шаблона тела
 		/// </summary>
-		[Required]
-		public Guid BodyTemplateId { get; set; }
+		public Guid Id { get; set; }
 
 		/// <summary>
 		/// Айди игры

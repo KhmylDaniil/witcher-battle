@@ -119,8 +119,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <returns>Список шаблонов частей тела</returns>
 		public void CreateBodyTemplateParts(IEnumerable<BodyTemplatePartsData> bodyTemplateParts)
 		{
-			if (BodyTemplateParts.Any())
-				BodyTemplateParts.Clear();
+			BodyTemplateParts = new List<BodyTemplatePart>();
 			
 			foreach (var part in bodyTemplateParts)
 				BodyTemplateParts.Add(new BodyTemplatePart(

@@ -42,11 +42,9 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 		/// <returns>Данные для списка шаблонов частей тела</returns>
 		public static List<BodyTemplatePartsData>
 			CreateBodyTemplatePartsData(CreateBodyTemplateRequest request)
-		{
-			return request == null
+			=> request.BodyTemplateParts == null
 				? Drafts.BodyTemplateDrafts.CreateBodyTemplatePartsDraft.CreateBodyPartsDraft()
 				: request.BodyTemplateParts.Select(x => new BodyTemplatePartsData(x)).ToList();
-		}
 
 		/// <summary>
 		/// Создание данных для списка шаблонов частей тела
@@ -55,9 +53,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 		/// <returns>Данные для списка шаблонов частей тела</returns>
 		public static List<BodyTemplatePartsData>
 			CreateBodyTemplatePartsData(ChangeBodyTemplateRequest request)
-		{
-			return request?.BodyTemplateParts.Select(x => new BodyTemplatePartsData(x)).ToList();
-		}
+			=> request.BodyTemplateParts?.Select(x => new BodyTemplatePartsData(x)).ToList();
 
 		/// <summary>
 		/// Создание данных для списка шаблонов частей тела для метода внесения изменений в список частей шаблона тела
@@ -84,7 +80,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 
 					result.Add(new BodyTemplatePartsData(part) { MaxToHit = request.MinToHit - 1 });
 
-				else if (part.MinToHit > request.MaxToHit || part.MaxToHit > request.MinToHit)
+				else if (part.MinToHit > request.MaxToHit || part.MaxToHit < request.MinToHit)
 					result.Add(new BodyTemplatePartsData(part));
 
 			return result;

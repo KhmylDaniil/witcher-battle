@@ -28,13 +28,10 @@ namespace Witcher.MVC.Controllers
 			return View(response.GamesList);
 		}
 
-		[Route("[controller]/{id}")]
-		public async Task<IActionResult> EnterAsync(Guid id, CancellationToken cancellationToken)
+		[Route("[controller]/{gameId}")]
+		public async Task<IActionResult> EnterAsync(Guid gameId, CancellationToken cancellationToken)
 		{
-			if (id == Guid.Empty && TempData["GameId"] is not null)
-				id = (Guid)TempData["GameId"];
-
-			var command = new GetGameByIdCommand() { Id = id };
+			var command = new GetGameByIdCommand() { Id = gameId };
 
 			try
 			{

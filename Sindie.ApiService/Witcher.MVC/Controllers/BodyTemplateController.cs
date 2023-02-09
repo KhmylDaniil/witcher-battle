@@ -1,12 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.DeleteBodyTemplateById;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById;
-using Sindie.ApiService.Core.Drafts.BodyTemplateDrafts;
 
 namespace Witcher.MVC.Controllers
 {
@@ -59,15 +59,13 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
-		[Route("[controller]/[action]{gameId}/{id}")]
+		[Route("[controller]/[action]/{gameId}/{id}")]
 		public ActionResult Edit(Guid gameId, Guid id)
-		{
-			return View(new ChangeBodyTemplateRequest() { GameId = gameId, Id = id });
-		}
+			=> View(new ChangeBodyTemplateRequest() { GameId = gameId, Id = id });
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Route("[controller]/[action]{gameId}/{id}")]
+		[Route("[controller]/[action]/{gameId}/{id}")]
 		public async Task<IActionResult> Edit(ChangeBodyTemplateRequest request, CancellationToken cancellationToken)
 		{
 			try
@@ -81,12 +79,33 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
-		[Route("[controller]/[action]{gameId}/{id}")]
+		[Route("[controller]/[action]/{gameId}/{id}")]
+		public ActionResult EditParts(Guid gameId, Guid id)
+			=> View(new ChangeBodyTemplatePartCommand() { GameId = gameId, Id = id });
+
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Route("[controller]/[action]/{gameId}/{id}")]
+		public async Task<IActionResult> EditParts(ChangeBodyTemplatePartCommand request, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await _mediator.Send(request, cancellationToken);
+				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { GameId = request.GameId, Id = request.Id });
+			}
+			catch
+			{
+				return View();
+			}
+		}
+
+		[Route("[controller]/[action]/{gameId}/{id}")]
 		public ActionResult Delete(Guid gameId, Guid id) => View(new DeleteBodyTemplateByIdCommand() { GameId = gameId, Id = id });
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Route("[controller]/[action]{gameId}/{id}")]
+		[Route("[controller]/[action]/{gameId}/{id}")]
 		public async Task<IActionResult> Delete(DeleteBodyTemplateByIdCommand request, CancellationToken cancellationToken)
 		{
 			try

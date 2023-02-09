@@ -11,17 +11,14 @@
 </p>
 
 <form asp-action="Index">
-    <p>Name: <input type="text" name="name" /></p>
-    <p>Body Part Name: <input type="text" name="bodyPartName" /></p>
-    <p>Author Name: <input type="text" name="authorName" /></p>
+    <p><input type="text" name="name" /> Name</p>
+    <p><input type="text" name="bodyPartName" /> Body Part Name</p>
+    <p><input type="text" name="authorName" /> Author Name</p>
     <p><input type="submit" value="Search" /></p>
 </form>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -34,9 +31,6 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
@@ -52,3 +46,7 @@
 }
     </tbody>
 </table>
+
+<div class="container">
+    <a asp-controller="Game" asp-action="Enter" asp-route-gameId="@Model.FirstOrDefault().GameId">Back to Game</a>
+</div>

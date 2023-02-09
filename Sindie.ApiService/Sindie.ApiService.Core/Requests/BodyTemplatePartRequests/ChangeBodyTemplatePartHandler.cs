@@ -35,7 +35,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplatePartRequests
 		public async Task<Unit> Handle(ChangeBodyTemplatePartCommand request, CancellationToken cancellationToken)
 		{
 			var bodyTemplate = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
-				.Include(g => g.BodyTemplates.Where(bt => bt.Id == request.BodyTemplateId))
+				.Include(g => g.BodyTemplates.Where(bt => bt.Id == request.Id))
 					.ThenInclude(bt => bt.BodyTemplateParts)
 				.SelectMany(g => g.BodyTemplates)
 				.FirstOrDefaultAsync(cancellationToken)
