@@ -13,7 +13,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 	/// <summary>
 	/// Обработчик запроса списка шаблонов тела
 	/// </summary>
-	public class GetBodyTemplateHandler : IRequestHandler<GetBodyTemplateCommand, GetBodyTemplateResponse>
+	public class GetBodyTemplateHandler : IRequestHandler<GetBodyTemplateQuery, GetBodyTemplateResponse>
 	{
 		/// <summary>
 		/// Контекст базы данных
@@ -51,7 +51,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns>Ответ на запрос списка шаблонов тела</returns>
-		public async Task<GetBodyTemplateResponse> Handle(GetBodyTemplateCommand request, CancellationToken cancellationToken)
+		public async Task<GetBodyTemplateResponse> Handle(GetBodyTemplateQuery request, CancellationToken cancellationToken)
 		{
 			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
 				throw new ArgumentOutOfRangeException(nameof(request.CreationMinTime));
@@ -76,7 +76,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 						.Where(x => x.ModifiedOn >= request.ModificationMinTime)
 						.Where(x => (request.ModificationMaxTime == default && x.ModifiedOn <= _dateTimeProvider.TimeProvider)
 						|| x.ModifiedOn <= request.ModificationMaxTime))
-						.Where(x => request.BodyPartType == null || x.BodyTemplateParts.Any(x => Enum.GetName(x.BodyPartType).Contains(request.BodyPartType)));
+						.Where(x => request.BodyPartName == null || x.BodyTemplateParts.Any(x => x.Name.Contains(request.BodyPartName)));
 
 			var list = await filter
 				.OrderBy(request.OrderBy, request.IsAscending)

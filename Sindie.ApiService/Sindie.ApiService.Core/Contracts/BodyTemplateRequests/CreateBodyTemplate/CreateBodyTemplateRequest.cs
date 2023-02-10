@@ -1,22 +1,26 @@
 ﻿using MediatR;
+using Sindie.ApiService.Core.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate
 {
 	/// <summary>
 	/// Запрос на создание шаблона тела
 	/// </summary>
-	public class CreateBodyTemplateRequest: IRequest
+	public class CreateBodyTemplateRequest : IRequest<BodyTemplate>
 	{
 		/// <summary>
 		/// Айди игры
 		/// </summary>
+		[Required]
 		public Guid GameId { get; set; }
-		
+
 		/// <summary>
 		/// Название шаблона тела
 		/// </summary>
+		[Required]
 		public string Name { get; set; }
 
 		/// <summary>
@@ -27,6 +31,7 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTempla
 		/// <summary>
 		/// Список частей тела
 		/// </summary>
-		public List<CreateBodyTemplateRequestItem> BodyTemplateParts { get; set; }
+		[Required]
+		public List<UpdateBodyTemplateRequestItem> BodyTemplateParts { get; set; }
 	}
 }

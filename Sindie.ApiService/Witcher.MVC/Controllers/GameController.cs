@@ -28,14 +28,9 @@ namespace Witcher.MVC.Controllers
 			return View(response.GamesList);
 		}
 
-		[Route("[controller]/{id}")]
-		public async Task<IActionResult> EnterAsync(Guid id, CancellationToken cancellationToken)
+		[Route("[controller]/[action]/{id}")]
+		public async Task<IActionResult> Enter(GetGameByIdCommand command, CancellationToken cancellationToken)
 		{
-			if (id == Guid.Empty && TempData["GameId"] is not null)
-				id = (Guid)TempData["GameId"];
-
-			var command = new GetGameByIdCommand() { Id = id };
-
 			try
 			{
 				var response = await _mediator.Send(command, cancellationToken);
@@ -88,9 +83,7 @@ namespace Witcher.MVC.Controllers
 			{
 				await _mediator.Send(command ?? throw new ArgumentNullException(nameof(command)), cancellationToken);
 
-				TempData["GameId"] = command.Id;
-
-				return RedirectToAction(nameof(EnterAsync));
+				return RedirectToAction(nameof(Enter), new GetGameByIdCommand { Id = command.Id } );
 			}
 			catch (Exception ex)
 			{

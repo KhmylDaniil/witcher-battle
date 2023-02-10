@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplate;
@@ -35,13 +36,14 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 		[TestMethod]
 		public async Task Handle_CreateBodyTemplate_ShouldReturnUnit()
 		{
-			var request = new CreateBodyTemplateCommand(
-				gameId: _game.Id,
-				name: "name",
-				description: "description",
-				bodyTemplateParts: new List<CreateBodyTemplateRequestItem>
+			var request = new CreateBodyTemplateRequest()
+			{
+				GameId = _game.Id,
+				Name = "name",
+				Description = "description",
+				BodyTemplateParts = new List<UpdateBodyTemplateRequestItem>
 				{
-					new CreateBodyTemplateRequestItem()
+					new UpdateBodyTemplateRequestItem()
 					{
 						Name = "head",
 						BodyPartType = BodyPartType.Head,
@@ -50,7 +52,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 						MinToHit = 1,
 						MaxToHit = 10
 					}
-				});
+				}
+			};
 
 			var newHandler = new CreateBodyTemplateHandler(_dbContext, AuthorizationService.Object);
 
@@ -68,12 +71,12 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 
 			var bodyTemplatePart = bodyTemplate.BodyTemplateParts.FirstOrDefault();
 			Assert.IsNotNull(bodyTemplatePart);
-			Assert.AreEqual(bodyTemplatePart.Name, "head");
+			Assert.AreEqual("head", bodyTemplatePart.Name);
 			Assert.AreEqual(bodyTemplatePart.BodyPartType, BodyPartType.Head);
-			Assert.AreEqual(bodyTemplatePart.DamageModifier, 2);
-			Assert.AreEqual(bodyTemplatePart.HitPenalty, 3);
-			Assert.AreEqual(bodyTemplatePart.MinToHit, 1);
-			Assert.AreEqual(bodyTemplatePart.MaxToHit, 10);
+			Assert.AreEqual(2, bodyTemplatePart.DamageModifier);
+			Assert.AreEqual(3, bodyTemplatePart.HitPenalty, 3);
+			Assert.AreEqual(1, bodyTemplatePart.MinToHit);
+			Assert.AreEqual(10,bodyTemplatePart.MaxToHit);
 		}
 	}
 }

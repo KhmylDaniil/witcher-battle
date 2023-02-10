@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate.GetBodyTemplateResponseItem>
+
+@{
+    ViewData["Title"] = "Body Templates";
+}
+
+<h1>Body Templates</h1>
+
+<p>
+    <a asp-action="Create" asp-route-gameId=@ViewData["GameId"]>Create New</a>
+</p>
+
+<form asp-action="Index">
+    <p><input type="text" name="name" /> Name</p>
+    <p><input type="text" name="bodyPartName" /> Body Part Name</p>
+    <p><input type="text" name="authorName" /> Author Name</p>
+    <p><input type="submit" value="Search" /></p>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { gameId = item.GameId, id=item.Id, name=item.Name, description=item.Description }) |
+                @Html.ActionLink("Details", "Details", new { gameId = item.GameId, id=item.Id } ) |
+                @Html.ActionLink("Delete", "Delete", new { gameId = item.GameId, id=item.Id, name=item.Name })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div class="container">
+    <a asp-controller="Game" asp-action="Enter" asp-route-id="@ViewData["GameId"]">Back to Game</a>
+</div>

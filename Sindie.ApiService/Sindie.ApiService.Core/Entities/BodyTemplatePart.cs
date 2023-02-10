@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests;
+using System;
 using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Entities

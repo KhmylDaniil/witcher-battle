@@ -1,40 +1,41 @@
 ﻿using static Sindie.ApiService.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate
+namespace Sindie.ApiService.Core.Abstractions
 {
 	/// <summary>
-	/// Элемент запроса на изменение шаблона тела
+	/// Данные о части шаблона тела
 	/// </summary>
-	public sealed class ChangeBodyTemplateRequestItem
+	public interface IBodyTemplatePartData
 	{
 		/// <summary>
 		/// Название части тела
 		/// </summary>
-		public string Name { get; set; }
+		public string Name { get; }
 
 		/// <summary>
 		/// Тип части тела
 		/// </summary>
-		public BodyPartType BodyPartType { get; set; }
+
+		public BodyPartType BodyPartType { get; }
 
 		/// <summary>
 		/// Модификатор урона
 		/// </summary>
-		public double DamageModifier { get; set; }
+		public double DamageModifier { get; }
 
 		/// <summary>
 		/// Пенальти за прицеливание
 		/// </summary>
-		public int HitPenalty { get; set; }
+		public int HitPenalty { get; }
 
 		/// <summary>
 		/// Минимум на попадание
 		/// </summary>
-		public int MinToHit { get; set; }
+		public int MinToHit { get; }
 
 		/// <summary>
 		/// Максимум на попадание
 		/// </summary>
-		public int MaxToHit { get; set; }
+		public int MaxToHit { get; }
 	}
 }

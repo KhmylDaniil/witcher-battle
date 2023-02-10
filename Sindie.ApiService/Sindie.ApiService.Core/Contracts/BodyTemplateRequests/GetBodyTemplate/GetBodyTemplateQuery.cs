@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Sindie.ApiService.Core.BaseData;
 using System;
 
 namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate
@@ -45,8 +44,8 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate
 		public DateTime ModificationMaxTime { get; set; }
 
 		/// <summary>
-		/// Тип части тела
+		/// Название части тела
 		/// </summary>
-		public string BodyPartType { get; set; }
+		public string BodyPartName { get; set; }
 	}
 }
