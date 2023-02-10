@@ -38,9 +38,9 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { gameId = item.GameId, id=item.Id }) |
+                @Html.ActionLink("Edit", "Edit", new { gameId = item.GameId, id=item.Id, name=item.Name, description=item.Description }) |
                 @Html.ActionLink("Details", "Details", new { gameId = item.GameId, id=item.Id } ) |
-                @Html.ActionLink("Delete", "Delete", new { gameId = item.GameId, id=item.Id })
+                @Html.ActionLink("Delete", "Delete", new { gameId = item.GameId, id=item.Id, name=item.Name })
             </td>
         </tr>
 }
@@ -48,5 +48,5 @@
 </table>
 
 <div class="container">
-    <a asp-controller="Game" asp-action="Enter" asp-route-gameId="@Model.FirstOrDefault().GameId">Back to Game</a>
+    <a asp-controller="Game" asp-action="Enter" asp-route-id="@ViewData["GameId"]">Back to Game</a>
 </div>

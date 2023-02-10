@@ -25,13 +25,13 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests
 		/// <summary>
 		/// Модификатор урона
 		/// </summary>
-		[Range(0, int.MaxValue)]
+		[Range(0.1, BaseData.DiceValue.Value)]
 		public double DamageModifier { get; set; }
 
 		/// <summary>
 		/// Пенальти за прицеливание
 		/// </summary>
-		[Range(1, int.MaxValue)]
+		[Range(1, BaseData.DiceValue.Value)]
 		public int HitPenalty { get; set; }
 
 		/// <summary>

@@ -7,13 +7,13 @@
 <h1>Games</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Create New Game</a>
 </p>
 
 <form asp-action="Index">
-    <p>Name: <input type="text" name="name" /></p>
-    <p>Description: <input type="text" name="description" /></p>
-    <p>Author Name: <input type="text" name="authorName" /></p>
+    <p><input type="text" name="name" />Name </p>
+    <p><input type="text" name="description" /> Description</p>
+    <p><input type="text" name="authorName" /> Author Name</p>
     <p><input type="submit" value="Search" /></p>
 </form>
 
@@ -39,7 +39,7 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.ActionLink("Enter", "Enter", new { id=item.Id })
+                <a asp-action="Enter" asp-route-id="@item.Id">Enter</a>
             </td>
         </tr>
 }

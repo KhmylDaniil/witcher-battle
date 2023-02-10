@@ -21,11 +21,9 @@ namespace Witcher.MVC.Controllers
 		}
 
 		[Route("[controller]/{gameId}")]
-		public async Task<IActionResult> Index(Guid gameId, string name, string authorName, string bodyPartName, CancellationToken cancellationToken)
+		public async Task<IActionResult> Index(GetBodyTemplateQuery request, CancellationToken cancellationToken)
 		{
-			ViewData["GameId"] = gameId;
-
-			var request = new GetBodyTemplateQuery() { GameId = gameId, Name = name, UserName = authorName, BodyPartName = bodyPartName};
+			ViewData["GameId"] = request.GameId;
 
 			var response = await _mediator.Send(request, cancellationToken);
 
@@ -41,77 +39,74 @@ namespace Witcher.MVC.Controllers
 		}
 
 		[Route("[controller]/[action]/{gameId}")]
-		public ActionResult Create(Guid gameId) => View(new CreateBodyTemplateRequest() { GameId = gameId} );
+		public ActionResult Create(CreateBodyTemplateRequest command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{gameId}")]
-		public async Task<IActionResult> Create(CreateBodyTemplateRequest request, CancellationToken cancellationToken)
+		public async Task<IActionResult> Create(CreateBodyTemplateRequest command, CancellationToken cancellationToken)
 		{
 			try
 			{
-				var draft = await _mediator.Send(request, cancellationToken);
+				var draft = await _mediator.Send(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { GameId = draft.GameId, Id = draft.Id });
 			}
 			catch
 			{
-				return View();
+				return View(command);
 			}
 		}
 
 		[Route("[controller]/[action]/{gameId}/{id}")]
-		public ActionResult Edit(Guid gameId, Guid id)
-			=> View(new ChangeBodyTemplateRequest() { GameId = gameId, Id = id });
+		public ActionResult Edit(ChangeBodyTemplateRequest command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{gameId}/{id}")]
-		public async Task<IActionResult> Edit(ChangeBodyTemplateRequest request, CancellationToken cancellationToken)
+		public async Task<IActionResult> Edit(ChangeBodyTemplateRequest command, CancellationToken cancellationToken)
 		{
 			try
 			{
-				await _mediator.Send(request, cancellationToken);
-				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { GameId = request.GameId, Id = request.Id });
+				await _mediator.Send(command, cancellationToken);
+				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { GameId = command.GameId, Id = command.Id });
 			}
 			catch
 			{
-				return View();
+				return View(command);
 			}
 		}
 
 		[Route("[controller]/[action]/{gameId}/{id}")]
-		public ActionResult EditParts(Guid gameId, Guid id)
-			=> View(new ChangeBodyTemplatePartCommand() { GameId = gameId, Id = id });
-
+		public ActionResult EditParts(ChangeBodyTemplatePartCommand command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{gameId}/{id}")]
-		public async Task<IActionResult> EditParts(ChangeBodyTemplatePartCommand request, CancellationToken cancellationToken)
+		public async Task<IActionResult> EditParts(ChangeBodyTemplatePartCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
-				await _mediator.Send(request, cancellationToken);
-				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { GameId = request.GameId, Id = request.Id });
+				await _mediator.Send(command, cancellationToken);
+				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { GameId = command.GameId, Id = command.Id });
 			}
 			catch
 			{
-				return View();
+				return View(command);
 			}
 		}
 
 		[Route("[controller]/[action]/{gameId}/{id}")]
-		public ActionResult Delete(Guid gameId, Guid id) => View(new DeleteBodyTemplateByIdCommand() { GameId = gameId, Id = id });
+		public ActionResult Delete(DeleteBodyTemplateByIdCommand command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{gameId}/{id}")]
-		public async Task<IActionResult> Delete(DeleteBodyTemplateByIdCommand request, CancellationToken cancellationToken)
+		public async Task<IActionResult> Delete(DeleteBodyTemplateByIdCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
-				await _mediator.Send(request, cancellationToken);
-				return RedirectToAction(nameof(Index), new GetBodyTemplateQuery { GameId = request.GameId });
+				await _mediator.Send(command, cancellationToken);
+				return RedirectToAction(nameof(Index), new GetBodyTemplateQuery { GameId = command.GameId });
 			}
 			catch
 			{
