@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +11,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility
 	/// <summary>
 	/// Запрос создания способности
 	/// </summary>
-	public class CreateAbilityRequest: IRequest
+	public class CreateAbilityCommand: IRequest<Ability>
 	{
 		/// <summary>
 		/// Ацди игры
@@ -46,6 +48,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility
 		/// <summary>
 		/// Скорость атаки
 		/// </summary>
+		[Range(1, DiceValue.Value)]
 		public int AttackSpeed { get; set; }
 
 		/// <summary>
@@ -66,6 +69,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility
 		/// <summary>
 		/// Накладываемые состояния
 		/// </summary>
-		public List<CreateAbilityRequestAppliedCondition> AppliedConditions { get; set; }
+		public List<UpdateAbilityCommandItemAppledCondition> AppliedConditions { get; set; }
 	}
 }

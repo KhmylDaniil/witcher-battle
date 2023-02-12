@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility;
 using System.Linq;
@@ -69,32 +70,30 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			var modificationMinTime = DateTimeProvider.Object.TimeProvider.AddDays(-1);
 			var modificationMaxTime = DateTimeProvider.Object.TimeProvider.AddDays(1);
 
-			var request = new GetAbilityCommand(
-				gameId: _game.Id,
-				name: "test",
-				attackSkillName: "Melee",
-				damageType: "Slashing",
-				conditionName: "Кровотечение",
-				minAttackDiceQuantity: 2,
-				maxAttackDiceQuantity: 3,
-				userName: "Author",
-				creationMinTime: creationMinTime,
-				creationMaxTime: creationMaxTime,
-				modificationMinTime: modificationMinTime,
-				modificationMaxTime: modificationMaxTime,
-				pageSize: 2,
-				pageNumber: 1,
-				orderBy: null,
-				isAscending: false);
+			var request = new GetAbilityQuery()
+			{
+				GameId = _game.Id,
+				Name = "test",
+				AttackSkillName = "Melee",
+				DamageType = "Slashing",
+				ConditionName = "Кровотечение",
+				MinAttackDiceQuantity = 2,
+				MaxAttackDiceQuantity = 3,
+				UserName = "Author",
+				CreationMinTime = creationMinTime,
+				CreationMaxTime = creationMaxTime,
+				ModificationMinTime = modificationMinTime,
+				ModificationMaxTime = modificationMaxTime
+			};
 
 			var newHandler = new GetAbilityHandler(_dbContext, AuthorizationService.Object, DateTimeProvider.Object);
 
 			var result = await newHandler.Handle(request, default);
 
 			Assert.IsNotNull(result);
-			Assert.AreEqual(1, result.TotalCount);
+			Assert.AreEqual(1, result.Count());
 
-			var resultItem = result.AbilitiesList.First();
+			var resultItem = result.First();
 			
 			var ability = _dbContext.Abilities
 				.Include(x => x.AppliedConditions)

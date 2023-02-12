@@ -1,14 +1,15 @@
 ﻿using MediatR;
+using Sindie.ApiService.Core.Entities;
 using System;
 using System.Collections.Generic;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 {
 	/// <summary>
 	/// Запрос на получение списка способностей
 	/// </summary>
-	public class GetAbilityQuery : GetBaseQuery, IRequest<GetAbilityResponse>
+	public class GetAbilityQuery : GetBaseQuery, IRequest<IEnumerable<Ability>>
 	{
 		// <summary>
 		/// Айди игры
@@ -38,12 +39,14 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 		/// <summary>
 		/// Минимальное количество кубов атаки
 		/// </summary>
+		[Range(0, int.MaxValue)]
 		public int MinAttackDiceQuantity { get; set; }
 
 		/// <summary>
 		/// Максимальное количество кубов атаки
 		/// </summary>
-		public int MaxAttackDiceQuantity { get; set; }
+		[Range(0, int.MaxValue)]
+		public int MaxAttackDiceQuantity { get; set; } = int.MaxValue;
 
 		/// <summary>
 		/// Фильтр по автору

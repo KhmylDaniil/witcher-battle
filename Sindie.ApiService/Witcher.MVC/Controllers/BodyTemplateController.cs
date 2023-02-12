@@ -11,14 +11,9 @@ using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById;
 namespace Witcher.MVC.Controllers
 {
 	[Authorize]
-	public class BodyTemplateController : Controller
+	public class BodyTemplateController : BaseController
 	{
-		private readonly IMediator _mediator;
-
-		public BodyTemplateController(IMediator mediator)
-		{
-			_mediator = mediator;
-		}
+		public BodyTemplateController(IMediator mediator) : base(mediator) { }
 
 		[Route("[controller]/{gameId}")]
 		public async Task<IActionResult> Index(GetBodyTemplateQuery request, CancellationToken cancellationToken)

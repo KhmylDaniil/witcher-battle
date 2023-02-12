@@ -18,28 +18,9 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.DeleteAbilityById
 	/// <summary>
 	/// Обработчик удаления способности
 	/// </summary>
-	public class DeleteAbilityByIdHandler : IRequestHandler<DeleteAbilityByIdCommand>
+	public class DeleteAbilityByIdHandler : BaseHandler, IRequestHandler<DeleteAbilityByIdCommand>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
-
-		/// <summary>
-		/// Сервис авторизации
-		/// </summary>
-		private readonly IAuthorizationService _authorizationService;
-
-		/// <summary>
-		/// Конструктор обработчика удаления способности
-		/// </summary>
-		/// <param name="appDbContext"></param>
-		/// <param name="authorizationService"></param>
-		public DeleteAbilityByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
-		{
-			_appDbContext = appDbContext;
-			_authorizationService = authorizationService;
-		}
+		public DeleteAbilityByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
 
 		/// <summary>
 		/// Удаление способности

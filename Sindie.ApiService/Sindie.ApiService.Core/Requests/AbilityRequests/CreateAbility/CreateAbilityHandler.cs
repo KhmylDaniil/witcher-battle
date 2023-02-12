@@ -2,45 +2,24 @@
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
-using Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 {
 	/// <summary>
 	/// Обработчик создания способности
 	/// </summary>
-	public class CreateAbilityHandler : IRequestHandler<CreateAbilityCommand>
+	public class CreateAbilityHandler : BaseHandler, IRequestHandler<CreateAbilityCommand, Ability>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
-
-		/// <summary>
-		/// Сервис авторизации
-		/// </summary>
-		private readonly IAuthorizationService _authorizationService;
-
-		/// <summary>
-		/// Конструктор обработчика создания способности
-		/// </summary>
-		/// <param name="appDbContext"></param>
-		/// <param name="authorizationService"></param>
-		public CreateAbilityHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
-		{
-			_appDbContext = appDbContext;
-			_authorizationService = authorizationService;
-		}
+		public CreateAbilityHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
 
 		/// <summary>
 		/// Обработчик создания способности
@@ -48,7 +27,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns>Способность</returns>
-		public async Task<Unit> Handle(CreateAbilityCommand request, CancellationToken cancellationToken)
+		public async Task<Ability> Handle(CreateAbilityCommand request, CancellationToken cancellationToken)
 		{
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
 				.Include(g => g.Abilities)
@@ -68,11 +47,11 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 				attackSkill: request.AttackSkill,
 				defensiveSkills: request.DefensiveSkills,
 				damageType: request.DamageType,
-				appliedConditions: AppliedConditionData.CreateAbilityData(request));
+				appliedConditions: request.AppliedConditions);
 
 			_appDbContext.Abilities.Add(newAbility);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
-			return Unit.Value;
+			return newAbility;
 		}
 
 		/// <summary>
@@ -80,7 +59,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="game">Игра</param>
-		private void CheckRequest(CreateAbilityCommand request, Game game)
+		private static void CheckRequest(CreateAbilityCommand request, Game game)
 		{
 			if (game.Abilities.Any(x => x.Name == request.Name))
 				throw new ExceptionRequestNameNotUniq<CreateAbilityCommand>(nameof(request.Name));
@@ -91,13 +70,15 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 			if (!Enum.IsDefined(request.DamageType))
 				throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(request.DamageType));
 
-			foreach (var item in request.DefensiveSkills)
-				if (!Enum.IsDefined(item))
-					throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(request.DefensiveSkills));
+			if (request.DefensiveSkills is not null)
+				foreach (var item in request.DefensiveSkills)
+					if (!Enum.IsDefined(item))
+						throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(request.DefensiveSkills));
 
-			foreach (var appliedCondition in request.AppliedConditions.Select(x => x.Condition))
-				if (!Enum.IsDefined(appliedCondition))
-					throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(appliedCondition));
+			if (request.AppliedConditions is not null)
+				foreach (var appliedCondition in request.AppliedConditions.Select(x => x.Condition))
+					if (!Enum.IsDefined(appliedCondition))
+						throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(appliedCondition));
 		}
 	}
 }

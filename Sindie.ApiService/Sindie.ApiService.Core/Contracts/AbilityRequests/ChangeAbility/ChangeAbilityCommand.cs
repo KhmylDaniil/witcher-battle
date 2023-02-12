@@ -1,6 +1,8 @@
 ﻿using MediatR;
+using Sindie.ApiService.Core.BaseData;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
@@ -8,7 +10,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 	/// <summary>
 	/// Запрос изменения способности
 	/// </summary>
-	public class ChangeAbilityRequest: IRequest
+	public class ChangeAbilityCommand: IRequest
 	{
 		/// <summary>
 		/// Айди
@@ -23,6 +25,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		/// <summary>
 		/// Наазвание способности
 		/// </summary>
+		[Required]
 		public string Name { get; set; }
 
 		/// <summary>
@@ -38,6 +41,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		/// <summary>
 		/// Количество кубов атаки
 		/// </summary>
+		[Range(0, int.MaxValue)]
 		public int AttackDiceQuantity { get; set; }
 
 		/// <summary>
@@ -48,6 +52,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		/// <summary>
 		/// Скорость атаки
 		/// </summary>
+		[Range(1, DiceValue.Value)]
 		public int AttackSpeed { get; set; }
 
 		/// <summary>
@@ -68,6 +73,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		/// <summary>
 		/// Накладываемые состояния
 		/// </summary>
-		public List<ChangeAbilityRequestAppliedCondition> AppliedConditions { get; set; }
+		public List<UpdateAbilityCommandItemAppledCondition> AppliedConditions { get; set; }
 	}
 }
