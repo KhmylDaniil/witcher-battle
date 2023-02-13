@@ -10,14 +10,9 @@ using Sindie.ApiService.Core.Contracts.GameRequests.GetGameById;
 namespace Witcher.MVC.Controllers
 {
 	[Authorize]
-	public class GameController : Controller
+	public class GameController : BaseController
 	{
-		private readonly IMediator _mediator;
-
-		public GameController(IMediator mediator)
-		{
-			_mediator = mediator;
-		}
+		public GameController(IMediator mediator) : base(mediator) { }
 
 		public async Task<IActionResult> Index(string name, string description, string authorName, CancellationToken cancellationToken)
 		{

@@ -1,19 +1,20 @@
-﻿using Sindie.ApiService.Core.BaseData;
+﻿using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.BaseData;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
+namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 {
 	/// <summary>
-	/// Элемент запроса изменения способности - применяемое состояние
+	/// Элемент запроса созадния или изменения способности(накладываемое состояние) 
 	/// </summary>
-	public sealed class ChangeAbilityRequestAppliedCondition
+	public class UpdateAbilityCommandItemAppledCondition
 	{
 		/// <summary>
 		/// Айди
 		/// </summary>
 		public Guid? Id { get; set; }
-		
+
 		/// <summary>
 		/// Тип состояния
 		/// </summary>

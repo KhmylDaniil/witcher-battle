@@ -8,17 +8,9 @@ using Witcher.MVC.ViewModels.Login;
 
 namespace Witcher.MVC.Controllers
 {
-	public class LoginController : Controller
+	public class LoginController : BaseController
 	{
-		private readonly ILogger<LoginController> _logger;
-
-		private readonly IMediator _mediator;
-
-		public LoginController(ILogger<LoginController> logger, IMediator mediator)
-		{
-			_logger = logger;
-			_mediator = mediator;
-		}
+		public LoginController(IMediator mediator) : base(mediator) { }
 
 		public IActionResult Index()
 		{

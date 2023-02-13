@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility;
+using Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
-using Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,28 +18,9 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 	/// <summary>
 	/// Обработчик изменения способности
 	/// </summary>
-	public class ChangeAbilityHandler : IRequestHandler<ChangeAbilityCommand>
+	public class ChangeAbilityHandler : BaseHandler, IRequestHandler<ChangeAbilityCommand>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
-
-		/// <summary>
-		/// Сервис авторизации
-		/// </summary>
-		private readonly IAuthorizationService _authorizationService;
-
-		/// <summary>
-		/// Конструктор обработчика создания способности
-		/// </summary>
-		/// <param name="appDbContext"></param>
-		/// <param name="authorizationService"></param>
-		public ChangeAbilityHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
-		{
-			_appDbContext = appDbContext;
-			_authorizationService = authorizationService;
-		}
+		public ChangeAbilityHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
 
 		/// <summary>
 		/// Обработчик изменения способности
@@ -69,7 +50,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 				attackSkill: request.AttackSkill,
 				defensiveSkills: request.DefensiveSkills,
 				damageType: request.DamageType,
-				appliedConditions: AppliedConditionData.CreateAbilityData(request));
+				appliedConditions: request.AppliedConditions);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
@@ -94,19 +75,21 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 			if (!Enum.IsDefined(request.DamageType))
 				throw new ExceptionRequestFieldIncorrectData<ChangeAbilityCommand>(nameof(request.DamageType));
 
-			foreach (var item in request.DefensiveSkills)
-				if (!Enum.IsDefined(item))
-					throw new ExceptionRequestFieldIncorrectData<ChangeAbilityCommand>(nameof(request.DefensiveSkills));
+			if (request.DefensiveSkills is not null)
+				foreach (var item in request.DefensiveSkills)
+					if (!Enum.IsDefined(item))
+						throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(request.DefensiveSkills));
 
-			foreach (var appliedCondition in request.AppliedConditions)
-			{
-				if (appliedCondition.Id != default)
-					_ = ability.AppliedConditions.FirstOrDefault(x => x.Id == appliedCondition.Id)
-							?? throw new ExceptionEntityNotFound<AppliedCondition>(appliedCondition.Id.Value);
+			if (request.AppliedConditions is not null)
+				foreach (var appliedCondition in request.AppliedConditions)
+				{
+					if (appliedCondition.Id != default)
+						_ = ability.AppliedConditions.FirstOrDefault(x => x.Id == appliedCondition.Id)
+								?? throw new ExceptionEntityNotFound<AppliedCondition>(appliedCondition.Id.Value);
 
-				if (!Enum.IsDefined(appliedCondition.Condition))
-					throw new ExceptionRequestFieldIncorrectData<CreateAbilityCommand>(nameof(appliedCondition.Condition));
-			}
+					if (!Enum.IsDefined(appliedCondition.Condition))
+						throw new ExceptionRequestFieldIncorrectData<ChangeAbilityCommand>(nameof(appliedCondition.Condition));
+				}
 		}
 	}
 }
