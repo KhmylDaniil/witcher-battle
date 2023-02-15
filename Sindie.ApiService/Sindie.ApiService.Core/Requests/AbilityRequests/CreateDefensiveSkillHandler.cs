@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests
 {
-	public class CreateDefensiveSkillHandler : BaseHandler, IRequestHandler<CreateDefensiveSkillCommand>
+	public class CreateDefensiveSkillHandler : BaseHandler<CreateDefensiveSkillCommand, Unit>
 	{
 		public CreateDefensiveSkillHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
 
-		public async Task<Unit> Handle(CreateDefensiveSkillCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(CreateDefensiveSkillCommand request, CancellationToken cancellationToken)
 		{
 			if (!Enum.IsDefined(request.Skill))
 				throw new ExceptionFieldOutOfRange<CreateDefensiveSkillCommand>(nameof(request.Skill));

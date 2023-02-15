@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById;
@@ -13,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbilityById
 {
-	public class GetAbilityByIdHandler : BaseHandler, IRequestHandler<GetAbilityByIdQuery, Ability>
+	public class GetAbilityByIdHandler : BaseHandler<GetAbilityByIdQuery, Ability>
 	{
 		public GetAbilityByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
 
-		public async Task<Ability> Handle(GetAbilityByIdQuery request, CancellationToken cancellationToken)
+		public override async Task<Ability> Handle(GetAbilityByIdQuery request, CancellationToken cancellationToken)
 		{
 			if (request == null)
-				throw new ExceptionRequestNull<GetBodyTemplateByIdQuery>();
+				throw new RequestNullException<GetBodyTemplateByIdQuery>();
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
 				.Include(x => x.Abilities.Where(x => x.Id == request.Id))

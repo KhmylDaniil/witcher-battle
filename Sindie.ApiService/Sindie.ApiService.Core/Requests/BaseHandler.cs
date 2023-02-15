@@ -1,11 +1,14 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using MediatR;
+using Sindie.ApiService.Core.Abstractions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Requests
 {
 	/// <summary>
 	/// Базовый класс для обработчика
 	/// </summary>
-	public abstract class BaseHandler
+	public abstract class BaseHandler<TRequest, Tout> : IRequestHandler<TRequest, Tout> where TRequest: IRequest<Tout>
 	{
 		/// <summary>
 		/// Контекст базы данных
@@ -27,5 +30,7 @@ namespace Sindie.ApiService.Core.Requests
 			_appDbContext = appDbContext;
 			_authorizationService = authorizationService;
 		}
+
+		public abstract Task<Tout> Handle(TRequest request, CancellationToken cancellationToken);
 	}
 }

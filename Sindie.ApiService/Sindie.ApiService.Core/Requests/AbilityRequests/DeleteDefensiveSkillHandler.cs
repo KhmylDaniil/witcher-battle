@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests
 {
-	public class DeleteDefensiveSkillHandler : BaseHandler, IRequestHandler<DeleteDefensiveSkillCommand>
+	public class DeleteDefensiveSkillHandler : BaseHandler<DeleteDefensiveSkillCommand, Unit>
 	{
 		public DeleteDefensiveSkillHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
 
-		public async Task<Unit> Handle(DeleteDefensiveSkillCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(DeleteDefensiveSkillCommand request, CancellationToken cancellationToken)
 		{	
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(g => g.Abilities.Where(a => a.Id == request.AbilityId))
