@@ -1,4 +1,5 @@
-﻿using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
+﻿using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
 using System.Collections.Generic;
 using static Sindie.ApiService.Core.BaseData.Enums;
 
@@ -6,7 +7,7 @@ namespace Sindie.ApiService.Core.Drafts.BodyTemplateDrafts
 {
 	public static class CreateBodyTemplatePartsDraft
 	{
-		public static List<BodyTemplatePartsData> CreateBodyPartsDraft()
+		public static List<IBodyTemplatePartData> CreateBodyPartsDraft()
 			=> new()
 			{
 				new BodyTemplatePartsData()

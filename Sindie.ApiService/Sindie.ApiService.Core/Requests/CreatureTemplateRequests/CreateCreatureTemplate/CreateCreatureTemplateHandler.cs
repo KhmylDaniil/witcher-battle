@@ -105,7 +105,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 		private void CheckRequest(CreateCreatureTemplateCommand request, Game game)
 		{
 			if (game.CreatureTemplates.Any(x => string.Equals(x.Name, request.Name, StringComparison.Ordinal)))
-				throw new ExceptionRequestNameNotUniq<CreateCreatureTemplateCommand>(nameof(request.Name));
+				throw new RequestNameNotUniqException<CreateCreatureTemplateCommand>(nameof(request.Name));
 
 			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId)
 				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.BodyTemplateId);
@@ -116,16 +116,16 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 					?? throw new ExceptionEntityNotFound<BodyTemplatePart>(item.BodyTemplatePartId);
 				
 				if (item.Armor < 0)
-					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateCommand>(nameof(item.Armor));
+					throw new RequestFieldIncorrectDataException<CreateCreatureTemplateCommand>(nameof(item.Armor));
 			}
 
 			foreach (var skill in request.CreatureTemplateSkills)
 			{
 				if (!Enum.IsDefined(skill.Skill))
-					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateCommand>(nameof(skill.Skill));
+					throw new RequestFieldIncorrectDataException<CreateCreatureTemplateCommand>(nameof(skill.Skill));
 
 				if (skill.Value < 0 || skill.Value > BaseData.DiceValue.Value)
-					throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateCommand>(nameof(skill.Value));
+					throw new RequestFieldIncorrectDataException<CreateCreatureTemplateCommand>(nameof(skill.Value));
 			}
 
 			foreach (var id in request.Abilities)

@@ -17,12 +17,8 @@ namespace Sindie.ApiService.Core.Requests.UserRequests.LoginUser
 	/// <summary>
 	/// Обработчик команды аутентификации пользователя
 	/// </summary>
-	public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginUserCommandResponse>
+	public class LoginUserCommandHandler : BaseHandler<LoginUserCommand, LoginUserCommandResponse>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
 
 		/// <summary>
 		/// Хеширование пароля
@@ -40,9 +36,9 @@ namespace Sindie.ApiService.Core.Requests.UserRequests.LoginUser
 		/// <param name="appDbContext">Контекст базы данных</param>
 		/// <param name="passwordHasher">Хеширование пароля</param>
 		/// <param name="httpContextAccessor">Доступ к Http контексту</param>
-		public LoginUserCommandHandler(IAppDbContext appDbContext, IPasswordHasher passwordHasher, IHttpContextAccessor httpContextAccessor)
+		public LoginUserCommandHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IPasswordHasher passwordHasher, IHttpContextAccessor httpContextAccessor)
+			: base(appDbContext, authorizationService)
 		{
-			_appDbContext = appDbContext;
 			_passwordHasher = passwordHasher;
 			_httpContextAccessor = httpContextAccessor;
 		}
@@ -53,7 +49,7 @@ namespace Sindie.ApiService.Core.Requests.UserRequests.LoginUser
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены запроса</param>
 		/// <returns>ответ</returns>
-		public async Task<LoginUserCommandResponse> Handle
+		public override async Task<LoginUserCommandResponse> Handle
 			(LoginUserCommand request, CancellationToken cancellationToken)
 		{
 			var existingUserAccount = await _appDbContext.UserAccounts
@@ -85,7 +81,7 @@ namespace Sindie.ApiService.Core.Requests.UserRequests.LoginUser
 		}
 
 		/// <summary>
-		/// Выделение метода расширения для возожности переопределения его поведения в тестах 
+		/// Выделение метода расширения для возможности переопределения его поведения в тестах 
 		/// </summary>
 		/// <param name="httpContext"></param>
 		/// <param name="claimsPrincipal"></param>

@@ -8,12 +8,12 @@ namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
 	/// Исключение не уникальное имя в запросе
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class ExceptionRequestNameNotUniq<T> : ExceptionApplicationBase
+	public class RequestNameNotUniqException<T> : RequestValidationException
 	{
 		/// <summary>
 		/// Конструктор исключения не уникального имени в запросе
 		/// </summary>
-		public ExceptionRequestNameNotUniq()
+		public RequestNameNotUniqException()
 			: base($"{typeof(T)} должен быть уникальным")
 		{
 		}
@@ -22,7 +22,7 @@ namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
 		/// Конструктор исключения не уникального имени в запросе
 		/// </summary>
 		/// <param name="name">Имя</param>
-		public ExceptionRequestNameNotUniq(string name)
+		public RequestNameNotUniqException(string name)
 			: base($"{typeof(T)} с именем {name} уже существует.")
 		{
 		}
@@ -31,7 +31,7 @@ namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
 		/// Конструктор исключения не уникального имени в запросе
 		/// </summary>
 		/// <param name="name">Имя</param>
-		public ExceptionRequestNameNotUniq(string requestName, string name)
+		public RequestNameNotUniqException(string requestName, string name)
 			: base($"В запросе {requestName} должно быть уникальное {name}, переданное {name} уже существует")
 		{
 		}
@@ -40,7 +40,7 @@ namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
 		/// Конструктор исключения не уникального имени в запросе
 		/// </summary>
 		/// <param name="id">ИД</param>
-		public ExceptionRequestNameNotUniq(Guid id)
+		public RequestNameNotUniqException(Guid id)
 			: base($"В запросе {typeof(T)} должен быть уникальный ИД, переданный {id} уже существует")
 		{
 		}

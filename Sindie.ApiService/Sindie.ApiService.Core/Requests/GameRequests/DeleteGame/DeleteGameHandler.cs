@@ -7,25 +7,13 @@ using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Requests.GameRequests.DeleteGame
 {
-	public class DeleteGameHandler: IRequestHandler<DeleteGameCommand, Unit>
+	public class DeleteGameHandler: BaseHandler<DeleteGameCommand, Unit>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
-
-		/// <summary>
-		/// Сервис авторизации
-		/// </summary>
-		private readonly IAuthorizationService _authorizationService;
-
-		public DeleteGameHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
+		public DeleteGameHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
-			_appDbContext = appDbContext;
-			_authorizationService = authorizationService;
 		}
 
-		public async Task<Unit> Handle(DeleteGameCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(DeleteGameCommand request, CancellationToken cancellationToken)
 		{
 			var game = await _authorizationService.UserGameFilter(_appDbContext.Games, request.Id)
 				.FirstAsync(cancellationToken: cancellationToken);

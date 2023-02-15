@@ -58,7 +58,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 
 			//Arrange
 			var registerUserCommandHandler = new RegisterUserCommandHandler
-				(context, passwordHasherMock.Object, HasUsersWithLogin);
+				(context, AuthorizationService.Object, passwordHasherMock.Object, HasUsersWithLogin);
 
 			//Act
 			var result = await registerUserCommandHandler.Handle(request, default);

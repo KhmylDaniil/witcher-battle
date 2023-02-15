@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate.ChangeBodyTemplateRequest
+﻿@model Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate.ChangeBodyTemplateCommand
 
 @{
     ViewData["Title"] = "Edit";
@@ -27,6 +27,8 @@
         </form>
     </div>
 </div>
+
+<p>@ViewData["ErrorMessage"]</p>
 
 <div>
     <a asp-action="Index" asp-route-gameId=@Model.GameId>Back to Body Templates</a>

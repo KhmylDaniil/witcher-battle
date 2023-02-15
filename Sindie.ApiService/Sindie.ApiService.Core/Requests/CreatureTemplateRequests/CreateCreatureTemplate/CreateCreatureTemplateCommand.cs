@@ -61,25 +61,25 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 			BodyTemplateId = bodyTemplateId;
 			CreatureType = Enum.IsDefined(creatureType)
 				? creatureType
-				: throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(creatureType));
+				: throw new RequestFieldIncorrectDataException<CreateCreatureTemplateRequest>(nameof(creatureType));
 			Name = string.IsNullOrWhiteSpace(name)
-				? throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequest>(nameof(Name))
+				? throw new RequestFieldNullException<CreateCreatureTemplateRequest>(nameof(Name))
 				: name;
 			Description = description;
-			HP = hp < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(HP)) : hp;
-			Sta = sta < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Sta)) : sta;
-			Int = @int < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Int)) : @int;
-			Ref = @ref < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Ref)) : @ref;
-			Dex = dex < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Dex)) : dex;
-			Body = body < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Body)) : body;
-			Emp = emp < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Emp)) : emp;
-			Cra = cra < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Cra)) : cra;
-			Will = will < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Will)) : will;
-			Speed = speed < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Speed)) : speed;
-			Luck = luck < 1 ? throw new ExceptionRequestFieldIncorrectData<CreateCreatureTemplateRequest>(nameof(Luck)) : luck;
-			ArmorList = armorList ?? throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequest>(nameof(ArmorList));
-			Abilities = abilities ?? throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequest>(nameof(Abilities));
-			CreatureTemplateSkills = creatureTemplateSkills ?? throw new ExceptionRequestFieldNull<CreateCreatureTemplateRequest>(nameof(CreatureTemplateSkills));
+			HP = hp < 1 ? throw new RequestFieldIncorrectDataException<CreateCreatureTemplateRequest>(nameof(HP)) : hp;
+			Sta = sta < 1 ? throw new RequestFieldIncorrectDataException<CreateCreatureTemplateRequest>(nameof(Sta)) : sta;
+			Int = @int < 1 ? throw new RequestFieldIncorrectDataException<CreateCreatureTemplateRequest>(nameof(Int)) : @int;
+			Ref = @ref < 1 ? throw new RequestFieldIncorrectDataException<CreateCreatureTemplateRequest>(nameof(Ref)) : @ref;
+			Dex = dex < 1 ? throw new RequestFieldIncorrectDataException<CreateCreatureTemplateRequest>(nameof(Dex)) : dex;
+			Body = body < 1 ? throw new RequestFieldIncorrectDataException<CreateCreatureTemplateRequest>(nameof(Body)) : body;
+			Emp = emp < 1 ? throw new RequestFieldIncorrectDataException<CreateCreatureTemplateRequest>(nameof(Emp)) : emp;
+			Cra = cra < 1 ? throw new RequestFieldIncorrectDataException<CreateCreatureTemplateRequest>(nameof(Cra)) : cra;
+			Will = will < 1 ? throw new RequestFieldIncorrectDataException<CreateCreatureTemplateRequest>(nameof(Will)) : will;
+			Speed = speed < 1 ? throw new RequestFieldIncorrectDataException<CreateCreatureTemplateRequest>(nameof(Speed)) : speed;
+			Luck = luck < 1 ? throw new RequestFieldIncorrectDataException<CreateCreatureTemplateRequest>(nameof(Luck)) : luck;
+			ArmorList = armorList ?? throw new RequestFieldNullException<CreateCreatureTemplateRequest>(nameof(ArmorList));
+			Abilities = abilities ?? throw new RequestFieldNullException<CreateCreatureTemplateRequest>(nameof(Abilities));
+			CreatureTemplateSkills = creatureTemplateSkills ?? throw new RequestFieldNullException<CreateCreatureTemplateRequest>(nameof(CreatureTemplateSkills));
 		}
 	}
 }

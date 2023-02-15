@@ -31,7 +31,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.ChangeBattle
 			Id = id;
 			ImgFileId = imgFileId;
 			Name = string.IsNullOrWhiteSpace(name)
-				? throw new ExceptionRequestFieldNull<ChangeBattleRequest>(nameof(Name))
+				? throw new RequestFieldNullException<ChangeBattleRequest>(nameof(Name))
 				: name;
 			Description = description;
 			Creatures = creatures;

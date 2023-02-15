@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser;
@@ -13,13 +12,8 @@ namespace Sindie.ApiService.Core.Requests.UserRequests.RegisterUser
 	/// <summary>
 	/// Обработчик команды регистрации пользователя
 	/// </summary>
-	public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, RegisterUserCommandResponse>
+	public class RegisterUserCommandHandler : BaseHandler<RegisterUserCommand, RegisterUserCommandResponse>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
-
 		/// <summary>
 		/// Хеширование пароля
 		/// </summary>
@@ -36,11 +30,12 @@ namespace Sindie.ApiService.Core.Requests.UserRequests.RegisterUser
 		/// <param name="appDbContext">Контекст базы данных</param>
 		/// <param name="passwordHasher">Хеширование пароля</param>
 		public RegisterUserCommandHandler(
-			IAppDbContext appDbContext, 
+			IAppDbContext appDbContext,
+			IAuthorizationService authorizationService,
 			IPasswordHasher passwordHasher, 
 			UserAccount.HasUsersWithLogin hasUsersWithLogin)
+			: base(appDbContext, authorizationService)
 		{
-			_appDbContext = appDbContext;
 			_passwordHasher = passwordHasher;
 			_hasUsersWithLogin = hasUsersWithLogin;
 		}
@@ -51,7 +46,7 @@ namespace Sindie.ApiService.Core.Requests.UserRequests.RegisterUser
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены запроса</param>
 		/// <returns>Ответ</returns>
-		public async Task<RegisterUserCommandResponse> Handle (RegisterUserCommand request, CancellationToken cancellationToken)
+		public override async Task<RegisterUserCommandResponse> Handle (RegisterUserCommand request, CancellationToken cancellationToken)
 		{
 			var systemInterface = await _appDbContext.Interfaces
 				.FirstOrDefaultAsync(x => x.Id == SystemInterfaces.SystemLightId, cancellationToken)

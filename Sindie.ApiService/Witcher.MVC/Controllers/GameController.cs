@@ -6,6 +6,8 @@ using Sindie.ApiService.Core.Contracts.GameRequests.CreateGame;
 using Sindie.ApiService.Core.Contracts.GameRequests.DeleteGame;
 using Sindie.ApiService.Core.Contracts.GameRequests.GetGame;
 using Sindie.ApiService.Core.Contracts.GameRequests.GetGameById;
+using Sindie.ApiService.Core.Exceptions;
+using Sindie.ApiService.Core.ExtensionMethods;
 
 namespace Witcher.MVC.Controllers
 {
@@ -18,7 +20,7 @@ namespace Witcher.MVC.Controllers
 		{
 			var query = new GetGameQuery() { Name = name, Description = description, AuthorName = authorName};
 			
-			var response = await _mediator.Send(query, cancellationToken);
+			var response = await _mediator.SendValidated(query, cancellationToken);
 
 			return View(response.GamesList);
 		}
@@ -28,14 +30,14 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var response = await _mediator.Send(command, cancellationToken);
+				var response = await _mediator.SendValidated(command, cancellationToken);
 
 				return View(response);
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = "You`re not authorized to requested game.";
-				return View("Error");
+				ViewData["ErrorMessage"] = ex.UserMessage;
+				return View(command);
 			}
 		}
 
@@ -52,12 +54,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(command ?? throw new ArgumentNullException(nameof(command)), cancellationToken);
+				await _mediator.SendValidated(command ?? throw new ArgumentNullException(nameof(command)), cancellationToken);
 				return RedirectToAction(nameof(Index));
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
-				return View();
+				ViewData["ErrorMessage"] = ex.UserMessage;
+				return View(command);
 			}
 		}
 
@@ -76,14 +79,14 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(command ?? throw new ArgumentNullException(nameof(command)), cancellationToken);
+				await _mediator.SendValidated(command ?? throw new ArgumentNullException(nameof(command)), cancellationToken);
 
 				return RedirectToAction(nameof(Enter), new GetGameByIdCommand { Id = command.Id } );
 			}
-			catch (Exception ex)
+			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.Message ?? "You`re don`t have permission to make changes in requested game.";
-				return View("Error");
+				ViewData["ErrorMessage"] = ex.UserMessage;
+				return View(command);
 			}
 		}
 
@@ -102,13 +105,14 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(command ?? throw new ArgumentNullException(nameof(command)), cancellationToken);
+				await _mediator.SendValidated(command ?? throw new ArgumentNullException(nameof(command)), cancellationToken);
 
 				return RedirectToAction(nameof(Index));
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
-				return View();
+				ViewData["ErrorMessage"] = ex.UserMessage;
+				return View(command);
 			}
 		}
 	}

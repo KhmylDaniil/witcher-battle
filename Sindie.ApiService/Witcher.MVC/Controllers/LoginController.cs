@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Sindie.ApiService.Core.Contracts.UserRequests.LoginUser;
 using Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser;
+using Sindie.ApiService.Core.Exceptions;
+using Sindie.ApiService.Core.ExtensionMethods;
 using System.Diagnostics;
 using Witcher.MVC.Models;
 using Witcher.MVC.ViewModels.Login;
@@ -28,15 +30,15 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
+				await _mediator.SendValidated(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
 
-				await _mediator.Send(new LoginUserCommand() { Login = request.Login, Password = request.Password }, cancellationToken);
+				await _mediator.SendValidated(new LoginUserCommand() { Login = request.Login, Password = request.Password }, cancellationToken);
 
 				return RedirectToAction(nameof(SuccessfulRegistration), new SuccessfulRegistration() { Name = request.Name });
 			}
-			catch (Exception ex)
+			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.Message;
+				ViewData["ErrorMessage"] = ex.UserMessage;
 				return View();
 			}
 		}
@@ -57,13 +59,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
+				await _mediator.SendValidated(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
 
 				return RedirectToAction("Index", "Home");
 			}
-			catch (Exception ex)
+			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.Message;
+				ViewData["ErrorMessage"] = ex.UserMessage;
 				return View();
 			}
 		}
