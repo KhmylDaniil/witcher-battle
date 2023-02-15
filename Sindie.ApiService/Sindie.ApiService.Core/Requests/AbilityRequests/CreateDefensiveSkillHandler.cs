@@ -9,14 +9,15 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests
 {
-	public class CreateDefensiveSkillHandler : BaseHandler, IRequestHandler<CreateDefensiveSkillCommand>
+	public class CreateDefensiveSkillHandler : BaseHandler<CreateDefensiveSkillCommand, Unit>
 	{
 		public CreateDefensiveSkillHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
 
-		public async Task<Unit> Handle(CreateDefensiveSkillCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(CreateDefensiveSkillCommand request, CancellationToken cancellationToken)
 		{
 			if (!Enum.IsDefined(request.Skill))
 				throw new ExceptionFieldOutOfRange<CreateDefensiveSkillCommand>(nameof(request.Skill));
@@ -29,6 +30,9 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests
 
 			var ability = game.Abilities.FirstOrDefault(a => a.Id == request.AbilityId)
 				?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId);
+
+			if (ability.DefensiveSkills.Any(x => x.Skill == request.Skill))
+				throw new RequestFieldIncorrectDataException<CreateDefensiveSkillCommand>(nameof(request.Skill), "Указанный навык уже включен в список");
 
 			ability.DefensiveSkills.Add(new DefensiveSkill(ability.Id, request.Skill));
 

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 {
-	public class GetAbilityHandler : BaseHandler, IRequestHandler<GetAbilityQuery, IEnumerable<Ability>>
+	public class GetAbilityHandler : BaseHandler<GetAbilityQuery, IEnumerable<Ability>>
 	{
 		/// <summary>
 		/// Провайдер времени
@@ -26,7 +26,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 			_dateTimeProvider = dateTimeProvider;
 		}
 
-		public async Task<IEnumerable<Ability>> Handle(GetAbilityQuery request, CancellationToken cancellationToken)
+		public override async Task<IEnumerable<Ability>> Handle(GetAbilityQuery request, CancellationToken cancellationToken)
 		{
 			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
 				throw new ArgumentOutOfRangeException(nameof(GetAbilityQuery.CreationMinTime));

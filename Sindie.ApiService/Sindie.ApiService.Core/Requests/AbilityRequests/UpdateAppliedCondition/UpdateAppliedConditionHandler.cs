@@ -12,16 +12,13 @@ using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests.UpdateAppliedCondition
 {
-	public class UpdateAppliedConditionHandler : BaseHandler, IRequestHandler<UpdateAppliedCondionCommand>
+	public class UpdateAppliedConditionHandler : BaseHandler<UpdateAppliedCondionCommand, Unit>
 	{
 		public UpdateAppliedConditionHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 			: base(appDbContext, authorizationService) { }
 
-		public async Task<Unit> Handle(UpdateAppliedCondionCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(UpdateAppliedCondionCommand request, CancellationToken cancellationToken)
 		{
-			if (!Enum.IsDefined(request.Condition))
-				throw new ExceptionFieldOutOfRange<UpdateAppliedCondionCommand>(nameof(request.Condition));
-			
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(g => g.Abilities.Where(a => a.Id == request.AbilityId))
 					.ThenInclude(a => a.AppliedConditions)

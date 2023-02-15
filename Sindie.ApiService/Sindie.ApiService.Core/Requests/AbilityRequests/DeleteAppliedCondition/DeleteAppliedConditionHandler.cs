@@ -11,12 +11,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests.DeleteAppliedCondition
 {
-	public class DeleteAppliedConditionHandler : BaseHandler, IRequestHandler<DeleteAppliedCondionCommand>
+	public class DeleteAppliedConditionHandler : BaseHandler<DeleteAppliedCondionCommand, Unit>
 	{
 		public DeleteAppliedConditionHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 			: base(appDbContext, authorizationService) { }
 
-		public async Task<Unit> Handle(DeleteAppliedCondionCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(DeleteAppliedCondionCommand request, CancellationToken cancellationToken)
 		{
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(g => g.Abilities.Where(a => a.Id == request.AbilityId))

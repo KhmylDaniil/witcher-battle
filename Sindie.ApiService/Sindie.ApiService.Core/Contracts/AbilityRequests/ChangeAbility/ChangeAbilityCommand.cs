@@ -1,5 +1,8 @@
 ﻿using MediatR;
+using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Entities;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +13,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 	/// <summary>
 	/// Запрос изменения способности
 	/// </summary>
-	public class ChangeAbilityCommand: IRequest
+	public class ChangeAbilityCommand: IValidatableCommand
 	{
 		/// <summary>
 		/// Айди
@@ -25,7 +28,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		/// <summary>
 		/// Наазвание способности
 		/// </summary>
-		[Required]
 		public string Name { get; set; }
 
 		/// <summary>
@@ -41,7 +43,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		/// <summary>
 		/// Количество кубов атаки
 		/// </summary>
-		[Range(0, int.MaxValue)]
 		public int AttackDiceQuantity { get; set; }
 
 		/// <summary>
@@ -52,7 +53,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		/// <summary>
 		/// Скорость атаки
 		/// </summary>
-		[Range(1, DiceValue.Value)]
 		public int AttackSpeed { get; set; }
 
 		/// <summary>
@@ -74,5 +74,41 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		/// Накладываемые состояния
 		/// </summary>
 		public List<UpdateAbilityCommandItemAppledCondition> AppliedConditions { get; set; }
+
+		/// <summary>
+		/// Валидация запроса
+		/// </summary>
+		public void Validate()
+		{
+			if (string.IsNullOrEmpty(Name))
+				throw new RequestFieldNullException<ChangeAbilityCommand>(nameof(Name));
+
+			if (!Enum.IsDefined(AttackSkill))
+				throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AttackSkill));
+
+			if (AttackDiceQuantity < 1)
+				throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AttackDiceQuantity), "Значение должно быть больше нуля");
+
+			if (AttackSpeed < 1)
+				throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AttackSpeed), "Значение должно быть больше нуля");
+
+			if (!Enum.IsDefined(DamageType))
+				throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(DamageType));
+
+			if (DefensiveSkills is not null)
+				foreach (var skill in DefensiveSkills)
+					if (!Enum.IsDefined(skill))
+						throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(DefensiveSkills));
+
+			if (AppliedConditions is not null)
+				foreach (var condition in AppliedConditions)
+				{
+					if (!Enum.IsDefined(condition.Condition))
+						throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AppliedConditions), "Неизвестное накладываемое состояние");
+
+					if (condition.ApplyChance < 1 || condition.ApplyChance > 100)
+						throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AppliedConditions), "Шанс наложения состояния должен быть в диапазоне от 1 до 100");
+				}
+		}
 	}
 }

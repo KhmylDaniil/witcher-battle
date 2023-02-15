@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Services.Hasher;
+using System;
 
 namespace Sindie.ApiService.UnitTest.Core.Hasher
 {
@@ -57,7 +58,7 @@ namespace Sindie.ApiService.UnitTest.Core.Hasher
 			var passwordHasher = new PasswordHasher(hasherOptions);
 
 			//Assert
-			Assert.ThrowsException<ExceptionApplicationBase>(() =>
+			Assert.ThrowsException<ArgumentException>(() =>
 				passwordHasher.Hash(null));
 		}
 
@@ -112,7 +113,7 @@ namespace Sindie.ApiService.UnitTest.Core.Hasher
 			var passwordHasher = new PasswordHasher(hasherOptions);
 
 			//Assert
-			Assert.ThrowsException<ExceptionApplicationBase>(() =>
+			Assert.ThrowsException<ArgumentException>(() =>
 				passwordHasher.VerifyHash(password, hash));
 		}
 	}

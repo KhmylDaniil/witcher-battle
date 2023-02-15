@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Sindie.ApiService.Core.Abstractions;
 using System;
 
 namespace Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedCondition
@@ -6,7 +7,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedConditio
 	/// <summary>
 	/// Команда создания или изменения накладываемого состояния
 	/// </summary>
-	public class UpdateAppliedCondionCommand : UpdateAbilityCommandItemAppledCondition, IRequest
+	public class UpdateAppliedCondionCommand : UpdateAbilityCommandItemAppledCondition, IValidatableCommand
 	{
 		/// <summary>
 		/// Айди способности
@@ -17,5 +18,10 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedConditio
 		/// Айди игры
 		/// </summary>
 		public Guid GameId { get; set; }
+
+		public void Validate()
+		{
+			// Method intentionally left empty.
+		}
 	}
 }

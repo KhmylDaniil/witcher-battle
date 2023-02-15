@@ -114,7 +114,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 				?? throw new ExceptionEntityNotFound<CreatureTemplate>(request.Id);
 
 			if (game.CreatureTemplates.Any(x => string.Equals(x.Name, request.Name, StringComparison.Ordinal) && x.Id != request.Id))
-				throw new ExceptionRequestNameNotUniq<ChangeCreatureTemplateCommand>(nameof(request.Name));
+				throw new RequestNameNotUniqException<ChangeCreatureTemplateCommand>(nameof(request.Name));
 
 			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId)
 				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.BodyTemplateId);
@@ -125,13 +125,13 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 					?? throw new ExceptionEntityNotFound<BodyTemplatePart>(item.BodyTemplatePartId);
 
 				if (item.Armor < 0)
-					throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateCommand>(nameof(item.Armor));
+					throw new RequestFieldIncorrectDataException<ChangeCreatureTemplateCommand>(nameof(item.Armor));
 			}
 
 			foreach (var skill in request.CreatureTemplateSkills)
 			{
 				if (!Enum.IsDefined(skill.Skill))
-					throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateCommand>(nameof(skill.Skill));
+					throw new RequestFieldIncorrectDataException<ChangeCreatureTemplateCommand>(nameof(skill.Skill));
 
 				if (skill.Id != default)
 					_ = creatureTemplate.CreatureTemplateSkills
@@ -139,10 +139,10 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 						?? throw new ExceptionEntityNotFound<CreatureTemplateSkill>(skill.Id.Value);
 				else
 					if (creatureTemplate.CreatureTemplateSkills.Any(x => x.Skill == skill.Skill))
-						throw new ExceptionRequestNotUniq<CreatureTemplateSkill>(Enum.GetName(skill.Skill));
+						throw new RequestNotUniqException<CreatureTemplateSkill>(Enum.GetName(skill.Skill));
 
 				if (skill.Value < 0)
-					throw new ExceptionRequestFieldIncorrectData<ChangeCreatureTemplateCommand>(nameof(skill.Value));
+					throw new RequestFieldIncorrectDataException<ChangeCreatureTemplateCommand>(nameof(skill.Value));
 			}
 
 			foreach (var id in request.Abilities)

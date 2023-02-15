@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Sindie.ApiService.Core.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAppliedConditio
 	/// <summary>
 	/// Команда удаления накладываемого состояния
 	/// </summary>
-	public class DeleteAppliedCondionCommand :  IRequest
+	public class DeleteAppliedCondionCommand : IValidatableCommand
 	{
 		/// <summary>
 		/// Айди способности
@@ -26,5 +27,13 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAppliedConditio
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
+
+		/// <summary>
+		/// Валидация
+		/// </summary>
+		public void Validate()
+		{
+			// Method intentionally left empty.
+		}
 	}
 }

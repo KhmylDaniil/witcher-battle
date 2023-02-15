@@ -68,7 +68,7 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 			//проверка на уникальность имени игры
 			if (!string.Equals(request.Name, game.Name, System.StringComparison.Ordinal) && await _appDbContext.Games
 				.AnyAsync(x => x.Name == request.Name, cancellationToken))
-				throw new ExceptionRequestNameNotUniq<ChangeGameCommand>(nameof(request.Name));
+				throw new RequestNameNotUniqException<ChangeGameCommand>(nameof(request.Name));
 
 			//находим аватар, проверяем на наличие в БД 
 			var avatar = request.AvatarId == null

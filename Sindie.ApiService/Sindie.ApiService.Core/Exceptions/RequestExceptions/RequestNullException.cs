@@ -5,12 +5,12 @@ namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
 	/// Исключение пустой запрос
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class ExceptionRequestNull<T> : ExceptionApplicationBase
+	public class RequestNullException<T> : RequestValidationException
 	{
 		/// <summary>
 		/// Конструктор исключения пустого запроса
 		/// </summary>
-		public ExceptionRequestNull()
+		public RequestNullException()
 			: base($"Пришел пустой запрос {typeof(T)}.")
 		{
 		}
@@ -19,7 +19,7 @@ namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
 		/// Конструктор исключения пустого запроса
 		/// </summary>
 		/// <param name="name"></param>
-		public ExceptionRequestNull(string name)
+		public RequestNullException(string name)
 			: base($"Пришел пустой запрос {name}.")
 		{
 		}

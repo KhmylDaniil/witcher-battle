@@ -9,6 +9,8 @@ using Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAppliedCondition;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedCondition;
+using Sindie.ApiService.Core.Exceptions;
+using Sindie.ApiService.Core.ExtensionMethods;
 
 namespace Witcher.MVC.Controllers
 {
@@ -25,17 +27,33 @@ namespace Witcher.MVC.Controllers
 		{
 			ViewData["GameId"] = request.GameId;
 
-			var response = await _mediator.Send(request, cancellationToken);
+			try
+			{
+				var response = await _mediator.SendValidated(request, cancellationToken);
 
-			return View(response);
+				return View(response);
+			}
+			catch (RequestValidationException ex)
+			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
+
+				return View(await _mediator.SendValidated(new GetAbilityQuery() { GameId = request.GameId }, cancellationToken));
+			}
 		}
 
 		[Route("[controller]/{gameId}/{id}")]
 		public async Task<IActionResult> Details(GetAbilityByIdQuery query, CancellationToken cancellationToken)
 		{
-			var response = await _mediator.Send(query, cancellationToken);
+			try
+			{
+				return View(await _mediator.SendValidated(query, cancellationToken));
+			}
+			catch (RequestValidationException ex)
+			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
 
-			return View(response);
+				return View(await _mediator.SendValidated(new GetAbilityQuery() { GameId = query.GameId }, cancellationToken));
+			}
 		}
 
 		[Route("[controller]/[action]/{gameId}")]
@@ -51,11 +69,12 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var draft = await _mediator.Send(command, cancellationToken);
+				var draft = await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = draft.GameId, Id = draft.Id });
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -70,11 +89,12 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(command, cancellationToken);
+				await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = command.GameId, Id = command.Id });
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -89,12 +109,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(command, cancellationToken);
+				await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Index), new GetAbilityQuery { GameId = command.GameId });
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
-				return View();
+				ViewData["ErrorMessage"] = ex.UserMessage;
+				return View(command);
 			}
 		}
 
@@ -108,11 +129,12 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(command, cancellationToken);
+				await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = command.GameId, Id = command.AbilityId });
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -122,11 +144,12 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(command, cancellationToken);
+				await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = command.GameId, Id = command.AbilityId });
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -141,11 +164,12 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(command, cancellationToken);
+				await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = command.GameId, Id = command.AbilityId });
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -155,7 +179,7 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(command, cancellationToken);
+				await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = command.GameId, Id = command.AbilityId });
 			}
 			catch

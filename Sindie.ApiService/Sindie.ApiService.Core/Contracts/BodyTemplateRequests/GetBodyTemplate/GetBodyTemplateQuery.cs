@@ -1,4 +1,7 @@
 ﻿using MediatR;
+using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+using Sindie.ApiService.Core.Services.DateTimeProvider;
 using System;
 
 namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate
@@ -6,7 +9,7 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate
 	/// <summary>
 	/// Запрос на получение списка шаблонов тела
 	/// </summary>
-	public class GetBodyTemplateQuery: GetBaseQuery, IRequest<GetBodyTemplateResponse>
+	public class GetBodyTemplateQuery: GetBaseQuery, IValidatableCommand<GetBodyTemplateResponse>
 	{
 		/// <summary>
 		/// Айди игры
@@ -47,5 +50,17 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate
 		/// Название части тела
 		/// </summary>
 		public string BodyPartName { get; set; }
+
+		/// <summary>
+		/// Валидация
+		/// </summary>
+		public void Validate()
+		{
+			if (CreationMaxTime != default && CreationMinTime >= CreationMaxTime)
+				throw new RequestFieldIncorrectDataException<GetBodyTemplateQuery>(nameof(CreationMaxTime));
+
+			if (ModificationMaxTime != default && ModificationMinTime >= ModificationMaxTime)
+				throw new RequestFieldIncorrectDataException<GetBodyTemplateQuery>(nameof(ModificationMaxTime));
+		}
 	}
 }

@@ -36,6 +36,8 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+<p>@ViewData["ErrorMessage"]</p>
+
 <div class="container">
     <a asp-controller="Ability" asp-action="Index" asp-route-gameId="@Model.Id">Abilities base </a>
 </div>

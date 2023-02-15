@@ -20,7 +20,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle
 			GameId = gameId;
 			ImgFileId = imgFileId;
 			Name = string.IsNullOrWhiteSpace(name)
-				? throw new ExceptionRequestFieldNull<CreateBattleRequest>(nameof(Name))
+				? throw new RequestFieldNullException<CreateBattleRequest>(nameof(Name))
 				: name;
 			Description = description;
 			Creatures = creatures;

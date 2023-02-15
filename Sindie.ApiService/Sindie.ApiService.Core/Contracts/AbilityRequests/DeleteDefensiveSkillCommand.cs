@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Sindie.ApiService.Core.Abstractions;
 using System;
 
 namespace Sindie.ApiService.Core.Contracts.AbilityRequests
@@ -6,7 +7,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 	/// <summary>
 	/// Команда удаления защитного навыка для способности
 	/// </summary>
-	public class DeleteDefensiveSkillCommand : IRequest
+	public class DeleteDefensiveSkillCommand : IValidatableCommand
 	{
 		/// <summary>
 		/// Айди игры
@@ -22,5 +23,13 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
+
+		/// <summary>
+		/// Валидация
+		/// </summary>
+		public void Validate()
+		{
+			// Method intentionally left empty.
+		}
 	}
 }

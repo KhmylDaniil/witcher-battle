@@ -1,7 +1,5 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
+﻿using Sindie.ApiService.Core.BaseData;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 {
@@ -23,7 +21,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 		/// <summary>
 		/// Шанс применения
 		/// </summary>
-		[Range(1, 100)]
 		public int ApplyChance { get; set; }
 	}
 }

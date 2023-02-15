@@ -1,11 +1,8 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
 using Sindie.ApiService.Core.Entities;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 {
@@ -34,26 +31,6 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 		public BodyTemplatePartsData()
 		{
 		}
-
-		/// <summary>
-		/// Создание данных для списка шаблонов частей тела
-		/// </summary>
-		/// <param name="request">Запрос</param>
-		/// <returns>Данные для списка шаблонов частей тела</returns>
-		public static List<BodyTemplatePartsData>
-			CreateBodyTemplatePartsData(CreateBodyTemplateRequest request)
-			=> request.BodyTemplateParts == null
-				? Drafts.BodyTemplateDrafts.CreateBodyTemplatePartsDraft.CreateBodyPartsDraft()
-				: request.BodyTemplateParts.Select(x => new BodyTemplatePartsData(x)).ToList();
-
-		/// <summary>
-		/// Создание данных для списка шаблонов частей тела
-		/// </summary>
-		/// <param name="request">Запрос</param>
-		/// <returns>Данные для списка шаблонов частей тела</returns>
-		public static List<BodyTemplatePartsData>
-			CreateBodyTemplatePartsData(ChangeBodyTemplateRequest request)
-			=> request.BodyTemplateParts?.Select(x => new BodyTemplatePartsData(x)).ToList();
 
 		/// <summary>
 		/// Создание данных для списка шаблонов частей тела для метода внесения изменений в список частей шаблона тела

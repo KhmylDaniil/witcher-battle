@@ -49,7 +49,7 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 		public async Task<Unit> Handle(ChangeUserGameCommand request, CancellationToken cancellationToken)
 		{
 			if (request == null)
-				throw new ExceptionRequestNull<ChangeUserGameCommand>();
+				throw new RequestNullException<ChangeUserGameCommand>();
 			
 			var checkedUserGame = await _appDbContext.UserGames.
 				Where(x => x.Id == request.UserGameId

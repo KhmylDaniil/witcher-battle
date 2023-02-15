@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
 using System.Collections.Generic;
 
@@ -7,7 +8,7 @@ namespace Sindie.ApiService.Core.Contracts.GameRequests.CreateGame
 	/// <summary>
 	/// Команда создания игры
 	/// </summary>
-	public sealed class CreateGameCommand : IRequest<Unit>
+	public sealed class CreateGameCommand : IValidatableCommand
 	{
 		/// <summary>
 		/// Айди аватара игры
@@ -33,5 +34,14 @@ namespace Sindie.ApiService.Core.Contracts.GameRequests.CreateGame
 		/// Графические файлы игры
 		/// </summary>
 		public List<Guid> ImgFiles { get; set; }
+
+		/// <summary>
+		/// Валидация
+		/// </summary>
+		public void Validate()
+		{
+			if (string.IsNullOrEmpty(Name))
+				throw new RequestFieldNullException<CreateGameCommand>(nameof(Name));
+		}
 	}
 }
