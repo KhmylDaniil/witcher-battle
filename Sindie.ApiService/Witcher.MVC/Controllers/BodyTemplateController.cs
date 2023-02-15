@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
 using Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
@@ -18,21 +19,43 @@ namespace Witcher.MVC.Controllers
 		public BodyTemplateController(IMediator mediator) : base(mediator) { }
 
 		[Route("[controller]/{gameId}")]
-		public async Task<IActionResult> Index(GetBodyTemplateQuery request, CancellationToken cancellationToken)
+		public async Task<IActionResult> Index(GetBodyTemplateQuery query, CancellationToken cancellationToken)
 		{
-			ViewData["GameId"] = request.GameId;
+			ViewData["GameId"] = query.GameId;
 
-			var response = await _mediator.SendValidated(request, cancellationToken);
+			try
+			{
+				var response = await _mediator.SendValidated(query, cancellationToken);
 
-			return View(response.BodyTemplatesList);
+				return View(response.BodyTemplatesList);
+			}
+			catch (RequestValidationException ex)
+			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
+
+				var response = await _mediator.SendValidated(new GetBodyTemplateQuery() { GameId = query.GameId }, cancellationToken);
+
+				return View(response.BodyTemplatesList);
+			}
 		}
 
 		[Route("[controller]/{gameId}/{id}")]
 		public async Task<IActionResult> Details(GetBodyTemplateByIdQuery query, CancellationToken cancellationToken)
 		{
-			var response = await _mediator.SendValidated(query, cancellationToken);
+			try
+			{
+				var response = await _mediator.SendValidated(query, cancellationToken);
 
-			return View(response);
+				return View(response);
+			}
+			catch (RequestValidationException ex)
+			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
+
+				var response = await _mediator.SendValidated(new GetBodyTemplateQuery() { GameId = query.GameId }, cancellationToken);
+
+				return View(response.BodyTemplatesList);
+			}
 		}
 
 		[Route("[controller]/[action]/{gameId}")]

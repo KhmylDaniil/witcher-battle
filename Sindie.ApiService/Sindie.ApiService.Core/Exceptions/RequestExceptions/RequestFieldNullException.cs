@@ -12,7 +12,7 @@ namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
 		public RequestFieldNullException(string name)
 			: base($"В запросе {typeof(T)} не заполнено обязательное поле {name}")
 		{
-			UserMessage = $"не заполнено обязательное поле {name}";
+			UserMessage = $"Не заполнено обязательное поле {name}.";
 		}
 	}
 }

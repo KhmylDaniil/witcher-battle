@@ -2,9 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests;
+using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;

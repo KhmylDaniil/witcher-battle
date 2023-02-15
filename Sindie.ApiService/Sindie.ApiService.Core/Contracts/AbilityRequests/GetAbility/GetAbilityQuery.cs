@@ -80,9 +80,9 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 				throw new RequestFieldIncorrectDataException<GetAbilityQuery>(nameof(MinAttackDiceQuantity), 
 					"Значение должно быть больше нуля.");
 
-			if (MaxAttackDiceQuantity < 0)
+			if (MaxAttackDiceQuantity < MinAttackDiceQuantity)
 				throw new RequestFieldIncorrectDataException<GetAbilityQuery>(nameof(MaxAttackDiceQuantity), 
-					"Значение должно быть минимального значения фильтра по количеству кубов атаки.");
+					"Значение должно быть больше минимального значения фильтра по количеству кубов атаки.");
 		}
 	}
 }

@@ -11,7 +11,6 @@ using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedCondition;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.ExtensionMethods;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Witcher.MVC.Controllers
 {
@@ -37,16 +36,24 @@ namespace Witcher.MVC.Controllers
 			catch (RequestValidationException ex)
 			{
 				ViewData["ErrorMessage"] = ex.UserMessage;
-				return View(request);
+
+				return View(await _mediator.SendValidated(new GetAbilityQuery() { GameId = request.GameId }, cancellationToken));
 			}
 		}
 
 		[Route("[controller]/{gameId}/{id}")]
 		public async Task<IActionResult> Details(GetAbilityByIdQuery query, CancellationToken cancellationToken)
 		{
-			var response = await _mediator.SendValidated(query, cancellationToken);
+			try
+			{
+				return View(await _mediator.SendValidated(query, cancellationToken));
+			}
+			catch (RequestValidationException ex)
+			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
 
-			return View(response);
+				return View(await _mediator.SendValidated(new GetAbilityQuery() { GameId = query.GameId }, cancellationToken));
+			}
 		}
 
 		[Route("[controller]/[action]/{gameId}")]

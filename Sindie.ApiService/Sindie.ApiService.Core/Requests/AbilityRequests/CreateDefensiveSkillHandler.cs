@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests
 {
@@ -29,6 +30,9 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests
 
 			var ability = game.Abilities.FirstOrDefault(a => a.Id == request.AbilityId)
 				?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId);
+
+			if (ability.DefensiveSkills.Any(x => x.Skill == request.Skill))
+				throw new RequestFieldIncorrectDataException<CreateDefensiveSkillCommand>(nameof(request.Skill), "Указанный навык уже включен в список");
 
 			ability.DefensiveSkills.Add(new DefensiveSkill(ability.Id, request.Skill));
 
