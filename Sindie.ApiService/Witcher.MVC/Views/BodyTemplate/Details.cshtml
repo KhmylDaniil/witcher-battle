@@ -25,7 +25,7 @@
 </div>
 
 <div class="container">
-    @Html.ActionLink("Edit Body Template", "Edit", new { GameId = Model.GameId, id = Model.Id })
+    @Html.ActionLink("Edit", "Edit", new { gameId = Model.GameId, id=Model.Id, name=Model.Name, description=Model.Description })
 </div>
 
 <table class="table">

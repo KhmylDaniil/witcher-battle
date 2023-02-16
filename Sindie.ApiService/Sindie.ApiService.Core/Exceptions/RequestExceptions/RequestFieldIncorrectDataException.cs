@@ -1,6 +1,4 @@
 ﻿
-using System;
-
 namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
 {
 	/// <summary>

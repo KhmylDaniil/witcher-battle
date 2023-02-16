@@ -1,8 +1,8 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplate;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using Sindie.ApiService.Core.ExtensionMethods;
 using System;
 using System.Linq;
@@ -14,35 +14,16 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 	/// <summary>
 	/// Обработчик команды получения списка шаблонов существа
 	/// </summary>
-	public class GetCreatureTemplateHandler : IRequestHandler<GetCreatureTemplateCommand, GetCreatureTemplateResponse>
+	public class GetCreatureTemplateHandler : BaseHandler<GetCreatureTemplateQuery, GetCreatureTemplateResponse>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
-
-		/// <summary>
-		/// Сервис авторизации
-		/// </summary>
-		private readonly IAuthorizationService _authorizationService;
-
 		/// <summary>
 		/// Провайдер времени
 		/// </summary>
 		private readonly IDateTimeProvider _dateTimeProvider;
 
-		/// <summary>
-		/// Конструктор обработчика команды получения списка шаблонов существа
-		/// </summary>
-		/// <param name="appDbContext">Контекст базы данных</param>
-		/// <param name="authorizationService">Сервис авторизации</param>
-		public GetCreatureTemplateHandler(
-			IAppDbContext appDbContext,
-			IAuthorizationService authorizationService,
-			IDateTimeProvider dateTimeProvider)
+		public GetCreatureTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IDateTimeProvider dateTimeProvider)
+			: base(appDbContext, authorizationService)
 		{
-			_appDbContext = appDbContext;
-			_authorizationService = authorizationService;
 			_dateTimeProvider = dateTimeProvider;
 		}
 
@@ -52,9 +33,12 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns>Ответ на запрос списка шаблонов существа</returns>
-		public async Task<GetCreatureTemplateResponse> Handle(GetCreatureTemplateCommand request, CancellationToken cancellationToken)
+		public override async Task<GetCreatureTemplateResponse> Handle(GetCreatureTemplateQuery request, CancellationToken cancellationToken)
 		{
-			CheckRequest(request);
+			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
+				throw new RequestFieldIncorrectDataException<GetCreatureTemplateQuery>(nameof(request.CreationMinTime));
+			if (request.ModificationMinTime > _dateTimeProvider.TimeProvider)
+				throw new RequestFieldIncorrectDataException<GetCreatureTemplateQuery>(nameof(request.CreationMinTime));
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(g => g.CreatureTemplates)
@@ -98,19 +82,6 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 				}).ToListAsync(cancellationToken);
 
 			return new GetCreatureTemplateResponse { CreatureTemplatesList = list, TotalCount = list.Count };
-		}
-
-		private void CheckRequest(GetCreatureTemplateCommand request)
-		{
-			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
-				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.CreationMinTime));
-			if (request.ModificationMinTime > _dateTimeProvider.TimeProvider)
-				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.ModificationMinTime));
-
-			if (request.CreationMaxTime != default && request.CreationMinTime >= request.CreationMaxTime)
-				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.CreationMaxTime));
-			if (request.ModificationMaxTime != default && request.ModificationMinTime >= request.ModificationMaxTime)
-				throw new ArgumentOutOfRangeException(nameof(GetCreatureTemplateCommand.ModificationMaxTime));
 		}
 	}
 }

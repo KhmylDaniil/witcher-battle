@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTemplate;
 using System;
@@ -92,22 +93,22 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var modificationMinTime = DateTimeProvider.Object.TimeProvider.AddDays(-1);
 			var modificationMaxTime = DateTimeProvider.Object.TimeProvider.AddDays(1);
 
-			var request = new GetCreatureTemplateCommand(
-				gameId: _game.Id,
-				name: "testName",
-				userName: "Author",
-				creatureType: "Human",
-				creationMinTime: creationMinTime,
-				creationMaxTime: creationMaxTime,
-				modificationMinTime: modificationMinTime,
-				modificationMaxTime: modificationMaxTime,
-				bodyTemplateName: "human",
-				bodyPartType: "Void",
-				conditionName: CritNames.GetConditionFullName(Condition.Bleed),
-				pageSize: 2,
-				pageNumber: 1,
-				orderBy: null,
-				isAscending: false);
+			var request = new GetCreatureTemplateQuery()
+			{
+				GameId = _game.Id,
+				Name = "testName",
+				UserName = "Author",
+				CreatureType = "Human",
+				CreationMinTime = creationMinTime,
+				CreationMaxTime = creationMaxTime,
+				ModificationMinTime = modificationMinTime,
+				ModificationMaxTime = modificationMaxTime,
+				BodyTemplateName = "human",
+				BodyPartType = "Void",
+				ConditionName = CritNames.GetConditionFullName(Condition.Bleed),
+				PageSize = 2,
+				PageNumber = 1,
+			};
 
 			var newHandler = new GetCreatureTemplateHandler(_dbContext, AuthorizationService.Object, DateTimeProvider.Object);
 

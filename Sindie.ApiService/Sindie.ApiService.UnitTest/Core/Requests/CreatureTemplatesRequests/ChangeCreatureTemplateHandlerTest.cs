@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatureTemplate;
@@ -90,49 +91,51 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		[TestMethod]
 		public async Task Handle_ChangeCreatureTemplate_ShouldReturnUnit()
 		{
-			var request = new ChangeCreatureTemplateCommand(
-				id: _creatureTemplate.Id,
-				gameId: _game.Id,
-				imgFileId: _imgFile.Id,
-				bodyTemplateId: _bodyTemplate.Id,
-				name: "newCT",
-				description: "description",
-				creatureType: CreatureType.Cursed,
-				hp: 10,
-				sta: 10,
-				@int: 6,
-				@ref: 7,
-				dex: 8,
-				body: 8,
-				emp: 1,
-				cra: 2,
-				will: 5,
-				speed: 7,
-				luck: 1,
-				armorList: new List<ChangeCreatureTemplateRequestArmorList>
+			var request = new ChangeCreatureTemplateCommand()
+			{
+				Id = _creatureTemplate.Id,
+				GameId = _game.Id,
+				ImgFileId = _imgFile.Id,
+				BodyTemplateId = _bodyTemplate.Id,
+				Name = "newCT",
+				Description = "description",
+				CreatureType = CreatureType.Cursed,
+				HP = 10,
+				Sta = 10,
+				Int = 6,
+				Ref = 7,
+				Dex = 8,
+				Body = 8,
+				Emp = 1,
+				Cra = 2,
+				Will = 5,
+				Speed = 7,
+				Luck = 1,
+				ArmorList = new List<UpdateCreatureTemplateRequestArmorList>
 				{
-					new ChangeCreatureTemplateRequestArmorList()
+					new UpdateCreatureTemplateRequestArmorList()
 					{
 						BodyTemplatePartId = _torso.Id,
 						Armor = 4
 					}
 				},
-				abilities: new List<Guid> { _ability2.Id },
-				creatureTemplateSkills: new List<ChangeCreatureTemplateRequestSkill>
+				Abilities = new List<Guid> { _ability2.Id },
+				CreatureTemplateSkills = new List<UpdateCreatureTemplateRequestSkill>
 				{
-					new ChangeCreatureTemplateRequestSkill()
+					new UpdateCreatureTemplateRequestSkill()
 					{
 						Id = _creatureTemplateSkill.Id,
 						Skill = Skill.Melee,
 						Value = 9
 					},
-					new ChangeCreatureTemplateRequestSkill()
+					new UpdateCreatureTemplateRequestSkill()
 					{
 						Skill = Skill.Staff,
 						Value = 3
 					}
-				});
-
+				}
+		};
+			
 			var newHandler = new ChangeCreatureTemplateHandler(_dbContext, AuthorizationService.Object);
 
 			var result = await newHandler.Handle(request, default);

@@ -1,18 +1,18 @@
 ﻿using System;
 using static Sindie.ApiService.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate
+namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests
 {
 	/// <summary>
-	/// Элемент запроса изменения шаблона существа - навык шаблона существа
+	/// Элемент изменения или создания шаблона существа - навык шаблона существа
 	/// </summary>
-	public sealed class ChangeCreatureTemplateRequestSkill
+	public sealed class UpdateCreatureTemplateRequestSkill
 	{
 		/// <summary>
 		/// Айди
 		/// </summary>
 		public Guid? Id { get; set; }
-		
+
 		/// <summary>
 		/// Навык
 		/// </summary>

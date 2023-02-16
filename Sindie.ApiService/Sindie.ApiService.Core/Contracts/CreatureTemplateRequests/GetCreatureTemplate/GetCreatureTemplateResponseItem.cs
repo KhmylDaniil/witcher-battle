@@ -9,6 +9,10 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 	public sealed class GetCreatureTemplateResponseItem
 	{
 		/// <summary>
+		/// Айди игры
+		/// </summary>
+		public Guid GameId { get; set; }
+		/// <summary>
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }

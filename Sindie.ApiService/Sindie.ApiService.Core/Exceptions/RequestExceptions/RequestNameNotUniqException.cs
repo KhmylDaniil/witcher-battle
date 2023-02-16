@@ -26,23 +26,5 @@ namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
 			: base($"{typeof(T)} с именем {name} уже существует.")
 		{
 		}
-
-		/// <summary>
-		/// Конструктор исключения не уникального имени в запросе
-		/// </summary>
-		/// <param name="name">Имя</param>
-		public RequestNameNotUniqException(string requestName, string name)
-			: base($"В запросе {requestName} должно быть уникальное {name}, переданное {name} уже существует")
-		{
-		}
-
-		/// <summary>
-		/// Конструктор исключения не уникального имени в запросе
-		/// </summary>
-		/// <param name="id">ИД</param>
-		public RequestNameNotUniqException(Guid id)
-			: base($"В запросе {typeof(T)} должен быть уникальный ИД, переданный {id} уже существует")
-		{
-		}
 	}
 }
