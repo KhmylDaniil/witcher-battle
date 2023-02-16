@@ -1,77 +1,99 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
 using Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.DeleteBodyTemplateById;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById;
+using Sindie.ApiService.Core.Exceptions;
+using Sindie.ApiService.Core.ExtensionMethods;
 
 namespace Witcher.MVC.Controllers
 {
 	[Authorize]
-	public class BodyTemplateController : Controller
+	public class BodyTemplateController : BaseController
 	{
-		private readonly IMediator _mediator;
-
-		public BodyTemplateController(IMediator mediator)
-		{
-			_mediator = mediator;
-		}
+		public BodyTemplateController(IMediator mediator) : base(mediator) { }
 
 		[Route("[controller]/{gameId}")]
-		public async Task<IActionResult> Index(GetBodyTemplateQuery request, CancellationToken cancellationToken)
+		public async Task<IActionResult> Index(GetBodyTemplateQuery query, CancellationToken cancellationToken)
 		{
-			ViewData["GameId"] = request.GameId;
+			ViewData["GameId"] = query.GameId;
 
-			var response = await _mediator.Send(request, cancellationToken);
+			try
+			{
+				var response = await _mediator.SendValidated(query, cancellationToken);
 
-			return View(response.BodyTemplatesList);
+				return View(response.BodyTemplatesList);
+			}
+			catch (RequestValidationException ex)
+			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
+
+				var response = await _mediator.SendValidated(new GetBodyTemplateQuery() { GameId = query.GameId }, cancellationToken);
+
+				return View(response.BodyTemplatesList);
+			}
 		}
 
 		[Route("[controller]/{gameId}/{id}")]
 		public async Task<IActionResult> Details(GetBodyTemplateByIdQuery query, CancellationToken cancellationToken)
 		{
-			var response = await _mediator.Send(query, cancellationToken);
+			try
+			{
+				var response = await _mediator.SendValidated(query, cancellationToken);
 
-			return View(response);
+				return View(response);
+			}
+			catch (RequestValidationException ex)
+			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
+
+				var response = await _mediator.SendValidated(new GetBodyTemplateQuery() { GameId = query.GameId }, cancellationToken);
+
+				return View(response.BodyTemplatesList);
+			}
 		}
 
 		[Route("[controller]/[action]/{gameId}")]
-		public ActionResult Create(CreateBodyTemplateRequest command) => View(command);
+		public ActionResult Create(CreateBodyTemplateCommand command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{gameId}")]
-		public async Task<IActionResult> Create(CreateBodyTemplateRequest command, CancellationToken cancellationToken)
+		public async Task<IActionResult> Create(CreateBodyTemplateCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
-				var draft = await _mediator.Send(command, cancellationToken);
+				var draft = await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { GameId = draft.GameId, Id = draft.Id });
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
 
 		[Route("[controller]/[action]/{gameId}/{id}")]
-		public ActionResult Edit(ChangeBodyTemplateRequest command) => View(command);
+		public ActionResult Edit(ChangeBodyTemplateCommand command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{gameId}/{id}")]
-		public async Task<IActionResult> Edit(ChangeBodyTemplateRequest command, CancellationToken cancellationToken)
+		public async Task<IActionResult> Edit(ChangeBodyTemplateCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
-				await _mediator.Send(command, cancellationToken);
+				await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { GameId = command.GameId, Id = command.Id });
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -86,11 +108,12 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(command, cancellationToken);
+				await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { GameId = command.GameId, Id = command.Id });
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -105,12 +128,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(command, cancellationToken);
+				await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Index), new GetBodyTemplateQuery { GameId = command.GameId });
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
-				return View();
+				ViewData["ErrorMessage"] = ex.UserMessage;
+				return View(command);
 			}
 		}
 	}

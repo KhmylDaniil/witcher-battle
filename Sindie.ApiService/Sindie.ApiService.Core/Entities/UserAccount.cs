@@ -78,7 +78,7 @@ namespace Sindie.ApiService.Core.Entities
 
 			var isDuplicate = hasUsersWithEmail(this, login);
 			if (isDuplicate)
-				throw new ExceptionRequestNotUniq<UserAccount>("Аккаунт с таким Login уже существует");
+				throw new RequestNotUniqException<UserAccount>("Аккаунт с таким Login уже существует");
 
 			Login = login;
 		}

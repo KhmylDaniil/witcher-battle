@@ -48,7 +48,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 		public async Task<GetCreatureTemplateByIdResponse> Handle(GetCreatureTemplateByIdQuery request, CancellationToken cancellationToken)
 		{
 			if (request == null)
-				throw new ExceptionRequestNull<GetCreatureTemplateByIdQuery>();
+				throw new RequestNullException<GetCreatureTemplateByIdQuery>();
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))

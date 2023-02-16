@@ -36,7 +36,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack
 			TargetCreatureId = targetCreatureId;
 			CreaturePartId = creaturePartId;
 			DefenseValue = defenseValue < 1 
-				? throw new ExceptionRequestFieldIncorrectData<MonsterAttackRequest>(nameof(DefenseValue))
+				? throw new RequestFieldIncorrectDataException<MonsterAttackRequest>(nameof(DefenseValue))
 				: defenseValue;
 			SpecialToHit = specialToHit;
 			SpecialToDamage = specialToDamage;

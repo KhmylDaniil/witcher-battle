@@ -53,7 +53,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 			var httpContextMock = new Mock<IHttpContextAccessor>();
 
 			var loginUserCommandHandler = new TestLoginUserCommandHandler
-				(_dbContext, passwordHasherMock.Object, httpContextMock.Object);
+				(_dbContext, AuthorizationService.Object, passwordHasherMock.Object, httpContextMock.Object);
 
 			var result = await loginUserCommandHandler.Handle(request, default);
 
@@ -70,7 +70,8 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 	/// </summary>
 	class TestLoginUserCommandHandler : LoginUserCommandHandler
 	{
-		public TestLoginUserCommandHandler(IAppDbContext appDbContext, IPasswordHasher passwordHasher, IHttpContextAccessor httpContextAccessor) : base(appDbContext, passwordHasher, httpContextAccessor)
+		public TestLoginUserCommandHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IPasswordHasher passwordHasher, IHttpContextAccessor httpContextAccessor)
+			: base(appDbContext, authorizationService, passwordHasher, httpContextAccessor)
 		{
 		}
 

@@ -16,27 +16,10 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 	/// <summary>
 	/// Обработчик создания шаблона тела
 	/// </summary>
-	public class CreateBodyTemplateHandler : IRequestHandler<CreateBodyTemplateRequest, BodyTemplate>
+	public class CreateBodyTemplateHandler : BaseHandler<CreateBodyTemplateCommand, BodyTemplate>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
-
-		/// <summary>
-		/// Сервис авторизации
-		/// </summary>
-		private readonly IAuthorizationService _authorizationService;
-
-		/// <summary>
-		/// Конструктор обработчика создания шаблона тела
-		/// </summary>
-		/// <param name="appDbContext"></param>
-		/// <param name="authorizationService"></param>
-		public CreateBodyTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
+		public CreateBodyTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
-			_appDbContext = appDbContext;
-			_authorizationService = authorizationService;
 		}
 
 		/// <summary>
@@ -45,61 +28,29 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplat
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		public async Task<BodyTemplate> Handle(CreateBodyTemplateRequest request, CancellationToken cancellationToken)
+		public override async Task<BodyTemplate> Handle(CreateBodyTemplateCommand request, CancellationToken cancellationToken)
 		{
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.BodyTemplates)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
-			CheckRequest(request, game);
+			if (game.BodyTemplates.Any(x => x.Name == request.Name))
+				throw new RequestNameNotUniqException<CreateBodyTemplateCommand>(nameof(request.Name));
+
+			var bodyTemplateParts = request.BodyTemplateParts == null
+				? Drafts.BodyTemplateDrafts.CreateBodyTemplatePartsDraft.CreateBodyPartsDraft()
+				: request.BodyTemplateParts.Select(x => (IBodyTemplatePartData)x);
 
 			var newBodyTemplate = new BodyTemplate(
 				game: game,
 				name: request.Name,
 				description: request.Description,
-				bodyTemplateParts: BodyTemplatePartsData.CreateBodyTemplatePartsData(request));
+				bodyTemplateParts: bodyTemplateParts);
 
 			_appDbContext.BodyTemplates.Add(newBodyTemplate);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return newBodyTemplate;
-		}
-
-		/// <summary>
-		/// Проверка запроса
-		/// </summary>
-		/// <param name="request">Запрос</param>
-		private void CheckRequest(CreateBodyTemplateRequest request, Game game)
-		{
-			if (game.BodyTemplates.Any(x => x.Name == request.Name))
-				throw new ExceptionRequestNameNotUniq<CreateBodyTemplateRequest>(nameof(request.Name));
-
-			if (request.BodyTemplateParts == null)
-				return;
-
-			var sortedList = request.BodyTemplateParts.OrderBy(x => x.MinToHit).ToList();
-
-			foreach (var part in sortedList)
-			{
-				if (request.BodyTemplateParts.Count(x => x.Name == part.Name) != 1)
-					throw new ArgumentException($"Значения в поле {nameof(part.Name)} повторяются");
-
-				if (!Enum.IsDefined(part.BodyPartType))
-					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(part.BodyPartType));
-
-				if (part.DamageModifier <= 0)
-					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(UpdateBodyTemplateRequestItem.DamageModifier));
-
-				if (part.MaxToHit > 10 || part.MaxToHit < part.MinToHit)
-					throw new ExceptionRequestFieldIncorrectData<CreateBodyTemplateRequest>(nameof(UpdateBodyTemplateRequestItem.MaxToHit));
-			}
-
-			if (sortedList.First().MinToHit != 1 || sortedList.Last().MaxToHit != 10)
-				throw new ArgumentException($"Значения таблицы попаданий не охватывают необходимый диапазон");
-
-			for (int i = 1; i < sortedList.Count; i++)
-				if (sortedList[i].MinToHit != sortedList[i - 1].MaxToHit + 1)
-					throw new ArgumentException($"Значения таблицы попаданий пересекаются");
 		}
 	}
 }

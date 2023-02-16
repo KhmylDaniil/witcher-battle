@@ -1,18 +1,17 @@
-﻿using MediatR;
+﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.UserRequests.LoginUser;
-using System.ComponentModel.DataAnnotations;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 
 namespace Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser
 {
 	/// <summary>
 	/// Запрос регистрации пользователя
 	/// </summary>
-	public class RegisterUserCommand : IRequest<RegisterUserCommandResponse>
+	public class RegisterUserCommand : IValidatableCommand<RegisterUserCommandResponse>
 	{
 		/// <summary>
 		/// Имя пользователя
 		/// </summary>
-		[Required]
 		public string Name { get; set; }
 
 		/// <summary>
@@ -28,14 +27,26 @@ namespace Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser
 		/// <summary>
 		/// Логин
 		/// </summary>
-		[Required]
 		public string Login { get; set; }
 
 		/// <summary>
 		/// Пароль
 		/// </summary>
-		[Required]
-		[MaxLength(25)]
 		public string Password { get; set; }
+
+		/// <summary>
+		/// Валидация
+		/// </summary>
+		public void Validate()
+		{
+			if (string.IsNullOrWhiteSpace(Login))
+				throw new RequestFieldNullException<LoginUserCommand>(nameof(Login));
+
+			if (string.IsNullOrWhiteSpace(Password))
+				throw new RequestFieldNullException<LoginUserCommand>(nameof(Password));
+
+			if (Password.Length > 25)
+				throw new RequestFieldIncorrectDataException<LoginUserCommand>(nameof(Password), "Превышена длина пароля");
+		}
 	}
 }

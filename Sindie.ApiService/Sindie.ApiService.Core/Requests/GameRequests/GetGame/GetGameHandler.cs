@@ -1,34 +1,20 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate;
 using Sindie.ApiService.Core.Contracts.GameRequests.GetGame;
 using Sindie.ApiService.Core.ExtensionMethods;
-using Sindie.ApiService.Core.Services.Authorization;
-using Sindie.ApiService.Core.Services.DateTimeProvider;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-
 namespace Sindie.ApiService.Core.Requests.GameRequests.GetGame
 {
-	public class GetGameHandler : IRequestHandler<GetGameQuery, GetGameResponse>
+	public class GetGameHandler : BaseHandler<GetGameQuery, GetGameResponse>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
-
-		public GetGameHandler(IAppDbContext appDbContext)
+		public GetGameHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
-			_appDbContext = appDbContext;
 		}
 
-		public async Task<GetGameResponse> Handle(GetGameQuery request, CancellationToken cancellationToken)
+		public override async Task<GetGameResponse> Handle(GetGameQuery request, CancellationToken cancellationToken)
 		{
 			var filter = _appDbContext.Games
 				.Include(g => g.TextFiles)

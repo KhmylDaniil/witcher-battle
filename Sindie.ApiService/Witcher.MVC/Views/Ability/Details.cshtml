@@ -1,0 +1,146 @@
+﻿@model Sindie.ApiService.Core.Entities.Ability
+
+@{
+    ViewData["Title"] = @Html.DisplayFor(model => model.Name) + "ability details";
+}
+
+<h1>Ability</h1>
+
+<div>
+    <h4>Ability</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.AttackSkill)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.AttackSkill)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.DamageType)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.DamageType)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.AttackDiceQuantity)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.AttackDiceQuantity)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.DamageModifier)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.DamageModifier)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.AttackSpeed)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.AttackSpeed)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Accuracy)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Accuracy)
+        </dd>
+    </dl>
+</div>
+
+<div class="container">
+    @Html.ActionLink("Edit Ability", "Edit", @Model)
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.AppliedConditions.First().Condition)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AppliedConditions.First().ApplyChance)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.AppliedConditions)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Condition)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApplyChance)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "UpdateAppliedCondition", 
+                    new { gameId = Model.GameId, abilityId=Model.Id, id = item.Id, condition = item.Condition, applyChance = item.ApplyChance}) |
+                    @Html.ActionLink("Delete", "DeleteAppliedCondition", new { gameId = Model.GameId, abilityId=Model.Id, id = item.Id })
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>
+                @Html.ActionLink("Add new applied condition", "UpdateAppliedCondition", new { gameId = Model.GameId, abilityId=Model.Id })
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DefensiveSkills.First().Skill)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.DefensiveSkills)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Skill)
+                </td>
+                <td>
+                    @if (Model.DefensiveSkills.Count > 1)
+                    {
+                        @Html.ActionLink("Delete", "DeleteDefensiveSkill", new { gameId = Model.GameId, abilityId=Model.Id, id = item.Id })
+                    }
+                    else
+                    {
+                        <p>Can`t delete last defensive skill.</p>
+                    }
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>
+                @Html.ActionLink("Add new defensive skill", "CreateDefensiveSkill", new { gameId = Model.GameId, abilityId=Model.Id })
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>@ViewData["ErrorMessage"]</p>
+
+<div class="container">
+    <a asp-action="Index" asp-route-gameId=@Model.GameId>Back to Abilities</a>
+</div>
+

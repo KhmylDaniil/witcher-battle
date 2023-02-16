@@ -49,7 +49,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.GetBodyTemplateByIdResponseItems.First().MaxToHit)
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -83,6 +82,7 @@
     @Html.ActionLink("Edit Body Template Parts", "EditParts", new { GameId = Model.GameId, id = Model.Id })
 </div>
 
+<p>@ViewData["ErrorMessage"]</p>
 
 <div class="container">
     <a asp-action="Index" asp-route-gameId=@Model.GameId>Back to Body Templates</a>
