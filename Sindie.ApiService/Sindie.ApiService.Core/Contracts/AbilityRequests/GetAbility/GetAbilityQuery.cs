@@ -9,7 +9,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 	/// <summary>
 	/// Запрос на получение списка способностей
 	/// </summary>
-	public class GetAbilityQuery : GetBaseQuery, IValidatableCommand<IEnumerable<Ability>>
+	public class GetAbilityQuery : GetBaseQuery, IValidatableCommand<IEnumerable<GetAbilityResponseItem>>
 	{
 		// <summary>
 		/// Айди игры

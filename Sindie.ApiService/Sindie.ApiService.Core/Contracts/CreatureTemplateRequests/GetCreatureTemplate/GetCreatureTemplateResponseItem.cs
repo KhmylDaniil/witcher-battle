@@ -12,6 +12,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// Айди игры
 		/// </summary>
 		public Guid GameId { get; set; }
+
 		/// <summary>
 		/// Айди
 		/// </summary>

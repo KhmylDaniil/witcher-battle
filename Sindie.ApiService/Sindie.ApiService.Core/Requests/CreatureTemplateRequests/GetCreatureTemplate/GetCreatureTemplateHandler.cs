@@ -72,6 +72,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 				{
 					Name = x.Name,
 					Description = x.Description,
+					GameId = x.GameId,
 					Id = x.Id,
 					CreatureType = x.CreatureType,
 					BodyTemplateName = x.BodyTemplate.Name,

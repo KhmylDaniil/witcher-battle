@@ -50,7 +50,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 				: await _appDbContext.ImgFiles.FirstOrDefaultAsync(x => x.Id == request.ImgFileId, cancellationToken)
 				?? throw new ExceptionEntityNotFound<ImgFile>(request.ImgFileId.Value);
 
-			CheckRequest(request, game, out CreatureTemplate creatureTemplate, out BodyTemplate bodyTemplate);
+			CheckRequest(out CreatureTemplate creatureTemplate, out BodyTemplate bodyTemplate);
 
 			creatureTemplate.ChangeCreatureTemplate(
 				game: game,
@@ -70,95 +70,96 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatur
 				luck: request.Luck,
 				name: request.Name,
 				description: request.Description,
-				armorList: CreateArmorList(bodyTemplate, request.ArmorList));
+				armorList: CreateArmorList(request.ArmorList));
 
-			creatureTemplate.UpdateAbililities(CreateAbilityList(request, game));
-
+			if (request.Abilities is not null)
+				creatureTemplate.UpdateAbililities(CreateAbilityList());
 
 			if (request.CreatureTemplateSkills is not null)
 				creatureTemplate.UpdateCreatureTemplateSkills(request.CreatureTemplateSkills);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
-		}
 
-		/// <summary>
-		/// Проверка запроса
-		/// </summary>
-		/// <param name="request">Запрос</param>
-		/// <param name="game">Игра</param>
-		void CheckRequest(ChangeCreatureTemplateCommand request, Game game, out CreatureTemplate creatureTemplate, out BodyTemplate bodyTemplate)
-		{
-			creatureTemplate = game.CreatureTemplates.FirstOrDefault(x => x.Id == request.Id)
-				?? throw new ExceptionEntityNotFound<CreatureTemplate>(request.Id);
-
-			if (game.CreatureTemplates.Any(x => string.Equals(x.Name, request.Name, StringComparison.Ordinal) && x.Id != request.Id))
-				throw new RequestNameNotUniqException<ChangeCreatureTemplateCommand>(nameof(request.Name));
-
-			bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId)
-				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.BodyTemplateId);
-
-			foreach (var id in request.ArmorList?.Select(x => x.BodyTemplatePartId))
-				_ = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == id)
-						?? throw new ExceptionEntityNotFound<BodyTemplatePart>(id);
-
-			if (request.Abilities is not null)
-				foreach (var id in request.Abilities)
-					_ = game.Abilities.FirstOrDefault(x => x.Id == id)
-						?? throw new ExceptionEntityNotFound<Ability>(id);
-
-			if (request.CreatureTemplateSkills is null)
-				return;
-
-			foreach (var skill in request.CreatureTemplateSkills)
+			/// <summary>
+			/// Проверка запроса
+			/// </summary>
+			/// <param name="request">Запрос</param>
+			/// <param name="game">Игра</param>
+			void CheckRequest(out CreatureTemplate creatureTemplate, out BodyTemplate bodyTemplate)
 			{
-				if (skill.Id != default)
-					_ = creatureTemplate.CreatureTemplateSkills
-						.FirstOrDefault(x => x.Id == skill.Id && x.Skill == skill.Skill)
-							?? throw new ExceptionEntityNotFound<CreatureTemplateSkill>(skill.Id.Value);
-				else
-					if (creatureTemplate.CreatureTemplateSkills.Any(x => x.Skill == skill.Skill))
+				creatureTemplate = game.CreatureTemplates.FirstOrDefault(x => x.Id == request.Id)
+					?? throw new ExceptionEntityNotFound<CreatureTemplate>(request.Id);
+
+				if (game.CreatureTemplates.Any(x => string.Equals(x.Name, request.Name, StringComparison.Ordinal) && x.Id != request.Id))
+					throw new RequestNameNotUniqException<ChangeCreatureTemplateCommand>(nameof(request.Name));
+
+				bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId)
+					?? throw new ExceptionEntityNotFound<BodyTemplate>(request.BodyTemplateId);
+
+				if (request.ArmorList is not null)
+					foreach (var id in request.ArmorList.Select(x => x.BodyTemplatePartId))
+						_ = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == id)
+							?? throw new ExceptionEntityNotFound<BodyTemplatePart>(id);
+
+				if (request.Abilities is not null)
+					foreach (var id in request.Abilities)
+						_ = game.Abilities.FirstOrDefault(x => x.Id == id)
+							?? throw new ExceptionEntityNotFound<Ability>(id);
+
+				if (request.CreatureTemplateSkills is null)
+					return;
+
+				foreach (var skill in request.CreatureTemplateSkills)
+				{
+					if (skill.Id != default)
+						_ = creatureTemplate.CreatureTemplateSkills
+							.FirstOrDefault(x => x.Id == skill.Id && x.Skill == skill.Skill)
+								?? throw new ExceptionEntityNotFound<CreatureTemplateSkill>(skill.Id.Value);
+					else
+						if (creatureTemplate.CreatureTemplateSkills.Any(x => x.Skill == skill.Skill))
 						throw new RequestNotUniqException<CreatureTemplateSkill>(Enum.GetName(skill.Skill));
+				}
 			}
-		}
 
-		/// <summary>
-		/// Создание списка частей шаблона тела
-		/// </summary>
-		/// <param name="bodyTemplate">Шаблон тела</param>
-		/// <param name="data">Данные</param>
-		/// <returns>Список частей шаблона тела</returns>
-		List<(BodyTemplatePart BodyTemplatePart, int Armor)> CreateArmorList(BodyTemplate bodyTemplate, List<UpdateCreatureTemplateRequestArmorList> data)
-		{
-			if (data is null)
-				return null;
-			
-			var result = new List<(BodyTemplatePart BodyTemplatePart, int Armor)>();
-
-			foreach (var item in bodyTemplate.BodyTemplateParts)
+			/// <summary>
+			/// Создание списка частей шаблона тела
+			/// </summary>
+			/// <param name="bodyTemplate">Шаблон тела</param>
+			/// <param name="data">Данные</param>
+			/// <returns>Список частей шаблона тела</returns>
+			List<(BodyTemplatePart BodyTemplatePart, int Armor)> CreateArmorList(List<UpdateCreatureTemplateRequestArmorList> data)
 			{
-				var correspondingPart = data.FirstOrDefault(x => x.BodyTemplatePartId == item.Id);
+				if (data is null && bodyTemplate.Id == creatureTemplate.BodyTemplateId)
+					return null;
 
-				var armor = correspondingPart == null ? 0 : correspondingPart.Armor;
+				var result = new List<(BodyTemplatePart BodyTemplatePart, int Armor)>();
 
-				result.Add((item, armor));
+				foreach (var item in bodyTemplate.BodyTemplateParts)
+				{
+					var correspondingPart = data?.FirstOrDefault(x => x.BodyTemplatePartId == item.Id);
+
+					var armor = correspondingPart == null ? 0 : correspondingPart.Armor;
+
+					result.Add((item, armor));
+				}
+				return result;
 			}
-			return result;
-		}
 
-		/// <summary>
-		/// Создать список способностей
-		/// </summary>
-		/// <param name="request">Запрос</param>
-		/// <param name="game">Игра</param>
-		/// <returns>Список способностей</returns>
-		List<Ability> CreateAbilityList(ChangeCreatureTemplateCommand request, Game game)
-		{
-			var result = new List<Ability>();
+			/// <summary>
+			/// Создать список способностей
+			/// </summary>
+			/// <param name="request">Запрос</param>
+			/// <param name="game">Игра</param>
+			/// <returns>Список способностей</returns>
+			List<Ability> CreateAbilityList()
+			{
+				var result = new List<Ability>();
 
-			foreach (var id in request.Abilities)
-				result.Add(game.Abilities.FirstOrDefault(x => x.Id == id));
-			return result;
+				foreach (var id in request.Abilities)
+					result.Add(game.Abilities.FirstOrDefault(x => x.Id == id));
+				return result;
+			}
 		}
 	}
 }

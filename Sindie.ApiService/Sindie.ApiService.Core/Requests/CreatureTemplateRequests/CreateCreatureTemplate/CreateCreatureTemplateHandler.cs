@@ -112,12 +112,9 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatur
 		{
 			var result = new List<(BodyTemplatePart BodyTemplatePart, int Armor)>();
 
-			if (data is null)
-				return result;
-
 			foreach (var item in bodyTemplate.BodyTemplateParts)
 			{
-				var correspondingPart = data.FirstOrDefault(x => x.BodyTemplatePartId == item.Id);
+				var correspondingPart = data?.FirstOrDefault(x => x.BodyTemplatePartId == item.Id);
 				
 				var armor = correspondingPart == null ? 0 : correspondingPart.Armor;
 

@@ -1,20 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.DeleteBodyTemplateById;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById;
-using Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplate;
-using Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplate;
-using Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate;
 using Sindie.ApiService.WebApi.Versioning;
-using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Sindie.ApiService.WebApi.Controllers
 {
@@ -111,32 +98,32 @@ namespace Sindie.ApiService.WebApi.Controllers
 		//	//		isAscending: request.IsAscending), cancellationToken);
 		//}
 
-		/// <summary>
-		/// Предоставить шаблон тела по айди
-		/// </summary>
-		/// <param name="request">Запрос на предоставление шаблона тела по айди</param>
-		/// <param name="cancellationToken">Токен отмены</param>
-		/// <returns>Ответ на запрос предоставления шаблона тела по айди</returns>
-		[HttpGet("GetBodyTemplateById")]
-		[SwaggerResponse(StatusCodes.Status200OK)]
-		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task<GetBodyTemplateByIdResponse> GetBodyTemplateByIdAsync([FromQuery] GetBodyTemplateByIdQuery request, CancellationToken cancellationToken)
-		{
-			return await _mediator.Send(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
-		}
+		///// <summary>
+		///// Предоставить шаблон тела по айди
+		///// </summary>
+		///// <param name="request">Запрос на предоставление шаблона тела по айди</param>
+		///// <param name="cancellationToken">Токен отмены</param>
+		///// <returns>Ответ на запрос предоставления шаблона тела по айди</returns>
+		//[HttpGet("GetBodyTemplateById")]
+		//[SwaggerResponse(StatusCodes.Status200OK)]
+		//[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
+		//public async Task<GetBodyTemplateByIdResponse> GetBodyTemplateByIdAsync([FromQuery] GetBodyTemplateByIdQuery request, CancellationToken cancellationToken)
+		//{
+		//	return await _mediator.Send(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
+		//}
 
-		/// <summary>
-		/// Удалить шаблон тела по айди
-		/// </summary>
-		/// <param name="request">Запрос на удаление шаблона тела по айди</param>
-		/// <param name="cancellationToken">Токен отмены</param>
-		/// <returns></returns>
-		[HttpDelete]
-		[SwaggerResponse(StatusCodes.Status200OK)]
-		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task DeleteBodyTemplateByIdAsync([FromQuery] DeleteBodyTemplateByIdCommand request, CancellationToken cancellationToken)
-		{
-			await _mediator.Send(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
-		}
+		///// <summary>
+		///// Удалить шаблон тела по айди
+		///// </summary>
+		///// <param name="request">Запрос на удаление шаблона тела по айди</param>
+		///// <param name="cancellationToken">Токен отмены</param>
+		///// <returns></returns>
+		//[HttpDelete]
+		//[SwaggerResponse(StatusCodes.Status200OK)]
+		//[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
+		//public async Task DeleteBodyTemplateByIdAsync([FromQuery] DeleteBodyTemplateByIdCommand request, CancellationToken cancellationToken)
+		//{
+		//	await _mediator.Send(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
+		//}
 	}
 }

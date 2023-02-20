@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 {
-	public class GetAbilityHandler : BaseHandler<GetAbilityQuery, IEnumerable<Ability>>
+	public class GetAbilityHandler : BaseHandler<GetAbilityQuery, IEnumerable<GetAbilityResponseItem>>
 	{
 		/// <summary>
 		/// Провайдер времени
@@ -26,7 +26,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 			_dateTimeProvider = dateTimeProvider;
 		}
 
-		public override async Task<IEnumerable<Ability>> Handle(GetAbilityQuery request, CancellationToken cancellationToken)
+		public override async Task<IEnumerable<GetAbilityResponseItem>> Handle(GetAbilityQuery request, CancellationToken cancellationToken)
 		{
 			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
 				throw new ArgumentOutOfRangeException(nameof(GetAbilityQuery.CreationMinTime));
@@ -61,6 +61,19 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 				.OrderBy(request.OrderBy, request.IsAscending)
 				.Skip(request.PageSize * (request.PageNumber - 1))
 				.Take(request.PageSize)
+				.Select(x => new GetAbilityResponseItem()
+				{
+					Id = x.Id,
+					GameId = x.GameId,
+					Name = x.Name,
+					Description = x.Description,
+					AttackDiceQuantity = x.AttackDiceQuantity,
+					DamageModifier = x.DamageModifier,
+					AttackSpeed = x.AttackSpeed,
+					Accuracy = x.Accuracy,
+					AttackSkill = x.AttackSkill,
+					DamageType = x.DamageType
+				})
 				.ToListAsync(cancellationToken);
 
 			return list;

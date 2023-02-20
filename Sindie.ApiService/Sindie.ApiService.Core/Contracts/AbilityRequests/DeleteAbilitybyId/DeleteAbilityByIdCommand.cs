@@ -29,8 +29,7 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAbilitybyId
 		/// </summary>
 		public void Validate()
 		{
-			if (string.IsNullOrEmpty(Name))
-				throw new RequestFieldNullException<DeleteAbilityByIdCommand>(nameof(Name));
+			// Method intentionally left empty.
 		}
 	}
 }

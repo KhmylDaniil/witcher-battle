@@ -374,7 +374,7 @@ namespace Sindie.ApiService.Core.Entities
 		internal void UpdateAbililities(List<Ability> request)
 		{
 			if (request == null)
-				throw new ApplicationException("Необходимо передать данные для обновления способностей");
+				throw new ArgumentException("Необходимо передать данные для обновления способностей");
 
 			if (Abilities == null)
 				throw new ExceptionFieldOutOfRange<CreatureTemplate>(nameof(Abilities));
