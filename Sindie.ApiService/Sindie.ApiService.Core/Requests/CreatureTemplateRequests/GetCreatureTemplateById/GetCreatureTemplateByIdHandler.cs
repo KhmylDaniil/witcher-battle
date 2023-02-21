@@ -105,6 +105,13 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 						ApplyChance = x.ApplyChance
 					}).ToList()
 				}).ToList(),
+				DamageTypeModifiers = creatureTemplate.DamageTypeModifiers
+				.Select(x => new GetCreatureTemplateByIdResponseDamageTypeModifier()
+				{
+					Id = x.Id,
+					DamageType = x.DamageType,
+					Modifier = x.DamageTypeModifier
+				}).ToList(),
 			};
 		}
 	}

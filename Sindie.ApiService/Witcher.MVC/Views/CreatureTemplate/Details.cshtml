@@ -97,6 +97,40 @@
 
 @Html.ActionLink("Edit Creature Template", "Edit", Model)
 
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatureTemplateSkills.First().Skill)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatureTemplateSkills.First().SkillValue)
+            </th>
+            <th>
+                @Html.ActionLink("Add new skill", "EditSkill",
+                new { GameId = Model.GameId, CreatureTemplateId = Model.Id })
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CreatureTemplateSkills)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Skill)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SkillValue)
+                </td>
+                <td>
+                    @Html.ActionLink("Change value", "EditSkill",
+                new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id, Skill = item.Skill, Value = item.SkillValue })
+                    | @Html.ActionLink("Delete", "DeleteSkill", new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 <table class="table">
     <thead>
@@ -182,6 +216,41 @@
                 <td>
                     <a asp-controller="Ability" asp-action="Details" asp-route-gameId="@Model.GameId" asp-route-id="@item.Id">Details </a>
                  </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DamageTypeModifiers.First().DamageType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DamageTypeModifiers.First().Modifier)
+            </th>
+            <th>
+                @Html.ActionLink("Add new skill", "EditSkill",
+                new { GameId = Model.GameId, CreatureTemplateId = Model.Id })
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.DamageTypeModifiers)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DamageType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Modifier)
+                </td>
+                <td>
+                    @Html.ActionLink("Change value", "EditSkill",
+                new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id, Skill = item.Skill, Value = item.SkillValue })
+                    | @Html.ActionLink("Delete", "DeleteSkill", new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id })
+                </td>
             </tr>
         }
     </tbody>

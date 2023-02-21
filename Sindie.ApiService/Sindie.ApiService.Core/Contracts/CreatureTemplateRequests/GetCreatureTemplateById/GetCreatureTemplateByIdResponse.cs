@@ -133,5 +133,10 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// Способности
 		/// </summary>
 		public List<GetCreatureTemplateByIdResponseAbility> Abilities { get; set; }
+
+		/// <summary>
+		/// Модификаторы урона
+		/// </summary>
+		public List<GetCreatureTemplateByIdResponseDamageTypeModifier> DamageTypeModifiers { get; set; }
 	}
 }

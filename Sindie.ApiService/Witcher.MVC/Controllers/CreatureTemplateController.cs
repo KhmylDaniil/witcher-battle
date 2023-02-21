@@ -2,9 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
-using Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests;
+using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatureTemplate;
@@ -18,9 +17,9 @@ using Witcher.MVC.ViewModels.CreatureTemplate;
 namespace Witcher.MVC.Controllers
 {
 	[Authorize]
-
 	public class CreatureTemplateController : BaseController
 	{
+
 		public CreatureTemplateController(IMediator mediator) : base(mediator)
 		{
 		}
@@ -29,21 +28,18 @@ namespace Witcher.MVC.Controllers
 		public async Task<IActionResult> Index(GetCreatureTemplateQuery query, CancellationToken cancellationToken)
 		{
 			ViewData["GameId"] = query.GameId;
-
+			GetCreatureTemplateResponse response;
 			try
 			{
-				var response = await _mediator.SendValidated(query, cancellationToken);
-
-				return View(response.CreatureTemplatesList);
+				response = await _mediator.SendValidated(query, cancellationToken);
 			}
 			catch (RequestValidationException ex)
 			{
 				ViewData["ErrorMessage"] = ex.UserMessage;
 
-				var response = await _mediator.SendValidated(new GetCreatureTemplateQuery() { GameId = query.GameId }, cancellationToken);
-
-				return View(response.CreatureTemplatesList);
+				response = await _mediator.SendValidated(new GetCreatureTemplateQuery() { GameId = query.GameId }, cancellationToken);
 			}
+			return View(response.CreatureTemplatesList);
 		}
 
 		[Route("[controller]/{gameId}/{id}")]
@@ -85,20 +81,18 @@ namespace Witcher.MVC.Controllers
 			catch (RequestValidationException ex)
 			{
 				ViewData["ErrorMessage"] = ex.UserMessage;
-				return View(await CreateVM(command, cancellationToken));
 			}
+			return View(await CreateVM(command, cancellationToken));
 		}
 
 		[HttpGet]
-		[Route("[controller]/[action]/{gameId}")]
+		[Route("[controller]/[action]/{gameId}/{id}")]
 		public async Task<IActionResult> Edit(ChangeCreatureTemplateCommandViewModel viewModel, CancellationToken cancellationToken)
-		{
-			return View(await CreateVM(viewModel, cancellationToken));
-		}
+			=> View(await CreateVM(viewModel, cancellationToken));
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Route("[controller]/[action]/{gameId}")]
+		[Route("[controller]/[action]/{gameId}/{id}")]
 		public async Task<IActionResult> Edit(ChangeCreatureTemplateCommand command, CancellationToken cancellationToken)
 		{
 			try
@@ -109,8 +103,8 @@ namespace Witcher.MVC.Controllers
 			catch (RequestValidationException ex)
 			{
 				ViewData["ErrorMessage"] = ex.UserMessage;
-				return View(await CreateVM(command, cancellationToken));
 			}
+			return View(await CreateVM(command, cancellationToken));
 		}
 
 		[Route("[controller]/[action]/{gameId}/{creatureTemplateId}/{id?}")]
@@ -145,6 +139,41 @@ namespace Witcher.MVC.Controllers
 			{
 				await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Index), new GetCreatureTemplateQuery { GameId = command.GameId });
+			}
+			catch (RequestValidationException ex)
+			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
+				return View(command);
+			}
+		}
+
+		[Route("[controller]/[action]/{gameId}/{creatureTemplateId}")]
+		public ActionResult EditSkill(UpdateCreatureTemplateSkillCommand command) => View(command);
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Route("[controller]/[action]/{gameId}/{creatureTemplateId}")]
+		public async Task<IActionResult> EditSkill(UpdateCreatureTemplateSkillCommand command, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await _mediator.SendValidated(command, cancellationToken);
+				return RedirectToAction(nameof(Details), new GetCreatureTemplateByIdQuery() { GameId = command.GameId, Id = command.CreatureTemplateId });
+			}
+			catch (RequestValidationException ex)
+			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
+				return View(command);
+			}
+		}
+
+		[Route("[controller]/[action]/{gameId}/{creatureTemplateId}")]
+		public async Task<IActionResult> DeleteSkill(DeleteCreatureTemplateSkillCommand command, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await _mediator.SendValidated(command, cancellationToken);
+				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = command.GameId, Id = command.CreatureTemplateId });
 			}
 			catch (RequestValidationException ex)
 			{

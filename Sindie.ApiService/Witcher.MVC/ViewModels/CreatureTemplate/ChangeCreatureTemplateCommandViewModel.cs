@@ -1,8 +1,8 @@
-﻿using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatureTemplate;
+﻿using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
 
 namespace Witcher.MVC.ViewModels.CreatureTemplate
 {
-	public class CreateCreatureTemplateCommandViewModel : CreateCreatureTemplateCommand
+	public class ChangeCreatureTemplateCommandViewModel : ChangeCreatureTemplateCommand
 	{
 		/// <summary>
 		/// Данные шаблонов тела
