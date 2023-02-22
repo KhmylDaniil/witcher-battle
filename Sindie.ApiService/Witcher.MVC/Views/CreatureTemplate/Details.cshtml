@@ -1,0 +1,263 @@
+﻿@model Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplateById.GetCreatureTemplateByIdResponse
+
+@{
+    ViewData["Title"] = @Html.DisplayFor(model => model.Name) + "creature template details";
+}
+
+<div>
+    <h4>Creature Template</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatureType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CreatureType)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.HP)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.HP)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Sta)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Sta)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Int)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Int)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Ref)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Ref)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Dex)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Dex)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Body)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Body)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Emp)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Emp)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Cra)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Cra)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Will)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Will)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Luck)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Luck)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Speed)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Speed)
+        </dd>
+    </dl>
+</div>
+
+@Html.ActionLink("Edit Creature Template", "Edit", Model)
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatureTemplateSkills.First().Skill)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatureTemplateSkills.First().SkillValue)
+            </th>
+            <th>
+                @Html.ActionLink("Add new skill", "EditSkill",
+                new { GameId = Model.GameId, CreatureTemplateId = Model.Id })
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CreatureTemplateSkills)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Skill)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SkillValue)
+                </td>
+                <td>
+                    @Html.ActionLink("Change value", "EditSkill",
+                new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id, Skill = item.Skill, Value = item.SkillValue })
+                    | @Html.ActionLink("Delete", "DeleteSkill", new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatureTemplateParts.First().Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatureTemplateParts.First().Armor)
+            </th>
+            <th>@Html.ActionLink("Change armor value for all parts", "EditParts",
+            new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Name = Model.Name })</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CreatureTemplateParts)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Armor)
+                </td>
+                <td>
+                    @Html.ActionLink("Change", "EditParts",
+                    new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id, Name = item.Name })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-controller="BodyTemplate" asp-action="Details" asp-route-gameId="@Model.GameId" asp-route-id="@Model.BodyTemplateId">To Body Template</a>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Abilities.First().Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Abilities.First().AttackDiceQuantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Abilities.First().DamageModifier)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Abilities.First().Accuracy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Abilities.First().AttackSkill)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Abilities.First().AppliedConditions)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Abilities)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AttackDiceQuantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DamageModifier)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Accuracy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AttackSkill)
+                </td>
+                <td>
+                    @string.Join(", ", item.AppliedConditions.Select(x => $"{x.Condition} {x.ApplyChance}%."))
+                </td>
+                <td>
+                    <a asp-controller="Ability" asp-action="Details" asp-route-gameId="@Model.GameId" asp-route-id="@item.Id">Details </a>
+                 </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DamageTypeModifiers.First().DamageType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DamageTypeModifiers.First().DamageTypeModifier)
+            </th>
+            <th>
+                @Html.ActionLink("Add new damage type modifier", "EditDamageTypeModifier",
+                new { GameId = Model.GameId, CreatureTemplateId = Model.Id })
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.DamageTypeModifiers)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DamageType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DamageTypeModifier)
+                </td>
+                <td>
+                    @Html.ActionLink("Change value", "EditDamageTypeModifier",
+                new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id,
+                DamageType = item.DamageType, DamageTypeModifier = item.DamageTypeModifier })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>@ViewData["ErrorMessage"]</p>
+
+<div class="container">
+    <a asp-action="Index" asp-route-gameId=@Model.GameId>Back to Creature Templates</a>
+</div>

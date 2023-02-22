@@ -54,7 +54,7 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 		public async Task<Unit> Handle(CreateUserGameCommand request, CancellationToken cancellationToken)
 		{
 			if (request == null)
-				throw new ExceptionRequestNull<CreateUserGameCommand>();
+				throw new RequestNullException<CreateUserGameCommand>();
 
 			var user = await _appDbContext.Users.FirstOrDefaultAsync(x => x.Id == request.AssignedUserId, cancellationToken)
 				?? throw new ExceptionEntityNotFound<User>(request.AssignedUserId);
@@ -66,7 +66,7 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 			if (await _appDbContext.UserGames.
 				Where(x => x.UserId == request.AssignedUserId
 				&& x.GameRoleId == request.AssingedRoleId).AnyAsync())
-				throw new ExceptionRequestNotUniq<CreateUserGameCommand>();
+				throw new RequestNotUniqException<CreateUserGameCommand>();
 
 			var @interface = await _appDbContext.Interfaces
 				.FirstOrDefaultAsync(u => u.Id == SystemInterfaces.GameDarkId, cancellationToken)

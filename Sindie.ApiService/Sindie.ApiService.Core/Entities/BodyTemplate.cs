@@ -1,8 +1,7 @@
-﻿using Sindie.ApiService.Core.BaseData;
+﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -32,12 +31,12 @@ namespace Sindie.ApiService.Core.Entities
 			Game game,
 			string name,
 			string description,
-			List<BodyTemplatePartsData> bodyTemplateParts)
+			IEnumerable<IBodyTemplatePartData> bodyTemplateParts)
 		{
 			Game = game;
 			Name = name;
 			Description = description;
-			BodyTemplateParts = CreateBodyTemplateParts(bodyTemplateParts);
+			CreateBodyTemplateParts(bodyTemplateParts);
 		}
 
 		/// <summary>
@@ -117,13 +116,12 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		/// <param name="bodyTemplateParts">Данные для списка шаблонов частей тела</param>
 		/// <returns>Список шаблонов частей тела</returns>
-		public List<BodyTemplatePart> CreateBodyTemplateParts(
-			List<BodyTemplatePartsData> bodyTemplateParts)
+		public void CreateBodyTemplateParts(IEnumerable<IBodyTemplatePartData> bodyTemplateParts)
 		{
-			var result = new List<BodyTemplatePart>();
+			BodyTemplateParts = new List<BodyTemplatePart>();
 			
 			foreach (var part in bodyTemplateParts)
-				result.Add(new BodyTemplatePart(
+				BodyTemplateParts.Add(new BodyTemplatePart(
 					bodyTemplate: this,
 					bodyPartType: part.BodyPartType,
 					name: part.Name,
@@ -131,7 +129,6 @@ namespace Sindie.ApiService.Core.Entities
 					hitPenalty: part.HitPenalty,
 					minToHit: part.MinToHit,
 					maxToHit: part.MaxToHit));
-			return result;
 		}
 
 		/// <summary>
@@ -145,14 +142,15 @@ namespace Sindie.ApiService.Core.Entities
 			Game game,
 			string name,
 			string description,
-			List<BodyTemplatePartsData> bodyTemplateParts)
+			IEnumerable<IBodyTemplatePartData> bodyTemplateParts)
 		{
 			Game = game;
 			Name = name;
 			Description = description;
-			if (BodyTemplateParts.Any())
-				BodyTemplateParts.Clear();
-			BodyTemplateParts = CreateBodyTemplateParts(bodyTemplateParts);
+
+			if (bodyTemplateParts == null) return;
+			
+			CreateBodyTemplateParts(bodyTemplateParts);
 		}
 	}
 }

@@ -1,6 +1,4 @@
-﻿using Sindie.ApiService.Core.Exceptions.UnauthorizedExceptions;
-
-namespace Sindie.ApiService.Core.Exceptions
+﻿namespace Sindie.ApiService.Core.Exceptions
 {
 	/// <summary>
 	/// Исключение нет прав доступа к сущности

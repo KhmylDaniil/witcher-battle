@@ -7,7 +7,7 @@ namespace Sindie.ApiService.Core.Exceptions
 	/// <summary>
 	/// Базовое исключение авторизации (код 403 Forbidden) 
 	/// </summary>
-	public class ExceptionUnauthorizedBase : ExceptionApplicationBase
+	public class ExceptionUnauthorizedBase : ArgumentException
 	{
 		/// <summary>
 		/// Конструктор исключения авторизации

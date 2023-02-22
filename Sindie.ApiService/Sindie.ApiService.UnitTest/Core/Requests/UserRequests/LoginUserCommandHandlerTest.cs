@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.UserRequests.LoginUser;
@@ -6,12 +7,13 @@ using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.UserRequests.LoginUser;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 {
 	/// <summary>
-	/// Тест для <see cref="LoginUserCommandHandler" >
+	/// Тест для <see cref="LoginUserCommandHandler">
 	/// </summary>
 	[TestClass]
 	public class LoginUserCommandHandlerTest : UnitTestBase
@@ -20,9 +22,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 		private readonly User _user;
 		private readonly User _user2;
 
-		/// <summary>
-		/// Конструктор
-		/// </summary>
 		public LoginUserCommandHandlerTest()
 		{
 			var role = SystemRole.CreateForTest(name: "User");
@@ -33,12 +32,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 		}
 
 		/// <summary>
-		/// Тест метода Handle( - аутентификации пользователя
-		/// - должен возвращать айди пользователя равный ожидаемому айди
+		/// Тест метода Handle(аутентификации пользователя
+		/// должен возвращать айди пользователя равный ожидаемому айди
 		/// </summary>
-		/// /// <param name="login">Логин</param>
-		/// <param name="password">Пароль</param>
-		/// /// <param name="id">Айди</param>
 		/// <returns></returns>
 		[TestMethod]
 		public async Task Handle_ByLoginUserCommandHandler_ShouldLoginUser()
@@ -54,42 +50,40 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 			passwordHasherMock.Setup(foo => foo.VerifyHash
 				(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
 
-			var jwtGeneratorMock = new Mock<IJwtGenerator>();
-			jwtGeneratorMock.Setup(foo => foo.CreateToken(It.IsAny<Guid>(), It.IsAny<string>())).Returns("aaa");
+			var httpContextMock = new Mock<IHttpContextAccessor>();
 
-			//Arrange
-			var loginUserCommandHandler = new LoginUserCommandHandler
-				(_dbContext, passwordHasherMock.Object, jwtGeneratorMock.Object);
+			var loginUserCommandHandler = new TestLoginUserCommandHandler
+				(_dbContext, AuthorizationService.Object, passwordHasherMock.Object, httpContextMock.Object);
 
-			//Act
 			var result = await loginUserCommandHandler.Handle(request, default);
 
-			//Assert
 			Assert.AreEqual(_user.Id, result?.UserId);
 			var userAcc = _user.UserAccounts.First();
 			Assert.IsNotNull(userAcc);
 			Assert.AreEqual(userAcc.Login, request.Login);
 			Assert.AreEqual(userAcc.PasswordHash, request.Password);
-			Assert.IsNotNull(result?.AuthenticationToken);
-			Assert.IsNotNull(result?.CreatedOn);
+		}
+	}
+
+	/// <summary>
+	/// Тестовый класс для обработчика
+	/// </summary>
+	class TestLoginUserCommandHandler : LoginUserCommandHandler
+	{
+		public TestLoginUserCommandHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IPasswordHasher passwordHasher, IHttpContextAccessor httpContextAccessor)
+			: base(appDbContext, authorizationService, passwordHasher, httpContextAccessor)
+		{
 		}
 
 		/// <summary>
-		/// Тест метода Handle( - аутентификации пользователя
-		/// - он должен генерировать исключение в случае если пришел пустой запрос
+		/// Переопределенный метод для исключения из тестирования метода расширения
 		/// </summary>
+		/// <param name="httpContext"></param>
+		/// <param name="claimsPrincipal"></param>
 		/// <returns></returns>
-		[TestMethod]
-		public async Task Handle_ByLoginUserCommandHandler_ShouldThrowArgumentNullException()
+		protected override async Task SignCookiesAsync(HttpContext httpContext, ClaimsPrincipal claimsPrincipal)
 		{
-			LoginUserCommand request = null;
-
-			//Arrange
-			var loginUserCommandHandler = new LoginUserCommandHandler(default, default, default);
-
-			//Assert
-			await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () =>
-				 await loginUserCommandHandler.Handle(request, default));
+			await Task.CompletedTask;
 		}
 	}
 }

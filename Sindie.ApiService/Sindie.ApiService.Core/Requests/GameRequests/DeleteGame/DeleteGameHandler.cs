@@ -1,0 +1,27 @@
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Contracts.GameRequests.DeleteGame;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Sindie.ApiService.Core.Requests.GameRequests.DeleteGame
+{
+	public class DeleteGameHandler: BaseHandler<DeleteGameCommand, Unit>
+	{
+		public DeleteGameHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
+		{
+		}
+
+		public override async Task<Unit> Handle(DeleteGameCommand request, CancellationToken cancellationToken)
+		{
+			var game = await _authorizationService.UserGameFilter(_appDbContext.Games, request.Id)
+				.FirstAsync(cancellationToken: cancellationToken);
+
+			_appDbContext.Games.Remove(game);
+			await _appDbContext.SaveChangesAsync(cancellationToken);
+
+			return Unit.Value;
+		}
+	}
+}

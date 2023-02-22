@@ -1,9 +1,8 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using Sindie.ApiService.Core.ExtensionMethods;
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,35 +12,16 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 	/// <summary>
 	/// Обработчик запроса списка шаблонов тела
 	/// </summary>
-	public class GetBodyTemplateHandler : IRequestHandler<GetBodyTemplateCommand, GetBodyTemplateResponse>
+	public class GetBodyTemplateHandler : BaseHandler<GetBodyTemplateQuery, GetBodyTemplateResponse>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
-
-		/// <summary>
-		/// Сервис авторизации
-		/// </summary>
-		private readonly IAuthorizationService _authorizationService;
-
 		/// <summary>
 		/// Провайдер времени
 		/// </summary>
 		private readonly IDateTimeProvider _dateTimeProvider;
 
-		/// <summary>
-		/// Конструктор обработчика команды получения списка шаблонов тела
-		/// </summary>
-		/// <param name="appDbContext">Контекст базы данных</param>
-		/// <param name="authorizationService">Сервис авторизации</param>
-		public GetBodyTemplateHandler(
-			IAppDbContext appDbContext,
-			IAuthorizationService authorizationService,
-			IDateTimeProvider dateTimeProvider)
+		public GetBodyTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IDateTimeProvider dateTimeProvider)
+			: base(appDbContext, authorizationService)
 		{
-			_appDbContext = appDbContext;
-			_authorizationService = authorizationService;
 			_dateTimeProvider = dateTimeProvider;
 		}
 
@@ -51,17 +31,12 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns>Ответ на запрос списка шаблонов тела</returns>
-		public async Task<GetBodyTemplateResponse> Handle(GetBodyTemplateCommand request, CancellationToken cancellationToken)
+		public override async Task<GetBodyTemplateResponse> Handle(GetBodyTemplateQuery request, CancellationToken cancellationToken)
 		{
 			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
-				throw new ArgumentOutOfRangeException(nameof(request.CreationMinTime));
+				throw new RequestFieldIncorrectDataException<GetBodyTemplateQuery>(nameof(request.CreationMinTime));
 			if (request.ModificationMinTime > _dateTimeProvider.TimeProvider)
-				throw new ArgumentOutOfRangeException(nameof(request.ModificationMinTime));
-
-			if (request.CreationMaxTime != default && request.CreationMinTime >= request.CreationMaxTime)
-				throw new ArgumentOutOfRangeException(nameof(request.CreationMaxTime));
-			if (request.ModificationMaxTime != default && request.ModificationMinTime >= request.ModificationMaxTime)
-				throw new ArgumentOutOfRangeException(nameof(request.ModificationMaxTime));
+				throw new RequestFieldIncorrectDataException<GetBodyTemplateQuery>(nameof(request.CreationMinTime));
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(g => g.BodyTemplates)
@@ -76,7 +51,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate
 						.Where(x => x.ModifiedOn >= request.ModificationMinTime)
 						.Where(x => (request.ModificationMaxTime == default && x.ModifiedOn <= _dateTimeProvider.TimeProvider)
 						|| x.ModifiedOn <= request.ModificationMaxTime))
-						.Where(x => request.BodyPartType == null || x.BodyTemplateParts.Any(x => Enum.GetName(x.BodyPartType).Contains(request.BodyPartType)));
+						.Where(x => request.BodyPartName == null || x.BodyTemplateParts.Any(x => x.Name.Contains(request.BodyPartName)));
 
 			var list = await filter
 				.OrderBy(request.OrderBy, request.IsAscending)

@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate;
 using System;
@@ -82,20 +83,22 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 			var modificationMinTime = DateTimeProvider.Object.TimeProvider.AddDays(-1);
 			var modificationMaxTime = DateTimeProvider.Object.TimeProvider.AddDays(1);
 
-			var request = new GetBodyTemplateCommand(
-				gameId: _game.Id,
-				name: "testName",
-				userName: "Author",
-				creationMinTime: creationMinTime,
-				creationMaxTime: creationMaxTime,
-				modificationMinTime: modificationMinTime,
-				modificationMaxTime: modificationMaxTime,
-				bodyPartType: Enum.GetName(BodyPartType.Head),
-				pageSize: 2,
-				pageNumber: 1,
-				orderBy: null,
-				isAscending: false);
-
+			var request = new GetBodyTemplateQuery()
+			{
+				GameId = _game.Id,
+				Name = "testName",
+				UserName = "Author",
+				CreationMinTime = creationMinTime,
+				CreationMaxTime = creationMaxTime,
+				ModificationMinTime = modificationMinTime,
+				ModificationMaxTime = modificationMaxTime,
+				BodyPartName = Enum.GetName(BodyPartType.Head),
+				PageSize = 2,
+				PageNumber = 1,
+				OrderBy = null,
+				IsAscending = false
+		};
+				
 			var newHandler = new GetBodyTemplateHandler(_dbContext, AuthorizationService.Object, DateTimeProvider.Object);
 
 			var result = await newHandler.Handle(request, default);
@@ -117,7 +120,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 			Assert.IsNotNull(user);
 			Assert.IsTrue(user.Name.Contains(request.UserName));
 
-			var bodyPart = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.BodyPartType == BodyPartType.Head);
+			var bodyPart = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Name == Enum.GetName(BodyPartType.Head));
 			Assert.IsNotNull(bodyPart);
 		}
 	}

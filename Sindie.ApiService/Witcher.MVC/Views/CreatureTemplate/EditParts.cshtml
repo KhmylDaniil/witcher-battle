@@ -1,0 +1,32 @@
+﻿@model Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplatePartCommand
+
+@{
+    ViewData["Title"] = $"Edit armor for {@Model.Name}";
+}
+
+<h1>Edit armor value for @Model.Name</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditParts">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ArmorValue" class="control-label"></label>
+                <input asp-for="ArmorValue" class="form-control" />
+                <span asp-validation-for="ArmorValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<p>@ViewData["ErrorMessage"]</p>
+
+<div class="container">
+    @Html.ActionLink("Back to Creature Template", "Details", new { GameId = Model.GameId, id = Model.CreatureTemplateId })
+</div>
+
+

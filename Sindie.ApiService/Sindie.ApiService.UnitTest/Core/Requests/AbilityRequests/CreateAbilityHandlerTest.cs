@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Contracts.AbilityRequests;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility;
@@ -39,25 +40,27 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		[TestMethod]
 		public async Task Handle_CreateAbility_ShouldReturnUnit()
 		{
-			var request = new CreateAbilityCommand(
-				gameId: _game.Id,
-				name: "name",
-				description: "description",
-				attackDiceQuantity: 2,
-				damageModifier: 4,
-				attackSpeed: 1,
-				accuracy: 1,
-				attackSkill: Skill.Melee,
-				defensiveSkills: new List<Skill> { Skill.Melee },
-				damageType: DamageType.Slashing,
-				appliedConditions: new List<CreateAbilityRequestAppliedCondition>
+			var request = new CreateAbilityCommand
+			{
+				GameId = _game.Id,
+				Name = "name",
+				Description = "description",
+				AttackDiceQuantity = 2,
+				DamageModifier = 4,
+				AttackSpeed = 1,
+				Accuracy = 1,
+				AttackSkill = Skill.Melee,
+				DefensiveSkills = new List<Skill> { Skill.Melee },
+				DamageType = DamageType.Slashing,
+				AppliedConditions = new List<UpdateAbilityCommandItemAppledCondition>
 				{
-					new CreateAbilityRequestAppliedCondition()
+					new UpdateAbilityCommandItemAppledCondition()
 					{
 						Condition = Condition.Bleed,
 						ApplyChance = 50
 					}
-				});
+				}
+			};
 
 			var newHandler = new CreateAbilityHandler(_dbContext, AuthorizationService.Object);
 

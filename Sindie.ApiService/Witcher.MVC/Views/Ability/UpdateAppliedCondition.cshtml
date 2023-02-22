@@ -1,0 +1,53 @@
+﻿@model Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedCondition.UpdateAppliedCondionCommand
+
+@{
+    if (@Model.Id == null)
+    {
+        ViewData["Title"] = "Create Applied Condition";
+        <h1>Create Applied Condition</h1>
+    }
+    else
+    {
+        ViewData["Title"] = "Edit Applied Condition";
+        <h1>Edit Applied Condition</h1>
+    }
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="UpdateAppliedCondition">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Condition" class="control-label"></label>
+                <select asp-for="Condition"
+                        class="form-control"
+                        asp-items="Html.GetEnumSelectList<Sindie.ApiService.Core.BaseData.Condition>()">
+                    <option>Select Condition ...</option>
+                </select>
+                <span asp-validation-for="Condition" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApplyChance" class="control-label"></label>
+                <input asp-for="ApplyChance" class="form-control" value=@Model.ApplyChance/>
+                <span asp-validation-for="ApplyChance" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @if (Model.Id != null)
+                {
+                    <input asp-for="Id" class="form-control" value=@Model.Id.Value hidden=true/>
+                }
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<p>@ViewData["ErrorMessage"]</p>
+
+<div class="container">
+    @Html.ActionLink("Back to ability", "Details", new { GameId = Model.GameId, id = Model.AbilityId })
+</div>
+

@@ -16,27 +16,10 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 	/// <summary>
 	/// Обработчик запроса предоставления шаблона существа по айди
 	/// </summary>
-	public class GetCreatureTemplateByIdHandler : IRequestHandler<GetCreatureTemplateByIdQuery, GetCreatureTemplateByIdResponse>
+	public class GetCreatureTemplateByIdHandler : BaseHandler<GetCreatureTemplateByIdQuery, GetCreatureTemplateByIdResponse>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
-
-		/// <summary>
-		/// Сервис авторизации
-		/// </summary>
-		private readonly IAuthorizationService _authorizationService;
-
-		/// <summary>
-		/// Конструктор обработчика запроса шаблона существа по айди
-		/// </summary>
-		/// <param name="appDbContext"></param>
-		/// <param name="authorizationService"></param>
-		public GetCreatureTemplateByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
+		public GetCreatureTemplateByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
-			_appDbContext = appDbContext;
-			_authorizationService = authorizationService;
 		}
 
 		/// <summary>
@@ -45,11 +28,8 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns>Шаблон существа</returns>
-		public async Task<GetCreatureTemplateByIdResponse> Handle(GetCreatureTemplateByIdQuery request, CancellationToken cancellationToken)
+		public override async Task<GetCreatureTemplateByIdResponse> Handle(GetCreatureTemplateByIdQuery request, CancellationToken cancellationToken)
 		{
-			if (request == null)
-				throw new ExceptionRequestNull<GetCreatureTemplateByIdQuery>();
-
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.CreatureTemplateSkills)
@@ -66,6 +46,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 			return new GetCreatureTemplateByIdResponse()
 			{
 				GameId = creatureTemplate.GameId,
+				Id = creatureTemplate.Id,
 				ImgFileId = creatureTemplate.ImgFileId,
 				BodyTemplateId = creatureTemplate.BodyTemplateId,
 				Name = creatureTemplate.Name,
@@ -123,6 +104,13 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 						Condition = x.Condition,
 						ApplyChance = x.ApplyChance
 					}).ToList()
+				}).ToList(),
+				DamageTypeModifiers = creatureTemplate.DamageTypeModifiers
+				.Select(x => new GetCreatureTemplateByIdResponseDamageTypeModifier()
+				{
+					Id = x.Id,
+					DamageType = x.DamageType,
+					DamageTypeModifier = x.DamageTypeModifier
 				}).ToList(),
 			};
 		}
