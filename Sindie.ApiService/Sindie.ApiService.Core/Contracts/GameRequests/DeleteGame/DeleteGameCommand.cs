@@ -23,8 +23,7 @@ namespace Sindie.ApiService.Core.Contracts.GameRequests.DeleteGame
 		/// </summary>
 		public void Validate()
 		{
-			if (string.IsNullOrEmpty(Name))
-				throw new RequestFieldNullException<DeleteGameCommand>(nameof(Name));
+			// Method intentionally left empty.
 		}
 	}
 }

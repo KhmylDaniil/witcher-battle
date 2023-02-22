@@ -1,11 +1,13 @@
 ﻿using MediatR;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
@@ -105,6 +107,9 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 				{
 					if (!Enum.IsDefined(condition.Condition))
 						throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AppliedConditions), "Неизвестное накладываемое состояние");
+
+					if (AppliedConditions.Count(x => x.Condition == condition.Condition) != 1)
+						throw new RequestNotUniqException<ChangeAbilityCommand>(nameof(AppliedConditions));
 
 					if (condition.ApplyChance < 1 || condition.ApplyChance > 100)
 						throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AppliedConditions), "Шанс наложения состояния должен быть в диапазоне от 1 до 100");

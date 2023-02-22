@@ -1,4 +1,5 @@
-﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+﻿using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
+using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
 using System;
 using System.Collections.Generic;
@@ -370,10 +371,10 @@ namespace Sindie.ApiService.Core.Entities
 		/// Обновление списка способностей
 		/// </summary>
 		/// <param name="data">Данные</param>
-		internal void UpdateAlibilities(List<Ability> request)
+		internal void UpdateAbililities(List<Ability> request)
 		{
 			if (request == null)
-				throw new ApplicationException("Необходимо передать данные для обновления способностей");
+				throw new ArgumentException("Необходимо передать данные для обновления способностей");
 
 			if (Abilities == null)
 				throw new ExceptionFieldOutOfRange<CreatureTemplate>(nameof(Abilities));
@@ -399,7 +400,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// Метод изменения списка навыков шаблона существа
 		/// </summary>
 		/// <param name="data">Данные</param>
-		internal void UpdateCreatureTemplateSkills(List<CreatureTemplateSkillData> data)
+		internal void UpdateCreatureTemplateSkills(IEnumerable<UpdateCreatureTemplateRequestSkill> data)
 		{
 			if (CreatureTemplateSkills == null)
 				throw new ExceptionEntityNotIncluded<CreatureTemplateSkill>(nameof(CreatureTemplateSkills));
@@ -511,7 +512,9 @@ namespace Sindie.ApiService.Core.Entities
 			Name = name;
 			Description = description;
 			CreatureType = creatureType;
-			CreatureTemplateParts = UpdateBody(armorList);
+
+			if (armorList is not null)
+				CreatureTemplateParts = UpdateBody(armorList);
 		}
 
 		/// <summary>
@@ -562,7 +565,7 @@ namespace Sindie.ApiService.Core.Entities
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
-			=> new CreatureTemplate
+			=> new()
 			{
 				Id = id ?? Guid.NewGuid(),
 				Game = game,

@@ -1,0 +1,110 @@
+﻿@model Witcher.MVC.ViewModels.CreatureTemplate.ChangeCreatureTemplateCommandViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Change</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="BodyTemplateId" class="control-label"></label>
+                <select asp-items="@(new SelectList(Model.BodyTemplatesDictionary, "Key", "Value"))" asp-for="BodyTemplateId"></select><br /><br />
+                <span asp-validation-for="BodyTemplateId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Abilities" class="control-label"></label>
+                <select asp-items="@(new SelectList(Model.AbilitiesDictionary, "Key", "Value"))" asp-for="Abilities"></select><br /><br />
+            </div>
+            <div class="form-group">
+                <label asp-for="CreatureType" class="control-label"></label>
+                <select asp-for="CreatureType"
+                        class="form-control"
+                        asp-items="Html.GetEnumSelectList<Sindie.ApiService.Core.BaseData.Enums.CreatureType>()">
+                    <option>Select Creature Type ...</option>
+                </select>
+                <span asp-validation-for="CreatureType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HP" class="control-label"></label>
+                <input asp-for="HP" class="form-control" />
+                <span asp-validation-for="HP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Sta" class="control-label"></label>
+                <input asp-for="Sta" class="form-control" />
+                <span asp-validation-for="Sta" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Int" class="control-label"></label>
+                <input asp-for="Int" class="form-control" />
+                <span asp-validation-for="Int" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ref" class="control-label"></label>
+                <input asp-for="Ref" class="form-control" />
+                <span asp-validation-for="Ref" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Dex" class="control-label"></label>
+                <input asp-for="Dex" class="form-control" />
+                <span asp-validation-for="Dex" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Body" class="control-label"></label>
+                <input asp-for="Body" class="form-control" />
+                <span asp-validation-for="Body" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Emp" class="control-label"></label>
+                <input asp-for="Emp" class="form-control" />
+                <span asp-validation-for="Emp" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cra" class="control-label"></label>
+                <input asp-for="Cra" class="form-control" />
+                <span asp-validation-for="Cra" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Will" class="control-label"></label>
+                <input asp-for="Will" class="form-control" />
+                <span asp-validation-for="Will" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Speed" class="control-label"></label>
+                <input asp-for="Speed" class="form-control" />
+                <span asp-validation-for="Speed" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Luck" class="control-label"></label>
+                <input asp-for="Luck" class="form-control" />
+                <span asp-validation-for="Luck" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<p>@ViewData["ErrorMessage"]</p>
+
+<div>
+    <a asp-action="Index" asp-route-gameId=@Model.GameId>Back to Creature Templates</a>
+</div>
+

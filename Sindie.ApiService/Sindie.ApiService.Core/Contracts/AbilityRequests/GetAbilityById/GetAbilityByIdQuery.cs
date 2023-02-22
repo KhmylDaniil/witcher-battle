@@ -5,7 +5,7 @@ using System;
 
 namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById
 {
-	public class GetAbilityByIdQuery : IValidatableCommand<Ability>
+	public class GetAbilityByIdQuery : IValidatableCommand<GetAbilityByIdResponse>
 	{
 		public Guid Id { get; set; }
 

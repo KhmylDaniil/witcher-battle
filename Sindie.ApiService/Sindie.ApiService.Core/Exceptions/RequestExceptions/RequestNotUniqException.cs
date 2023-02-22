@@ -23,26 +23,9 @@ namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
 		/// </summary>
 		/// <param name="name">Имя</param>
 		public RequestNotUniqException(string name)
-			: base($"В запросе {typeof(T)} должно быть уникальное поле, переданное {name} уже существует")
+			: base($"В запросе {typeof(T)} требуются уникальные параметры в поле {name}.")
 		{
-		}
-
-		/// <summary>
-		/// Конструктор исключения не уникального запроса
-		/// </summary>
-		/// <param name="name">Имя</param>
-		public RequestNotUniqException(string requestName, string name)
-			: base($"В запросе {requestName} должно быть уникальное поле, переданное {name} уже существует")
-		{
-		}
-
-		/// <summary>
-		/// Конструктор исключения не уникального запроса
-		/// </summary>
-		/// <param name="id">ИД</param>
-		public RequestNotUniqException(Guid id)
-			: base($"В запросе {typeof(T)} должен быть уникальный ИД, переданный {id} уже существует")
-		{
+			UserMessage = $"Требуются уникальные параметры в поле {name}.";
 		}
 	}
 }

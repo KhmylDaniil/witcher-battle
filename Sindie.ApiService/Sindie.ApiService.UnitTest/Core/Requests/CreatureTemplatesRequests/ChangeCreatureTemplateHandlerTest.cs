@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
+using Sindie.ApiService.Core.Drafts.BodyTemplateDrafts;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatureTemplate;
 using System;
@@ -20,6 +22,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
 		private readonly ImgFile _imgFile;
+		private readonly BodyTemplate _humanBodyTemplate;
 		private readonly BodyTemplate _bodyTemplate;
 		private readonly BodyTemplatePart _torso;
 		private readonly CreatureTemplate _creatureTemplate;
@@ -35,6 +38,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		{
 			_game = Game.CreateForTest();
 			_imgFile = ImgFile.CreateForTest();
+
+			_humanBodyTemplate = BodyTemplate.CreateForTest(game: _game);
+			_humanBodyTemplate.CreateBodyTemplateParts(CreateBodyTemplatePartsDraft.CreateBodyPartsDraft());
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 
 			_torso = BodyTemplatePart.CreateForTest(
@@ -75,6 +81,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
 				_imgFile,
+				_humanBodyTemplate,
 				_bodyTemplate,
 				_torso,
 				_ability1,
@@ -90,49 +97,51 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		[TestMethod]
 		public async Task Handle_ChangeCreatureTemplate_ShouldReturnUnit()
 		{
-			var request = new ChangeCreatureTemplateCommand(
-				id: _creatureTemplate.Id,
-				gameId: _game.Id,
-				imgFileId: _imgFile.Id,
-				bodyTemplateId: _bodyTemplate.Id,
-				name: "newCT",
-				description: "description",
-				creatureType: CreatureType.Cursed,
-				hp: 10,
-				sta: 10,
-				@int: 6,
-				@ref: 7,
-				dex: 8,
-				body: 8,
-				emp: 1,
-				cra: 2,
-				will: 5,
-				speed: 7,
-				luck: 1,
-				armorList: new List<ChangeCreatureTemplateRequestArmorList>
+			var request = new ChangeCreatureTemplateCommand()
+			{
+				Id = _creatureTemplate.Id,
+				GameId = _game.Id,
+				ImgFileId = _imgFile.Id,
+				BodyTemplateId = _bodyTemplate.Id,
+				Name = "newCT",
+				Description = "description",
+				CreatureType = CreatureType.Cursed,
+				HP = 10,
+				Sta = 10,
+				Int = 6,
+				Ref = 7,
+				Dex = 8,
+				Body = 8,
+				Emp = 1,
+				Cra = 2,
+				Will = 5,
+				Speed = 7,
+				Luck = 1,
+				ArmorList = new List<UpdateCreatureTemplateRequestArmorList>
 				{
-					new ChangeCreatureTemplateRequestArmorList()
+					new UpdateCreatureTemplateRequestArmorList()
 					{
 						BodyTemplatePartId = _torso.Id,
 						Armor = 4
 					}
 				},
-				abilities: new List<Guid> { _ability2.Id },
-				creatureTemplateSkills: new List<ChangeCreatureTemplateRequestSkill>
+				Abilities = new List<Guid> { _ability2.Id },
+				CreatureTemplateSkills = new List<UpdateCreatureTemplateRequestSkill>
 				{
-					new ChangeCreatureTemplateRequestSkill()
+					new UpdateCreatureTemplateRequestSkill()
 					{
 						Id = _creatureTemplateSkill.Id,
 						Skill = Skill.Melee,
 						Value = 9
 					},
-					new ChangeCreatureTemplateRequestSkill()
+					new UpdateCreatureTemplateRequestSkill()
 					{
 						Skill = Skill.Staff,
 						Value = 3
 					}
-				});
-
+				}
+		};
+			
 			var newHandler = new ChangeCreatureTemplateHandler(_dbContext, AuthorizationService.Object);
 
 			var result = await newHandler.Handle(request, default);
@@ -187,6 +196,76 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var creatureTemplateParameter2 = creatureTemplate.CreatureTemplateSkills
 				.FirstOrDefault(x => x.Skill == Skill.Staff);
 			Assert.IsTrue(creatureTemplateParameter2.SkillValue == 3);
+		}
+
+		/// <summary>
+		/// Тест метода Handle - изменение шаблона тела меняет части шаблона существа и обнуляет броню
+		/// </summary>
+		/// <returns></returns>
+		[TestMethod]
+		public async Task Handle_ChangeCreatureTemplateWithBodyTemplateChanging_ShouldReturnUnit()
+		{
+			var request = new ChangeCreatureTemplateCommand()
+			{
+				Id = _creatureTemplate.Id,
+				GameId = _game.Id,
+				BodyTemplateId = _humanBodyTemplate.Id,
+				Name = "newCT",
+				Description = "description",
+				CreatureType = CreatureType.Cursed,
+				HP = 10,
+				Sta = 10,
+				Int = 6,
+				Ref = 7,
+				Dex = 8,
+				Body = 8,
+				Emp = 1,
+				Cra = 2,
+				Will = 5,
+				Speed = 7,
+				Luck = 1,
+			};
+
+			var newHandler = new ChangeCreatureTemplateHandler(_dbContext, AuthorizationService.Object);
+
+			var result = await newHandler.Handle(request, default);
+
+			Assert.IsNotNull(result);
+
+			var creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault(x => x.Id == request.Id);
+			Assert.IsNotNull(creatureTemplate);
+			Assert.IsTrue(_dbContext.CreatureTemplates.Count() == 1);
+
+			Assert.AreEqual(request.GameId, creatureTemplate.GameId);
+			Assert.IsNotNull(creatureTemplate.Name);
+			Assert.AreEqual(request.Name, creatureTemplate.Name);
+			Assert.AreEqual(request.Description, creatureTemplate.Description);
+			Assert.AreEqual(request.ImgFileId, creatureTemplate.ImgFileId);
+			Assert.AreEqual(request.BodyTemplateId, creatureTemplate.BodyTemplateId);
+			Assert.AreEqual(request.CreatureType, creatureTemplate.CreatureType);
+			Assert.AreEqual(request.HP, creatureTemplate.HP);
+			Assert.AreEqual(request.Sta, creatureTemplate.Sta);
+			Assert.AreEqual(request.Int, creatureTemplate.Int);
+			Assert.AreEqual(request.Ref, creatureTemplate.Ref);
+			Assert.AreEqual(request.Dex, creatureTemplate.Dex);
+			Assert.AreEqual(request.Body, creatureTemplate.Body);
+			Assert.AreEqual(request.Emp, creatureTemplate.Emp);
+			Assert.AreEqual(request.Cra, creatureTemplate.Cra);
+			Assert.AreEqual(request.Will, creatureTemplate.Will);
+			Assert.AreEqual(request.Speed, creatureTemplate.Speed);
+			Assert.AreEqual(request.Luck, creatureTemplate.Luck);
+
+			Assert.IsNotNull(creatureTemplate.CreatureTemplateParts);
+			Assert.AreEqual(6, creatureTemplate.CreatureTemplateParts.Count);
+
+			var head = creatureTemplate.CreatureTemplateParts.FirstOrDefault(x => x.BodyPartType == BodyPartType.Head);
+			Assert.IsNotNull(head);
+			Assert.AreEqual("Head", head.Name);
+			Assert.AreEqual(4, head.HitPenalty);
+			Assert.AreEqual(3, head.DamageModifier);
+			Assert.AreEqual(1, head.MaxToHit);
+			Assert.AreEqual(1, head.MinToHit);
+			Assert.AreEqual(0, head.Armor);
 		}
 	}
 }

@@ -29,8 +29,7 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.DeleteBodyTempla
 		/// </summary>
 		public void Validate()
 		{
-			if (string.IsNullOrEmpty(Name))
-				throw new RequestFieldNullException<DeleteBodyTemplateByIdCommand>(nameof(Name));
+			// Method intentionally left empty.
 		}
 	}
 }

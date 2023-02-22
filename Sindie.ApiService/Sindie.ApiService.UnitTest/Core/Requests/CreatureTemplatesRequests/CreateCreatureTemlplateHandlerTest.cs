@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.CreateCreatureTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.CreateCreatureTemplate;
@@ -53,41 +54,43 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		[TestMethod]
 		public async Task Handle_CreateCreatureTemplate_ShouldReturnUnit()
 		{
-			var request = new CreateCreatureTemplateCommand(
-				gameId: _game.Id,
-				imgFileId: _imgFile.Id,
-				bodyTemplateId: _bodyTemplate.Id,
-				name: "name",
-				description: "description",
-				creatureType: CreatureType.Human,
-				hp: 10,
-				sta: 10,
-				@int: 6,
-				@ref: 7,
-				dex: 8,
-				body: 8,
-				emp: 1,
-				cra: 2,
-				will: 5,
-				speed: 7,
-				luck: 1,
-				armorList: new List<CreateCreatureTemplateRequestArmorList>
+			var request = new CreateCreatureTemplateCommand()
+			{
+				GameId = _game.Id,
+				ImgFileId = _imgFile.Id,
+				BodyTemplateId = _bodyTemplate.Id,
+				Name = "name",
+				Description = "description",
+				CreatureType = CreatureType.Human,
+				HP = 10,
+				Sta = 10,
+				Int = 6,
+				Ref = 7,
+				Dex = 8,
+				Body = 8,
+				Emp = 1,
+				Cra = 2,
+				Will = 5,
+				Speed = 7,
+				Luck = 1,
+				ArmorList = new List<UpdateCreatureTemplateRequestArmorList>
 				{
-					new CreateCreatureTemplateRequestArmorList()
+					new UpdateCreatureTemplateRequestArmorList()
 					{
 						BodyTemplatePartId = _bodyTemplatePart.Id,
 						Armor = 4
 					}
 				},
-				abilities: new List<Guid> { _ability.Id },
-				creatureTemplateSkills: new List<CreateCreatureTemplateRequestSkill>
+				Abilities = new List<Guid> { _ability.Id },
+				CreatureTemplateSkills = new List<UpdateCreatureTemplateRequestSkill>
 				{
-					new CreateCreatureTemplateRequestSkill()
+					new UpdateCreatureTemplateRequestSkill()
 					{
 						Skill = Skill.Melee,
 						Value = 5
 					}
-				});
+				}
+			};
 
 			var newHandler = new CreateCreatureTemplateHandler(_dbContext, AuthorizationService.Object);
 
