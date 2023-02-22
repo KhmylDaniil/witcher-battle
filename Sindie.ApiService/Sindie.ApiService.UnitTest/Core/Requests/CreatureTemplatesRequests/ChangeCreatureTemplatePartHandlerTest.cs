@@ -1,10 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 using Sindie.ApiService.Core.Drafts.BodyTemplateDrafts;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.BodyTemplatePartRequests;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
 using System.Linq;
 using System.Threading.Tasks;

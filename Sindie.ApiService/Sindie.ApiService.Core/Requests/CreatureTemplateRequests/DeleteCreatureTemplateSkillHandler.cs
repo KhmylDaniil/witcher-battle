@@ -4,12 +4,12 @@ using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions;
-using Sindie.ApiService.Core.Requests;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 
-namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests
+namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
 {
 	public class DeleteCreatureTemplateSkillHandler : BaseHandler<DeleteCreatureTemplateSkillCommand, Unit>
 	{
