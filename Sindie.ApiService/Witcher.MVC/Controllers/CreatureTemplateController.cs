@@ -182,6 +182,27 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
+		[Route("[controller]/[action]/{gameId}/{creatureTemplateId}")]
+		public ActionResult EditDamageTypeModifier(ChangeDamageTypeModifierCommand command) => View(command);
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Route("[controller]/[action]/{gameId}/{creatureTemplateId}")]
+		public async Task<IActionResult> EditDamageTypeModifier(ChangeDamageTypeModifierCommand command, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await _mediator.SendValidated(command, cancellationToken);
+				return RedirectToAction(nameof(Details), new GetCreatureTemplateByIdQuery() { GameId = command.GameId, Id = command.CreatureTemplateId });
+			}
+			catch (RequestValidationException ex)
+			{
+				ViewData["ErrorMessage"] = ex.UserMessage;
+				return View(command);
+			}
+		}
+
+
 		/// <summary>
 		/// Создание модели представления для создания шаблона существа
 		/// </summary>

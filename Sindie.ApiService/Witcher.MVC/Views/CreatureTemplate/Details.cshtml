@@ -228,10 +228,10 @@
                 @Html.DisplayNameFor(model => model.DamageTypeModifiers.First().DamageType)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DamageTypeModifiers.First().Modifier)
+                @Html.DisplayNameFor(model => model.DamageTypeModifiers.First().DamageTypeModifier)
             </th>
             <th>
-                @Html.ActionLink("Add new skill", "EditSkill",
+                @Html.ActionLink("Add new damage type modifier", "EditDamageTypeModifier",
                 new { GameId = Model.GameId, CreatureTemplateId = Model.Id })
             </th>
         </tr>
@@ -244,12 +244,12 @@
                     @Html.DisplayFor(modelItem => item.DamageType)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Modifier)
+                    @Html.DisplayFor(modelItem => item.DamageTypeModifier)
                 </td>
                 <td>
-                    @Html.ActionLink("Change value", "EditSkill",
-                new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id, Skill = item.Skill, Value = item.SkillValue })
-                    | @Html.ActionLink("Delete", "DeleteSkill", new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id })
+                    @Html.ActionLink("Change value", "EditDamageTypeModifier",
+                new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id,
+                DamageType = item.DamageType, DamageTypeModifier = item.DamageTypeModifier })
                 </td>
             </tr>
         }

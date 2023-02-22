@@ -110,7 +110,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTe
 				{
 					Id = x.Id,
 					DamageType = x.DamageType,
-					Modifier = x.DamageTypeModifier
+					DamageTypeModifier = x.DamageTypeModifier
 				}).ToList(),
 			};
 		}

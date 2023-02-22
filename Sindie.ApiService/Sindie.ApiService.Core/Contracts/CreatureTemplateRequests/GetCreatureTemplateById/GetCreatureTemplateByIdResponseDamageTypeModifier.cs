@@ -20,6 +20,6 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// <summary>
 		/// Модификатор типа урона
 		/// </summary>
-		public BaseData.Enums.DamageTypeModifier Modifier { get; set; }
+		public BaseData.Enums.DamageTypeModifier DamageTypeModifier { get; set; }
 	}
 }

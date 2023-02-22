@@ -21,7 +21,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <param name="primaryEntityid"></param>
 		/// <param name="damageType"></param>
 		/// <param name="modifier"></param>
-		protected CreatureTemplateDamageTypeModifier(Guid primaryEntityid, DamageType damageType, DamageTypeModifier modifier)
+		public CreatureTemplateDamageTypeModifier(Guid primaryEntityid, DamageType damageType, DamageTypeModifier modifier)
 		{
 			PrimaryEntityid = primaryEntityid;
 			DamageType = damageType;
@@ -31,17 +31,17 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Тип урона
 		/// </summary>
-		public DamageType DamageType { get; protected set; }
+		public DamageType DamageType { get; set; }
 
 		/// <summary>
 		/// Модификатор урона
 		/// </summary>
-		public DamageTypeModifier DamageTypeModifier { get; protected set; }
+		public DamageTypeModifier DamageTypeModifier { get; set; }
 
 		/// <summary>
 		/// Айди первичной сущности
 		/// </summary>
-		public Guid PrimaryEntityid { get; protected set; }
+		public Guid PrimaryEntityid { get; set; }
 	}
 
 	/// <summary>
