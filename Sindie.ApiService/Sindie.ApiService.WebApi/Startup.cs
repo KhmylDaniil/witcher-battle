@@ -1,18 +1,23 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Sindie.ApiService.Core;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Services.Hasher;
+using Sindie.ApiService.Core.Services.Token;
 using Sindie.ApiService.Storage.Postgresql;
 using Sindie.ApiService.WebApi.ExseptionMiddelware;
 using Sindie.ApiService.WebApi.Services;
 using Sindie.ApiService.WebApi.Swagger;
 using Sindie.ApiService.WebApi.Versioning;
+using System.Collections.Generic;
 
 namespace Sindie.ApiService.WebApi
 {
@@ -42,11 +47,27 @@ namespace Sindie.ApiService.WebApi
 				: null;
 
 			services.AddPostgreSqlStorage(options, sqlLoggerFactory);
-			services.AddCore(hasherOptions);
+			services.AddCore(hasherOptions, AuthServer, AuthClient, AuthKey);
 			services.AddControllers();
 
 			services.AddCustomSwagger();
 			services.AddCustomApiVersioning();
+
+			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+				.AddJwtBearer(options =>
+				{
+					options.RequireHttpsMetadata = true;
+					options.TokenValidationParameters = new TokenValidationParameters
+					{
+						ValidateIssuer = true,
+						ValidIssuer = AuthServer,
+						ValidateAudience = true,
+						ValidAudience = AuthClient,
+						ValidateLifetime = true,
+						IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+						ValidateIssuerSigningKey = true,
+					};
+				});
 
 			services.AddHttpContextAccessor();
 			services.AddTransient<IUserContext, UserContext>();
@@ -57,6 +78,8 @@ namespace Sindie.ApiService.WebApi
 					.AllowAnyMethod()
 					.AllowAnyHeader();
 			}));
+
+			//services.AddRequestLogging();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

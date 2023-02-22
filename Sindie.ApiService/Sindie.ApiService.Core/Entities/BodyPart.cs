@@ -1,5 +1,4 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
 using static Sindie.ApiService.Core.BaseData.Enums;
 
@@ -8,7 +7,7 @@ namespace Sindie.ApiService.Core.Entities
 	/// <summary>
 	/// Часть тела - базовая
 	/// </summary>
-	public class BodyPart: EntityBase, IBodyTemplatePartData
+	public class BodyPart: EntityBase
 	{
 		private int _maxToHit;
 		private int _minToHit;

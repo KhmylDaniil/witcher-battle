@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplate;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplate;
@@ -39,15 +38,14 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 		[TestMethod]
 		public async Task Handle_ChangeBodyTemplate_ShouldReturnUnit()
 		{
-			var request = new ChangeBodyTemplateCommand()
-			{
-				Id = _bodyTemplate.Id,
-				GameId = _game.Id,
-				Name = "name",
-				Description = "description",
-				BodyTemplateParts = new List<UpdateBodyTemplateRequestItem>
+			var request = new ChangeBodyTemplateCommand(
+				id: _bodyTemplate.Id,
+				gameId: _game.Id,
+				name: "name",
+				description: "description",
+				bodyTemplateParts: new List<ChangeBodyTemplateRequestItem>
 				{
-					new UpdateBodyTemplateRequestItem()
+					new ChangeBodyTemplateRequestItem()
 					{
 						Name = "head",
 						BodyPartType = BodyPartType.Head,
@@ -56,7 +54,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 						MinToHit = 1,
 						MaxToHit = 5
 					},
-					new UpdateBodyTemplateRequestItem()
+					new ChangeBodyTemplateRequestItem()
 					{
 						Name = "body",
 						BodyPartType= BodyPartType.Torso,
@@ -65,8 +63,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 						MinToHit = 6,
 						MaxToHit = 10
 					}
-				}
-			};
+				});
 
 			var newHandler = new ChangeBodyTemplateHandler(_dbContext, AuthorizationService.Object);
 
@@ -85,18 +82,18 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 			var head = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Name == "head");
 			Assert.IsNotNull(head);
 			Assert.AreEqual(head.BodyPartType, BodyPartType.Head);
-			Assert.AreEqual(2, head.DamageModifier);
-			Assert.AreEqual(3, head.HitPenalty);
-			Assert.AreEqual(1, head.MinToHit);
-			Assert.AreEqual(5, head.MaxToHit);
+			Assert.AreEqual(head.DamageModifier, 2);
+			Assert.AreEqual(head.HitPenalty, 3);
+			Assert.AreEqual(head.MinToHit, 1);
+			Assert.AreEqual(head.MaxToHit, 5);
 
 			var body = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Name == "body");
 			Assert.IsNotNull(body);
 			Assert.AreEqual(body.BodyPartType, BodyPartType.Torso);
-			Assert.AreEqual(2, body.DamageModifier);
-			Assert.AreEqual(2, body.HitPenalty);
-			Assert.AreEqual(6, body.MinToHit);
-			Assert.AreEqual(10, body.MaxToHit);
+			Assert.AreEqual(body.DamageModifier, 2);
+			Assert.AreEqual(body.HitPenalty, 2);
+			Assert.AreEqual(body.MinToHit, 6);
+			Assert.AreEqual(body.MaxToHit, 10);
 		}
 	}
 }

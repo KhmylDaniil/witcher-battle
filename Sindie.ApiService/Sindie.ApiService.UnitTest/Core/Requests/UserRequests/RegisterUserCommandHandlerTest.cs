@@ -58,7 +58,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 
 			//Arrange
 			var registerUserCommandHandler = new RegisterUserCommandHandler
-				(context, AuthorizationService.Object, passwordHasherMock.Object, HasUsersWithLogin);
+				(context, passwordHasherMock.Object, HasUsersWithLogin);
 
 			//Act
 			var result = await registerUserCommandHandler.Handle(request, default);
@@ -77,6 +77,24 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
 				.FirstOrDefaultAsync(x => x.Login == login);
 			Assert.IsNotNull(userName?.User?.Name);
 			Assert.AreEqual(name, userName.User.Name);
+		}
+
+		/// <summary>
+		/// Тест метода Handle( - регистрации пользователя
+		/// - он должен генерировать исключение в случае если пришел пустой запрос
+		/// </summary>
+		/// <returns></returns>
+		[TestMethod]
+		public async Task Handle_ByLoginUserCommandHandler_ShouldThrowArgumentNullException()
+		{
+			RegisterUserCommand request = null;
+
+			//Arrange
+			var registerUserCommandHandler = new RegisterUserCommandHandler(default, default, HasUsersWithLogin);
+
+			//Assert
+			await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () =>
+				 await registerUserCommandHandler.Handle(request, default));
 		}
 	}
 }

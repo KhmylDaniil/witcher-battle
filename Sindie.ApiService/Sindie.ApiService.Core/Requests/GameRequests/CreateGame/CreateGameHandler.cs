@@ -15,8 +15,13 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 	/// <summary>
 	/// Обработчик команды создания игры
 	/// </summary>
-	public class CreateGameHandler : BaseHandler<CreateGameCommand, Unit>
+	public class CreateGameHandler : IRequestHandler<CreateGameCommand, Unit>
 	{
+		/// <summary>
+		/// Контекст базы данных
+		/// </summary>
+		private readonly IAppDbContext _appDbContext;
+
 		/// <summary>
 		/// Интерфейс получения данных пользователя из веба
 		/// </summary>
@@ -27,8 +32,6 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 		/// </summary>
 		private readonly IChangeListService _changeListService;
 
-
-
 		/// <summary>
 		/// Конструктор обработчика команды регистрации пользователя
 		/// </summary>
@@ -37,11 +40,10 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 		/// <param name="changeListService">Сервис изменения списков графических и текстовых файлов</param>
 		public CreateGameHandler(
 			IAppDbContext appDbContext,
-			IAuthorizationService authorizationService,
 			IUserContext userContext,
 			IChangeListService changeListService)
-			: base(appDbContext, authorizationService)
 		{
+			_appDbContext = appDbContext;
 			_userContext = userContext;
 			_changeListService = changeListService;
 		}
@@ -52,27 +54,32 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены запроса</param>
 		/// <returns></returns>
-		public override async Task<Unit> Handle(CreateGameCommand request, CancellationToken cancellationToken)
+		public async Task<Unit> Handle(CreateGameCommand request, CancellationToken cancellationToken)
 		{
+			if (request is null)
+				throw new ExceptionRequestNull<CreateGameCommand>();
+
+			if (string.IsNullOrWhiteSpace(request.Name))
+				throw new ExceptionRequestFieldNull<CreateGameCommand>($"{nameof(request.Name)}");
 
 			if (await _appDbContext.Games.AnyAsync(x => x.Name == request.Name, cancellationToken))
-				throw new RequestNameNotUniqException<CreateGameCommand>(nameof(request.Name));
+				throw new ExceptionRequestNameNotUniq<CreateGameCommand>(nameof(request.Name));
 
 			var currentUser = await _appDbContext.Users
 				.FirstOrDefaultAsync(u => u.Id == _userContext.CurrentUserId, cancellationToken)
-				?? throw new RequestNullException<User>("Текущий пользователь не найден");
+				?? throw new ExceptionRequestNull<User>("Текущий пользователь не найден");
 
 			var currentMasterRole = await _appDbContext.GameRoles
 				.FirstOrDefaultAsync(u => u.Name == GameRoles.MasterRoleName, cancellationToken)
-				?? throw new RequestNullException<GameRole>("Роль мастера не найдена");
+				?? throw new ExceptionRequestNull<GameRole>("Роль мастера не найдена");
 
 			var currentMainMasterRole = await _appDbContext.GameRoles
 				.FirstOrDefaultAsync(u => u.Name == GameRoles.MainMasterRoleName, cancellationToken)
-				?? throw new RequestNullException<GameRole>("Роль главного мастера не найдена");
+				?? throw new ExceptionRequestNull<GameRole>("Роль главного мастера не найдена");
 
 			var currentGameInterface = await _appDbContext.Interfaces
 				.FirstOrDefaultAsync(u => u.Name == SystemInterfaces.GameDarkName, cancellationToken)
-				?? throw new RequestNullException<Interface>("Интерфейс не найден");
+				?? throw new ExceptionRequestNull<Interface>("Интерфейс не найден");
 
 			var avatar = request.AvatarId == null
 				? null

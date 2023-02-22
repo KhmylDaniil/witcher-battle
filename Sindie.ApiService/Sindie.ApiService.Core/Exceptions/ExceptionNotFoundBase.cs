@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace Sindie.ApiService.Core.Exceptions
+﻿namespace Sindie.ApiService.Core.Exceptions
 {
 	/// <summary>
 	/// Исключение ничего не найдено (код 404 Not Found)
 	/// </summary>
-	public class ExceptionNotFoundBase : ArgumentException
+	public class ExceptionNotFoundBase : ExceptionApplicationBase
 	{
 		/// <summary>
 		/// Конструктор исключения ничего не найдено

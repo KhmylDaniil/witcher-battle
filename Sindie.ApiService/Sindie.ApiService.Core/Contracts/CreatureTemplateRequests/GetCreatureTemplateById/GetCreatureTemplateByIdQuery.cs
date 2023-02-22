@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Sindie.ApiService.Core.Abstractions;
 using System;
 
 namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplateById
@@ -7,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 	/// <summary>
 	/// Запрос шаблона существа по айди
 	/// </summary>
-	public class GetCreatureTemplateByIdQuery: IValidatableCommand<GetCreatureTemplateByIdResponse>
+	public class GetCreatureTemplateByIdQuery: IRequest<GetCreatureTemplateByIdResponse>
 	{
 		/// <summary>
 		/// Айди игры
@@ -18,10 +17,5 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
-
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

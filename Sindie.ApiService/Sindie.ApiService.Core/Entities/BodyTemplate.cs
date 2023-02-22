@@ -1,7 +1,8 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sindie.ApiService.Core.Entities
 {
@@ -31,12 +32,12 @@ namespace Sindie.ApiService.Core.Entities
 			Game game,
 			string name,
 			string description,
-			IEnumerable<IBodyTemplatePartData> bodyTemplateParts)
+			List<BodyTemplatePartsData> bodyTemplateParts)
 		{
 			Game = game;
 			Name = name;
 			Description = description;
-			CreateBodyTemplateParts(bodyTemplateParts);
+			BodyTemplateParts = CreateBodyTemplateParts(bodyTemplateParts);
 		}
 
 		/// <summary>
@@ -116,12 +117,13 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		/// <param name="bodyTemplateParts">Данные для списка шаблонов частей тела</param>
 		/// <returns>Список шаблонов частей тела</returns>
-		public void CreateBodyTemplateParts(IEnumerable<IBodyTemplatePartData> bodyTemplateParts)
+		public List<BodyTemplatePart> CreateBodyTemplateParts(
+			List<BodyTemplatePartsData> bodyTemplateParts)
 		{
-			BodyTemplateParts = new List<BodyTemplatePart>();
+			var result = new List<BodyTemplatePart>();
 			
 			foreach (var part in bodyTemplateParts)
-				BodyTemplateParts.Add(new BodyTemplatePart(
+				result.Add(new BodyTemplatePart(
 					bodyTemplate: this,
 					bodyPartType: part.BodyPartType,
 					name: part.Name,
@@ -129,6 +131,7 @@ namespace Sindie.ApiService.Core.Entities
 					hitPenalty: part.HitPenalty,
 					minToHit: part.MinToHit,
 					maxToHit: part.MaxToHit));
+			return result;
 		}
 
 		/// <summary>
@@ -142,15 +145,14 @@ namespace Sindie.ApiService.Core.Entities
 			Game game,
 			string name,
 			string description,
-			IEnumerable<IBodyTemplatePartData> bodyTemplateParts)
+			List<BodyTemplatePartsData> bodyTemplateParts)
 		{
 			Game = game;
 			Name = name;
 			Description = description;
-
-			if (bodyTemplateParts == null) return;
-			
-			CreateBodyTemplateParts(bodyTemplateParts);
+			if (BodyTemplateParts.Any())
+				BodyTemplateParts.Clear();
+			BodyTemplateParts = CreateBodyTemplateParts(bodyTemplateParts);
 		}
 	}
 }

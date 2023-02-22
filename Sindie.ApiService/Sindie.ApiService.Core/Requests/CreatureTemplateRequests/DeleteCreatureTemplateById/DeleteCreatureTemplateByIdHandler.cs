@@ -15,10 +15,27 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.DeleteCreatur
 	/// <summary>
 	/// Обработчик удаления шаблона существа по айди
 	/// </summary>
-	public class DeleteCreatureTemplateByIdHandler : BaseHandler<DeleteCreatureTemplateByIdCommand, Unit>
+	public class DeleteCreatureTemplateByIdHandler : IRequestHandler<DeleteCreatureTemplateByIdCommand>
 	{
-		public DeleteCreatureTemplateByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
+		/// <summary>
+		/// Контекст базы данных
+		/// </summary>
+		private readonly IAppDbContext _appDbContext;
+
+		/// <summary>
+		/// Сервис авторизации
+		/// </summary>
+		private readonly IAuthorizationService _authorizationService;
+
+		/// <summary>
+		/// Конструктор обработчика удаления шаблона существа по айди
+		/// </summary>
+		/// <param name="appDbContext"></param>
+		/// <param name="authorizationService"></param>
+		public DeleteCreatureTemplateByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 		{
+			_appDbContext = appDbContext;
+			_authorizationService = authorizationService;
 		}
 
 		/// <summary>
@@ -27,7 +44,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.DeleteCreatur
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		public override async Task<Unit> Handle(DeleteCreatureTemplateByIdCommand request, CancellationToken cancellationToken)
+		public async Task<Unit> Handle(DeleteCreatureTemplateByIdCommand request, CancellationToken cancellationToken)
 		{
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
@@ -38,7 +55,7 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests.DeleteCreatur
 				?? throw new ExceptionEntityNotFound<CreatureTemplate>(request.Id);
 
 			game.CreatureTemplates.Remove(creatureTemplate);
-			await _appDbContext.SaveChangesAsync(cancellationToken);
+			await _appDbContext.SaveChangesAsync();
 			return Unit.Value;
 		}
 	}

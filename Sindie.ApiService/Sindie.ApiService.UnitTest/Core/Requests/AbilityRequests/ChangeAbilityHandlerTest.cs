@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.AbilityRequests;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility;
@@ -41,28 +40,26 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		[TestMethod]
 		public async Task Handle_ChangeAbility_ShouldReturnUnit()
 		{
-			var request = new ChangeAbilityCommand()
-			{
-				Id = _ability.Id,
-				GameId = _game.Id,
-				Name = "newName",
-				Description = "newDescription",
-				AttackDiceQuantity = 2,
-				DamageModifier = 4,
-				AttackSpeed = 1,
-				Accuracy = 1,
-				AttackSkill = Skill.Staff,
-				DefensiveSkills = new List<Skill> { Skill.Dodge },
-				DamageType = DamageType.Piercing,
-				AppliedConditions = new List<UpdateAbilityCommandItemAppledCondition>
+			var request = new ChangeAbilityCommand(
+				id: _ability.Id,
+				gameId: _game.Id,
+				name: "newName",
+				description: "newDescription",
+				attackDiceQuantity: 2,
+				damageModifier: 4,
+				attackSpeed: 1,
+				accuracy: 1,
+				attackSkill: Skill.Staff,
+				defensiveSkills: new List<Skill> { Skill.Dodge },
+				damageType: DamageType.Piercing,
+				appliedConditions: new List<ChangeAbilityRequestAppliedCondition>
 				{
-					new UpdateAbilityCommandItemAppledCondition()
+					new ChangeAbilityRequestAppliedCondition()
 					{
 						Condition = Condition.Bleed,
 						ApplyChance = 50
 					}
-				}
-			};
+				});
 
 			var newHandler = new ChangeAbilityHandler(_dbContext, AuthorizationService.Object);
 

@@ -1,6 +1,5 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.AbilityRequests;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+using Sindie.ApiService.Core.Requests.AbilityRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -192,7 +191,7 @@ namespace Sindie.ApiService.Core.Entities
 			Skill attackSkill,
 			DamageType damageType,
 			List<Skill> defensiveSkills,
-			IEnumerable<UpdateAbilityCommandItemAppledCondition> appliedConditions)
+			List<AppliedConditionData> appliedConditions)
 		{
 			var ability = new Ability(
 				game: game,
@@ -205,7 +204,7 @@ namespace Sindie.ApiService.Core.Entities
 				accuracy: accuracy,
 				damageType: damageType);
 
-			ability.UpdateDefensiveSkills(defensiveSkills ?? Drafts.AbilityDrafts.DefensiveSkillsDrafts.BaseDefensiveSkills);
+			ability.UpdateDefensiveSkills(defensiveSkills);
 			ability.UpdateAplliedConditions(appliedConditions);
 
 			return ability;
@@ -234,7 +233,7 @@ namespace Sindie.ApiService.Core.Entities
 			int accuracy,
 			DamageType damageType,
 			List<Skill> defensiveSkills,
-			IEnumerable<UpdateAbilityCommandItemAppledCondition> appliedConditions)
+			List<AppliedConditionData> appliedConditions)
 		{
 			Name = name;
 			Description = description;
@@ -244,10 +243,7 @@ namespace Sindie.ApiService.Core.Entities
 			AttackSpeed = attackSpeed;
 			Accuracy = accuracy;
 			DamageType = damageType;
-
-			if (defensiveSkills != null)
-				UpdateDefensiveSkills(defensiveSkills);
-
+			UpdateDefensiveSkills(defensiveSkills);
 			UpdateAplliedConditions(appliedConditions);
 		}
 
@@ -255,16 +251,16 @@ namespace Sindie.ApiService.Core.Entities
 		/// Обновление списка применяемых состояний
 		/// </summary>
 		/// <param name="data">Данные</param>
-		private void UpdateAplliedConditions(IEnumerable<UpdateAbilityCommandItemAppledCondition> data)
+		private void UpdateAplliedConditions(List<AppliedConditionData> data)
 		{
 			if (data == null)
-				return;
+				throw new ApplicationException("Не переданы данные для обновления накладываемых состояний");
 
 			if (AppliedConditions == null)
 				throw new ExceptionFieldOutOfRange<Ability>(nameof(AppliedConditions));
 
 			var entitiesToDelete = AppliedConditions.Where(x => !data
-				.Any(y => y.Id == x.Id)).ToList();
+				.Any(y => y.AppliedConditionId == x.Id)).ToList();
 
 			if (entitiesToDelete.Any())
 				foreach (var entity in entitiesToDelete)
@@ -275,7 +271,7 @@ namespace Sindie.ApiService.Core.Entities
 
 			foreach (var dataItem in data)
 			{
-				var appliedCondition = AppliedConditions.FirstOrDefault(x => x.Id == dataItem.Id);
+				var appliedCondition = AppliedConditions.FirstOrDefault(x => x.Id == dataItem.AppliedConditionId);
 				if (appliedCondition == null)
 					AppliedConditions.Add(
 						AppliedCondition.CreateAppliedCondition(
@@ -352,7 +348,7 @@ namespace Sindie.ApiService.Core.Entities
 				Creatures = new List<Creature>(),
 				AppliedConditions = new List<AppliedCondition>()
 			};
-			ability.UpdateDefensiveSkills(defensiveSkills ?? Drafts.AbilityDrafts.DefensiveSkillsDrafts.BaseDefensiveSkills);
+			ability.UpdateDefensiveSkills(defensiveSkills ?? new List<Skill>() { Skill.Melee });
 			return ability;
 		}
 	}

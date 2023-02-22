@@ -18,9 +18,28 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.DeleteAbilityById
 	/// <summary>
 	/// Обработчик удаления способности
 	/// </summary>
-	public class DeleteAbilityByIdHandler : BaseHandler<DeleteAbilityByIdCommand, Unit>
+	public class DeleteAbilityByIdHandler : IRequestHandler<DeleteAbilityByIdCommand>
 	{
-		public DeleteAbilityByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
+		/// <summary>
+		/// Контекст базы данных
+		/// </summary>
+		private readonly IAppDbContext _appDbContext;
+
+		/// <summary>
+		/// Сервис авторизации
+		/// </summary>
+		private readonly IAuthorizationService _authorizationService;
+
+		/// <summary>
+		/// Конструктор обработчика удаления способности
+		/// </summary>
+		/// <param name="appDbContext"></param>
+		/// <param name="authorizationService"></param>
+		public DeleteAbilityByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
+		{
+			_appDbContext = appDbContext;
+			_authorizationService = authorizationService;
+		}
 
 		/// <summary>
 		/// Удаление способности
@@ -28,10 +47,10 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.DeleteAbilityById
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		public override async Task<Unit> Handle(DeleteAbilityByIdCommand request, CancellationToken cancellationToken)
+		public async Task<Unit> Handle(DeleteAbilityByIdCommand request, CancellationToken cancellationToken)
 		{
 			if (request == null)
-				throw new RequestNullException<DeleteAbilityByIdCommand>();
+				throw new ExceptionRequestNull<DeleteAbilityByIdCommand>();
 
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.Abilities.Where(x => x.Id == request.Id))

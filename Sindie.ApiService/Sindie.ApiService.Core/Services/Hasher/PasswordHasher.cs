@@ -33,7 +33,7 @@ namespace Sindie.ApiService.Core.Services.Hasher
 		public string Hash(string password)
 		{
 			if (password == null)
-				throw new ArgumentException("Пустое поле пароль.");
+				throw new ExceptionApplicationBase("Пустое поле пароль.");
 
 			byte[] Salt = Encoding.ASCII.GetBytes(_salt);
 
@@ -56,9 +56,9 @@ namespace Sindie.ApiService.Core.Services.Hasher
 		public bool VerifyHash(string password, string hash)
 		{
 			if (password == null)
-				throw new ArgumentException("Пустое поле пароль.");
+				throw new ExceptionApplicationBase("Пустое поле пароль.");
 			if (hash == null)
-				throw new ArgumentException("Пустое поле хешированый пароль.");
+				throw new ExceptionApplicationBase("Пустое поле хешированый пароль.");
 
 			return string.Equals(hash, Hash(password), StringComparison.Ordinal);
 		}

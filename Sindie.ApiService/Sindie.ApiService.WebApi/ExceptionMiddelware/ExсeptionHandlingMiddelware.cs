@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Sindie.ApiService.Core.Exceptions;
+using Sindie.ApiService.Core.Exceptions.ScryptExceptions;
+using Sindie.ApiService.Core.Exceptions.UnauthorizedExceptions;
 using System;
 using System.Threading.Tasks;
 
@@ -56,7 +58,7 @@ namespace Sindie.ApiService.WebApi.ExseptionMiddelware
 			{
 				await ProcessException(context, ex, 420);
 			}
-			catch (ArgumentException ex)
+			catch (ExceptionApplicationBase ex)
 			{
 				await ProcessException(context, ex, 400);
 			}

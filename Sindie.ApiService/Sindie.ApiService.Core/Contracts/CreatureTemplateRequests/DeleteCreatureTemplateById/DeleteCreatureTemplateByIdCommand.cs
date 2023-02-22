@@ -1,6 +1,4 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAbilitybyId;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+﻿using MediatR;
 using System;
 
 namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.DeleteCreatureTemplateById
@@ -8,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.DeleteCreatu
 	/// <summary>
 	/// Команда на удаление шаблона существа по айди
 	/// </summary>
-	public sealed class DeleteCreatureTemplateByIdCommand: IValidatableCommand
+	public sealed class DeleteCreatureTemplateByIdCommand: IRequest
 	{
 		/// <summary>
 		/// Айди игры
@@ -19,18 +17,5 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.DeleteCreatu
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
-
-		/// <summary>
-		/// Название
-		/// </summary>
-		public string Name { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

@@ -4,26 +4,22 @@ using static Sindie.ApiService.Core.BaseData.Enums;
 namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 {
 	/// <summary>
-	/// Элемент ответа на запрос на получение списка способностей
+	/// Элемент ответа на запрос списка способностей
 	/// </summary>
-	public class GetAbilityResponseItem
+	public sealed class GetAbilityResponseItem
 	{
 		/// <summary>
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
-		/// <summary>
-		/// Айди игры
-		/// </summary>
-		public Guid GameId { get; set; }
 
 		/// <summary>
-		/// Наазвание способности
+		/// Название
 		/// </summary>
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Описание способности
+		/// Описание
 		/// </summary>
 		public string Description { get; set; }
 
@@ -31,31 +27,16 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 		/// Навык атаки
 		/// </summary>
 		public Skill AttackSkill { get; set; }
-
-		/// <summary>
-		/// Тип урона
-		/// </summary>
-		public DamageType DamageType { get; set; }
-
+		
 		/// <summary>
 		/// Количество кубов атаки
 		/// </summary>
 		public int AttackDiceQuantity { get; set; }
 
 		/// <summary>
-		/// Модификатор атаки
+		/// Модификатор урона
 		/// </summary>
 		public int DamageModifier { get; set; }
-
-		/// <summary>
-		/// Скорость атаки
-		/// </summary>
-		public int AttackSpeed { get; set; }
-
-		/// <summary>
-		/// Точность атаки
-		/// </summary>
-		public int Accuracy { get; set; }
 
 		/// <summary>
 		/// Дата создания
@@ -66,5 +47,15 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 		/// Дата изменения
 		/// </summary>
 		public DateTime ModifiedOn { get; set; }
+
+		/// <summary>
+		/// Айди создавшего пользователя
+		/// </summary>
+		public Guid CreatedByUserId { get; set; }
+
+		/// <summary>
+		/// Айди изменившего пользователя
+		/// </summary>
+		public Guid ModifiedByUserId { get; set; }
 	}
 }

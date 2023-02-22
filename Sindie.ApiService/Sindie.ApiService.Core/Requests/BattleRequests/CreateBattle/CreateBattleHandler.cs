@@ -90,7 +90,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle
 		private void CheckRequest(CreateBattleCommand request, Game game)
 		{
 			if (game.Battles.Any(x => x.Name == request.Name))
-				throw new RequestNameNotUniqException<CreateBattleCommand>(nameof(request.Name));
+				throw new ExceptionRequestNameNotUniq<CreateBattleCommand>(nameof(request.Name));
 
 			foreach (var item in request.Creatures)
 			{
@@ -98,7 +98,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle
 					?? throw new ExceptionEntityNotFound<CreatureTemplate>(item.CreatureTemplateId);
 
 				if (string.IsNullOrEmpty(item.Name))
-					throw new RequestFieldNullException<CreateBattleRequestItem>(nameof(item.Name));
+					throw new ExceptionRequestFieldNull<CreateBattleRequestItem>(nameof(item.Name));
 
 				if (request.Creatures.Where(x => x.Name == item.Name).Count() != 1)
 					throw new ApplicationException($"Значения в поле {nameof(item.Name)} повторяются");

@@ -15,11 +15,6 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		public Guid GameId { get; set; }
 
 		/// <summary>
-		/// Айди
-		/// </summary>
-		public Guid Id { get; set; }
-
-		/// <summary>
 		/// Айди графического файла
 		/// </summary>
 		public Guid? ImgFileId { get; set; }
@@ -133,10 +128,5 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// Способности
 		/// </summary>
 		public List<GetCreatureTemplateByIdResponseAbility> Abilities { get; set; }
-
-		/// <summary>
-		/// Модификаторы урона
-		/// </summary>
-		public List<GetCreatureTemplateByIdResponseDamageTypeModifier> DamageTypeModifiers { get; set; }
 	}
 }

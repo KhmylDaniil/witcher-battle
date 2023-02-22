@@ -41,10 +41,21 @@ namespace Sindie.ApiService.WebApi.Controllers
 		[SwaggerResponse(StatusCodes.Status200OK, type: typeof(RegisterUserCommandResponse))]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
 		public async Task<RegisterUserCommandResponse> Register(
-			[FromQuery] RegisterUserCommand request,
+			[FromQuery] RegisterUserRequest request,
 			CancellationToken cancellationToken)
 		{
-			return await _mediator.Send(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
+			return await _mediator.Send(
+				request == null
+				? new RegisterUserCommand()
+				: new RegisterUserCommand(request)
+				{
+					Name = request.Name,
+					Email = request.Email,
+					Phone = request.Phone,
+					Login = request.Login,
+					Password = request.Password
+				},
+				cancellationToken);
 		}
 
 		/// <summary>

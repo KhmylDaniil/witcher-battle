@@ -1,4 +1,4 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using MediatR;
 using System;
 
 namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById
@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateB
 	/// <summary>
 	/// Запрос шаблона тела по айди
 	/// </summary>
-	public class GetBodyTemplateByIdQuery: IValidatableCommand<GetBodyTemplateByIdResponse>
+	public class GetBodyTemplateByIdQuery: IRequest<GetBodyTemplateByIdResponse>
 	{
 		/// <summary>
 		/// Айди игры
@@ -17,10 +17,5 @@ namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateB
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
-
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

@@ -15,10 +15,27 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplateBy
 	/// <summary>
 	/// Запрос шаблона тела по айди
 	/// </summary>
-	public class GetBodyTemplateByIdHandler : BaseHandler<GetBodyTemplateByIdQuery, GetBodyTemplateByIdResponse>
+	public class GetBodyTemplateByIdHandler : IRequestHandler<GetBodyTemplateByIdQuery, GetBodyTemplateByIdResponse>
 	{
-		public GetBodyTemplateByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
+		/// <summary>
+		/// Контекст базы данных
+		/// </summary>
+		private readonly IAppDbContext _appDbContext;
+
+		/// <summary>
+		/// Сервис авторизации
+		/// </summary>
+		private readonly IAuthorizationService _authorizationService;
+
+		/// <summary>
+		/// Конструктор обработчика запроса шаблона тела по айди
+		/// </summary>
+		/// <param name="appDbContext"></param>
+		/// <param name="authorizationService"></param>
+		public GetBodyTemplateByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 		{
+			_appDbContext = appDbContext;
+			_authorizationService = authorizationService;
 		}
 
 		/// <summary>
@@ -27,10 +44,10 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplateBy
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		public override async Task<GetBodyTemplateByIdResponse> Handle(GetBodyTemplateByIdQuery request, CancellationToken cancellationToken)
+		public async Task<GetBodyTemplateByIdResponse> Handle(GetBodyTemplateByIdQuery request, CancellationToken cancellationToken)
 		{
 			if (request == null)
-				throw new RequestNullException<GetBodyTemplateByIdQuery>();
+				throw new ExceptionRequestNull<GetBodyTemplateByIdQuery>();
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
 				.Include(x => x.BodyTemplates.Where(x => x.Id == request.Id))

@@ -1,8 +1,5 @@
 ﻿using MediatR;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate;
-using Sindie.ApiService.Core.Exceptions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+using Sindie.ApiService.Core.BaseData;
 using System;
 
 namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplate
@@ -10,7 +7,7 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 	/// <summary>
 	/// Запрос на получение списка шаблонов существа
 	/// </summary>
-	public class GetCreatureTemplateQuery : GetBaseQuery, IValidatableCommand<GetCreatureTemplateResponse>
+	public class GetCreatureTemplateQuery : GetBaseQuery, IRequest<GetCreatureTemplateResponse>
 	{
 		/// <summary>
 		/// Айди игры
@@ -66,14 +63,5 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureT
 		/// фильтр по названию накладываемого состояния
 		/// </summary>
 		public string ConditionName { get; set; }
-
-		public void Validate()
-		{
-			if (CreationMaxTime != default && CreationMinTime >= CreationMaxTime)
-				throw new RequestFieldIncorrectDataException<GetCreatureTemplateQuery>(nameof(CreationMaxTime));
-
-			if (ModificationMaxTime != default && ModificationMinTime >= ModificationMaxTime)
-				throw new RequestFieldIncorrectDataException<GetCreatureTemplateQuery>(nameof(ModificationMaxTime));
-		}
 	}
 }

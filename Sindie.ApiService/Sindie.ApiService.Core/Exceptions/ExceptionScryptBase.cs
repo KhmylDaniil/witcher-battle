@@ -7,7 +7,7 @@ namespace Sindie.ApiService.Core.Exceptions
 	/// <summary>
 	/// Базовое исключение скрипта (код 420) код ошибки с потолка 
 	/// </summary>
-	public class ExceptionScryptBase : ArgumentException
+	public class ExceptionScryptBase : ExceptionApplicationBase
 	{
 		/// <summary>
 		/// Конструктор базового исключения скрипта

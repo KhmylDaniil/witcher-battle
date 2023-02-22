@@ -3,40 +3,57 @@ using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
-using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.ExtensionMethods;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 {
-	public class GetAbilityHandler : BaseHandler<GetAbilityQuery, IEnumerable<GetAbilityResponseItem>>
+	public class GetAbilityHandler : IRequestHandler<GetAbilityCommand, GetAbilityResponse>
 	{
+		/// <summary>
+		/// Контекст базы данных
+		/// </summary>
+		private readonly IAppDbContext _appDbContext;
+
+		/// <summary>
+		/// Сервис авторизации
+		/// </summary>
+		private readonly IAuthorizationService _authorizationService;
+
 		/// <summary>
 		/// Провайдер времени
 		/// </summary>
 		private readonly IDateTimeProvider _dateTimeProvider;
 
-		public GetAbilityHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IDateTimeProvider dateTimeProvider)
-			: base(appDbContext, authorizationService)
+		/// <summary>
+		/// Конструктор обработчика команды получения списка шаблонов тела
+		/// </summary>
+		/// <param name="appDbContext">Контекст базы данных</param>
+		/// <param name="authorizationService">Сервис авторизации</param>
+		public GetAbilityHandler(
+			IAppDbContext appDbContext,
+			IAuthorizationService authorizationService,
+			IDateTimeProvider dateTimeProvider)
 		{
+			_appDbContext = appDbContext;
+			_authorizationService = authorizationService;
 			_dateTimeProvider = dateTimeProvider;
 		}
 
-		public override async Task<IEnumerable<GetAbilityResponseItem>> Handle(GetAbilityQuery request, CancellationToken cancellationToken)
+		public async Task<GetAbilityResponse> Handle(GetAbilityCommand request, CancellationToken cancellationToken)
 		{
 			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
-				throw new ArgumentOutOfRangeException(nameof(GetAbilityQuery.CreationMinTime));
+				throw new ArgumentOutOfRangeException(nameof(GetAbilityCommand.CreationMinTime));
 			if (request.ModificationMinTime > _dateTimeProvider.TimeProvider)
-				throw new ArgumentOutOfRangeException(nameof(GetAbilityQuery.ModificationMinTime));
+				throw new ArgumentOutOfRangeException(nameof(GetAbilityCommand.ModificationMinTime));
 
 			if (request.CreationMaxTime != default && request.CreationMinTime >= request.CreationMaxTime)
-				throw new ArgumentOutOfRangeException(nameof(GetAbilityQuery.CreationMaxTime));
+				throw new ArgumentOutOfRangeException(nameof(GetAbilityCommand.CreationMaxTime));
 			if (request.ModificationMaxTime != default && request.ModificationMinTime >= request.ModificationMaxTime)
-				throw new ArgumentOutOfRangeException(nameof(GetAbilityQuery.ModificationMaxTime));
+				throw new ArgumentOutOfRangeException(nameof(GetAbilityCommand.ModificationMaxTime));
 
 			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(g => g.Abilities)
@@ -64,19 +81,18 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 				.Select(x => new GetAbilityResponseItem()
 				{
 					Id = x.Id,
-					GameId = x.GameId,
 					Name = x.Name,
 					Description = x.Description,
+					AttackSkill = x.AttackSkill,
 					AttackDiceQuantity = x.AttackDiceQuantity,
 					DamageModifier = x.DamageModifier,
-					AttackSpeed = x.AttackSpeed,
-					Accuracy = x.Accuracy,
-					AttackSkill = x.AttackSkill,
-					DamageType = x.DamageType
-				})
-				.ToListAsync(cancellationToken);
+					CreatedByUserId = x.CreatedByUserId,
+					ModifiedByUserId = x.ModifiedByUserId,
+					CreatedOn = x.CreatedOn,
+					ModifiedOn = x.ModifiedOn
+				}).ToListAsync(cancellationToken);
 
-			return list;
+			return new GetAbilityResponse { AbilitiesList = list, TotalCount = list.Count };
 		}
 	}
 }

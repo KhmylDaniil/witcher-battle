@@ -34,10 +34,10 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer
 			TargetId = targetId;
 			AbilityId = abilityId;
 			DamageValue = damageValue < 0
-				? throw new RequestFieldIncorrectDataException<MonsterSufferRequest>(nameof(DamageValue))
+				? throw new ExceptionRequestFieldIncorrectData<MonsterSufferRequest>(nameof(DamageValue))
 				: damageValue;
 			SuccessValue = successValue < 1
-				? throw new RequestFieldIncorrectDataException<MonsterSufferRequest>(nameof(SuccessValue))
+				? throw new ExceptionRequestFieldIncorrectData<MonsterSufferRequest>(nameof(SuccessValue))
 				: successValue;
 			CreaturePartId = creaturePartId;
 		}

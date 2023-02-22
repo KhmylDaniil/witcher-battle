@@ -57,7 +57,7 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 		public async Task<Unit> Handle(DeleteUserGameCommand request, CancellationToken cancellationToken)
 		{
 			if (request == null)
-				throw new RequestNullException<DeleteUserGameCommand>();
+				throw new ExceptionRequestNull<DeleteUserGameCommand>();
 
 			var game = await _authorizationService.RoleGameFilter(
 				_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)

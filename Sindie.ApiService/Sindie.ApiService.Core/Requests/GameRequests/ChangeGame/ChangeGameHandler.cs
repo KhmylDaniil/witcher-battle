@@ -56,6 +56,14 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 		/// <returns></returns>
 		public async Task<Unit> Handle(ChangeGameCommand request, CancellationToken cancellationToken)
 		{
+			///проверка запроса на нулл
+			if (request == null)
+				throw new ExceptionRequestNull<ChangeGameCommand>();
+
+			//проверка имени на нулл или пустую строку
+			if (string.IsNullOrWhiteSpace(request.Name))
+				throw new ExceptionRequestFieldNull<ChangeGameCommand>($"{nameof(request.Name)}");
+
 			var game = await _authorizationService
 				.RoleGameFilter(_appDbContext.Games, request.Id, GameRoles.MainMasterRoleId)
 				.Include(x => x.Avatar)
@@ -68,7 +76,7 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 			//проверка на уникальность имени игры
 			if (!string.Equals(request.Name, game.Name, System.StringComparison.Ordinal) && await _appDbContext.Games
 				.AnyAsync(x => x.Name == request.Name, cancellationToken))
-				throw new RequestNameNotUniqException<ChangeGameCommand>(nameof(request.Name));
+				throw new ExceptionRequestNameNotUniq<ChangeGameCommand>(nameof(request.Name));
 
 			//находим аватар, проверяем на наличие в БД 
 			var avatar = request.AvatarId == null

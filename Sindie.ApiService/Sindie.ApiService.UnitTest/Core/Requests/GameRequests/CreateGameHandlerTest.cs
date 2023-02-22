@@ -62,7 +62,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.GameRequests
 
 			//Arrange
 			var newHandler = new CreateGameHandler(
-				_dbContext, AuthorizationService.Object, UserContext.Object, ChangeListServiceMock.Object);
+				_dbContext, UserContext.Object, ChangeListServiceMock.Object);
 
 			//Act
 			var result = await newHandler.Handle(request, default);

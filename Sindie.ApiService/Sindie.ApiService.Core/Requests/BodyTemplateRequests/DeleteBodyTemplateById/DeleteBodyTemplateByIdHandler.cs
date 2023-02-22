@@ -5,6 +5,7 @@ using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.DeleteBodyTemplateBy
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,10 +15,27 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.DeleteBodyTemplat
 	/// <summary>
 	/// Обработчик удаления шаблона тела по айди
 	/// </summary>
-	public class DeleteBodyTemplateByIdHandler : BaseHandler<DeleteBodyTemplateByIdCommand, Unit>
+	public class DeleteBodyTemplateByIdHandler : IRequestHandler<DeleteBodyTemplateByIdCommand>
 	{
-		public DeleteBodyTemplateByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
+		/// <summary>
+		/// Контекст базы данных
+		/// </summary>
+		private readonly IAppDbContext _appDbContext;
+
+		/// <summary>
+		/// Сервис авторизации
+		/// </summary>
+		private readonly IAuthorizationService _authorizationService;
+
+		/// <summary>
+		/// Конструктор обработчика удаления шаблона тела по айди
+		/// </summary>
+		/// <param name="appDbContext"></param>
+		/// <param name="authorizationService"></param>
+		public DeleteBodyTemplateByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 		{
+			_appDbContext = appDbContext;
+			_authorizationService = authorizationService;
 		}
 
 		/// <summary>
@@ -26,7 +44,7 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests.DeleteBodyTemplat
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		public override async Task<Unit> Handle(DeleteBodyTemplateByIdCommand request, CancellationToken cancellationToken)
+		public async Task<Unit> Handle(DeleteBodyTemplateByIdCommand request, CancellationToken cancellationToken)
 		{
 			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
 				.Include(x => x.BodyTemplates.Where(x => x.Id == request.Id))

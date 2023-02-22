@@ -1,65 +1,90 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
-using Sindie.ApiService.Core.Entities;
+﻿using Sindie.ApiService.Core.Requests.BodyTemplateRequests.ChangeBodyTemplate;
+using Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplate;
 using System.Collections.Generic;
+using static Sindie.ApiService.Core.BaseData.Enums;
 
 namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 {
 	/// <summary>
 	/// Данные для обновления частей шаблона тела
 	/// </summary>
-	public class BodyTemplatePartsData : UpdateBodyTemplateRequestItem
+	public class BodyTemplatePartsData
 	{
 		/// <summary>
-		/// Конструктор
+		/// Название части тела
 		/// </summary>
-		/// <param name="data">Данные о части шаблона тела</param>
-		private BodyTemplatePartsData(IBodyTemplatePartData data)
-		{
-			Name = data.Name;
-			BodyPartType = data.BodyPartType;
-			DamageModifier = data.DamageModifier;
-			HitPenalty = data.HitPenalty;
-			MaxToHit = data.MaxToHit;
-			MinToHit = data.MinToHit;
-		}
+		public string Name { get; set; }
 
 		/// <summary>
-		/// Пустой конструктор для драфта
+		/// Тип части тела
 		/// </summary>
-		public BodyTemplatePartsData()
-		{
-		}
+		public BodyPartType BodyPartType { get; set; }
 
 		/// <summary>
-		/// Создание данных для списка шаблонов частей тела для метода внесения изменений в список частей шаблона тела
+		/// Модификатор урона
 		/// </summary>
-		/// <param name="bodyTemplateParts">Имеющиеся части шаблона тела</param>
-		/// <param name="request">Запрос на изменение части шаблона тела, затрагивающий несколько частей шаблона тела</param>
+		public double DamageModifier { get; set; }
+
+		/// <summary>
+		/// Пенальти за прицеливание
+		/// </summary>
+		public int HitPenalty { get; set; }
+
+		/// <summary>
+		/// Минимум на попадание
+		/// </summary>
+		public int MinToHit { get; set; }
+
+		/// <summary>
+		/// Максимум на попадание
+		/// </summary>
+		public int MaxToHit { get; set; }
+
+		/// <summary>
+		/// Создание данных для списка шаблонов частей тела
+		/// </summary>
+		/// <param name="request">Запрос</param>
+		/// <param name="bodyPartTypes">Типы частей тела</param>
 		/// <returns>Данные для списка шаблонов частей тела</returns>
-		public static List<BodyTemplatePartsData> CreateBodyTemplatePartsData(List<BodyTemplatePart> bodyTemplateParts, ChangeBodyTemplatePartCommand request)
+		public static List<BodyTemplatePartsData>
+			CreateBodyTemplatePartsData(CreateBodyTemplateCommand request)
 		{
-			var result = new List<BodyTemplatePartsData>() { new BodyTemplatePartsData(request) };
+			var result = new List<BodyTemplatePartsData>();
 
-			foreach(var part in bodyTemplateParts)
+			foreach (var part in request.BodyTemplateParts)
+				result.Add(new BodyTemplatePartsData()
+				{
+					Name = part.Name,
+					BodyPartType = part.BodyPartType,
+					DamageModifier = part.DamageModifier,
+					HitPenalty = part.HitPenalty,
+					MinToHit = part.MinToHit,
+					MaxToHit = part.MaxToHit
+				});
+			return result;
+		}
 
-				if (part.MinToHit < request.MinToHit && part.MaxToHit > request.MaxToHit)
-					{
-						result.Add(new BodyTemplatePartsData(part) { MaxToHit = request.MinToHit - 1 });
-						result.Add(new BodyTemplatePartsData(part) { MinToHit = request.MaxToHit + 1 });
-					}
+		/// <summary>
+		/// Создание данных для списка шаблонов частей тела
+		/// </summary>
+		/// <param name="request">Запрос</param>
+		/// <param name="bodyPartTypes">Типы частей тела</param>
+		/// <returns>Данные для списка шаблонов частей тела</returns>
+		public static List<BodyTemplatePartsData>
+			CreateBodyTemplatePartsData(ChangeBodyTemplateCommand request)
+		{
+			var result = new List<BodyTemplatePartsData>();
 
-				else if (part.MaxToHit > request.MaxToHit && part.MinToHit <= request.MaxToHit)
-					result.Add(new BodyTemplatePartsData(part) { MinToHit = request.MaxToHit + 1 });
-
-				else if (part.MinToHit < request.MinToHit && part.MaxToHit >= request.MinToHit)
-
-					result.Add(new BodyTemplatePartsData(part) { MaxToHit = request.MinToHit - 1 });
-
-				else if (part.MinToHit > request.MaxToHit || part.MaxToHit < request.MinToHit)
-					result.Add(new BodyTemplatePartsData(part));
-
+			foreach (var part in request.BodyTemplateParts)
+				result.Add(new BodyTemplatePartsData()
+				{
+					Name = part.Name,
+					BodyPartType = part.BodyPartType,
+					DamageModifier = part.DamageModifier,
+					HitPenalty = part.HitPenalty,
+					MinToHit = part.MinToHit,
+					MaxToHit = part.MaxToHit
+				});
 			return result;
 		}
 	}
