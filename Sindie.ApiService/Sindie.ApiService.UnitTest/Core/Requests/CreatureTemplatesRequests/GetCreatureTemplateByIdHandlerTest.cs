@@ -1,10 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplateById;
+using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTemplateById;
-using System;
+using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
 using System.Linq;
 using System.Threading.Tasks;
 using static Sindie.ApiService.Core.BaseData.Enums;
@@ -83,7 +82,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		{
 			var request = new GetCreatureTemplateByIdQuery()
 			{
-				GameId = _game.Id,
 				Id = _creatureTemplate.Id
 			};
 			var newHandler = new GetCreatureTemplateByIdHandler(_dbContext, AuthorizationService.Object);
@@ -91,7 +89,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var result = await newHandler.Handle(request, default);
 
 			Assert.IsNotNull(result);
-			Assert.AreEqual(_creatureTemplate.GameId, result.GameId);
 			Assert.AreEqual(result.ImgFileId, _creatureTemplate.ImgFileId);
 			Assert.AreEqual(result.BodyTemplateId, _bodyTemplate.Id);
 			Assert.AreEqual(result.Name, "testName");

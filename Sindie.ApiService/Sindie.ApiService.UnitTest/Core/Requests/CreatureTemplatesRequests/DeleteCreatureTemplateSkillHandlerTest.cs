@@ -3,10 +3,7 @@ using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static Sindie.ApiService.Core.BaseData.Enums;
 
@@ -48,7 +45,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		{
 			var request = new DeleteCreatureTemplateSkillCommand()
 			{
-				GameId = _game.Id,
 				CreatureTemplateId = _creatureTemplate.Id,
 				Id = _skill.Id
 			};

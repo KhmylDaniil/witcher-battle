@@ -23,7 +23,7 @@ namespace Sindie.ApiService.UnitTest.Core.Services.Authorization
 		/// </summary>
 		public AuthorizationServiceTest()
 		{
-			_game = Game.CreateForTest();
+			_game = Game.CreateForTest(id: GameId);
 			_userGame = UserGame.CreateForTest(
 				game: _game,
 				user: User.CreateForTest(UserContextAsUser.Object.CurrentUserId),
@@ -42,13 +42,10 @@ namespace Sindie.ApiService.UnitTest.Core.Services.Authorization
 		[TestMethod]
 		public void Hash_RoleGameFilter_ShouldReturnGame()
 		{
-			//Arrange
-			var authorizationService = new AuthorizationService(UserContextAsUser.Object);
+			var authorizationService = new AuthorizationService(UserContextAsUser.Object, GameIdService.Object);
 
-			//Act
-			var result = authorizationService.RoleGameFilter(_dbContext.Games, _game.Id, GameRoles.MasterRoleId);
+			var result = authorizationService.AuthorizedGameFilter(_dbContext.Games, GameRoles.MasterRoleId);
 
-			//Assert
 			Assert.AreEqual(1, result.Count());
 			Assert.AreEqual(_game.Id, result.First().Id);
 		}
@@ -61,13 +58,10 @@ namespace Sindie.ApiService.UnitTest.Core.Services.Authorization
 		[TestMethod]
 		public void Hash_UserGameFilter_ShouldReturnGame()
 		{
-			//Arrange
-			var authorizationService = new AuthorizationService(UserContextAsUser.Object);
+			var authorizationService = new AuthorizationService(UserContextAsUser.Object, GameIdService.Object);
 
-			//Act
 			var result = authorizationService.UserGameFilter(_dbContext.Games, _game.Id);
 
-			//Assert
 			Assert.AreEqual(1, result.Count());
 			Assert.AreEqual(_game.Id, result.First().Id);
 		}
@@ -80,13 +74,10 @@ namespace Sindie.ApiService.UnitTest.Core.Services.Authorization
 		[TestMethod]
 		public void Hash_InstanceMasterFilter_ShouldReturnGame()
 		{
-			//Arrange
-			var authorizationService = new AuthorizationService(UserContextAsUser.Object);
+			var authorizationService = new AuthorizationService(UserContextAsUser.Object, GameIdService.Object);
 
-			//Act
 			var result = authorizationService.BattleMasterFilter(_dbContext.Battles, _instance.Id);
 
-			//Assert
 			Assert.AreEqual(1, result.Count());
 			Assert.AreEqual(_instance.Id, result.First().Id);
 		}

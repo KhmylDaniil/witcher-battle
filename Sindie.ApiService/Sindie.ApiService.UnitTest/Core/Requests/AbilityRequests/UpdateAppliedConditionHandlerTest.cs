@@ -38,7 +38,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		{
 			var createCommand = new UpdateAppliedCondionCommand
 			{
-				GameId = _game.Id,
 				AbilityId = _ability.Id,
 				Id = null,
 				ApplyChance = 50,
@@ -61,7 +60,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 
 			var updateCommand = new UpdateAppliedCondionCommand
 			{
-				GameId = _game.Id,
 				AbilityId = _ability.Id,
 				Id = appliedCondition.Id,
 				ApplyChance = 30,

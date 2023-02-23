@@ -37,7 +37,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			//create
 			var request = new ChangeDamageTypeModifierCommand()
 			{
-				GameId = _game.Id,
 				CreatureTemplateId = _creatureTemplate.Id,
 				DamageType = DamageType.Slashing,
 				DamageTypeModifier = DamageTypeModifier.Vulnerability
@@ -59,7 +58,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			//update
 			request = new ChangeDamageTypeModifierCommand()
 			{
-				GameId = _game.Id,
 				CreatureTemplateId = _creatureTemplate.Id,
 				DamageType = DamageType.Slashing,
 				DamageTypeModifier = DamageTypeModifier.Resistance
@@ -79,7 +77,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			//delete
 			request = new ChangeDamageTypeModifierCommand()
 			{
-				GameId = _game.Id,
 				CreatureTemplateId = _creatureTemplate.Id,
 				DamageType = DamageType.Slashing,
 				DamageTypeModifier = DamageTypeModifier.Normal

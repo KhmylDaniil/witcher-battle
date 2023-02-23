@@ -3,7 +3,7 @@ using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.AbilityRequests;
 using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById;
+using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
@@ -22,7 +22,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbilityById
 			if (request == null)
 				throw new RequestNullException<GetBodyTemplateByIdQuery>();
 
-			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
+			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.Abilities.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.AppliedConditions)
 				.SelectMany(x => x.Abilities);
@@ -33,7 +33,6 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbilityById
 			return new GetAbilityByIdResponse()
 			{
 				Id = ability.Id,
-				GameId = ability.GameId,
 				Name = ability.Name,
 				Description = ability.Description,
 				AttackSkill = ability.AttackSkill,

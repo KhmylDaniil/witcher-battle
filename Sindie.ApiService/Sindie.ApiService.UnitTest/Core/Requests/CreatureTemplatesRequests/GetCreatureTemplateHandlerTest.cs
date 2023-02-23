@@ -2,9 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplate;
+using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.GetCreatureTemplate;
+using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -95,7 +95,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 
 			var request = new GetCreatureTemplateQuery()
 			{
-				GameId = _game.Id,
 				Name = "testName",
 				UserName = "Author",
 				CreatureType = "Human",
@@ -115,9 +114,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var result = await newHandler.Handle(request, default);
 
 			Assert.IsNotNull(result);
-			Assert.AreEqual(1, result.TotalCount);
+			Assert.AreEqual(1, result.Count());
 
-			var resultItem = result.CreatureTemplatesList.First();
+			var resultItem = result.First();
 			Assert.IsTrue(resultItem.Name.Contains(request.Name));
 			Assert.IsTrue(Enum.GetName(resultItem.CreatureType).Contains(request.CreatureType));
 			Assert.IsTrue(resultItem.BodyTemplateName.Contains(request.BodyTemplateName));

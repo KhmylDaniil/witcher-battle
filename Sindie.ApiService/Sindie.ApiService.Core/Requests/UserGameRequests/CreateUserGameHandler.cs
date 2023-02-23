@@ -75,8 +75,8 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 			if (request.AssingedRoleId == GameRoles.MainMasterRoleId
 				|| request.AssingedRoleId == GameRoles.MasterRoleId)
 			{
-				var game = await _authorizationService.RoleGameFilter(
-					_appDbContext.Games, request.GameId, GameRoles.MainMasterRoleId)
+				var game = await _authorizationService.AuthorizedGameFilter(
+					_appDbContext.Games, GameRoles.MainMasterRoleId)
 					.Include(x => x.UserGames)
 					.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionEntityNotFound<Game>(request.GameId);
@@ -85,8 +85,8 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 			}
 			else
 			{
-				var game = await _authorizationService.RoleGameFilter(
-					_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
+				var game = await _authorizationService.AuthorizedGameFilter(
+					_appDbContext.Games)
 					.Include(x => x.UserGames)
 					.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionEntityNotFound<Game>(request.GameId);

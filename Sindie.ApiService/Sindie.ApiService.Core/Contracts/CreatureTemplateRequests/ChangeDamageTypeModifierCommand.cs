@@ -11,11 +11,6 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests
 	public class ChangeDamageTypeModifierCommand : IValidatableCommand
 	{
 		/// <summary>
-		/// Айди игры
-		/// </summary>
-		public Guid GameId { get; set; }
-
-		/// <summary>
 		/// Айди шаблона существа
 		/// </summary>
 		public Guid CreatureTemplateId { get; set; }

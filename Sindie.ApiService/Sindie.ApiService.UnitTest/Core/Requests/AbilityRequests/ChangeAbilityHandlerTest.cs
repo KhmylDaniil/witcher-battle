@@ -44,7 +44,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			var request = new ChangeAbilityCommand()
 			{
 				Id = _ability.Id,
-				GameId = _game.Id,
 				Name = "newName",
 				Description = "newDescription",
 				AttackDiceQuantity = 2,
@@ -72,7 +71,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			Assert.AreEqual(1, _dbContext.Abilities.Count());
 			var ability = _dbContext.Abilities.FirstOrDefault();
 
-			Assert.AreEqual(request.GameId, ability.GameId);
 			Assert.IsNotNull(ability.Name);
 			Assert.AreEqual(request.Name, ability.Name);
 			Assert.AreEqual(request.Description, ability.Description);

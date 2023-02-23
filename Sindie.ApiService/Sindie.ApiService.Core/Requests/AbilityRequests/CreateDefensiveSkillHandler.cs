@@ -22,7 +22,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests
 			if (!Enum.IsDefined(request.Skill))
 				throw new ExceptionFieldOutOfRange<CreateDefensiveSkillCommand>(nameof(request.Skill));
 
-			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
+			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities.Where(a => a.Id == request.AbilityId))
 					.ThenInclude(a => a.DefensiveSkills)
 				.FirstOrDefaultAsync(cancellationToken)

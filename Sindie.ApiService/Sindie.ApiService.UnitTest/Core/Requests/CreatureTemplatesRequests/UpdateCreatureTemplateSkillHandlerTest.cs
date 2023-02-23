@@ -45,7 +45,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		{
 			var request = new UpdateCreatureTemplateSkillCommand()
 			{
-				GameId = _game.Id,
 				CreatureTemplateId = _creatureTemplate.Id,
 				Skill = Skill.Dodge,
 				Value = 5
@@ -74,7 +73,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		{
 			var request = new UpdateCreatureTemplateSkillCommand()
 			{
-				GameId = _game.Id,
 				CreatureTemplateId = _creatureTemplate.Id,
 				Id = _skill.Id,
 				Skill = Skill.Awareness,
@@ -98,7 +96,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			//can`t change skill, only skill value
 			var request2 = new UpdateCreatureTemplateSkillCommand()
 			{
-				GameId = _game.Id,
 				CreatureTemplateId = _creatureTemplate.Id,
 				Id = _skill.Id,
 				Skill = Skill.Business,

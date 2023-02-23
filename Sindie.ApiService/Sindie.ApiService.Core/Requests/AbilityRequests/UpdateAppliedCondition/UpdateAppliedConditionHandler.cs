@@ -20,7 +20,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.UpdateAppliedCondition
 
 		public override async Task<Unit> Handle(UpdateAppliedCondionCommand request, CancellationToken cancellationToken)
 		{
-			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
+			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities.Where(a => a.Id == request.AbilityId))
 					.ThenInclude(a => a.AppliedConditions)
 				.FirstOrDefaultAsync(cancellationToken)

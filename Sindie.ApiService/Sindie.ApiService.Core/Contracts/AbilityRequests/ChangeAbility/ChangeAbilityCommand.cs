@@ -21,11 +21,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
-		
-		/// <summary>
-		/// Ацди игры
-		/// </summary>
-		public Guid GameId { get; set; }
 
 		/// <summary>
 		/// Наазвание способности

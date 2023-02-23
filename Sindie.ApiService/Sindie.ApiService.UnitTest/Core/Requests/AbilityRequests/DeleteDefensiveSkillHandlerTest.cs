@@ -44,7 +44,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		{
 			var command = new DeleteDefensiveSkillCommand
 			{
-				GameId = _game.Id,
 				AbilityId = _ability.Id,
 				Id = _defensiveSkill.Id
 			};

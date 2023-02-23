@@ -43,7 +43,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		{
 			var command = new CreateDefensiveSkillCommand
 			{
-				GameId = _game.Id,
 				AbilityId = _ability.Id,
 				Skill = Enums.Skill.Sword
 			};

@@ -1,12 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.DeleteBodyTemplateById;
+using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.BodyTemplateRequests.DeleteBodyTemplateById;
-using System;
-using System.Collections.Generic;
+using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
@@ -41,7 +38,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 			var request = new DeleteBodyTemplateByIdCommand()
 			{
 				Id = _bodyTemplate.Id,
-				GameId = _game.Id
 			};
 
 			var newHandler = new DeleteBodyTemplateByIdHandler(_dbContext, AuthorizationService.Object);

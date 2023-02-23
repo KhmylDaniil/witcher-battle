@@ -42,7 +42,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 		{
 			var command = new DeleteAppliedCondionCommand
 			{
-				GameId = _game.Id,
 				AbilityId = _ability.Id,
 				Id = _appliedCondition.Id,
 			};

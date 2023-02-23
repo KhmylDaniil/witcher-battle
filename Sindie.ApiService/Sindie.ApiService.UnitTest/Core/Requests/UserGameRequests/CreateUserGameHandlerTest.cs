@@ -38,7 +38,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserGameRequests
 			_playerRole = GameRole.CreateForTest(id: GameRoles.PlayerRoleId);
 			_interface = Interface.CreateForTest(id: SystemInterfaces.GameDarkId);
 
-			_gameAsMainMaster = Game.CreateForTest();
+			_gameAsMainMaster = Game.CreateForTest(GameId);
 			_gameAsMainMaster.UserGames.Add(UserGame.CreateForTest(
 				user: _currentUser,
 				gameRole: _mainMasterRole));

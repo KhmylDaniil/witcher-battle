@@ -33,7 +33,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.DeleteAbilityById
 			if (request == null)
 				throw new RequestNullException<DeleteAbilityByIdCommand>();
 
-			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
+			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.Abilities.Where(x => x.Id == request.Id))
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();

@@ -33,6 +33,8 @@ namespace Sindie.ApiService.Core
 
 			services.AddAutoMapper(typeof(Entry).Assembly);
 
+			services.AddSingleton<IGameIdService, GameIdService>();
+
 			services.AddScoped<IAuthorizationService, AuthorizationService>();
 
 			services.AddScoped<IDateTimeProvider, DateTimeProvider>();

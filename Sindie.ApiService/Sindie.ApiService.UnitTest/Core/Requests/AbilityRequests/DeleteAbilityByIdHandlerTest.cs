@@ -40,7 +40,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			var request = new DeleteAbilityByIdCommand()
 			{
 				Id = _ability.Id,
-				GameId = _game.Id
 			};
 
 			var newHandler = new DeleteAbilityByIdHandler(_dbContext, AuthorizationService.Object);

@@ -48,7 +48,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle
 		/// <returns>Бой</returns>
 		public async Task<Unit> Handle(CreateBattleCommand request, CancellationToken cancellationToken)
 		{
-			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
+			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.CreatureTemplates)
 					.ThenInclude(x => x.CreatureTemplateParts)
 				.Include(x => x.CreatureTemplates)

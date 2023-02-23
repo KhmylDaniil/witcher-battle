@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame;
 using Sindie.ApiService.Core.Contracts.GameRequests.CreateGame;
 using Sindie.ApiService.Core.Contracts.GameRequests.DeleteGame;
@@ -14,13 +15,15 @@ namespace Witcher.MVC.Controllers
 	[Authorize]
 	public class GameController : BaseController
 	{
-		public GameController(IMediator mediator) : base(mediator) { }
+		public GameController(IMediator mediator, IGameIdService gameIdService) : base(mediator, gameIdService) { }
 
 		public async Task<IActionResult> Index(string name, string description, string authorName, CancellationToken cancellationToken)
 		{
 			var query = new GetGameQuery() { Name = name, Description = description, AuthorName = authorName};
 			
 			var response = await _mediator.SendValidated(query, cancellationToken);
+
+			_gameIdService.Reset();
 
 			return View(response.GamesList);
 		}
@@ -31,6 +34,8 @@ namespace Witcher.MVC.Controllers
 			try
 			{
 				var response = await _mediator.SendValidated(command, cancellationToken);
+
+				_gameIdService.Set(command.Id);
 
 				return View(response);
 			}

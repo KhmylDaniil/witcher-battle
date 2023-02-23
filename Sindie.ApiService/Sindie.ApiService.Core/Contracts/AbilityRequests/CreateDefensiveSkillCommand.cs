@@ -12,11 +12,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 	public class CreateDefensiveSkillCommand : IValidatableCommand
 	{
 		/// <summary>
-		/// Айди игры
-		/// </summary>
-		public Guid GameId { get; set; }
-
-		/// <summary>
 		/// Айди способности
 		/// </summary>
 		public Guid AbilityId { get; set; }

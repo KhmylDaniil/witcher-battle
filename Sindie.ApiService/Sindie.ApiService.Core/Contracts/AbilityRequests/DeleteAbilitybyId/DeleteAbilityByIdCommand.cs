@@ -10,11 +10,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAbilitybyId
 	public sealed class DeleteAbilityByIdCommand : IValidatableCommand
 	{
 		/// <summary>
-		/// Айди игры
-		/// </summary>
-		public Guid GameId { get; set; }
-
-		/// <summary>
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }

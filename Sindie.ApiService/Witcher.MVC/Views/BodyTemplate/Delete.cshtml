@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.BodyTemplateRequests.DeleteBodyTemplateById.DeleteBodyTemplateByIdCommand
+﻿@model Sindie.ApiService.Core.Contracts.BodyTemplateRequests.DeleteBodyTemplateByIdCommand
 
 @{
     ViewData["Title"] = "Delete";
@@ -21,6 +21,6 @@
     
     <form asp-action="Delete">
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index" asp-route-gameId=@Model.GameId>Back to Body Templates</a>
+        <a asp-action="Index">Back to Body Templates</a>
     </form>
 </div>

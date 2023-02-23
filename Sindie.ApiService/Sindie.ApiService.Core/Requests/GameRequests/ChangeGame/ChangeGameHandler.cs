@@ -57,7 +57,7 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 		public async Task<Unit> Handle(ChangeGameCommand request, CancellationToken cancellationToken)
 		{
 			var game = await _authorizationService
-				.RoleGameFilter(_appDbContext.Games, request.Id, GameRoles.MainMasterRoleId)
+				.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.Avatar)
 				.Include(x => x.ImgFiles)
 				.Include(x => x.TextFiles)

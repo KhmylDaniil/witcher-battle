@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.DeleteCreatureTemplateById.DeleteCreatureTemplateByIdCommand
+﻿@model Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.DeleteCreatureTemplateByIdCommand
 
 @{
     ViewData["Title"] = "Delete";
@@ -20,6 +20,6 @@
     
     <form asp-action="Delete">
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index" asp-route-gameId=@Model.GameId>Back to Creature Templates</a>
+        <a asp-action="Index">Back to Creature Templates</a>
     </form>
 </div>

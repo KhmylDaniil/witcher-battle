@@ -72,7 +72,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 
 			var request = new GetAbilityQuery()
 			{
-				GameId = _game.Id,
 				Name = "test",
 				AttackSkillName = "Melee",
 				DamageType = "Slashing",

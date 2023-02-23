@@ -2,9 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplate;
+using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.BodyTemplateRequests.GetBodyTemplate;
+using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,7 +85,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 
 			var request = new GetBodyTemplateQuery()
 			{
-				GameId = _game.Id,
 				Name = "testName",
 				UserName = "Author",
 				CreationMinTime = creationMinTime,
@@ -104,9 +103,9 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 			var result = await newHandler.Handle(request, default);
 
 			Assert.IsNotNull(result);
-			Assert.AreEqual(1, result.TotalCount);
+			Assert.AreEqual(1, result.Count());
 
-			var resultItem = result.BodyTemplatesList.First();
+			var resultItem = result.First();
 			Assert.IsTrue(resultItem.Name.Contains(request.Name));
 			Assert.IsTrue(resultItem.CreatedOn >= creationMinTime && resultItem.CreatedOn <= creationMaxTime);
 			Assert.IsTrue(resultItem.ModifiedOn >= modificationMinTime && resultItem.ModifiedOn <= modificationMaxTime);

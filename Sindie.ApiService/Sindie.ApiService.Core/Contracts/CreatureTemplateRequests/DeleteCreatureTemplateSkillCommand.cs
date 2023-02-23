@@ -9,11 +9,6 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests
 	public class DeleteCreatureTemplateSkillCommand : IValidatableCommand
 	{
 		/// <summary>
-		/// Айди игры
-		/// </summary>
-		public Guid GameId { get; set; }
-
-		/// <summary>
 		/// Айди шаблона существ
 		/// </summary>
 		public Guid CreatureTemplateId { get; set; }

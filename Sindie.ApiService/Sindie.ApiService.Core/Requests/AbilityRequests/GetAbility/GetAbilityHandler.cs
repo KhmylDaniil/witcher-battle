@@ -38,7 +38,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 			if (request.ModificationMaxTime != default && request.ModificationMinTime >= request.ModificationMaxTime)
 				throw new ArgumentOutOfRangeException(nameof(GetAbilityQuery.ModificationMaxTime));
 
-			var filter = _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
+			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities)
 					.ThenInclude(a => a.AppliedConditions)
 					.SelectMany(g => g.Abilities
@@ -64,7 +64,6 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility
 				.Select(x => new GetAbilityResponseItem()
 				{
 					Id = x.Id,
-					GameId = x.GameId,
 					Name = x.Name,
 					Description = x.Description,
 					AttackDiceQuantity = x.AttackDiceQuantity,

@@ -1,5 +1,4 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Entities;
 using System.Collections.Generic;

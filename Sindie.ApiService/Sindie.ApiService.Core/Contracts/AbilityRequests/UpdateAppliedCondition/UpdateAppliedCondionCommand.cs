@@ -14,11 +14,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedConditio
 		/// </summary>
 		public Guid AbilityId { get; set; }
 
-		/// <summary>
-		/// Айди игры
-		/// </summary>
-		public Guid GameId { get; set; }
-
 		public void Validate()
 		{
 			// Method intentionally left empty.

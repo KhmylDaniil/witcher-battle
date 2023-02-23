@@ -13,16 +13,17 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
 {
 	public class DeleteCreatureTemplateSkillHandler : BaseHandler<DeleteCreatureTemplateSkillCommand, Unit>
 	{
-		public DeleteCreatureTemplateSkillHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
+		public DeleteCreatureTemplateSkillHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
+			: base(appDbContext, authorizationService)
 		{
 		}
 
 		public async override Task<Unit> Handle(DeleteCreatureTemplateSkillCommand request, CancellationToken cancellationToken)
 		{
-			var creatureTemplate = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
-				.SelectMany(g => g.CreatureTemplates.Where(g => g.Id == request.CreatureTemplateId))
+			var creatureTemplate = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
+				.SelectMany(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
 					.Include(ct => ct.CreatureTemplateSkills)
-				.FirstOrDefaultAsync(cancellationToken)
+				.FirstOrDefaultAsync(ct => ct.Id == request.CreatureTemplateId, cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
 			var creatureTemplateSkill = creatureTemplate.CreatureTemplateSkills.FirstOrDefault(x => x.Id == request.Id)

@@ -19,11 +19,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAppliedConditio
 		public Guid AbilityId { get; set; }
 
 		/// <summary>
-		/// Айди игры
-		/// </summary>
-		public Guid GameId { get; set; }
-
-		/// <summary>
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }

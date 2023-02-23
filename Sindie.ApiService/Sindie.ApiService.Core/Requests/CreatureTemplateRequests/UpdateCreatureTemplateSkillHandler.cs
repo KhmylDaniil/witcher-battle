@@ -13,16 +13,17 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
 {
 	public class UpdateCreatureTemplateSkillHandler : BaseHandler<UpdateCreatureTemplateSkillCommand, Unit>
 	{
-		public UpdateCreatureTemplateSkillHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
+		public UpdateCreatureTemplateSkillHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
+			: base(appDbContext, authorizationService)
 		{
 		}
 
 		public async override Task<Unit> Handle(UpdateCreatureTemplateSkillCommand request, CancellationToken cancellationToken)
 		{
-			var creatureTemplate = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
-				.SelectMany(g => g.CreatureTemplates.Where(g => g.Id == request.CreatureTemplateId))
+			var creatureTemplate = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
+				.SelectMany(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
 					.Include(ct => ct.CreatureTemplateSkills)
-				.FirstOrDefaultAsync(cancellationToken)
+				.FirstOrDefaultAsync(ct => ct.Id == request.CreatureTemplateId, cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
 			var currentSkill = creatureTemplate.CreatureTemplateSkills.FirstOrDefault(x => x.Id == request.Id);

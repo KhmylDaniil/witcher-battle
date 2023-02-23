@@ -25,7 +25,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 		public override async Task<Ability> Handle(CreateAbilityCommand request, CancellationToken cancellationToken)
 		{
 			
-			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
+			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();

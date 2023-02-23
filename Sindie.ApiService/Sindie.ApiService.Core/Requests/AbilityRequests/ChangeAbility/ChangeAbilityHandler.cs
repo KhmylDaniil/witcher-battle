@@ -28,7 +28,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility
 		/// <returns></returns>
 		public override async Task<Unit> Handle(ChangeAbilityCommand request, CancellationToken cancellationToken)
 		{
-			var game = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
+			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities)
 					.ThenInclude(a => a.AppliedConditions)
 				.FirstOrDefaultAsync(cancellationToken)

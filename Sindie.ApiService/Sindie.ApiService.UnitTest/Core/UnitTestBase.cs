@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
@@ -46,6 +47,11 @@ namespace Sindie.ApiService.UnitTest.Core
 		/// Сервис проверки прав доступа
 		/// </summary>
 		protected Mock<IAuthorizationService> AuthorizationService { get; private set; }
+
+		/// <summary>
+		/// Сервис айди игры
+		/// </summary>
+		protected Mock<IGameIdService> GameIdService { get; private set; }
 
 		/// <summary>
 		/// Сервис проверки прав доступа с указанием айди игры
@@ -115,10 +121,10 @@ namespace Sindie.ApiService.UnitTest.Core
 			UserContextAsUser.Setup(x => x.CurrentUserId).Returns(UserId);
 			UserContextAsUser.Setup(x => x.Role).Returns(SystemRoles.UserRoleName);
 
+			GameIdService = new Mock<IGameIdService>();
+			GameIdService.Setup(x => x.GameId).Returns(GameId);
+
 			AuthorizationService = new Mock<IAuthorizationService>();
-			AuthorizationService
-				.Setup(x => x.RoleGameFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
-				.Returns<IQueryable<Game>, Guid, Guid>((x, y, z) => x);
 			AuthorizationService
 				.Setup(x => x.UserGameFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>()))
 				.Returns<IQueryable<Game>, Guid>((x, y) => x);
@@ -128,9 +134,13 @@ namespace Sindie.ApiService.UnitTest.Core
 
 			AuthorizationServiceWithGameId = new Mock<IAuthorizationService>();
 			AuthorizationServiceWithGameId
-				.Setup(x => x.RoleGameFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
-				.Returns<IQueryable<Game>, Guid, Guid>((x, y, z) => x.Where(a => a.Id == y));
-	
+				.Setup(x => x.AuthorizedGameFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>()))
+				.Returns<IQueryable<Game>, Guid>((x, y) => x.Where(a => a.Id == y));
+
+			AuthorizationService
+				.Setup(x => x.AuthorizedGameFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>()))
+				.Returns<IQueryable<Game>, Guid>((x, y) => x);
+
 			RollService = new Mock<IRollService>();
 			int attackerFumble = 0;
 			int defenderFumble = 0;

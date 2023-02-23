@@ -1,4 +1,4 @@
-﻿using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
+﻿using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 
 namespace Witcher.MVC.ViewModels.CreatureTemplate
 {

@@ -11,11 +11,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 	/// </summary>
 	public class GetAbilityQuery : GetBaseQuery, IValidatableCommand<IEnumerable<GetAbilityResponseItem>>
 	{
-		// <summary>
-		/// Айди игры
-		/// </summary>
-		public Guid GameId { get; set; }
-
 		/// <summary>
 		/// Фильтр по названию
 		/// </summary>

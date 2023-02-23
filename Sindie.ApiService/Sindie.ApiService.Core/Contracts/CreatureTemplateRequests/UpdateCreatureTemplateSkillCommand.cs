@@ -9,8 +9,9 @@ namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests
 	/// </summary>
 	public class UpdateCreatureTemplateSkillCommand : UpdateCreatureTemplateRequestSkill, IValidatableCommand
 	{
-		public Guid GameId { get; set; }
-
+		/// <summary>
+		/// Айди шаблона существа
+		/// </summary>
 		public Guid CreatureTemplateId { get; set; }
 
 		public void Validate()

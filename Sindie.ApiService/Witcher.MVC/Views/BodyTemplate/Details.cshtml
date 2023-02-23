@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateById.GetBodyTemplateByIdResponse
+﻿@model Sindie.ApiService.Core.Contracts.BodyTemplateRequests.GetBodyTemplateByIdResponse
 
 @{
     ViewData["Title"] = @Html.DisplayFor(model => model.Name) + "body template details";
@@ -25,7 +25,7 @@
 </div>
 
 <div class="container">
-    @Html.ActionLink("Edit", "Edit", new { gameId = Model.GameId, id=Model.Id, name=Model.Name, description=Model.Description })
+    @Html.ActionLink("Edit", "Edit", new { id=Model.Id, name=Model.Name, description=Model.Description })
 </div>
 
 <table class="table">
@@ -79,11 +79,11 @@
 </table>
 
 <div class="container">
-    @Html.ActionLink("Edit Body Template Parts", "EditParts", new { GameId = Model.GameId, id = Model.Id })
+    @Html.ActionLink("Edit Body Template Parts", "EditParts", new { id = Model.Id })
 </div>
 
 <p>@ViewData["ErrorMessage"]</p>
 
 <div class="container">
-    <a asp-action="Index" asp-route-gameId=@Model.GameId>Back to Body Templates</a>
+    <a asp-action="Index">Back to Body Templates</a>
 </div>
