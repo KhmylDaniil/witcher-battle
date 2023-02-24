@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.AbilityRequests;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.ExtensionMethods;
-using Sindie.ApiService.Core.Services.Authorization;
 
 namespace Witcher.MVC.Controllers
 {
@@ -15,7 +15,13 @@ namespace Witcher.MVC.Controllers
 	[Authorize]
 	public class AbilityController : BaseController
 	{
-		public AbilityController(IMediator mediator, IGameIdService gameIdService) : base(mediator, gameIdService) { }
+		private readonly IMemoryCache _memoryCache;
+
+		public AbilityController(IMediator mediator, IGameIdService gameIdService, IMemoryCache memoryCache)
+			: base(mediator, gameIdService)
+		{
+			_memoryCache = memoryCache;
+		}
 
 		[Route("[controller]/[action]")]
 		public async Task<IActionResult> Index(GetAbilityQuery request, CancellationToken cancellationToken)
@@ -65,6 +71,9 @@ namespace Witcher.MVC.Controllers
 			try
 			{
 				var draft = await _mediator.SendValidated(command, cancellationToken);
+
+				_memoryCache.Remove("abilities");
+
 				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { Id = draft.Id });
 			}
 			catch (RequestValidationException ex)
@@ -85,6 +94,9 @@ namespace Witcher.MVC.Controllers
 			try
 			{
 				await _mediator.SendValidated(command, cancellationToken);
+
+				_memoryCache.Remove("abilities");
+
 				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() {Id = command.Id });
 			}
 			catch (RequestValidationException ex)
@@ -105,6 +117,9 @@ namespace Witcher.MVC.Controllers
 			try
 			{
 				await _mediator.SendValidated(command, cancellationToken);
+
+				_memoryCache.Remove("abilities");
+
 				return RedirectToAction(nameof(Index), new GetAbilityQuery());
 			}
 			catch (RequestValidationException ex)

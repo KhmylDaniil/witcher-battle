@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Caching.Memory;
 using Sindie.ApiService.Core;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Services.Hasher;
@@ -6,7 +7,7 @@ using Sindie.ApiService.Storage.Postgresql;
 
 namespace Witcher.MVC
 {
-	public class Startup
+	public static class Startup
 	{
 		public static void ConfigureServices(IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
 		{
@@ -24,6 +25,8 @@ namespace Witcher.MVC
 			services.AddCore(hasherOptions: configuration.Get<HasherOptions>());
 
 			services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => options.LoginPath = "/login");
+
+			services.AddMemoryCache(options => options.ExpirationScanFrequency = TimeSpan.FromSeconds(600));
 
 			services.AddHttpContextAccessor();
 			services.AddTransient<IUserContext, UserContext>();

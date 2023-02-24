@@ -1,12 +1,14 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.AbilityRequests;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.ExtensionMethods;
+using System.Threading;
 using Witcher.MVC.ViewModels.CreatureTemplate;
 
 namespace Witcher.MVC.Controllers
@@ -14,8 +16,13 @@ namespace Witcher.MVC.Controllers
 	[Authorize]
 	public class CreatureTemplateController : BaseController
 	{
+		private readonly IMemoryCache _memoryCache;
 
-		public CreatureTemplateController(IMediator mediator, IGameIdService gameIdService) : base(mediator, gameIdService) { }
+		public CreatureTemplateController(IMediator mediator, IGameIdService gameIdService, IMemoryCache memoryCache)
+			: base(mediator, gameIdService)
+		{
+			_memoryCache = memoryCache;
+		}
 
 		[Route("[controller]")]
 		public async Task<IActionResult> Index(GetCreatureTemplateQuery query, CancellationToken cancellationToken)
@@ -225,15 +232,50 @@ namespace Witcher.MVC.Controllers
 					CreatureTemplateSkills = command.CreatureTemplateSkills,
 				};
 
-			var bodyTemplates = await _mediator.SendValidated(new GetBodyTemplateQuery(), cancellationToken);
-
-			viewModel.BodyTemplatesDictionary = bodyTemplates.ToDictionary(x => x.Id, x => x.Name);
-
-			var abilities = await _mediator.SendValidated(new GetAbilityQuery(), cancellationToken);
-
-			viewModel.AbilitiesDictionary = abilities.ToDictionary(x => x.Id, x => x.Name);
+			viewModel.BodyTemplatesDictionary = await GetbodyTemplateListToViewBag(cancellationToken);
+			viewModel.AbilitiesDictionary = await GetAbilityListToViewBag(cancellationToken);
 
 			return viewModel;
+		}
+
+		/// <summary>
+		/// Создание/извлечение из кэша данных о способностях
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		private async Task<Dictionary<Guid, string>> GetAbilityListToViewBag(CancellationToken cancellationToken)
+		{
+			if (_memoryCache.TryGetValue("abilities", out Dictionary<Guid, string> abilitiesFromCache))
+				return abilitiesFromCache;
+			else
+			{
+				var abilities = await _mediator.SendValidated(new GetAbilityQuery(), cancellationToken);
+
+				var result =  abilities.ToDictionary(x => x.Id, x => x.Name);
+
+				_memoryCache.Set("abilities", result);
+				return result;
+			}	
+		}
+
+		/// <summary>
+		/// Создание/извлечение из кэша данных о шаблонах тела
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		private async Task<Dictionary<Guid, string>> GetbodyTemplateListToViewBag(CancellationToken cancellationToken)
+		{
+			if (_memoryCache.TryGetValue("bodyTemplates", out Dictionary<Guid, string> bodyTemplatesFromCache))
+				return bodyTemplatesFromCache;
+			else
+			{
+				var bodyTemplates = await _mediator.SendValidated(new GetBodyTemplateQuery(), cancellationToken);
+
+				var result = bodyTemplates.ToDictionary(x => x.Id, x => x.Name);
+
+				_memoryCache.Set("bodyTemplates", result);
+				return result;
+			}
 		}
 
 		/// <summary>
@@ -266,13 +308,8 @@ namespace Witcher.MVC.Controllers
 					CreatureTemplateSkills = command.CreatureTemplateSkills,
 				};
 
-			var bodyTemplates = await _mediator.SendValidated(new GetBodyTemplateQuery(), cancellationToken);
-
-			viewModel.BodyTemplatesDictionary = bodyTemplates.ToDictionary(x => x.Id, x => x.Name);
-
-			var abilities = await _mediator.SendValidated(new GetAbilityQuery(), cancellationToken);
-
-			viewModel.AbilitiesDictionary = abilities.ToDictionary(x => x.Id, x => x.Name);
+			viewModel.BodyTemplatesDictionary = await GetbodyTemplateListToViewBag(cancellationToken);
+			viewModel.AbilitiesDictionary = await GetAbilityListToViewBag(cancellationToken);
 
 			return viewModel;
 		}
