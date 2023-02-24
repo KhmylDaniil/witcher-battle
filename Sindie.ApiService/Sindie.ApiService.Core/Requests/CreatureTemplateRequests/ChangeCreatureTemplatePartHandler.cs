@@ -4,7 +4,6 @@ using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,16 +12,17 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
 {
 	public class ChangeCreatureTemplatePartHandler : BaseHandler<ChangeCreatureTemplatePartCommand, Unit>
 	{
-		public ChangeCreatureTemplatePartHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
+		public ChangeCreatureTemplatePartHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
+			: base(appDbContext, authorizationService)
 		{
 		}
 
 		public override async Task<Unit> Handle(ChangeCreatureTemplatePartCommand request, CancellationToken cancellationToken)
 		{
-			var creatureTemplate = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
+			var creatureTemplate = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.SelectMany(g => g.CreatureTemplates.Where(g => g.Id == request.CreatureTemplateId))
 					.Include(ct => ct.CreatureTemplateParts)
-				.FirstOrDefaultAsync(cancellationToken)
+				.FirstOrDefaultAsync(ct => ct.Id == request.CreatureTemplateId, cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
 			var partsToUpdate = request.Id == null

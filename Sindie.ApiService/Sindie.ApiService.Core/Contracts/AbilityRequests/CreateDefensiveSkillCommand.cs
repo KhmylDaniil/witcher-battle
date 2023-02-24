@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Sindie.ApiService.Core.Abstractions;
+﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
 using static Sindie.ApiService.Core.BaseData.Enums;
@@ -11,11 +10,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 	/// </summary>
 	public class CreateDefensiveSkillCommand : IValidatableCommand
 	{
-		/// <summary>
-		/// Айди игры
-		/// </summary>
-		public Guid GameId { get; set; }
-
 		/// <summary>
 		/// Айди способности
 		/// </summary>

@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.BodyTemplatePartsRequests.ChangeBodyTemplatePartCommand
+﻿@model Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplatePartCommand
 
 @{
     ViewData["Title"] = "EditParts";
@@ -56,6 +56,6 @@
 <p>@ViewData["ErrorMessage"]</p>
 
 <div class="container">
-    @Html.ActionLink("Back to Body Template", "Details", new { GameId = Model.GameId, id = Model.Id })
+    @Html.ActionLink("Back to Body Template", "Details", new { id = Model.Id })
 </div>
 

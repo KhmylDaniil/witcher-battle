@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.UserRequests.LoginUser;
 using Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser;
 using Sindie.ApiService.Core.Exceptions;
@@ -12,7 +13,7 @@ namespace Witcher.MVC.Controllers
 {
 	public class LoginController : BaseController
 	{
-		public LoginController(IMediator mediator) : base(mediator) { }
+		public LoginController(IMediator mediator, IGameIdService gameIdService) : base(mediator, gameIdService) { }
 
 		public IActionResult Index()
 		{

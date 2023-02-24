@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAbilitybyId.DeleteAbilityByIdCommand
+﻿@model Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAbilityByIdCommand
 
 @{
     ViewData["Title"] = "Delete";
@@ -20,6 +20,6 @@
     
     <form asp-action="Delete">
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index" asp-route-gameId=@Model.GameId>Back to Abilities</a>
+        <a asp-action="Index">Back to Abilities</a>
     </form>
 </div>

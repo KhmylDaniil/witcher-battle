@@ -15,7 +15,7 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.GetGameById
 
 		public override async Task<GetGameByIdResponse> Handle(GetGameByIdCommand request, CancellationToken cancellationToken)
 		{
-			var game = await _authorizationService.UserGameFilter(_appDbContext.Games, request.Id)
+			var game = await _authorizationService.UserGameFilter(_appDbContext.Games)
 				.Include(g => g.TextFiles)
 				.Include(g => g.ImgFiles)
 				.Include(g => g.UserGames)

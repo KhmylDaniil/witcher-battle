@@ -1,8 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.DeleteCreatureTemplateById;
+using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.DeleteCreatureTemplateById;
+using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
 using System.Linq;
 using System.Threading.Tasks;
 using static Sindie.ApiService.Core.BaseData.Enums;
@@ -41,7 +41,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var request = new DeleteCreatureTemplateByIdCommand()
 			{
 				Id = _creatureTemplate.Id,
-				GameId = _game.Id
 			};
 
 			var newHandler = new DeleteCreatureTemplateByIdHandler(_dbContext, AuthorizationService.Object);

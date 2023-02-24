@@ -2,9 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
+using Sindie.ApiService.Core.Contracts.AbilityRequests;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.AbilityRequests.GetAbility;
+using Sindie.ApiService.Core.Requests.AbilityRequests;
 using System.Linq;
 using System.Threading.Tasks;
 using static Sindie.ApiService.Core.BaseData.Enums;
@@ -72,7 +72,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 
 			var request = new GetAbilityQuery()
 			{
-				GameId = _game.Id,
 				Name = "test",
 				AttackSkillName = "Melee",
 				DamageType = "Slashing",

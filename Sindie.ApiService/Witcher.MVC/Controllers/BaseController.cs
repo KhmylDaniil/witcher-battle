@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Sindie.ApiService.Core.Abstractions;
 
 namespace Witcher.MVC.Controllers
 {
@@ -14,12 +15,18 @@ namespace Witcher.MVC.Controllers
 		protected readonly IMediator _mediator;
 
 		/// <summary>
+		/// Айди игры для роутов
+		/// </summary>
+		protected readonly IGameIdService _gameIdService;
+
+		/// <summary>
 		/// Базовый конструктор
 		/// </summary>
 		/// <param name="mediator">Медиатор</param>
-		protected BaseController(IMediator mediator)
+		protected BaseController(IMediator mediator, IGameIdService gameIdService)
 		{
 			_mediator = mediator;
+			_gameIdService = gameIdService;
 		}
 	}
 }

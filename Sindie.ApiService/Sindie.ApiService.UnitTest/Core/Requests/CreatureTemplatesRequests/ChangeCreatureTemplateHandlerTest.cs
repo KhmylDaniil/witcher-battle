@@ -1,10 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
-using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeCreatureTemplate;
 using Sindie.ApiService.Core.Drafts.BodyTemplateDrafts;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.CreatureTemplateRequests.ChangeCreatureTemplate;
+using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -100,7 +99,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var request = new ChangeCreatureTemplateCommand()
 			{
 				Id = _creatureTemplate.Id,
-				GameId = _game.Id,
 				ImgFileId = _imgFile.Id,
 				BodyTemplateId = _bodyTemplate.Id,
 				Name = "newCT",
@@ -152,7 +150,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsNotNull(creatureTemplate);
 			Assert.IsTrue(_dbContext.CreatureTemplates.Count() == 1);
 
-			Assert.AreEqual(request.GameId, creatureTemplate.GameId);
+			Assert.AreEqual(_game.Id, creatureTemplate.GameId);
 			Assert.IsNotNull(creatureTemplate.Name);
 			Assert.AreEqual(request.Name, creatureTemplate.Name);
 			Assert.AreEqual(request.Description, creatureTemplate.Description);
@@ -208,7 +206,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var request = new ChangeCreatureTemplateCommand()
 			{
 				Id = _creatureTemplate.Id,
-				GameId = _game.Id,
 				BodyTemplateId = _humanBodyTemplate.Id,
 				Name = "newCT",
 				Description = "description",
@@ -236,7 +233,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsNotNull(creatureTemplate);
 			Assert.IsTrue(_dbContext.CreatureTemplates.Count() == 1);
 
-			Assert.AreEqual(request.GameId, creatureTemplate.GameId);
+			Assert.AreEqual(_game.Id, creatureTemplate.GameId);
 			Assert.IsNotNull(creatureTemplate.Name);
 			Assert.AreEqual(request.Name, creatureTemplate.Name);
 			Assert.AreEqual(request.Description, creatureTemplate.Description);

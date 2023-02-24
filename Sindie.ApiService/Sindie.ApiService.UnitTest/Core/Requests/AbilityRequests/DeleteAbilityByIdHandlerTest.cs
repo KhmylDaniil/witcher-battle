@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAbilitybyId;
+using Sindie.ApiService.Core.Contracts.AbilityRequests;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.AbilityRequests.DeleteAbilityById;
+using Sindie.ApiService.Core.Requests.AbilityRequests;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -40,7 +40,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			var request = new DeleteAbilityByIdCommand()
 			{
 				Id = _ability.Id,
-				GameId = _game.Id
 			};
 
 			var newHandler = new DeleteAbilityByIdHandler(_dbContext, AuthorizationService.Object);

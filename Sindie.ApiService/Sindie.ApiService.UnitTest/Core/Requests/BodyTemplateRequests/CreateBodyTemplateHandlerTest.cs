@@ -1,9 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests.CreateBodyTemplate;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.BodyTemplateRequests.CreateBodyTemplate;
+using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,7 +37,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 		{
 			var request = new CreateBodyTemplateCommand()
 			{
-				GameId = _game.Id,
 				Name = "name",
 				Description = "description",
 				BodyTemplateParts = new List<UpdateBodyTemplateRequestItem>
@@ -63,7 +61,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
 			Assert.AreEqual(1, _dbContext.BodyTemplates.Count());
 			var bodyTemplate = _dbContext.BodyTemplates.FirstOrDefault();
 
-			Assert.AreEqual(request.GameId, bodyTemplate.GameId);
+			Assert.AreEqual(_game.Id, bodyTemplate.GameId);
 			Assert.IsNotNull(bodyTemplate.Name);
 			Assert.AreEqual(request.Name, bodyTemplate.Name);
 			Assert.AreEqual(request.Description, bodyTemplate.Description);

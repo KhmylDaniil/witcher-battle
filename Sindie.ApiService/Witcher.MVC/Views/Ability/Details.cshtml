@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById.GetAbilityByIdResponse
+﻿@model Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityByIdResponse
 @{
     ViewData["Title"] = @Html.DisplayFor(model => model.Name) + "ability details";
 }
@@ -88,14 +88,14 @@
                 </td>
                 <td>
                     @Html.ActionLink("Edit", "UpdateAppliedCondition", 
-                    new { gameId = Model.GameId, abilityId=Model.Id, id = item.Id, condition = item.Condition, applyChance = item.ApplyChance}) |
-                    @Html.ActionLink("Delete", "DeleteAppliedCondition", new { gameId = Model.GameId, abilityId=Model.Id, id = item.Id })
+                    new { abilityId=Model.Id, id = item.Id, condition = item.Condition, applyChance = item.ApplyChance}) |
+                    @Html.ActionLink("Delete", "DeleteAppliedCondition", new { abilityId=Model.Id, id = item.Id })
                 </td>
             </tr>
         }
         <tr>
             <td>
-                @Html.ActionLink("Add new applied condition", "UpdateAppliedCondition", new { gameId = Model.GameId, abilityId=Model.Id })
+                @Html.ActionLink("Add new applied condition", "UpdateAppliedCondition", new { abilityId=Model.Id })
             </td>
         </tr>
     </tbody>
@@ -120,7 +120,7 @@
                 <td>
                     @if (Model.DefensiveSkills.Count > 1)
                     {
-                        @Html.ActionLink("Delete", "DeleteDefensiveSkill", new { gameId = Model.GameId, abilityId=Model.Id, id = item.Id })
+                        @Html.ActionLink("Delete", "DeleteDefensiveSkill", new { abilityId=Model.Id, id = item.Id })
                     }
                     else
                     {
@@ -131,7 +131,7 @@
         }
         <tr>
             <td>
-                @Html.ActionLink("Add new defensive skill", "CreateDefensiveSkill", new { gameId = Model.GameId, abilityId=Model.Id })
+                @Html.ActionLink("Add new defensive skill", "CreateDefensiveSkill", new { abilityId=Model.Id })
             </td>
         </tr>
     </tbody>
@@ -140,6 +140,6 @@
 <p>@ViewData["ErrorMessage"]</p>
 
 <div class="container">
-    <a asp-action="Index" asp-route-gameId=@Model.GameId>Back to Abilities</a>
+    <a asp-action="Index">Back to Abilities</a>
 </div>
 

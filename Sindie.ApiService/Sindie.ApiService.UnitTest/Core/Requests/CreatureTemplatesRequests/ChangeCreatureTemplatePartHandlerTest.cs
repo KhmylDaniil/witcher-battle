@@ -70,7 +70,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		{
 			var request = new ChangeCreatureTemplatePartCommand()
 			{
-				GameId = _game.Id,
 				CreatureTemplateId = _creatureTemplate.Id,
 				Id = _head.Id,
 				ArmorValue = 5
@@ -99,7 +98,6 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
 		{
 			var request = new ChangeCreatureTemplatePartCommand()
 			{
-				GameId = _game.Id,
 				CreatureTemplateId = _creatureTemplate.Id,
 				Id = null,
 				ArmorValue = 3

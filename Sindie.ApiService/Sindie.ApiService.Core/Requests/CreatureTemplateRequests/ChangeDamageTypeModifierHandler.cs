@@ -12,16 +12,17 @@ namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
 {
 	public class ChangeDamageTypeModifierHandler : BaseHandler<ChangeDamageTypeModifierCommand, Unit>
 	{
-		public ChangeDamageTypeModifierHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
+		public ChangeDamageTypeModifierHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
+			: base(appDbContext, authorizationService)
 		{
 		}
 
 		public async override Task<Unit> Handle(ChangeDamageTypeModifierCommand request, CancellationToken cancellationToken)
 		{
-			var creatureTemplate = await _authorizationService.RoleGameFilter(_appDbContext.Games, request.GameId, BaseData.GameRoles.MasterRoleId)
+			var creatureTemplate = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.SelectMany(g => g.CreatureTemplates.Where(g => g.Id == request.CreatureTemplateId))
 					.Include(ct => ct.DamageTypeModifiers)
-				.FirstOrDefaultAsync(cancellationToken)
+				.FirstOrDefaultAsync(ct => ct.Id == request.CreatureTemplateId, cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Game>();
 
 			var creatureTemplateDamageTypeModifier = creatureTemplate.DamageTypeModifiers

@@ -1,16 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.AbilityRequests;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAbilitybyId;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAppliedCondition;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedCondition;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.ExtensionMethods;
+using Sindie.ApiService.Core.Services.Authorization;
 
 namespace Witcher.MVC.Controllers
 {
@@ -20,13 +15,13 @@ namespace Witcher.MVC.Controllers
 	[Authorize]
 	public class AbilityController : BaseController
 	{
-		public AbilityController(IMediator mediator) : base(mediator) { }
+		public AbilityController(IMediator mediator, IGameIdService gameIdService) : base(mediator, gameIdService) { }
 
-		[Route("[controller]/{gameId}")]
+		[Route("[controller]/[action]")]
 		public async Task<IActionResult> Index(GetAbilityQuery request, CancellationToken cancellationToken)
 		{
-			ViewData["GameId"] = request.GameId;
-
+			ViewData["GameId"] = _gameIdService.GameId;
+			
 			try
 			{
 				var response = await _mediator.SendValidated(request, cancellationToken);
@@ -37,11 +32,11 @@ namespace Witcher.MVC.Controllers
 			{
 				ViewData["ErrorMessage"] = ex.UserMessage;
 
-				return View(await _mediator.SendValidated(new GetAbilityQuery() { GameId = request.GameId }, cancellationToken));
+				return View(await _mediator.SendValidated(new GetAbilityQuery(), cancellationToken));
 			}
 		}
 
-		[Route("[controller]/{gameId}/{id}")]
+		[Route("[controller]/[action]/{id}")]
 		public async Task<IActionResult> Details(GetAbilityByIdQuery query, CancellationToken cancellationToken)
 		{
 			try
@@ -52,17 +47,17 @@ namespace Witcher.MVC.Controllers
 			{
 				ViewData["ErrorMessage"] = ex.UserMessage;
 
-				return View(await _mediator.SendValidated(new GetAbilityQuery() { GameId = query.GameId }, cancellationToken));
+				return View(await _mediator.SendValidated(new GetAbilityQuery(), cancellationToken));
 			}
 		}
 
-		[Route("[controller]/[action]/{gameId}")]
+		[Route("[controller]/[action]")]
 		public ActionResult Create(CreateAbilityCommand command)
 		{
 			return View(command);
 		}
 
-		[Route("[controller]/[action]/{gameId}")]
+		[Route("[controller]/[action]")]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(CreateAbilityCommand command, CancellationToken cancellationToken)
@@ -70,7 +65,7 @@ namespace Witcher.MVC.Controllers
 			try
 			{
 				var draft = await _mediator.SendValidated(command, cancellationToken);
-				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = draft.GameId, Id = draft.Id });
+				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { Id = draft.Id });
 			}
 			catch (RequestValidationException ex)
 			{
@@ -79,18 +74,18 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
-		[Route("[controller]/[action]/{gameId}/{id}")]
+		[Route("[controller]/[action]/{id}")]
 		public ActionResult Edit(ChangeAbilityCommand command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Route("[controller]/[action]/{gameId}/{id}")]
+		[Route("[controller]/[action]/{id}")]
 		public async Task<IActionResult> Edit(ChangeAbilityCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
 				await _mediator.SendValidated(command, cancellationToken);
-				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = command.GameId, Id = command.Id });
+				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() {Id = command.Id });
 			}
 			catch (RequestValidationException ex)
 			{
@@ -99,18 +94,18 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
-		[Route("[controller]/[action]/{gameId}/{id}")]
+		[Route("[controller]/[action]/{id}")]
 		public ActionResult Delete(DeleteAbilityByIdCommand command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Route("[controller]/[action]/{gameId}/{id}")]
+		[Route("[controller]/[action]/{id}")]
 		public async Task<IActionResult> Delete(DeleteAbilityByIdCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
 				await _mediator.SendValidated(command, cancellationToken);
-				return RedirectToAction(nameof(Index), new GetAbilityQuery { GameId = command.GameId });
+				return RedirectToAction(nameof(Index), new GetAbilityQuery());
 			}
 			catch (RequestValidationException ex)
 			{
@@ -119,18 +114,18 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
-		[Route("[controller]/[action]/{gameId}/{abilityId}")]
+		[Route("[controller]/[action]/{abilityId}")]
 		public ActionResult UpdateAppliedCondition(UpdateAppliedCondionCommand command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Route("[controller]/[action]/{gameId}/{abilityId}")]
+		[Route("[controller]/[action]/{abilityId}")]
 		public async Task<IActionResult> UpdateAppliedCondition(UpdateAppliedCondionCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
 				await _mediator.SendValidated(command, cancellationToken);
-				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = command.GameId, Id = command.AbilityId });
+				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { Id = command.AbilityId });
 			}
 			catch (RequestValidationException ex)
 			{
@@ -139,13 +134,13 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
-		[Route("[controller]/[action]/{gameId}/{abilityId}")]
+		[Route("[controller]/[action]/{abilityId}")]
 		public async Task<IActionResult> DeleteAppliedCondition(DeleteAppliedCondionCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
 				await _mediator.SendValidated(command, cancellationToken);
-				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = command.GameId, Id = command.AbilityId });
+				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { Id = command.AbilityId });
 			}
 			catch (RequestValidationException ex)
 			{
@@ -154,18 +149,18 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
-		[Route("[controller]/[action]/{gameId}/{abilityId}")]
+		[Route("[controller]/[action]/{abilityId}")]
 		public ActionResult CreateDefensiveSkill(CreateDefensiveSkillCommand command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Route("[controller]/[action]/{gameId}/{abilityId}")]
+		[Route("[controller]/[action]/{abilityId}")]
 		public async Task<IActionResult> CreateDefensiveSkill(CreateDefensiveSkillCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
 				await _mediator.SendValidated(command, cancellationToken);
-				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = command.GameId, Id = command.AbilityId });
+				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { Id = command.AbilityId });
 			}
 			catch (RequestValidationException ex)
 			{
@@ -174,17 +169,17 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
-		[Route("[controller]/[action]/{gameId}/{abilityId}")]
+		[Route("[controller]/[action]/{abilityId}")]
 		public async Task<IActionResult> DeleteDefensiveSkill(DeleteDefensiveSkillCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
 				await _mediator.SendValidated(command, cancellationToken);
-				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = command.GameId, Id = command.AbilityId });
+				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { Id = command.AbilityId });
 			}
 			catch
 			{
-				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { GameId = command.GameId, Id = command.AbilityId });
+				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { Id = command.AbilityId });
 			}
 		}
 	}

@@ -14,8 +14,8 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// </summary>
 		/// <param name="query">Запрос</param>
 		/// <returns>Отфильтрованный запрос</returns>
-		public IQueryable<Game> RoleGameFilter(
-			IQueryable<Game> query, Guid gameId, Guid gameRoleId);
+		public IQueryable<Game> AuthorizedGameFilter(
+			IQueryable<Game> query, Guid gameRoleId = default);
 
 		/// <summary>
 		/// Проверить права доступа для пользователя игры
@@ -23,7 +23,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <param name="query">Запрос</param>
 		/// <returns>Отфильтрованный запрос</returns>
 		public IQueryable<Game> UserGameFilter(
-			IQueryable<Game> query, Guid gameId);
+			IQueryable<Game> query);
 
 		/// <summary>
 		/// Проверить права мастера боя</summary>

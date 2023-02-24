@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplateById.GetCreatureTemplateByIdResponse
+﻿@model Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.GetCreatureTemplateByIdResponse
 
 @{
     ViewData["Title"] = @Html.DisplayFor(model => model.Name) + "creature template details";
@@ -108,7 +108,7 @@
             </th>
             <th>
                 @Html.ActionLink("Add new skill", "EditSkill",
-                new { GameId = Model.GameId, CreatureTemplateId = Model.Id })
+                new { CreatureTemplateId = Model.Id })
             </th>
         </tr>
     </thead>
@@ -124,8 +124,8 @@
                 </td>
                 <td>
                     @Html.ActionLink("Change value", "EditSkill",
-                new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id, Skill = item.Skill, Value = item.SkillValue })
-                    | @Html.ActionLink("Delete", "DeleteSkill", new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id })
+                new { CreatureTemplateId = Model.Id, Id = item.Id, Skill = item.Skill, Value = item.SkillValue })
+                    | @Html.ActionLink("Delete", "DeleteSkill", new { CreatureTemplateId = Model.Id, Id = item.Id })
                 </td>
             </tr>
         }
@@ -142,7 +142,7 @@
                 @Html.DisplayNameFor(model => model.CreatureTemplateParts.First().Armor)
             </th>
             <th>@Html.ActionLink("Change armor value for all parts", "EditParts",
-            new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Name = Model.Name })</th>
+            new { CreatureTemplateId = Model.Id, Name = Model.Name })</th>
         </tr>
     </thead>
     <tbody>
@@ -157,14 +157,14 @@
                 </td>
                 <td>
                     @Html.ActionLink("Change", "EditParts",
-                    new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id, Name = item.Name })
+                    new { CreatureTemplateId = Model.Id, Id = item.Id, Name = item.Name })
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-<a asp-controller="BodyTemplate" asp-action="Details" asp-route-gameId="@Model.GameId" asp-route-id="@Model.BodyTemplateId">To Body Template</a>
+<a asp-controller="BodyTemplate" asp-action="Details" asp-route-id="@Model.BodyTemplateId">To Body Template</a>
 
 
 <table class="table">
@@ -214,7 +214,7 @@
                     @string.Join(", ", item.AppliedConditions.Select(x => $"{x.Condition} {x.ApplyChance}%."))
                 </td>
                 <td>
-                    <a asp-controller="Ability" asp-action="Details" asp-route-gameId="@Model.GameId" asp-route-id="@item.Id">Details </a>
+                    <a asp-controller="Ability" asp-action="Details" asp-route-id="@item.Id">Details </a>
                  </td>
             </tr>
         }
@@ -232,7 +232,7 @@
             </th>
             <th>
                 @Html.ActionLink("Add new damage type modifier", "EditDamageTypeModifier",
-                new { GameId = Model.GameId, CreatureTemplateId = Model.Id })
+                new { CreatureTemplateId = Model.Id })
             </th>
         </tr>
     </thead>
@@ -248,7 +248,7 @@
                 </td>
                 <td>
                     @Html.ActionLink("Change value", "EditDamageTypeModifier",
-                new { GameId = Model.GameId, CreatureTemplateId = Model.Id, Id = item.Id,
+                new { CreatureTemplateId = Model.Id, Id = item.Id,
                 DamageType = item.DamageType, DamageTypeModifier = item.DamageTypeModifier })
                 </td>
             </tr>
@@ -259,5 +259,5 @@
 <p>@ViewData["ErrorMessage"]</p>
 
 <div class="container">
-    <a asp-action="Index" asp-route-gameId=@Model.GameId>Back to Creature Templates</a>
+    <a asp-action="Index">Back to Creature Templates</a>
 </div>

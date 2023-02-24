@@ -14,19 +14,8 @@ using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Requests.UserGameRequests
 {
-	public class DeleteUserGameHandler : IRequestHandler<DeleteUserGameCommand, Unit>
-
+	public class DeleteUserGameHandler : BaseHandler<DeleteUserGameCommand, Unit>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
-
-		/// <summary>
-		/// Сервис авторизации
-		/// </summary>
-		private readonly IAuthorizationService _authorizationService;
-
 		/// <summary>
 		/// Контекст пользователя
 		/// </summary>
@@ -42,9 +31,8 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 			IAppDbContext appDbContext,
 			IAuthorizationService authorizationService,
 			IUserContext userContext)
+			: base(appDbContext, authorizationService)
 		{
-			_appDbContext = appDbContext;
-			_authorizationService = authorizationService;
 			_userContext = userContext;
 		}
 
@@ -54,30 +42,25 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns>Юнит</returns>
-		public async Task<Unit> Handle(DeleteUserGameCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(DeleteUserGameCommand request, CancellationToken cancellationToken)
 		{
-			if (request == null)
-				throw new RequestNullException<DeleteUserGameCommand>();
-
-			var game = await _authorizationService.RoleGameFilter(
-				_appDbContext.Games, request.GameId, GameRoles.MasterRoleId)
+			var game = await _authorizationService.UserGameFilter(_appDbContext.Games)
 				.Include(x => x.UserGames)
 				.FirstOrDefaultAsync(cancellationToken)
-				?? throw new ExceptionEntityNotFound<Game>(request.GameId);
+				?? throw new ExceptionEntityNotFound<Game>();
 			
 			var userGame = game.UserGames.FirstOrDefault(x => x.Id == request.UserGameId)
 				?? throw new ExceptionEntityNotFound<UserGame>(request.UserGameId);
 
-			if (game.UserGames.Where(x => x.GameRoleId == GameRoles.MainMasterRoleId).Count() == 1
-				&& userGame.GameRoleId == GameRoles.MainMasterRoleId)
-				throw new ExceptionNoAccessToEntity<UserGame>();
+			if (userGame.GameRoleId == GameRoles.MainMasterRoleId)
+				throw new RequestValidationException("Роль главмастера не может быть удалена без удаления игры");
 
 			bool IsMainMaster = game.UserGames.Any(x => x.GameRoleId == GameRoles.MainMasterRoleId
 				&& x.UserId == _userContext.CurrentUserId);
 
 			if (userGame.UserId == _userContext.CurrentUserId)
 				game.UserGames.Remove(userGame);
-			else if (IsMainMaster && userGame.GameRoleId != GameRoles.MainMasterRoleId)
+			else if (IsMainMaster)
 				game.UserGames.Remove(userGame);
 			else if (userGame.GameRoleId == GameRoles.PlayerRoleId)
 				game.UserGames.Remove(userGame);
