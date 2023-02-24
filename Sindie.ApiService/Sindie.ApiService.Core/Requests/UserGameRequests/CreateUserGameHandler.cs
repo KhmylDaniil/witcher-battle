@@ -19,30 +19,20 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 	/// <summary>
 	/// Обработчик команды создания пользователя игры
 	/// </summary>
-	public class CreateUserGameHandler : IRequestHandler<CreateUserGameCommand, Unit>
+	public class CreateUserGameHandler : BaseHandler<CreateUserGameCommand, Unit>
 	{
-
 		/// <summary>
-		/// Контекст базы данных
+		/// Контекст пользователя
 		/// </summary>
-		private readonly IAppDbContext _appDbContext;
+		private readonly IUserContext _userContext;
 
-		/// <summary>
-		/// Сервис авторизации
-		/// </summary>
-		private readonly IAuthorizationService _authorizationService;
-
-		/// <summary>
-		/// Конструктор обработчика команды создания пользователя игры
-		/// </summary>
-		/// <param name="appDbContext">Контекст базы данных</param>
-		/// <param name="authorizationService">Сервис авторизации</param>
 		public CreateUserGameHandler(
-			IAppDbContext appDbContext,
-			IAuthorizationService authorizationService)
+			IAppDbContext appDbContext, 
+			IAuthorizationService authorizationService,
+			IUserContext userContext)
+			: base(appDbContext, authorizationService)
 		{
-			_appDbContext = appDbContext;
-			_authorizationService = authorizationService;
+			_userContext = userContext;
 		}
 
 		/// <summary>
@@ -51,10 +41,12 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns>Юнит</returns>
-		public async Task<Unit> Handle(CreateUserGameCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(CreateUserGameCommand request, CancellationToken cancellationToken)
 		{
-			if (request == null)
-				throw new RequestNullException<CreateUserGameCommand>();
+			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
+				.Include(g => g.UserGames)
+				.FirstOrDefaultAsync(cancellationToken)
+				?? throw new ExceptionNoAccessToEntity<Game>();
 
 			var user = await _appDbContext.Users.FirstOrDefaultAsync(x => x.Id == request.AssignedUserId, cancellationToken)
 				?? throw new ExceptionEntityNotFound<User>(request.AssignedUserId);
@@ -63,37 +55,21 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 				.FirstOrDefaultAsync(u => u.Id == request.AssingedRoleId, cancellationToken)
 				?? throw new ExceptionEntityNotFound<GameRole>(request.AssingedRoleId);
 
-			if (await _appDbContext.UserGames.
-				Where(x => x.UserId == request.AssignedUserId
-				&& x.GameRoleId == request.AssingedRoleId).AnyAsync())
+			if (game.UserGames.Any(x => x.UserId == request.AssignedUserId
+				&& x.GameRoleId == request.AssingedRoleId))
 				throw new RequestNotUniqException<CreateUserGameCommand>();
 
 			var @interface = await _appDbContext.Interfaces
 				.FirstOrDefaultAsync(u => u.Id == SystemInterfaces.GameDarkId, cancellationToken)
 				?? throw new ExceptionEntityNotFound<Interface>(SystemInterfaces.GameDarkId);
 
-			if (request.AssingedRoleId == GameRoles.MainMasterRoleId
-				|| request.AssingedRoleId == GameRoles.MasterRoleId)
-			{
-				var game = await _authorizationService.AuthorizedGameFilter(
-					_appDbContext.Games, GameRoles.MainMasterRoleId)
-					.Include(x => x.UserGames)
-					.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionEntityNotFound<Game>(request.GameId);
-
-				game.UserGames.Add(new UserGame(user, game, @interface, role));
-			}
-			else
-			{
-				var game = await _authorizationService.AuthorizedGameFilter(
-					_appDbContext.Games)
-					.Include(x => x.UserGames)
-					.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionEntityNotFound<Game>(request.GameId);
-
-				game.UserGames.Add(new UserGame(user, game, @interface, role));
-			}
-
+			if (request.AssingedRoleId == GameRoles.MasterRoleId
+				&& !game.UserGames.Any(x => x.UserId == _userContext.CurrentUserId
+					&& x.GameRoleId == GameRoles.MainMasterRoleId))
+				throw new RequestValidationException("Нет прав для присвоения роли");
+			
+			game.UserGames.Add(new UserGame(user, game, @interface, role));
+	
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
 		}

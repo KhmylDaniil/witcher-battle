@@ -60,7 +60,7 @@ namespace Sindie.ApiService.UnitTest.Core.Services.Authorization
 		{
 			var authorizationService = new AuthorizationService(UserContextAsUser.Object, GameIdService.Object);
 
-			var result = authorizationService.UserGameFilter(_dbContext.Games, _game.Id);
+			var result = authorizationService.UserGameFilter(_dbContext.Games);
 
 			Assert.AreEqual(1, result.Count());
 			Assert.AreEqual(_game.Id, result.First().Id);

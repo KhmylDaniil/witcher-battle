@@ -15,7 +15,7 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.DeleteGame
 
 		public override async Task<Unit> Handle(DeleteGameCommand request, CancellationToken cancellationToken)
 		{
-			var game = await _authorizationService.UserGameFilter(_appDbContext.Games, request.Id)
+			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games, BaseData.GameRoles.MainMasterRoleId)
 				.FirstAsync(cancellationToken: cancellationToken);
 
 			_appDbContext.Games.Remove(game);

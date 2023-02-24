@@ -15,18 +15,8 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 	/// <summary>
 	/// Обработчик команды изменения игры
 	/// </summary>
-	public class ChangeGameHandler : IRequestHandler<ChangeGameCommand, Unit>
+	public class ChangeGameHandler : BaseHandler<ChangeGameCommand, Unit>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
-
-		/// <summary>
-		/// Сервис авторизации
-		/// </summary>
-		private readonly IAuthorizationService _authorizationService;
-
 		/// <summary>
 		/// Сервис изменения списков графических и текстовых файлов
 		/// </summary>
@@ -42,22 +32,21 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 			IAppDbContext appDbContext,
 			IAuthorizationService authorizationService,
 			IChangeListService changeListService)
+			: base(appDbContext, authorizationService)
 		{
-			_appDbContext = appDbContext;
-			_authorizationService = authorizationService;
 			_changeListService = changeListService;
 		}
 
 		/// <summary>
-		/// Обработка команды создания игры
+		/// Обработка команды изменения игры
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены запроса</param>
 		/// <returns></returns>
-		public async Task<Unit> Handle(ChangeGameCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(ChangeGameCommand request, CancellationToken cancellationToken)
 		{
 			var game = await _authorizationService
-				.AuthorizedGameFilter(_appDbContext.Games)
+				.AuthorizedGameFilter(_appDbContext.Games, GameRoles.MainMasterRoleId)
 				.Include(x => x.Avatar)
 				.Include(x => x.ImgFiles)
 				.Include(x => x.TextFiles)
@@ -65,23 +54,19 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new ExceptionEntityNotFound<Game>(request.Id);
 
-			//проверка на уникальность имени игры
 			if (!string.Equals(request.Name, game.Name, System.StringComparison.Ordinal) && await _appDbContext.Games
 				.AnyAsync(x => x.Name == request.Name, cancellationToken))
 				throw new RequestNameNotUniqException<ChangeGameCommand>(nameof(request.Name));
 
-			//находим аватар, проверяем на наличие в БД 
 			var avatar = request.AvatarId == null
 				? null
 				: await _appDbContext.ImgFiles
 				.FirstOrDefaultAsync(x => x.Id == request.AvatarId, cancellationToken)
 				?? throw new ExceptionEntityNotFound<ImgFile>(nameof(request.AvatarId));
 
-			//находим списки и проверяем на наличие в БД
 			var textFiles = new List<TextFile>();
 
 			if (request.TextFiles != null)
-			{
 				foreach (var x in request.TextFiles)
 				{
 					var textFile = await _appDbContext.TextFiles
@@ -89,12 +74,10 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 					?? throw new ExceptionEntityNotFound<TextFile>(nameof(x));
 					textFiles.Add(textFile);
 				}
-			}
 
 			var imgFiles = new List<ImgFile>();
 
 			if (request.ImgFiles != null)
-			{
 				foreach (var x in request.ImgFiles)
 				{
 					var imgFile = await _appDbContext.ImgFiles
@@ -102,7 +85,6 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 					?? throw new ExceptionEntityNotFound<ImgFile>(nameof(x));
 					imgFiles.Add(imgFile);
 				}
-			}
 
 			game.ChangeGame(
 				name: request.Name,

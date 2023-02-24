@@ -33,14 +33,15 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var response = await _mediator.SendValidated(command, cancellationToken);
-
 				_gameIdService.Set(command.Id);
+
+				var response = await _mediator.SendValidated(command, cancellationToken);
 
 				return View(response);
 			}
 			catch (RequestValidationException ex)
 			{
+				_gameIdService.Reset();
 				ViewData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}

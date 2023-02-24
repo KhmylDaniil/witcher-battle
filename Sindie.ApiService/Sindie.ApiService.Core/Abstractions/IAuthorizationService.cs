@@ -23,7 +23,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <param name="query">Запрос</param>
 		/// <returns>Отфильтрованный запрос</returns>
 		public IQueryable<Game> UserGameFilter(
-			IQueryable<Game> query, Guid gameId);
+			IQueryable<Game> query);
 
 		/// <summary>
 		/// Проверить права мастера боя</summary>

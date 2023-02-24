@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Exceptions;
 using System;
 
 namespace Sindie.ApiService.Core.Contracts.UserGameRequests
@@ -6,13 +7,8 @@ namespace Sindie.ApiService.Core.Contracts.UserGameRequests
 	/// <summary>
 	/// Команда создания пользователя игры
 	/// </summary>
-	public sealed class CreateUserGameCommand: IRequest<Unit>
+	public sealed class CreateUserGameCommand: IValidatableCommand
 	{
-		/// <summary>
-		/// Айди игры
-		/// </summary>
-		public Guid GameId { get; set; }
-
 		/// <summary>
 		/// Айди пользователя
 		/// </summary>
@@ -22,5 +18,14 @@ namespace Sindie.ApiService.Core.Contracts.UserGameRequests
 		/// Айди роли в игре
 		/// </summary>
 		public Guid AssingedRoleId { get; set; }
+
+		/// <summary>
+		/// Валидация
+		/// </summary>
+		public void Validate()
+		{
+			if (AssingedRoleId == BaseData.GameRoles.MainMasterRoleId)
+				throw new RequestValidationException("Роль главмастера невозможно присвоить");
+		}
 	}
 }

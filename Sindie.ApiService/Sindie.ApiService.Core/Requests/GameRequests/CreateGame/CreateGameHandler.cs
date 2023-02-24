@@ -27,8 +27,6 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 		/// </summary>
 		private readonly IChangeListService _changeListService;
 
-
-
 		/// <summary>
 		/// Конструктор обработчика команды регистрации пользователя
 		/// </summary>
@@ -54,7 +52,6 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 		/// <returns></returns>
 		public override async Task<Unit> Handle(CreateGameCommand request, CancellationToken cancellationToken)
 		{
-
 			if (await _appDbContext.Games.AnyAsync(x => x.Name == request.Name, cancellationToken))
 				throw new RequestNameNotUniqException<CreateGameCommand>(nameof(request.Name));
 

@@ -126,20 +126,17 @@ namespace Sindie.ApiService.UnitTest.Core
 
 			AuthorizationService = new Mock<IAuthorizationService>();
 			AuthorizationService
-				.Setup(x => x.UserGameFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>()))
-				.Returns<IQueryable<Game>, Guid>((x, y) => x);
+				.Setup(x => x.UserGameFilter(It.IsAny<IQueryable<Game>>()))
+				.Returns<IQueryable<Game>>(x => x);
 			AuthorizationService
 				.Setup(x => x.BattleMasterFilter(It.IsAny<IQueryable<Battle>>(), It.IsAny<Guid>()))
 				.Returns<IQueryable<Battle>, Guid>((x, y) => x);
 
-			AuthorizationServiceWithGameId = new Mock<IAuthorizationService>();
-			AuthorizationServiceWithGameId
-				.Setup(x => x.AuthorizedGameFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>()))
-				.Returns<IQueryable<Game>, Guid>((x, y) => x.Where(a => a.Id == y));
-
 			AuthorizationService
 				.Setup(x => x.AuthorizedGameFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>()))
 				.Returns<IQueryable<Game>, Guid>((x, y) => x);
+
+			AuthorizationServiceWithGameId = new Mock<IAuthorizationService>();
 
 			RollService = new Mock<IRollService>();
 			int attackerFumble = 0;

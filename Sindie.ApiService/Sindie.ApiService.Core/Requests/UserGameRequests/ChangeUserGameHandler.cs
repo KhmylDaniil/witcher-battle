@@ -15,13 +15,8 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 	/// <summary>
 	/// Обработчик команды изменения пользователя игры
 	/// </summary>
-	public class ChangeUserGameHandler : IRequestHandler<ChangeUserGameCommand, Unit>
+	public class ChangeUserGameHandler : BaseHandler<ChangeUserGameCommand, Unit>
 	{
-		/// <summary>
-		/// Контекст базы данных
-		/// </summary>
-		private readonly IAppDbContext _appDbContext;
-
 		/// <summary>
 		/// Контекст пользователя
 		/// </summary>
@@ -34,9 +29,10 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 		/// <param name="userContext">Контекст пользователя</param>
 		public ChangeUserGameHandler(
 			IAppDbContext appDbContext,
+			IAuthorizationService authorizationService,
 			IUserContext userContext)
+			: base(appDbContext, authorizationService)
 		{
-			_appDbContext = appDbContext;
 			_userContext = userContext;
 		}
 
@@ -46,22 +42,24 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns>Юнит</returns>
-		public async Task<Unit> Handle(ChangeUserGameCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(ChangeUserGameCommand request, CancellationToken cancellationToken)
 		{
 			if (request == null)
 				throw new RequestNullException<ChangeUserGameCommand>();
 			
-			var checkedUserGame = await _appDbContext.UserGames.
-				Where(x => x.Id == request.UserGameId
-				&& x.UserId == _userContext.CurrentUserId)
-				.FirstOrDefaultAsync(cancellationToken)
-				?? throw new ExceptionNoAccessToEntity<UserGame>();
+			var userGames = await _authorizationService.UserGameFilter(_appDbContext.Games)
+				.Include(g => g.UserGames)
+				.SelectMany(g => g.UserGames)
+				.Where(ug => ug.UserId == _userContext.CurrentUserId)
+				.ToListAsync(cancellationToken)
+					?? throw new ExceptionNoAccessToEntity<UserGame>();
 
 			var @interface = await _appDbContext.Interfaces
 				.FirstOrDefaultAsync(u => u.Id == request.InterfaceId, cancellationToken)
 				?? throw new ExceptionEntityNotFound<Interface>(request.InterfaceId);
 
-			checkedUserGame.Interface = @interface;
+			foreach (var game in userGames)
+				game.Interface = @interface;
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;

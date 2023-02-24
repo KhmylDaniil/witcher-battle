@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using Sindie.ApiService.Core.Abstractions;
 using System;
 
 namespace Sindie.ApiService.Core.Contracts.UserGameRequests
@@ -6,16 +6,19 @@ namespace Sindie.ApiService.Core.Contracts.UserGameRequests
 	/// <summary>
 	/// Команда удаления пользователя игры
 	/// </summary>
-	public sealed class DeleteUserGameCommand : IRequest<Unit>
+	public sealed class DeleteUserGameCommand : IValidatableCommand
 	{
-		/// <summary>
-		/// Айди игры
-		/// </summary>
-		public Guid GameId { get; set; }
-
 		/// <summary>
 		/// Айди пользователя игры
 		/// </summary>
 		public Guid UserGameId { get; set; }
+
+		/// <summary>
+		/// Валидация
+		/// </summary>
+		public void Validate()
+		{
+			// Method intentionally left empty.
+		}
 	}
 }

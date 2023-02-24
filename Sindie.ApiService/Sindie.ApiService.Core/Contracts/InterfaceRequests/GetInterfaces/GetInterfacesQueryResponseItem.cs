@@ -7,7 +7,6 @@ namespace Sindie.ApiService.Core.Contracts.InterfaceRequests.GetInterfaces
 	/// </summary>
 	public sealed class GetInterfacesQueryResponseItem
 	{
-
 		/// <summary>
 		/// Айди интерфейса
 		/// </summary>

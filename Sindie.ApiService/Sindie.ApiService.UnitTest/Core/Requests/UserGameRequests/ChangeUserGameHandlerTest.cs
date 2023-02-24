@@ -17,6 +17,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserGameRequests
 	{
 		private readonly Interface _currentInterface;
 		private readonly Interface _newInterface;
+		private readonly Game _game;
 		private readonly User _user;
 		private readonly UserGame _userGame;
 		private readonly IAppDbContext _appDbContext;
@@ -27,10 +28,12 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserGameRequests
 		public ChangeUserGameHandlerTest()
 		{
 			_user = User.CreateForTest(id: UserId);
+			_game = Game.CreateForTest();
 			_currentInterface = Interface.CreateForTest(id: SystemInterfaces.GameDarkId);
 			_newInterface = Interface.CreateForTest(id: SystemInterfaces.GameLightId);
-			_userGame = UserGame.CreateForTest(user: _user, @interface: _currentInterface);
+			_userGame = UserGame.CreateForTest(user: _user, game: _game, @interface: _currentInterface);
 			_appDbContext = CreateInMemoryContext(x => x.AddRange(
+				_game,
 				_currentInterface,
 				_newInterface,
 				_user,
@@ -46,11 +49,10 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserGameRequests
 		{
 			var request = new ChangeUserGameCommand()
 			{
-				UserGameId = _userGame.Id,
 				InterfaceId = _newInterface.Id,
 			};
 
-			var newHandler = new ChangeUserGameHandler(_appDbContext, UserContext.Object);
+			var newHandler = new ChangeUserGameHandler(_appDbContext, AuthorizationService.Object, UserContext.Object);
 
 			var result = await newHandler.Handle(request, default);
 
