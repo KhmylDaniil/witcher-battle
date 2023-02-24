@@ -1,12 +1,11 @@
-﻿using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById
+namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 {
 	/// <summary>
 	/// Ответ на запрос способности
 	/// </summary>
-	public class GetAbilityByIdResponse: GetAbilityResponseItem
+	public class GetAbilityByIdResponse : GetAbilityResponseItem
 	{
 		/// <summary>
 		/// Накладываемые состояния

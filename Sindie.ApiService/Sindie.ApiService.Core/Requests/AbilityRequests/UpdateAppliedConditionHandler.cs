@@ -1,17 +1,16 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedCondition;
+using Sindie.ApiService.Core.Contracts.AbilityRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.AbilityRequests.UpdateAppliedCondition
+namespace Sindie.ApiService.Core.Requests.AbilityRequests
 {
 	public class UpdateAppliedConditionHandler : BaseHandler<UpdateAppliedCondionCommand, Unit>
 	{

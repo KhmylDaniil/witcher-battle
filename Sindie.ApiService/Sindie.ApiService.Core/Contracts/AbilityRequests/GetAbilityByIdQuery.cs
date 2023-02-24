@@ -1,9 +1,7 @@
-﻿using MediatR;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Entities;
+﻿using Sindie.ApiService.Core.Abstractions;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById
+namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 {
 	public class GetAbilityByIdQuery : IValidatableCommand<GetAbilityByIdResponse>
 	{

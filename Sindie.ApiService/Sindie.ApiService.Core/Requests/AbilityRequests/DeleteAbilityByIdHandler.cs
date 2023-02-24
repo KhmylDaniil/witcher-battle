@@ -1,19 +1,16 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAbilitybyId;
+using Sindie.ApiService.Core.Contracts.AbilityRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.AbilityRequests.DeleteAbilityById
+namespace Sindie.ApiService.Core.Requests.AbilityRequests
 {
 	/// <summary>
 	/// Обработчик удаления способности

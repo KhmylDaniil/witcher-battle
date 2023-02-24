@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility;
+using Sindie.ApiService.Core.Contracts.AbilityRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
+namespace Sindie.ApiService.Core.Requests.AbilityRequests
 {
 	/// <summary>
 	/// Обработчик создания способности
@@ -24,7 +23,7 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests.CreateAbility
 		/// <returns>Способность</returns>
 		public override async Task<Ability> Handle(CreateAbilityCommand request, CancellationToken cancellationToken)
 		{
-			
+
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities)
 				.FirstOrDefaultAsync(cancellationToken)

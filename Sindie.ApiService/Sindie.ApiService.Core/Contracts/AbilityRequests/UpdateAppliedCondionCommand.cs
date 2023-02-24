@@ -1,8 +1,7 @@
-﻿using MediatR;
-using Sindie.ApiService.Core.Abstractions;
+﻿using Sindie.ApiService.Core.Abstractions;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedCondition
+namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 {
 	/// <summary>
 	/// Команда создания или изменения накладываемого состояния

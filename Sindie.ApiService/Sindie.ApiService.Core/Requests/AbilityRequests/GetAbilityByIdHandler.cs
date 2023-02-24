@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.AbilityRequests;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
@@ -11,7 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.AbilityRequests.GetAbilityById
+namespace Sindie.ApiService.Core.Requests.AbilityRequests
 {
 	public class GetAbilityByIdHandler : BaseHandler<GetAbilityByIdQuery, GetAbilityByIdResponse>
 	{

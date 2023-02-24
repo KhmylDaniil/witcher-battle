@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Sindie.ApiService.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById
+namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 {
 	/// <summary>
 	/// Элемент ответа на запрос на получение списка способностей - защитный навык

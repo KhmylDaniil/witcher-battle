@@ -3,13 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.AbilityRequests;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAbilitybyId;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAppliedCondition;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedCondition;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.ExtensionMethods;
 using Sindie.ApiService.Core.Services.Authorization;
@@ -64,7 +57,7 @@ namespace Witcher.MVC.Controllers
 			return View(command);
 		}
 
-		[Route("[controller]/[action]/{gameId}")]
+		[Route("[controller]/[action]")]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(CreateAbilityCommand command, CancellationToken cancellationToken)

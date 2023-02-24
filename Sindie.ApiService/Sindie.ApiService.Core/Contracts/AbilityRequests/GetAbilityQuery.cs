@@ -1,10 +1,9 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
 using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
+namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 {
 	/// <summary>
 	/// Запрос на получение списка способностей
@@ -72,11 +71,11 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility
 		public void Validate()
 		{
 			if (MinAttackDiceQuantity < 0)
-				throw new RequestFieldIncorrectDataException<GetAbilityQuery>(nameof(MinAttackDiceQuantity), 
+				throw new RequestFieldIncorrectDataException<GetAbilityQuery>(nameof(MinAttackDiceQuantity),
 					"Значение должно быть больше нуля.");
 
 			if (MaxAttackDiceQuantity < MinAttackDiceQuantity)
-				throw new RequestFieldIncorrectDataException<GetAbilityQuery>(nameof(MaxAttackDiceQuantity), 
+				throw new RequestFieldIncorrectDataException<GetAbilityQuery>(nameof(MaxAttackDiceQuantity),
 					"Значение должно быть больше минимального значения фильтра по количеству кубов атаки.");
 		}
 	}

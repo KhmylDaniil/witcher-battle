@@ -1,27 +1,18 @@
-﻿using MediatR;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbility;
+﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using static Sindie.ApiService.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
+namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 {
 	/// <summary>
-	/// Запрос изменения способности
+	/// Запрос создания способности
 	/// </summary>
-	public class ChangeAbilityCommand: IValidatableCommand
+	public class CreateAbilityCommand : IValidatableCommand<Ability>
 	{
-		/// <summary>
-		/// Айди
-		/// </summary>
-		public Guid Id { get; set; }
-
 		/// <summary>
 		/// Наазвание способности
 		/// </summary>
@@ -73,41 +64,43 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility
 		public List<UpdateAbilityCommandItemAppledCondition> AppliedConditions { get; set; }
 
 		/// <summary>
-		/// Валидация запроса
+		/// Валидация
 		/// </summary>
 		public void Validate()
 		{
 			if (string.IsNullOrEmpty(Name))
-				throw new RequestFieldNullException<ChangeAbilityCommand>(nameof(Name));
+				throw new RequestFieldNullException<CreateAbilityCommand>(nameof(Name));
 
 			if (!Enum.IsDefined(AttackSkill))
-				throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AttackSkill));
+				throw new RequestFieldIncorrectDataException<CreateAbilityCommand>(nameof(AttackSkill));
 
 			if (AttackDiceQuantity < 1)
-				throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AttackDiceQuantity), "Значение должно быть больше нуля");
+				throw new RequestFieldIncorrectDataException<CreateAbilityCommand>(nameof(AttackDiceQuantity), "Значение должно быть больше нуля");
 
 			if (AttackSpeed < 1)
-				throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AttackSpeed), "Значение должно быть больше нуля");
+				throw new RequestFieldIncorrectDataException<CreateAbilityCommand>(nameof(AttackSpeed), "Значение должно быть больше нуля");
 
 			if (!Enum.IsDefined(DamageType))
-				throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(DamageType));
+				throw new RequestFieldIncorrectDataException<CreateAbilityCommand>(nameof(DamageType));
 
 			if (DefensiveSkills is not null)
+			{
 				foreach (var skill in DefensiveSkills)
 					if (!Enum.IsDefined(skill))
-						throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(DefensiveSkills));
+						throw new RequestFieldIncorrectDataException<CreateAbilityCommand>(nameof(DefensiveSkills));
+			}
 
 			if (AppliedConditions is not null)
 				foreach (var condition in AppliedConditions)
 				{
 					if (!Enum.IsDefined(condition.Condition))
-						throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AppliedConditions), "Неизвестное накладываемое состояние");
+						throw new RequestFieldIncorrectDataException<CreateAbilityCommand>(nameof(AppliedConditions), "Неизвестное накладываемое состояние");
 
 					if (AppliedConditions.Count(x => x.Condition == condition.Condition) != 1)
-						throw new RequestNotUniqException<ChangeAbilityCommand>(nameof(AppliedConditions));
+						throw new RequestNotUniqException<CreateAbilityCommand>(nameof(AppliedConditions));
 
 					if (condition.ApplyChance < 1 || condition.ApplyChance > 100)
-						throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AppliedConditions), "Шанс наложения состояния должен быть в диапазоне от 1 до 100");
+						throw new RequestFieldIncorrectDataException<CreateAbilityCommand>(nameof(AppliedConditions), "Шанс наложения состояния должен быть в диапазоне от 1 до 100");
 				}
 		}
 	}

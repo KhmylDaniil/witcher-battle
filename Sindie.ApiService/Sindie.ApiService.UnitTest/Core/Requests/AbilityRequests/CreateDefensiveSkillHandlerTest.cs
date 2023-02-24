@@ -2,14 +2,9 @@
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.AbilityRequests;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedCondition;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Requests.AbilityRequests;
-using Sindie.ApiService.Core.Requests.AbilityRequests.UpdateAppliedCondition;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests

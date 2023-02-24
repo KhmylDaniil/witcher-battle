@@ -6,10 +6,10 @@ using Sindie.ApiService.Core.Exceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.DeleteAppliedCondition;
 using Microsoft.EntityFrameworkCore;
+using Sindie.ApiService.Core.Contracts.AbilityRequests;
 
-namespace Sindie.ApiService.Core.Requests.AbilityRequests.DeleteAppliedCondition
+namespace Sindie.ApiService.Core.Requests.AbilityRequests
 {
 	public class DeleteAppliedConditionHandler : BaseHandler<DeleteAppliedCondionCommand, Unit>
 	{

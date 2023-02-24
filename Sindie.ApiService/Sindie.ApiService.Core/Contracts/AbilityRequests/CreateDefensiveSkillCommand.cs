@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Sindie.ApiService.Core.Abstractions;
+﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
 using static Sindie.ApiService.Core.BaseData.Enums;

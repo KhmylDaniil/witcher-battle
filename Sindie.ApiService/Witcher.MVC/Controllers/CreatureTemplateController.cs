@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbility;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.GetAbilityById;
+using Sindie.ApiService.Core.Contracts.AbilityRequests;
 using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 using Sindie.ApiService.Core.Exceptions;

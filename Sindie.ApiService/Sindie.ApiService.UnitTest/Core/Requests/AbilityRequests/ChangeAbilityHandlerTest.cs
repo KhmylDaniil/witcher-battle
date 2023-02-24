@@ -2,10 +2,8 @@
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.AbilityRequests;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.ChangeAbility;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.AbilityRequests.ChangeAbility;
-using System;
+using Sindie.ApiService.Core.Requests.AbilityRequests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

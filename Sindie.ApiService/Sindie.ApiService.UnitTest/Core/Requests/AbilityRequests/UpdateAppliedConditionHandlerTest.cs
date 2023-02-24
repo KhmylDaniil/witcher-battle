@@ -4,8 +4,8 @@ using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Entities;
 using System.Linq;
 using System.Threading.Tasks;
-using Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedCondition;
-using Sindie.ApiService.Core.Requests.AbilityRequests.UpdateAppliedCondition;
+using Sindie.ApiService.Core.Contracts.AbilityRequests;
+using Sindie.ApiService.Core.Requests.AbilityRequests;
 
 namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 {
