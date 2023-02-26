@@ -1,13 +1,13 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.GameRequests.DeleteGame;
+using Sindie.ApiService.Core.Contracts.GameRequests;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.GameRequests.DeleteGame
+namespace Sindie.ApiService.Core.Requests.GameRequests
 {
-	public class DeleteGameHandler: BaseHandler<DeleteGameCommand, Unit>
+	public class DeleteGameHandler : BaseHandler<DeleteGameCommand, Unit>
 	{
 		public DeleteGameHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{

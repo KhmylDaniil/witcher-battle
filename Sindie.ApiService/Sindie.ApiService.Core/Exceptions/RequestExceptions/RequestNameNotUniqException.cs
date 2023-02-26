@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
 {
 	/// <summary>
@@ -10,14 +7,6 @@ namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
 	/// <typeparam name="T"></typeparam>
 	public class RequestNameNotUniqException<T> : RequestValidationException
 	{
-		/// <summary>
-		/// Конструктор исключения не уникального имени в запросе
-		/// </summary>
-		public RequestNameNotUniqException()
-			: base($"{typeof(T)} должен быть уникальным")
-		{
-		}
-
 		/// <summary>
 		/// Конструктор исключения не уникального имени в запросе
 		/// </summary>

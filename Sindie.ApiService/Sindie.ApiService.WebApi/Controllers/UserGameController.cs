@@ -40,18 +40,6 @@ namespace Sindie.ApiService.WebApi.Controllers
 		}
 
 		/// <summary>
-		/// Изменение интерфейса пользователя игры
-		/// </summary>
-		/// <param name="request">Запрос изменения игры</param>
-		/// <returns>Юнит</returns>
-		[Authorize]
-		[HttpPut]
-		public async Task<Unit> ChangeUserGame([FromQuery] ChangeUserGameCommand request)
-		{
-			return await _mediator.Send(request);
-		}
-
-		/// <summary>
 		/// Удаление пользователя игры
 		/// </summary>
 		/// <param name="request">Запрос удаления пользователя игры</param>

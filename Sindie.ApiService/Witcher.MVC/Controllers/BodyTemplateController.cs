@@ -33,7 +33,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 
 				var response = await _mediator.SendValidated(new GetBodyTemplateQuery(), cancellationToken);
 
@@ -52,7 +52,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 
 				var response = await _mediator.SendValidated(new GetBodyTemplateQuery(), cancellationToken);
 
@@ -78,7 +78,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -101,7 +101,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -121,7 +121,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -144,7 +144,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}

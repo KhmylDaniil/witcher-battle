@@ -11,7 +11,12 @@ namespace Sindie.ApiService.Core.Contracts.UserGameRequests
 		/// <summary>
 		/// Айди пользователя игры
 		/// </summary>
-		public Guid UserGameId { get; set; }
+		public Guid UserId { get; set; }
+
+		/// <summary>
+		/// Имя пользователя
+		/// </summary>
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Валидация

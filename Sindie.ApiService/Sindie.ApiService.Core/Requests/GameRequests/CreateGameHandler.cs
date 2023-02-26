@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame;
+using Sindie.ApiService.Core.Contracts.GameRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
@@ -10,53 +10,63 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
+namespace Sindie.ApiService.Core.Requests.GameRequests
 {
 	/// <summary>
-	/// Обработчик команды изменения игры
+	/// Обработчик команды создания игры
 	/// </summary>
-	public class ChangeGameHandler : BaseHandler<ChangeGameCommand, Unit>
+	public class CreateGameHandler : BaseHandler<CreateGameCommand, Unit>
 	{
+		/// <summary>
+		/// Интерфейс получения данных пользователя из веба
+		/// </summary>
+		private readonly IUserContext _userContext;
+
 		/// <summary>
 		/// Сервис изменения списков графических и текстовых файлов
 		/// </summary>
 		private readonly IChangeListService _changeListService;
 
 		/// <summary>
-		/// Конструктор обработчика команды изменения игры
+		/// Конструктор обработчика команды создания игры
 		/// </summary>
 		/// <param name="appDbContext">Контекст базы данных</param>
-		/// <param name="authorizationService">Сервис авторизации</param>
+		/// <param name="userContext">Получение контекста пользователя из веба</param>
 		/// <param name="changeListService">Сервис изменения списков графических и текстовых файлов</param>
-		public ChangeGameHandler(
+		public CreateGameHandler(
 			IAppDbContext appDbContext,
 			IAuthorizationService authorizationService,
+			IUserContext userContext,
 			IChangeListService changeListService)
 			: base(appDbContext, authorizationService)
 		{
+			_userContext = userContext;
 			_changeListService = changeListService;
 		}
 
 		/// <summary>
-		/// Обработка команды изменения игры
+		/// Обработка команды создания игры
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены запроса</param>
 		/// <returns></returns>
-		public override async Task<Unit> Handle(ChangeGameCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(CreateGameCommand request, CancellationToken cancellationToken)
 		{
-			var game = await _authorizationService
-				.AuthorizedGameFilter(_appDbContext.Games, GameRoles.MainMasterRoleId)
-				.Include(x => x.Avatar)
-				.Include(x => x.ImgFiles)
-				.Include(x => x.TextFiles)
-				.Include(x => x.UserGames)
-				.FirstOrDefaultAsync(cancellationToken)
-				?? throw new ExceptionEntityNotFound<Game>(request.Id);
 
-			if (!string.Equals(request.Name, game.Name, System.StringComparison.Ordinal) && await _appDbContext.Games
-				.AnyAsync(x => x.Name == request.Name, cancellationToken))
-				throw new RequestNameNotUniqException<ChangeGameCommand>(nameof(request.Name));
+			if (await _appDbContext.Games.AnyAsync(x => x.Name == request.Name, cancellationToken))
+				throw new RequestNameNotUniqException<CreateGameCommand>(nameof(request.Name));
+
+			var currentUser = await _appDbContext.Users
+				.FirstOrDefaultAsync(u => u.Id == _userContext.CurrentUserId, cancellationToken)
+				?? throw new RequestNullException<User>("Текущий пользователь не найден");
+
+			var currentMainMasterRole = await _appDbContext.GameRoles
+				.FirstOrDefaultAsync(u => u.Name == GameRoles.MainMasterRoleName, cancellationToken)
+				?? throw new RequestNullException<GameRole>("Роль главного мастера не найдена");
+
+			var currentGameInterface = await _appDbContext.Interfaces
+				.FirstOrDefaultAsync(u => u.Name == SystemInterfaces.GameDarkName, cancellationToken)
+				?? throw new RequestNullException<Interface>("Интерфейс не найден");
 
 			var avatar = request.AvatarId == null
 				? null
@@ -86,13 +96,18 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.CreateGame
 					imgFiles.Add(imgFile);
 				}
 
-			game.ChangeGame(
+			var newGame = Game.CreateGame(
 				name: request.Name,
 				avatar: avatar,
-				description: request.Description);
+				description: request.Description,
+				user: currentUser,
+				@interface: currentGameInterface,
+				mainMasterRole: currentMainMasterRole);
 
-			_changeListService.ChangeTextFilesList(game, textFiles);
-			_changeListService.ChangeImgFilesList(game, imgFiles);
+			_changeListService.ChangeTextFilesList(newGame, textFiles);
+			_changeListService.ChangeImgFilesList(newGame, imgFiles);
+
+			_appDbContext.Games.Add(newGame);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
 			return Unit.Value;

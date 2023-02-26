@@ -1,0 +1,33 @@
+﻿@model Sindie.ApiService.Core.Contracts.UserGameRequests.DeleteUserGameCommand
+
+@{
+    ViewData["Title"] = "Delete user from game";
+}
+
+<h1>DeleteUserGame</h1>
+
+@if((Guid)ViewData["currentUser"] == Model.UserId)
+{
+    <h3>Are you sure you want to leave the Game?</h3>
+}
+else
+{
+    <h3>Are you sure you want to delete this user?</h3>
+}
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+    </dl>
+    
+    <form asp-action="DeleteUserGame">
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Enter" asp-route-id="@ViewData["GameId"]">Back to game</a>
+    </form>
+</div>

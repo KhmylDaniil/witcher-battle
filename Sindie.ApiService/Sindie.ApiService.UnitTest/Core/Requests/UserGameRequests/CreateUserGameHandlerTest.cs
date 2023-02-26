@@ -71,23 +71,30 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserGameRequests
 		/// <param name="role">Айди роли</param>
 		/// <returns>Юнит</returns>
 		[TestMethod]
-		public async Task Handle_CreateUserGameAsMainMaster_ShouldReturnUnit()
+		[DataRow("8094e0d0-3147-4791-9053-9667cbe117d7")]
+		[DataRow("8094e0d0-3148-4791-9053-9667cbe137d8")]
+		public async Task Handle_CreateUserGameAsMainMaster_ShouldReturnUnit(string role)
 		{
+			var roleId = new Guid(role);
 			var request = new CreateUserGameCommand()
 			{
-				AssignedUserId = _assignedUser.Id,
-				AssingedRoleId = GameRoles.MasterRoleId
+				UserId = _assignedUser.Id,
+				RoleId = roleId
 			};
 
 			gameId = _gameAsMainMaster.Id;
+			//Arrange
 			var newHandler = new CreateUserGameHandler(_appDbContext, AuthorizationServiceWithGameId.Object, UserContext.Object);
 
+			//Act
 			var result = await newHandler.Handle(request, default);
 
+			//Assert
 			Assert.IsNotNull(result);
-			var userGame = _appDbContext.UserGames.FirstOrDefault(x => x.UserId == request.AssignedUserId);
+			var userGame = _appDbContext.UserGames.FirstOrDefault(x => x.UserId == request.UserId);
 			Assert.IsNotNull(userGame);
-			Assert.IsTrue(userGame.GameRoleId == request.AssingedRoleId);
+			Assert.IsTrue(userGame.GameId == gameId);
+			Assert.IsTrue(userGame.GameRoleId == request.RoleId);
 		}
 
 		/// <summary>
@@ -99,19 +106,21 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserGameRequests
 		{
 			var request = new CreateUserGameCommand()
 			{
-				AssignedUserId = _assignedUser.Id,
-				AssingedRoleId = GameRoles.PlayerRoleId
+				UserId = _assignedUser.Id,
+				RoleId = GameRoles.PlayerRoleId
 			};
 
 			gameId = _gameAsMaster.Id;
+
 			var newHandler = new CreateUserGameHandler(_appDbContext, AuthorizationServiceWithGameId.Object, UserContext.Object);
 
 			var result = await newHandler.Handle(request, default);
 
 			Assert.IsNotNull(result);
-			var userGame = _appDbContext.UserGames.FirstOrDefault(x => x.UserId == request.AssignedUserId);
+			var userGame = _appDbContext.UserGames.FirstOrDefault(x => x.UserId == request.UserId);
 			Assert.IsNotNull(userGame);
-			Assert.IsTrue(userGame.GameRoleId == request.AssingedRoleId);
+			Assert.IsTrue(userGame.GameId == gameId);
+			Assert.IsTrue(userGame.GameRoleId == request.RoleId);
 		}
 	}
 }

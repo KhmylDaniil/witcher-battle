@@ -33,7 +33,7 @@
     <a asp-action="Index">Back</a>
 </div>
 
-<p>@ViewData["ErrorMessage"]</p>
+<p>@TempData["ErrorMessage"]</p>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

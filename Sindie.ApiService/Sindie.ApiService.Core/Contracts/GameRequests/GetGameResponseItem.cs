@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.GameRequests.GetGame
+namespace Sindie.ApiService.Core.Contracts.GameRequests
 {
 	public class GetGameResponseItem
 	{
@@ -9,7 +9,7 @@ namespace Sindie.ApiService.Core.Contracts.GameRequests.GetGame
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
-		
+
 		/// <summary>
 		/// Название игры
 		/// </summary>

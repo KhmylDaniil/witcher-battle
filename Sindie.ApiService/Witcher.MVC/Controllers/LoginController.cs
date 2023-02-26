@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.UserRequests.LoginUser;
 using Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser;
@@ -13,7 +14,13 @@ namespace Witcher.MVC.Controllers
 {
 	public class LoginController : BaseController
 	{
-		public LoginController(IMediator mediator, IGameIdService gameIdService) : base(mediator, gameIdService) { }
+		private readonly IMemoryCache _memoryCache;
+
+		public LoginController(IMediator mediator, IGameIdService gameIdService, IMemoryCache memoryCache)
+			: base(mediator, gameIdService)
+		{
+			_memoryCache = memoryCache;
+		}
 
 		public IActionResult Index()
 		{
@@ -33,13 +40,15 @@ namespace Witcher.MVC.Controllers
 			{
 				await _mediator.SendValidated(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
 
+				_memoryCache.Remove("users");
+
 				await _mediator.SendValidated(new LoginUserCommand() { Login = request.Login, Password = request.Password }, cancellationToken);
 
 				return RedirectToAction(nameof(SuccessfulRegistration), new SuccessfulRegistration() { Name = request.Name });
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View();
 			}
 		}
@@ -66,7 +75,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View();
 			}
 		}

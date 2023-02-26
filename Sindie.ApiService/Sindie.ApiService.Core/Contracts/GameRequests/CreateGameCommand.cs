@@ -1,21 +1,15 @@
-﻿using MediatR;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.GameRequests.CreateGame;
+﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
-namespace Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame
+namespace Sindie.ApiService.Core.Contracts.GameRequests
 {
-	public sealed class ChangeGameCommand : IValidatableCommand
+	/// <summary>
+	/// Команда создания игры
+	/// </summary>
+	public sealed class CreateGameCommand : IValidatableCommand
 	{
-		/// <summary>
-		/// Айди игры
-		/// </summary>
-		[Required]
-		public Guid Id { get; set; }
-
 		/// <summary>
 		/// Айди аватара игры
 		/// </summary>
@@ -24,7 +18,6 @@ namespace Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame
 		/// <summary>
 		/// Название игры
 		/// </summary>
-		[Required]
 		public string Name { get; set; }
 
 		/// <summary>
@@ -48,7 +41,7 @@ namespace Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame
 		public void Validate()
 		{
 			if (string.IsNullOrEmpty(Name))
-				throw new RequestFieldNullException<ChangeGameCommand>(nameof(Name));
+				throw new RequestFieldNullException<CreateGameCommand>(nameof(Name));
 		}
 	}
 }

@@ -23,7 +23,7 @@
     </div>
 </div>
 
-<p>@ViewData["ErrorMessage"]</p>
+<p>@TempData["ErrorMessage"]</p>
 
 <div class="container">
     @Html.ActionLink("Back to Creature Template", "Details", new { id = Model.CreatureTemplateId })

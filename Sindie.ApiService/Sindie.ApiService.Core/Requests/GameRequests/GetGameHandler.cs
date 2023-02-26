@@ -1,20 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.GameRequests.GetGame;
+using Sindie.ApiService.Core.Contracts.GameRequests;
 using Sindie.ApiService.Core.ExtensionMethods;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.GameRequests.GetGame
+namespace Sindie.ApiService.Core.Requests.GameRequests
 {
-	public class GetGameHandler : BaseHandler<GetGameQuery, GetGameResponse>
+	public class GetGameHandler : BaseHandler<GetGameQuery, IEnumerable<GetGameResponseItem>>
 	{
 		public GetGameHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
 		}
 
-		public override async Task<GetGameResponse> Handle(GetGameQuery request, CancellationToken cancellationToken)
+		public override async Task<IEnumerable<GetGameResponseItem>> Handle(GetGameQuery request, CancellationToken cancellationToken)
 		{
 			var filter = _appDbContext.Games
 				.Include(g => g.TextFiles)
@@ -32,18 +33,16 @@ namespace Sindie.ApiService.Core.Requests.GameRequests.GetGame
 				.Take(request.PageSize)
 				.ToListAsync(cancellationToken);
 
-			var response = list.Select(x => new GetGameResponseItem()
-				{
-					Id = x.Id,
-					Name = x.Name,
-					Description = x.Description,
-					AvatarId = x.AvatarId,
-					Users = x.UserGames.Select(ug => ug.User).DistinctBy(u => u.Id).ToDictionary(x => x.Id, x => x.Name),
-					TextFiles = x.TextFiles.Select(tf => tf.Id).ToList(),
-					ImgFiles = x.ImgFiles.Select(imf => imf.Id).ToList()
-				}).ToList();
-
-			return new GetGameResponse { GamesList = response, TotalCount = response.Count };
+			return list.Select(x => new GetGameResponseItem()
+			{
+				Id = x.Id,
+				Name = x.Name,
+				Description = x.Description,
+				AvatarId = x.AvatarId,
+				Users = x.UserGames.Select(ug => ug.User).DistinctBy(u => u.Id).ToDictionary(x => x.Id, x => x.Name),
+				TextFiles = x.TextFiles.Select(tf => tf.Id).ToList(),
+				ImgFiles = x.ImgFiles.Select(imf => imf.Id).ToList()
+			}).ToList();
 		}
 	}
 }

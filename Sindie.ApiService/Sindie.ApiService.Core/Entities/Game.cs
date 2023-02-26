@@ -155,7 +155,6 @@ namespace Sindie.ApiService.Core.Entities
 			ImgFile avatar,
 			User user,
 			Interface @interface,
-			GameRole masterRole,
 			GameRole mainMasterRole)
 		{
 			var newGame = new Game(
@@ -163,11 +162,7 @@ namespace Sindie.ApiService.Core.Entities
 				description: description,
 				avatar: avatar);
 				
-			newGame.UserGames.AddRange(new List<UserGame>()
-			{
-				new UserGame(user, newGame, @interface, masterRole),
-				new UserGame(user, newGame, @interface, mainMasterRole)
-			});
+			newGame.UserGames.Add(new UserGame(user, newGame, @interface, mainMasterRole));
 
 			return newGame;
 		}

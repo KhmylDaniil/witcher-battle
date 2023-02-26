@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.GameRequests.CreateGame.CreateGameCommand
+﻿@model Sindie.ApiService.Core.Contracts.GameRequests.CreateGameCommand
 
 @{
     ViewData["Title"] = "Create";
@@ -32,7 +32,7 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-<p>@ViewData["ErrorMessage"]</p>
+<p>@TempData["ErrorMessage"]</p>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

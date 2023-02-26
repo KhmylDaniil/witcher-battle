@@ -1,8 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame;
+using Sindie.ApiService.Core.Contracts.GameRequests;
 using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.GameRequests.CreateGame;
+using Sindie.ApiService.Core.Requests.GameRequests;
 using System.Linq;
 using System.Threading.Tasks;
 
