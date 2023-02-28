@@ -25,6 +25,8 @@
         </dd>
     </dl>
     
+    <p>@TempData["ErrorMessage"]</p>
+
     <form asp-action="Delete">
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Enter" asp-route-id="@Model.Id">Back</a>
