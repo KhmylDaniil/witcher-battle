@@ -47,7 +47,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
 			var result = await newHandler.Handle(request, default);
 
 			Assert.IsNotNull(result);
-			Assert.IsNull(_dbContext.CreatureTemplates
+			Assert.IsNull(_dbContext.Abilities
 				.FirstOrDefault(x => x.Id == _ability.Id));
 		}
 	}

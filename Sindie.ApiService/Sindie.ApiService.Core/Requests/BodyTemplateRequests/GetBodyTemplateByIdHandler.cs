@@ -27,9 +27,6 @@ namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
 		/// <returns></returns>
 		public override async Task<GetBodyTemplateByIdResponse> Handle(GetBodyTemplateByIdQuery request, CancellationToken cancellationToken)
 		{
-			if (request == null)
-				throw new RequestNullException<GetBodyTemplateByIdQuery>();
-
 			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.BodyTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.BodyTemplateParts)

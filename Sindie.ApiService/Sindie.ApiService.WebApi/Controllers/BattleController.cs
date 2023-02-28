@@ -2,13 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Sindie.ApiService.Core.Contracts.BattleRequests.CreateBattle;
 using Sindie.ApiService.Core.Contracts.BattleRequests.CreatureAttack;
 using Sindie.ApiService.Core.Contracts.BattleRequests.MonsterAttack;
 using Sindie.ApiService.Core.Contracts.BattleRequests.MonsterSuffer;
 using Sindie.ApiService.Core.Contracts.BattleRequests.TreatEffect;
 using Sindie.ApiService.Core.Contracts.BattleRequests.TurnBeginning;
-using Sindie.ApiService.Core.Requests.BattleRequests.CreateBattle;
 using Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack;
 using Sindie.ApiService.Core.Requests.BattleRequests.MonsterAttack;
 using Sindie.ApiService.Core.Requests.BattleRequests.MonsterSuffer;
@@ -41,27 +39,27 @@ namespace Sindie.ApiService.WebApi.Controllers
 			_mediator = mediator;
 		}
 
-		/// <summary>
-		/// Создать бой
-		/// </summary>
-		/// <param name="request">Запрос на создание боя</param>
-		/// <param name="cancellationToken">Токен отмены</param>
-		/// <returns></returns>
-		[HttpPost]
-		[SwaggerResponse(StatusCodes.Status200OK)]
-		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task CreateBattleAsync([FromBody] CreateBattleRequest request, CancellationToken cancellationToken)
-		{
-			await _mediator.Send(
-				request == null
-				? throw new ArgumentNullException(nameof(request))
-				: new CreateBattleCommand(
-					gameId: request.GameId,
-					imgFileId: request.ImgFileId,
-					name: request.Name,
-					description: request.Description,
-					creatures: request.Creatures), cancellationToken);
-		}
+		///// <summary>
+		///// Создать бой
+		///// </summary>
+		///// <param name="request">Запрос на создание боя</param>
+		///// <param name="cancellationToken">Токен отмены</param>
+		///// <returns></returns>
+		//[HttpPost]
+		//[SwaggerResponse(StatusCodes.Status200OK)]
+		//[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
+		//public async Task CreateBattleAsync([FromBody] Core.Contracts.BattleRequests.CreateBattleCommand request, CancellationToken cancellationToken)
+		//{
+		//	await _mediator.Send(
+		//		request == null
+		//		? throw new ArgumentNullException(nameof(request))
+		//		: new Core.Requests.BattleRequests.CreateBattle.CreateBattleCommand(
+		//			gameId: request.GameId,
+		//			imgFileId: request.ImgFileId,
+		//			name: request.Name,
+		//			description: request.Description,
+		//			creatures: request.Creatures), cancellationToken);
+		//}
 
 		/// <summary>
 		/// Атака монстра

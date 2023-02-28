@@ -84,12 +84,10 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int Round { get; private set; }
 
-
 		/// <summary>
 		/// Время активации боя
 		/// </summary>
 		public DateTime? ActivationTime { get; set; }
-
 
 		#region navigation properties
 
@@ -138,6 +136,13 @@ namespace Sindie.ApiService.Core.Entities
 		public List<Creature> Creatures { get; set; }
 
 		#endregion navigation properties
+
+		internal void ChangeBattle(string name, string description, ImgFile imgFile)
+		{
+			Name = name;
+			Description = description;
+			ImgFile = imgFile;
+		}
 
 		/// <summary>
 		/// Создание тестовой сущности с заполненными полями
