@@ -36,7 +36,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 
 				return View(await _mediator.SendValidated(new GetAbilityQuery(), cancellationToken));
 			}
@@ -51,7 +51,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 
 				return View(await _mediator.SendValidated(new GetAbilityQuery(), cancellationToken));
 			}
@@ -78,7 +78,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -101,7 +101,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -124,7 +124,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -144,7 +144,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -159,7 +159,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -179,7 +179,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}

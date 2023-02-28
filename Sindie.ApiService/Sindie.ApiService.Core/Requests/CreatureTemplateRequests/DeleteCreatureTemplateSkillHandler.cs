@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
-using Sindie.ApiService.Core.Exceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
+using Sindie.ApiService.Core.Exceptions;
 
 namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
 {

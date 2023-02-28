@@ -35,7 +35,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 
 				response = await _mediator.SendValidated(new GetCreatureTemplateQuery() , cancellationToken);
 			}
@@ -53,7 +53,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 
 				var response = await _mediator.SendValidated(new GetCreatureTemplateQuery(), cancellationToken);
 
@@ -80,7 +80,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 			}
 			return View(await CreateVM(command, cancellationToken));
 		}
@@ -102,7 +102,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 			}
 			return View(await CreateVM(command, cancellationToken));
 		}
@@ -122,7 +122,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -142,7 +142,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -162,7 +162,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -177,7 +177,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -197,7 +197,7 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (RequestValidationException ex)
 			{
-				ViewData["ErrorMessage"] = ex.UserMessage;
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
 		}
@@ -232,8 +232,8 @@ namespace Witcher.MVC.Controllers
 					CreatureTemplateSkills = command.CreatureTemplateSkills,
 				};
 
-			viewModel.BodyTemplatesDictionary = await GetbodyTemplateListToViewBag(cancellationToken);
-			viewModel.AbilitiesDictionary = await GetAbilityListToViewBag(cancellationToken);
+			viewModel.BodyTemplatesDictionary = await GetBodyTemplateListForViewModel(cancellationToken);
+			viewModel.AbilitiesDictionary = await GetAbilityListToViewModel(cancellationToken);
 
 			return viewModel;
 		}
@@ -243,7 +243,7 @@ namespace Witcher.MVC.Controllers
 		/// </summary>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		private async Task<Dictionary<Guid, string>> GetAbilityListToViewBag(CancellationToken cancellationToken)
+		private async Task<Dictionary<Guid, string>> GetAbilityListToViewModel(CancellationToken cancellationToken)
 		{
 			if (_memoryCache.TryGetValue("abilities", out Dictionary<Guid, string> abilitiesFromCache))
 				return abilitiesFromCache;
@@ -263,7 +263,7 @@ namespace Witcher.MVC.Controllers
 		/// </summary>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		private async Task<Dictionary<Guid, string>> GetbodyTemplateListToViewBag(CancellationToken cancellationToken)
+		private async Task<Dictionary<Guid, string>> GetBodyTemplateListForViewModel(CancellationToken cancellationToken)
 		{
 			if (_memoryCache.TryGetValue("bodyTemplates", out Dictionary<Guid, string> bodyTemplatesFromCache))
 				return bodyTemplatesFromCache;
@@ -308,8 +308,8 @@ namespace Witcher.MVC.Controllers
 					CreatureTemplateSkills = command.CreatureTemplateSkills,
 				};
 
-			viewModel.BodyTemplatesDictionary = await GetbodyTemplateListToViewBag(cancellationToken);
-			viewModel.AbilitiesDictionary = await GetAbilityListToViewBag(cancellationToken);
+			viewModel.BodyTemplatesDictionary = await GetBodyTemplateListForViewModel(cancellationToken);
+			viewModel.AbilitiesDictionary = await GetAbilityListToViewModel(cancellationToken);
 
 			return viewModel;
 		}

@@ -1,16 +1,19 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using System;
-using System.ComponentModel.DataAnnotations;
 
-namespace Sindie.ApiService.Core.Contracts.GameRequests.GetGameById
+namespace Sindie.ApiService.Core.Contracts.GameRequests
 {
-	public sealed class GetGameByIdCommand : IValidatableCommand<GetGameByIdResponse>
+	public class DeleteGameCommand : IValidatableCommand
 	{
 		/// <summary>
 		/// Айди
 		/// </summary>
-		[Required]
 		public Guid Id { get; set; }
+
+		/// <summary>
+		/// Название
+		/// </summary>
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Валидация

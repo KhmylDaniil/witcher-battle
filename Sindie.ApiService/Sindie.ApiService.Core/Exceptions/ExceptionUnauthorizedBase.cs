@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Sindie.ApiService.Core.Exceptions
 {
 	/// <summary>
 	/// Базовое исключение авторизации (код 403 Forbidden) 
 	/// </summary>
-	public class ExceptionUnauthorizedBase : ArgumentException
+	public class ExceptionUnauthorizedBase : Exception
 	{
 		/// <summary>
 		/// Конструктор исключения авторизации

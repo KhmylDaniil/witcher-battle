@@ -40,15 +40,14 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserGameRequests
 			_masterRole = GameRole.CreateForTest(id: GameRoles.MasterRoleId);
 			_playerRole = GameRole.CreateForTest(id: GameRoles.PlayerRoleId);
 
-			_gameAsMainMaster = Game.CreateForTest();
+			_gameAsMainMaster = Game.CreateForTest(name: "gameAsMainMaster");
 			_gameAsMainMaster.UserGames = new List<UserGame>
 			{
 				UserGame.CreateForTest(user: _currentUser, gameRole: _mainMasterRole),
 				UserGame.CreateForTest(user: _targetUser, gameRole: _masterRole),
-				UserGame.CreateForTest(user: _targetUser, gameRole: _playerRole)
 			};
 				
-			_gameAsMaster = Game.CreateForTest();
+			_gameAsMaster = Game.CreateForTest(name: "gameAsMaster");
 			_gameAsMaster.UserGames = new List<UserGame>
 			{
 				UserGame.CreateForTest(user: _currentUser, gameRole: _masterRole),
@@ -74,45 +73,35 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserGameRequests
 		/// </summary>
 		/// <param name="role">Айди роли</param>
 		/// <returns>Юнит</returns>
-		[DataRow("8094e0d0-3147-4791-9053-9667cbe117d7")]
-		[DataRow("8094e0d0-3148-4791-9053-9667cbe137d8")]
 		[TestMethod]
-		public async Task Handle_DeleteUserGameAsMainMaster_ShouldReturnUnit(string role)
+		public async Task Handle_DeleteUserGameAsMainMaster_ShouldReturnUnit()
 		{
-			var roleId = new Guid(role);
-
 			var request = new DeleteUserGameCommand()
 			{
-				UserGameId = _gameAsMainMaster.UserGames
-				.FirstOrDefault(x => x.GameRoleId == roleId).Id
+				UserId = _targetUser.Id
 			};
 
 			gameId = _gameAsMainMaster.Id;
-			
+
 			var newHandler = new DeleteUserGameHandler(_appDbContext, AuthorizationServiceWithGameId.Object, UserContext.Object);
 			
 			var result = await newHandler.Handle(request, default);
 
 			Assert.IsNotNull(result);
 			Assert.IsNull(_appDbContext.UserGames
-				.FirstOrDefault(x => x.Id == request.UserGameId));
+				.FirstOrDefault(x => x.UserId == request.UserId && x.GameId == _gameAsMainMaster.Id));
 		}
 
 		/// <summary>
 		/// Тест метода удаления пользователя игры(игрока) мастером
 		/// </summary>
 		/// <returns>Юнит</returns>
-		[DataRow("8094e0d0-3147-4791-9053-9667cbe117d7")]
-		[DataRow("8094e0d0-3148-4791-9053-9667cbe137d8")]
 		[TestMethod]
-		public async Task Handle_DeleteUserGameAsMaster_ShouldReturnUnit(string role)
+		public async Task Handle_DeleteUserGameAsMaster_ShouldReturnUnit()
 		{
-			var roleId = new Guid(role);
-
 			var request = new DeleteUserGameCommand()
 			{
-				UserGameId = _gameAsMaster.UserGames
-				.FirstOrDefault(x => x.GameRoleId == roleId).Id
+				UserId = _targetUser.Id
 			};
 
 			gameId = _gameAsMaster.Id;
@@ -123,7 +112,7 @@ namespace Sindie.ApiService.UnitTest.Core.Requests.UserGameRequests
 
 			Assert.IsNotNull(result);
 			Assert.IsNull(_appDbContext.UserGames
-				.FirstOrDefault(x => x.Id == request.UserGameId));
+				.FirstOrDefault(x => x.UserId == request.UserId && x.GameId == _gameAsMaster.Id));
 		}
 	}
 }

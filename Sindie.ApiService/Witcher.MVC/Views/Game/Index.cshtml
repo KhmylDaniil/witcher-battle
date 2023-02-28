@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Sindie.ApiService.Core.Contracts.GameRequests.GetGame.GetGameResponseItem>
+﻿@model IEnumerable<Sindie.ApiService.Core.Contracts.GameRequests.GetGameResponseItem>
 
 @{
     ViewData["Title"] = "Games";
@@ -46,5 +46,5 @@
     </tbody>
 </table>
 
-<p>@ViewData["ErrorMessage"]</p>
+<p>@TempData["ErrorMessage"]</p>
 

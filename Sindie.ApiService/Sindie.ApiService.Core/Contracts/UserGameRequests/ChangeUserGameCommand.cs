@@ -4,14 +4,14 @@ using System;
 namespace Sindie.ApiService.Core.Contracts.UserGameRequests
 {
 	/// <summary>
-	/// Команда изменения пользователя игры
+	/// Команда изменения роли пользователя игры
 	/// </summary>
-	public sealed class ChangeUserGameCommand : IValidatableCommand
+	public class ChangeUserGameCommand : IValidatableCommand
 	{
 		/// <summary>
-		/// Айди интерфейса
+		/// Айди пользователя игры
 		/// </summary>
-		public Guid InterfaceId { get; set; }
+		public Guid UserId { get; set; }
 
 		/// <summary>
 		/// Валидация
@@ -20,5 +20,5 @@ namespace Sindie.ApiService.Core.Contracts.UserGameRequests
 		{
 			// Method intentionally left empty.
 		}
-	}	
+	}
 }

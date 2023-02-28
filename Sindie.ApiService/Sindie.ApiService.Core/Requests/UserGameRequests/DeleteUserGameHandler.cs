@@ -6,9 +6,7 @@ using Sindie.ApiService.Core.Contracts.UserGameRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,7 +20,7 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 		private readonly IUserContext _userContext;
 
 		/// <summary>
-		/// Конструктор обработчика команды изменения пользователя игры
+		/// Конструктор обработчика команды удаления пользователя игры
 		/// </summary>
 		/// <param name="appDbContext">Контекст базы данных</param>
 		/// <param name="authorizationService">Сервис авторизации</param>
@@ -46,11 +44,12 @@ namespace Sindie.ApiService.Core.Requests.UserGameRequests
 		{
 			var game = await _authorizationService.UserGameFilter(_appDbContext.Games)
 				.Include(x => x.UserGames)
+				.ThenInclude(ug => ug.User)
 				.FirstOrDefaultAsync(cancellationToken)
-				?? throw new ExceptionEntityNotFound<Game>();
+				?? throw new ExceptionNoAccessToEntity<Game>();
 			
-			var userGame = game.UserGames.FirstOrDefault(x => x.Id == request.UserGameId)
-				?? throw new ExceptionEntityNotFound<UserGame>(request.UserGameId);
+			var userGame = game.UserGames.FirstOrDefault(x => x.UserId == request.UserId)
+				?? throw new ExceptionEntityNotFound<UserGame>(request.UserId);
 
 			if (userGame.GameRoleId == GameRoles.MainMasterRoleId)
 				throw new RequestValidationException("Роль главмастера не может быть удалена без удаления игры");

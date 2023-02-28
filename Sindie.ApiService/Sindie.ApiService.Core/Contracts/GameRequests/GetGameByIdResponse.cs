@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Contracts.GameRequests.GetGameById
+namespace Sindie.ApiService.Core.Contracts.GameRequests
 {
 	public sealed class GetGameByIdResponse
 	{
@@ -33,7 +33,7 @@ namespace Sindie.ApiService.Core.Contracts.GameRequests.GetGameById
 		/// <summary>
 		/// Пользователи игры
 		/// </summary>
-		public Dictionary<Guid, string> Users { get; set; }
+		public Dictionary<Guid, (string, string)> Users { get; set; }
 
 		/// <summary>
 		/// Текстовые файлы

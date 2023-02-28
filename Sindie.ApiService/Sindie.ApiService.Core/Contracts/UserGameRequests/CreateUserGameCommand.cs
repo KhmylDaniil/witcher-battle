@@ -7,24 +7,29 @@ namespace Sindie.ApiService.Core.Contracts.UserGameRequests
 	/// <summary>
 	/// Команда создания пользователя игры
 	/// </summary>
-	public sealed class CreateUserGameCommand: IValidatableCommand
+	public class CreateUserGameCommand: IValidatableCommand
 	{
 		/// <summary>
-		/// Айди пользователя
+		/// Айди пользователя игры
 		/// </summary>
-		public Guid AssignedUserId { get; set; }
+		public Guid UserId { get; set; }
+
+		/// <summary>
+		/// Имя пользователя
+		/// </summary>
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Айди роли в игре
 		/// </summary>
-		public Guid AssingedRoleId { get; set; }
+		public Guid RoleId { get; set; }
 
 		/// <summary>
 		/// Валидация
 		/// </summary>
 		public void Validate()
 		{
-			if (AssingedRoleId == BaseData.GameRoles.MainMasterRoleId)
+			if (RoleId == BaseData.GameRoles.MainMasterRoleId)
 				throw new RequestValidationException("Роль главмастера невозможно присвоить");
 		}
 	}

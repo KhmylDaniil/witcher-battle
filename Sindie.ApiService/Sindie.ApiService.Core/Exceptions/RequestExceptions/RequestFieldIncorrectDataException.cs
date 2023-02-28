@@ -8,15 +8,6 @@ namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
 	public class RequestFieldIncorrectDataException<T> : RequestValidationException
 	{
 		/// <summary>
-		/// Конструктор в поле запроса задано некорректное значение
-		/// </summary>
-		public RequestFieldIncorrectDataException()
-			: base($"В запросе {typeof(T)} в поле или нескольких полях задано некорректное значение.")
-		{
-			UserMessage = "В поле или нескольких полях задано некорректное значение";
-		}
-
-		/// <summary>
 		/// Конструктор исключения в поле запроса задано некорректное значение 
 		/// </summary>
 		public RequestFieldIncorrectDataException(string name)

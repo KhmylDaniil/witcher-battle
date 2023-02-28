@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.AbilityRequests;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,9 +15,6 @@ namespace Sindie.ApiService.Core.Requests.AbilityRequests
 
 		public override async Task<GetAbilityByIdResponse> Handle(GetAbilityByIdQuery request, CancellationToken cancellationToken)
 		{
-			if (request == null)
-				throw new RequestNullException<GetBodyTemplateByIdQuery>();
-
 			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.Abilities.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.AppliedConditions)

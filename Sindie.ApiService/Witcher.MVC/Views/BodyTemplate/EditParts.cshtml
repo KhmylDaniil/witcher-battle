@@ -53,7 +53,7 @@
     </div>
 </div>
 
-<p>@ViewData["ErrorMessage"]</p>
+<p>@TempData["ErrorMessage"]</p>
 
 <div class="container">
     @Html.ActionLink("Back to Body Template", "Details", new { id = Model.Id })

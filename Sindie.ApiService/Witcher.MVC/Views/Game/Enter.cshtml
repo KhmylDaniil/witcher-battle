@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.GameRequests.GetGameById.GetGameByIdResponse
+﻿@model Sindie.ApiService.Core.Contracts.GameRequests.GetGameByIdResponse
 
 @{
     ViewData["Title"] = @Html.DisplayFor(model => model.Name);
@@ -30,13 +30,48 @@
         </dd>
     </dl>
 </div>
+
+<p>@TempData["ErrorMessage"]</p>
+
 <div>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id, name = Model.Name, description = Model.Description })
     @Html.ActionLink("Delete", "Delete", new { id = Model.Id, name = Model.Name })
     <a asp-action="Index">Back to List</a>
 </div>
 
-<p>@ViewData["ErrorMessage"]</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Users)
+            </th>
+            <th>
+                <p>User roles</p>
+            </th>
+            <th>
+                <a asp-action="CreateUserGame">Add user to game</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Users.Where(x => x.Key != (Guid)ViewData["currentUser"]))
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Value.Item1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Value.Item2)
+                </td>
+                <td>
+                    <a asp-action="DeleteUserGame" asp-route-userId="@item.Key" asp-route-name="@item.Value.Item1">Remove from the game</a>
+                    <a asp-action="ChangeUserGame" asp-route-userId="@item.Key">Change game role</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 
 <div class="container">
     <a asp-controller="Ability" asp-action="Index" asp-route-gameId="@Model.Id">Abilities base </a>
@@ -48,4 +83,8 @@
 
 <div class="container">
     <a asp-controller="CreatureTemplate" asp-action="Index" asp-route-gameId="@Model.Id">Creature Template base </a>
+</div>
+
+<div class="container">
+    <a asp-action="DeleteUserGame" asp-route-userId="@ViewData["currentUser"]">Leave Game </a>
 </div>

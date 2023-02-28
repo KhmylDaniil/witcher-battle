@@ -1,8 +1,9 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
+using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Contracts.GameRequests.GetGame
+namespace Sindie.ApiService.Core.Contracts.GameRequests
 {
-	public class GetGameQuery: GetBaseQuery, IValidatableCommand<GetGameResponse>
+	public class GetGameQuery : GetBaseQuery, IValidatableCommand<IEnumerable<GetGameResponseItem>>
 	{
 		/// <summary>
 		/// Фильтр по названию

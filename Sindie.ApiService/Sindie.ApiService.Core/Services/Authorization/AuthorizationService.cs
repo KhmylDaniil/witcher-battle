@@ -37,7 +37,7 @@ namespace Sindie.ApiService.Core.Services.Authorization
 
 			return query.Where(x => x.Id == _gameIdService.GameId
 				&& x.UserGames.Any(y => y.UserId == _userContext.CurrentUserId
-					&& y.GameRoleId == gameRoleId));
+					&& (y.GameRoleId == gameRoleId || y.GameRoleId == GameRoles.MainMasterRoleId)));
 		}
 
 		/// <inheritdoc/>

@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame.ChangeGameCommand
+﻿@model Sindie.ApiService.Core.Contracts.GameRequests.ChangeGameCommand
 
 @{
     ViewData["Title"] = "Edit Game";
@@ -28,7 +28,7 @@
     </div>
 </div>
 
-<p>@ViewData["ErrorMessage"]</p>
+<p>@TempData["ErrorMessage"]</p>
 
 <div>
     <a asp-action="Enter" asp-route-id="@Model.Id">Back to Game</a>

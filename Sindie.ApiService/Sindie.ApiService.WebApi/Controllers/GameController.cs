@@ -1,8 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Sindie.ApiService.Core.Contracts.GameRequests.ChangeGame;
-using Sindie.ApiService.Core.Contracts.GameRequests.CreateGame;
+using Sindie.ApiService.Core.Contracts.GameRequests;
 using Sindie.ApiService.WebApi.Versioning;
 using System.Threading.Tasks;
 

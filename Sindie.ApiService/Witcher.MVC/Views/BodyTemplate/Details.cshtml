@@ -82,7 +82,7 @@
     @Html.ActionLink("Edit Body Template Parts", "EditParts", new { id = Model.Id })
 </div>
 
-<p>@ViewData["ErrorMessage"]</p>
+<p>@TempData["ErrorMessage"]</p>
 
 <div class="container">
     <a asp-action="Index">Back to Body Templates</a>
