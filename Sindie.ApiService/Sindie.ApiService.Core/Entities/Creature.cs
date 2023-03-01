@@ -1,4 +1,5 @@
 ﻿using Sindie.ApiService.Core.BaseData;
+using Sindie.ApiService.Core.Contracts.BattleRequests;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
@@ -381,6 +382,17 @@ namespace Sindie.ApiService.Core.Entities
 		public List<CreatureDamageTypeModifier> DamageTypeModifiers { get; protected set; }
 
 		#endregion navigation properties
+
+		/// <summary>
+		/// Изменение существа
+		/// </summary>
+		/// <param name="name">Название</param>
+		/// <param name="description">Описание</param>
+		internal void ChangeCreature(string name, string description)
+		{
+			Name = name;
+			Description = description;
+		}
 
 		/// <summary>
 		/// Создание списка навыков существа

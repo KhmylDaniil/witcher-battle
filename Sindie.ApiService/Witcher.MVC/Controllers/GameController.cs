@@ -33,9 +33,9 @@ namespace Witcher.MVC.Controllers
 		/// <param name="authorName">Поле поиска по имени автора</param>
 		/// <param name="cancellationToken"></param>
 		/// <returns>Список игр</returns>
-		public async Task<IActionResult> Index(string name, string description, string authorName, CancellationToken cancellationToken)
+		public async Task<IActionResult> Index(GetGameQuery query, CancellationToken cancellationToken)
 		{
-			var query = new GetGameQuery() { Name = name, Description = description, AuthorName = authorName};
+			//var query = new GetGameQuery() { Name = name, Description = description, AuthorName = authorName};
 			
 			var response = await _mediator.SendValidated(query, cancellationToken);
 

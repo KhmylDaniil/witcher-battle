@@ -1,0 +1,45 @@
+﻿using static Sindie.ApiService.Core.BaseData.Enums;
+
+namespace Sindie.ApiService.Core.Contracts.BattleRequests
+{
+	/// <summary>
+	/// Элемент ответа на запрос существа - часть тела существа
+	/// </summary>
+	public sealed class GetCreatureByIdResponsePart
+	{
+		/// <summary>
+		/// Название
+		/// </summary>
+		public string Name { get; set; }
+
+		/// <summary>
+		/// Пенальти за прицеливание
+		/// </summary>
+		public int HitPenalty { get; set; }
+
+		/// <summary>
+		/// Тип части тела
+		/// </summary>
+		public BodyPartType BodyPartType { get; set; }
+
+		/// <summary>
+		/// Модификатор урона
+		/// </summary>
+		public double DamageModifier { get; set; }
+
+		/// <summary>
+		/// Минимум на попадание
+		/// </summary>
+		public int MinToHit { get; set; }
+
+		/// <summary>
+		/// Максимум на попадание
+		/// </summary>
+		public int MaxToHit { get; set; }
+
+		/// <summary>
+		/// Броня
+		/// </summary>
+		public (int current, int max) Armor { get; set; }
+	}
+}

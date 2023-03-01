@@ -7,8 +7,6 @@ namespace Sindie.ApiService.Core.Contracts.AbilityRequests
 	{
 		public Guid Id { get; set; }
 
-		public Guid GameId { get; set; }
-
 		/// <summary>
 		/// Валидация
 		/// </summary>
