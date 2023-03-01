@@ -19,15 +19,29 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 		{
 			var creature = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
-					.ThenInclude(b => b.Creatures)
+					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
 						.ThenInclude(c => c.CreatureTemplate)
 							.ThenInclude(ct => ct.BodyTemplate)
+				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
+					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
+						.ThenInclude(c => c.CreatureParts)
+				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
+					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
+						.ThenInclude(c => c.CreatureSkills)
+				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
+					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
+						.ThenInclude(c => c.Abilities)
+							.ThenInclude(a => a.AppliedConditions)
+				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
+					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
+						.ThenInclude(c => c.DamageTypeModifiers)
 				.SelectMany(x => x.Battles).SelectMany(b => b.Creatures).FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
 				?? throw new ExceptionEntityNotFound<Creature>(request.Id);
 
 			return new GetCreatureByIdResponse()
 			{
 				Id = creature.Id,
+				BattleId = creature.BattleId,
 				CreatureTemplateId = creature.CreatureTemplateId,
 				CreatureTemplateName = creature.CreatureTemplate.Name,
 				BodyTemplateId = creature.CreatureTemplate.BodyTemplateId,

@@ -25,7 +25,16 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 		{
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
+					.ThenInclude(b => b.Creatures)
 				.Include(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
+					.ThenInclude(ct => ct.CreatureTemplateParts)
+				.Include(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
+					.ThenInclude(ct => ct.CreatureTemplateSkills)
+				.Include(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
+					.ThenInclude(ct => ct.DamageTypeModifiers)
+				.Include(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
+					.ThenInclude(ct => ct.Abilities)
+						.ThenInclude(a => a.AppliedConditions)
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new ExceptionNoAccessToEntity<Game>();
 

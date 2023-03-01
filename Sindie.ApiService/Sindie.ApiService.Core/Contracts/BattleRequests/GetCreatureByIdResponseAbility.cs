@@ -45,6 +45,6 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests
 		/// <summary>
 		/// Накладывваемые состояния
 		/// </summary>
-		public List<(Condition condition, int appleChance)> AppliedConditions { get; set; }
+		public List<(Condition condition, int applyChance)> AppliedConditions { get; set; }
 	}
 }

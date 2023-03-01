@@ -1,4 +1,5 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
+using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
 using System;
 
@@ -7,7 +8,7 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests
 	/// <summary>
 	/// Команда создания боя
 	/// </summary>
-	public class CreateBattleCommand : IValidatableCommand
+	public class CreateBattleCommand : IValidatableCommand<Battle>
 	{
 		/// <summary>
 		/// Айди графического файла

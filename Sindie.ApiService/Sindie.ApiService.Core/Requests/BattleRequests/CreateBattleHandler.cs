@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.BattleRequests;
 using Sindie.ApiService.Core.Entities;
@@ -15,7 +14,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 	/// <summary>
 	/// Обработчик создания боя
 	/// </summary>
-	public class CreateBattleHandler : BaseHandler<CreateBattleCommand, Unit>
+	public class CreateBattleHandler : BaseHandler<CreateBattleCommand, Battle>
 	{
 		public CreateBattleHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -27,7 +26,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns>Бой</returns>
-		public override async Task<Unit> Handle(CreateBattleCommand request, CancellationToken cancellationToken)
+		public override async Task<Battle> Handle(CreateBattleCommand request, CancellationToken cancellationToken)
 		{
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.Battles)
@@ -50,7 +49,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 
 			game.Battles.Add(newBattle);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
-			return Unit.Value;
+			return newBattle;
 		}
 	}
 }

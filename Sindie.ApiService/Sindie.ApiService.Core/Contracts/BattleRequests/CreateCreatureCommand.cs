@@ -7,7 +7,7 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests
 	/// <summary>
 	/// Команда добавлени существа в битву
 	/// </summary>
-	public sealed class CreateCreatureCommand : IValidatableCommand
+	public class CreateCreatureCommand : IValidatableCommand
 	{
 		/// <summary>
 		/// Айди боя

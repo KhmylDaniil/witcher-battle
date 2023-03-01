@@ -16,6 +16,11 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests
 		public Guid Id { get; set; }
 
 		/// <summary>
+		/// Айди битвы
+		/// </summary>
+		public Guid BattleId { get; set; }
+
+		/// <summary>
 		/// Айди шаблона существа
 		/// </summary>
 		public Guid CreatureTemplateId { get; set; }
@@ -123,6 +128,6 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests
 		/// <summary>
 		/// Модификаторы урона
 		/// </summary>
-		public List<(DamageType damageType, DamageTypeModifier modifier)> DamageTypeModifiers { get; set; }
+		public List<(DamageType DamageType, DamageTypeModifier Modifier)> DamageTypeModifiers { get; set; }
 	}
 }

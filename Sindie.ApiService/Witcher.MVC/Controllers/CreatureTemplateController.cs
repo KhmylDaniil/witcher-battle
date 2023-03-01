@@ -8,7 +8,6 @@ using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
 using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.ExtensionMethods;
-using System.Threading;
 using Witcher.MVC.ViewModels.CreatureTemplate;
 
 namespace Witcher.MVC.Controllers
@@ -76,6 +75,9 @@ namespace Witcher.MVC.Controllers
 			try
 			{
 				var result = await _mediator.SendValidated(command, cancellationToken);
+
+				_memoryCache.Remove("creatureTemplates");
+
 				return RedirectToAction(nameof(Details), new GetCreatureTemplateByIdQuery() { Id = result.Id });
 			}
 			catch (RequestValidationException ex)
@@ -98,6 +100,9 @@ namespace Witcher.MVC.Controllers
 			try
 			{
 				await _mediator.SendValidated(command, cancellationToken);
+
+				_memoryCache.Remove("creatureTemplates");
+
 				return RedirectToAction(nameof(Details), new GetCreatureTemplateByIdQuery() { Id = command.Id });
 			}
 			catch (RequestValidationException ex)
@@ -138,6 +143,9 @@ namespace Witcher.MVC.Controllers
 			try
 			{
 				await _mediator.SendValidated(command, cancellationToken);
+
+				_memoryCache.Remove("creatureTemplates");
+
 				return RedirectToAction(nameof(Index), new GetCreatureTemplateQuery());
 			}
 			catch (RequestValidationException ex)
@@ -239,6 +247,42 @@ namespace Witcher.MVC.Controllers
 		}
 
 		/// <summary>
+		/// Создание модели представления для изменения шаблона существа
+		/// </summary>
+		async Task<ChangeCreatureTemplateCommandViewModel> CreateVM(ChangeCreatureTemplateCommand command, CancellationToken cancellationToken)
+		{
+			var viewModel = command is ChangeCreatureTemplateCommandViewModel vm
+				? vm
+				: new ChangeCreatureTemplateCommandViewModel()
+				{
+					ImgFileId = command.ImgFileId,
+					BodyTemplateId = command.BodyTemplateId,
+					CreatureType = command.CreatureType,
+					Name = command.Name,
+					Description = command.Description,
+					HP = command.HP,
+					Sta = command.Sta,
+					Int = command.Int,
+					Ref = command.Ref,
+					Dex = command.Dex,
+					Body = command.Body,
+					Emp = command.Emp,
+					Cra = command.Cra,
+					Will = command.Will,
+					Speed = command.Speed,
+					Luck = command.Luck,
+					ArmorList = command.ArmorList,
+					Abilities = command.Abilities,
+					CreatureTemplateSkills = command.CreatureTemplateSkills,
+				};
+
+			viewModel.BodyTemplatesDictionary = await GetBodyTemplateListForViewModel(cancellationToken);
+			viewModel.AbilitiesDictionary = await GetAbilityListToViewModel(cancellationToken);
+
+			return viewModel;
+		}
+
+		/// <summary>
 		/// Создание/извлечение из кэша данных о способностях
 		/// </summary>
 		/// <param name="cancellationToken"></param>
@@ -276,42 +320,6 @@ namespace Witcher.MVC.Controllers
 				_memoryCache.Set("bodyTemplates", result);
 				return result;
 			}
-		}
-
-		/// <summary>
-		/// Создание модели представления для изменения шаблона существа
-		/// </summary>
-		async Task<ChangeCreatureTemplateCommandViewModel> CreateVM(ChangeCreatureTemplateCommand command, CancellationToken cancellationToken)
-		{
-			var viewModel = command is ChangeCreatureTemplateCommandViewModel vm
-				? vm
-				: new ChangeCreatureTemplateCommandViewModel()
-				{
-					ImgFileId = command.ImgFileId,
-					BodyTemplateId = command.BodyTemplateId,
-					CreatureType = command.CreatureType,
-					Name = command.Name,
-					Description = command.Description,
-					HP = command.HP,
-					Sta = command.Sta,
-					Int = command.Int,
-					Ref = command.Ref,
-					Dex = command.Dex,
-					Body = command.Body,
-					Emp = command.Emp,
-					Cra = command.Cra,
-					Will = command.Will,
-					Speed = command.Speed,
-					Luck = command.Luck,
-					ArmorList = command.ArmorList,
-					Abilities = command.Abilities,
-					CreatureTemplateSkills = command.CreatureTemplateSkills,
-				};
-
-			viewModel.BodyTemplatesDictionary = await GetBodyTemplateListForViewModel(cancellationToken);
-			viewModel.AbilitiesDictionary = await GetAbilityListToViewModel(cancellationToken);
-
-			return viewModel;
 		}
 	}
 }
