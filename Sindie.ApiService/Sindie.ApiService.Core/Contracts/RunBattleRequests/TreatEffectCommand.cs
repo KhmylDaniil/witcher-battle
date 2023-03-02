@@ -1,12 +1,12 @@
-﻿using MediatR;
+﻿using Sindie.ApiService.Core.Abstractions;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.BattleRequests.TreatEffect
+namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 {
 	/// <summary>
 	/// Команда попытки снятия эффекта
 	/// </summary>
-	public sealed class TreatEffectCommand : IRequest<TreatEffectResponse>
+	public sealed class TreatEffectCommand : IValidatableCommand<TreatEffectResponse>
 	{
 		/// <summary>
 		/// Айди боя
@@ -22,5 +22,13 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests.TreatEffect
 		/// Айди эффекта
 		/// </summary>
 		public Guid EffectId { get; set; }
+
+		/// <summary>
+		/// Валидация
+		/// </summary>
+		public void Validate()
+		{
+			// Method intentionally left empty.
+		}
 	}
 }

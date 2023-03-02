@@ -4,12 +4,9 @@ using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.RunBattleRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Entities.Effects;
-using Sindie.ApiService.Core.Requests.BattleRequests.CreatureAttack;
 using Sindie.ApiService.Core.Requests.RunBattleRequests;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static Sindie.ApiService.Core.BaseData.Enums;
 

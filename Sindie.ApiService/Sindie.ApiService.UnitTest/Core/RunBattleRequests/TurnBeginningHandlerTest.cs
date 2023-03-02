@@ -1,13 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BattleRequests.TurnBeginning;
+using Sindie.ApiService.Core.Contracts.RunBattleRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Entities.Effects;
 using Sindie.ApiService.Core.Requests.RunBattleRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static Sindie.ApiService.Core.BaseData.Enums;
 

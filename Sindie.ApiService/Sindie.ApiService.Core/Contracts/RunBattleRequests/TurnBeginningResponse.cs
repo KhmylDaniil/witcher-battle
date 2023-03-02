@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sindie.ApiService.Core.Contracts.BattleRequests.TurnBeginning
+﻿namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 {
 	/// <summary>
 	/// Отчет о начале хода существа

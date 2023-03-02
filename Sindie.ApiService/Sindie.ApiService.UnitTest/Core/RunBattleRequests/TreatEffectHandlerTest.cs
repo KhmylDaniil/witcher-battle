@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.BattleRequests.TreatEffect;
+using Sindie.ApiService.Core.Contracts.RunBattleRequests;
 using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Entities.Effects;
 using Sindie.ApiService.Core.Requests.RunBattleRequests;

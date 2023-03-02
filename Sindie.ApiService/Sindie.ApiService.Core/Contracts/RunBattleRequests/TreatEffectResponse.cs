@@ -1,5 +1,4 @@
-﻿
-namespace Sindie.ApiService.Core.Contracts.BattleRequests.TreatEffect
+﻿namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 {
 	/// <summary>
 	/// Ответ на команду попытки снятия эффекта
