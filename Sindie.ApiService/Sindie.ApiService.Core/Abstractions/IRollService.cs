@@ -37,6 +37,7 @@ namespace Sindie.ApiService.Core.Abstractions
 		/// <param name="attackerFumble">Провал атаки</param>
 		/// <param name="defenderFumble">Провал защиты</param>
 		/// <returns>Успешность атаки</returns>
-		public int ContestRollWithFumble(int attackBase, int defenseBase, out int attackerFumble, out int defenderFumble);
+		public int ContestRollWithFumble(int attackBase, int defenseBase, int? attackValue,
+			int? defenseValue, out int attackerFumble, out int defenderFumble);
 	}
 }

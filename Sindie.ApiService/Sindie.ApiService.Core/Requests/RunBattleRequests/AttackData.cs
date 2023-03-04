@@ -31,9 +31,9 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 		internal CreaturePart AimedPart { get; private set; }
 
 		/// <summary>
-		/// Навык защиты
+		/// База защиты
 		/// </summary>
-		internal CreatureSkill DefensiveSkill { get; private set; }
+		internal int DefenseBase { get; private set; }
 
 		/// <summary>
 		/// Специальный бонус к попаданию
@@ -67,7 +67,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 		{
 			ability = ability is null ? attacker.DefaultAbility() : ability;
 
-			defensiveSkill = defensiveSkill is null ? target.DefaultDefensiveSkill(ability) : defensiveSkill;
+			var defenseBase = defensiveSkill is null ? target.DefaultDefenseBase(ability) : target.SkillBase(defensiveSkill.Skill);
 
 			specialToHit = aimedPart is null ? specialToHit : specialToHit - aimedPart.HitPenalty;
 
@@ -79,7 +79,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 				Target = target,
 				Ability = ability,
 				AimedPart = aimedPart,
-				DefensiveSkill = defensiveSkill,
+				DefenseBase = defenseBase,
 				ToHit = specialToHit,
 				ToDamage = specialToDamage
 			};

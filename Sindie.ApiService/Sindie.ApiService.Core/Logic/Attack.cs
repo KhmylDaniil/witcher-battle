@@ -39,12 +39,11 @@ namespace Sindie.ApiService.Core.Logic
 		{
 			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
 
-			int attackBase = attackValue is null ? AttackValue(data.Attacker, data.Ability, data.ToHit) : attackValue.Value;
-			int defenseBase = defenseValue is null ? DefenseValue(data.Target, data.DefensiveSkill) : defenseValue.Value;
-
 			var successValue = _rollService.ContestRollWithFumble(
-				attackBase: attackBase,
-				defenseBase: defenseBase,
+				attackBase: AttackValue(data.Attacker, data.Ability, data.ToHit),
+				defenseBase: DefenseValue(data.Target, data.DefenseBase),
+				attackValue: attackValue,
+				defenseValue: defenseValue,
 				out int attackerFumble,
 				out int defenderFumble);
 
@@ -98,7 +97,7 @@ namespace Sindie.ApiService.Core.Logic
 		/// <param name="defender">Защищающееся существо</param>
 		/// <param name="defensiveParameter">Защитный параметр</param>
 		/// <returns>База защиты</returns>
-		int DefenseValue(Creature defender, CreatureSkill defensiveParameter)
+		int DefenseValue(Creature defender, int defenseBase)
 		{
 			var staggeredModifier = defender.Effects.FirstOrDefault(x => x is StaggeredEffect) is null
 				? 0
@@ -108,7 +107,7 @@ namespace Sindie.ApiService.Core.Logic
 				? 0
 				: BlindedEffect.AttackAndDefenseModifier;
 
-			var result = defender.SkillBase(defensiveParameter.Skill) + staggeredModifier + blindedModifier;
+			var result = defenseBase + staggeredModifier + blindedModifier;
 
 			if (defender.Effects.Any(x => x is StunEffect))
 				result = 10;
