@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.BattleRequests.GetBattleByIdResponse
+﻿@model Sindie.ApiService.Core.Contracts.RunBattleRequests.RunBattleResponse
 
 @{
     ViewData["Title"] = Model.Name;
@@ -75,8 +75,11 @@
     </tbody>
 </table>
 
+<p>@Model.Message</p>
+
+
 <div class="container">
-    <a asp-action="MakeTurn" asp-route-id="@Model.Id">Make next turn</a>
+    <a asp-action="MakeTurn" asp-route-id="@Model.Id">@Model.CurrentCreatureName turn</a>
 </div>
 
 <p>@TempData["ErrorMessage"]</p>

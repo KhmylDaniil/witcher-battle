@@ -52,6 +52,9 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 			var attackResult = attack.RunAttack(attackData, request.DamageValue, request.AttackValue, request.DefenseValue);
 
 			Attack.RemoveDeadBodies(battle);
+
+			battle.NextInitiative++;
+			
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
 			return new AttackResult { Message = attackResult };

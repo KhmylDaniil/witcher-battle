@@ -1,0 +1,81 @@
+﻿@model Sindie.ApiService.Core.Contracts.RunBattleRequests.AttackCommand
+
+@{
+    ViewData["Title"] = "Attack";
+}
+
+<h1>Attack</h1>
+
+<h4>AttackCommand</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Attack">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="BattleId" class="control-label"></label>
+                <input asp-for="BattleId" class="form-control" />
+                <span asp-validation-for="BattleId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TargetCreatureId" class="control-label"></label>
+                <input asp-for="TargetCreatureId" class="form-control" />
+                <span asp-validation-for="TargetCreatureId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AbilityId" class="control-label"></label>
+                <input asp-for="AbilityId" class="form-control" />
+                <span asp-validation-for="AbilityId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreaturePartId" class="control-label"></label>
+                <input asp-for="CreaturePartId" class="form-control" />
+                <span asp-validation-for="CreaturePartId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefensiveSkill" class="control-label"></label>
+                <input asp-for="DefensiveSkill" class="form-control" />
+                <span asp-validation-for="DefensiveSkill" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefenseValue" class="control-label"></label>
+                <input asp-for="DefenseValue" class="form-control" />
+                <span asp-validation-for="DefenseValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DamageValue" class="control-label"></label>
+                <input asp-for="DamageValue" class="form-control" />
+                <span asp-validation-for="DamageValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AttackValue" class="control-label"></label>
+                <input asp-for="AttackValue" class="form-control" />
+                <span asp-validation-for="AttackValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SpecialToHit" class="control-label"></label>
+                <input asp-for="SpecialToHit" class="form-control" />
+                <span asp-validation-for="SpecialToHit" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SpecialToDamage" class="control-label"></label>
+                <input asp-for="SpecialToDamage" class="form-control" />
+                <span asp-validation-for="SpecialToDamage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<p>@TempData["ErrorMessage"]</p>
+
+<div>
+    <a asp-action="Run" asp-route-id=@Model.BattleId>Back to Battle</a>
+</div>

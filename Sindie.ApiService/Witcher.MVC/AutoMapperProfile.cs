@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Sindie.ApiService.Core.Contracts.BattleRequests;
 using Sindie.ApiService.Core.Contracts.RunBattleRequests;
 using Witcher.MVC.ViewModels.RunBattle;
 

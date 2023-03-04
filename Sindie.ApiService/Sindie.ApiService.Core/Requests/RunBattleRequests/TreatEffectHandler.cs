@@ -61,6 +61,8 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 			StringBuilder message = new();
 
 			effect.Treat(_rollService, creature, ref message);
+			
+			battle.NextInitiative++;
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 

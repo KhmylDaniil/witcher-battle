@@ -4,13 +4,13 @@ using System;
 namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 {
 	/// <summary>
-	/// Отвевт на запрос запуска битвы
+	/// Отвевт на запрос данных для совершения хода
 	/// </summary>
-	public class MakeTurnResponse : TurnResult
+	public class MakeTurnResponse 
 	{
-		public Guid BattleId { get; set; }
-
 		public Guid Id { get; set; }
+
+		public Guid CreatureId { get; set; }
 		
 		public string CurrentCreatureName { get; set; }
 

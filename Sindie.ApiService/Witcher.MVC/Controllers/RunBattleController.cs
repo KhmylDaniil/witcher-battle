@@ -22,11 +22,12 @@ namespace Witcher.MVC.Controllers
 		}
 
 		[Route("[controller]/[action]/{id}")]
-		public async Task<IActionResult> Run(GetBattleByIdQuery command, CancellationToken cancellationToken)
+		public async Task<IActionResult> Run(RunBattleCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
 				var response = await _mediator.SendValidated(command, cancellationToken);
+
 				return View(response);
 			}
 			catch (RequestValidationException ex)
@@ -56,6 +57,8 @@ namespace Witcher.MVC.Controllers
 				return RedirectToAction(nameof(Run), new GetBattleByIdQuery() { Id = command.Id });
 			}
 		}
+
+		public ActionResult Attack(AttackCommand command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
