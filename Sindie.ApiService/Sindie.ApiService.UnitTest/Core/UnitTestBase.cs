@@ -88,7 +88,13 @@ namespace Sindie.ApiService.UnitTest.Core
 		/// <param name="defenseBase">База защиты</param>
 		/// <param name="attackerFumble">Провал атакующего</param>
 		/// <param name="defenderFumble">Провал защитника</param>
-		private delegate void ContestedFumble(int attackBase, int defenseBase, out int attackerFumble, out int defenderFumble);
+		private delegate void ContestedFumble(
+			int attackBase,
+			int defenseBase,
+			int? attackValue,
+			int? defenseValue,
+			out int attackerFumble,
+			out int defenderFumble);
 
 		/// <summary>
 		/// Проверить, есть ли пользак с таким же логином
@@ -155,14 +161,21 @@ namespace Sindie.ApiService.UnitTest.Core
 					=> roll = a))
 				.Returns<int, int, int>((attackBase, defenseBase, attackerFumble) => attackBase > defenseBase);
 
-			RollService.Setup(x => x.ContestRollWithFumble(It.IsAny<int>(), It.IsAny<int>(), out attackerFumble, out defenderFumble))
-				.Callback(new ContestedFumble((int a, int d, out int attackerFumble, out int defenderFumble)
+			RollService.Setup(x => x.ContestRollWithFumble(
+				It.IsAny<int>(), 
+				It.IsAny<int>(), 
+				It.IsAny<int?>(), 
+				It.IsAny<int?>(), 
+				out attackerFumble, 
+				out defenderFumble))
+				.Callback(new ContestedFumble((int a, int d, int? av, int? dv, out int attackerFumble, out int defenderFumble)
 				=>
 				{
 					attackerFumble = 0;
 					defenderFumble = 0;
 				}))
-				.Returns<int, int, int, int>((attackBase, defenseBase, attackerFumble, defenderFumble) => attackBase - defenseBase);
+				.Returns<int, int, int?, int?, int, int>(
+				(attackBase, defenseBase, attackValue, defenseValue, attackerFumble, defenderFumble) => attackBase - defenseBase);
 		}
 
 		/// <summary>

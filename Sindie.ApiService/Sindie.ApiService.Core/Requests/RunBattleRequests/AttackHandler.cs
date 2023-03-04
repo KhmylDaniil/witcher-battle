@@ -80,7 +80,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 				throw new RequestValidationException($"У существа {attacker.Name} отсутствуют способности, атака невозможна.");
 
 			var ability = request.AbilityId == null
-				? null
+				? attacker.DefaultAbility()
 				: attacker.Abilities.FirstOrDefault(x => x.Id == request.AbilityId)
 					?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId.Value);
 

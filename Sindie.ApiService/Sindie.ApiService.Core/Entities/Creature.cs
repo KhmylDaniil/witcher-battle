@@ -460,18 +460,14 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		/// <param name="ability">Способность</param>
 		/// <returns>Защитный навык существа</returns>
-		internal CreatureSkill DefaultDefensiveSkill(Ability ability)
+		internal int DefaultDefenseBase(Ability ability)
 		{
 			if (!ability.DefensiveSkills.Any())
 				throw new ApplicationException($"От способности {ability.Name} c айди {ability.Id} нет защиты.");
 
-			var creatureDefensiveSkills = CreatureSkills.Where(cs => ability.DefensiveSkills.Any(ds => ds.Skill == cs.Skill)).ToList();
+			var defenseBase = ability.DefensiveSkills.Select(ds => SkillBase(ds.Skill)).Max();
 
-			var sortedList = from x in creatureDefensiveSkills
-							 orderby SkillBase(x.Skill)
-							 select x;
-
-			return sortedList.Last();
+			return defenseBase;
 		}
 
 		/// <summary>
