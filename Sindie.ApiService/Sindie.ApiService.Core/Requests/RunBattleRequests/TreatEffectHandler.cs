@@ -41,18 +41,18 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 		public override async Task<TreatEffectResponse> Handle(TreatEffectCommand request, CancellationToken cancellationToken)
 		{
 			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
-				.Include(i => i.Creatures.Where(c => c.Id == request.CreatureId))
+				.Include(i => i.Creatures.Where(c => c.Id == request.Id))
 					.ThenInclude(c => c.CreatureSkills)
-				.Include(i => i.Creatures.Where(c => c.Id == request.CreatureId))
+				.Include(i => i.Creatures.Where(c => c.Id == request.Id))
 					.ThenInclude(c => c.CreatureParts)
-				.Include(i => i.Creatures.Where(c => c.Id == request.CreatureId))
+				.Include(i => i.Creatures.Where(c => c.Id == request.Id))
 					.ThenInclude(c => c.DamageTypeModifiers)
-				.Include(i => i.Creatures.Where(c => c.Id == request.CreatureId))
+				.Include(i => i.Creatures.Where(c => c.Id == request.Id))
 					.ThenInclude(c => c.Effects)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Battle>();
 
-			var creature = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
+			var creature = battle.Creatures.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new ExceptionEntityNotFound<Creature>();
 
 			var effect = creature.Effects.FirstOrDefault(x => x.Id == request.EffectId)

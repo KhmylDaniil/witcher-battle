@@ -18,7 +18,7 @@ namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 		/// <summary>
 		/// Айди атакующего существа
 		/// </summary>
-		public Guid AttackerId { get; set; }
+		public Guid Id { get; set; }
 
 		/// <summary>
 		/// Айди цели
@@ -70,16 +70,16 @@ namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 		/// </summary>
 		public void Validate()
 		{
-			if (DamageValue.Value < 0)
+			if (DamageValue is not null && DamageValue.Value < 0)
 				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(DamageValue), "Значение не может быть отрицательным.");
 
-			if (AttackValue.Value < 0)
+			if (AttackValue is not null && AttackValue.Value < 0)
 				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(AttackValue), "Значение не может быть отрицательным.");
 
-			if (DefenseValue.Value < 0)
+			if (DefenseValue is not null && DefenseValue.Value < 0)
 				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(DefenseValue), "Значение не может быть отрицательным.");
 
-			if (!Enum.IsDefined(DefensiveSkill.Value))
+			if (DefensiveSkill is not null && !Enum.IsDefined(DefensiveSkill.Value))
 				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(DefensiveSkill));
 		}
 	}

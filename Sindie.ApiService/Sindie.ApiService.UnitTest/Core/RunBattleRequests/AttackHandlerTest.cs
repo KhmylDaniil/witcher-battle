@@ -155,7 +155,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			var request = new AttackCommand()
 			{
 				BattleId = _instance.Id,
-				AttackerId = _creature.Id,
+				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _torsoPart.Id,
 				SpecialToHit = 3
@@ -186,7 +186,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			var request = new AttackCommand()
 			{
 				BattleId = _instance.Id,
-				AttackerId = _creature.Id,
+				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _torsoPart.Id,
 				SpecialToHit = 3
@@ -233,7 +233,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			var request = new AttackCommand()
 			{
 				BattleId = _instance.Id,
-				AttackerId = _creature.Id,
+				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _torsoPart.Id,
 				SpecialToHit = 3,
@@ -263,7 +263,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			var request = new AttackCommand()
 			{
 				BattleId = _instance.Id,
-				AttackerId = _creature.Id,
+				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _leftLegPart.Id,
 				SpecialToHit = 8
@@ -303,7 +303,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			request = new AttackCommand()
 			{
 				BattleId = _instance.Id,
-				AttackerId = _creature.Id,
+				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _rightLegPart.Id,
 				SpecialToHit = 3
@@ -353,7 +353,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			request = new AttackCommand()
 			{
 				BattleId = _instance.Id,
-				AttackerId = _creature.Id,
+				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _rightLegPart.Id,
 				SpecialToHit = 8
@@ -386,7 +386,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			request = new AttackCommand()
 			{
 				BattleId = _instance.Id,
-				AttackerId = _creature.Id,
+				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _rightLegPart.Id,
 				SpecialToHit = 17

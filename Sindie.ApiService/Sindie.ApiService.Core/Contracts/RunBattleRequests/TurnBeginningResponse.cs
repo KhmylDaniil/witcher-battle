@@ -3,11 +3,7 @@
 	/// <summary>
 	/// Отчет о начале хода существа
 	/// </summary>
-	public sealed class TurnBeginningResponse
+	public sealed class TurnBeginningResponse : TurnResult
 	{
-		/// <summary>
-		/// Сообщение
-		/// </summary>
-		public string Message { get; set; }
 	}
 }

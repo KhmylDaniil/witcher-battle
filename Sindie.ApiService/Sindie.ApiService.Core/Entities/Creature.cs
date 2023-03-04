@@ -315,6 +315,11 @@ namespace Sindie.ApiService.Core.Entities
 			}
 		}
 
+		/// <summary>
+		/// Порядок хода в битве
+		/// </summary>
+		public int InitiativeInBattle { get; set; }
+
 		#region navigation properties
 
 		/// <summary>

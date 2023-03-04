@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+using Sindie.ApiService.Core.Logic;
 
 namespace Sindie.ApiService.Core.Requests.BattleRequests
 {
@@ -48,6 +49,8 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 				?? throw new ExceptionEntityNotFound<CreatureTemplate>(request.CreatureTemplateId);
 
 			battle.Creatures.Add(new Creature(creatureTemplate, battle, request.Name, request.Description));
+
+			RunBattle.FormInitiativeOrder(battle);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;

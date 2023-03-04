@@ -65,7 +65,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 				effect.AutoEnd(creature, ref message);
 			}
 
-			Attack.DisposeCorpses(battle);
+			Attack.RemoveDeadBodies(battle);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 

@@ -35,6 +35,9 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
 					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
 						.ThenInclude(c => c.DamageTypeModifiers)
+				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
+					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
+						.ThenInclude(c => c.Effects)
 				.SelectMany(x => x.Battles).SelectMany(b => b.Creatures).FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
 				?? throw new ExceptionEntityNotFound<Creature>(request.Id);
 

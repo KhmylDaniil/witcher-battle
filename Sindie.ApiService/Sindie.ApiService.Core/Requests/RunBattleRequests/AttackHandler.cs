@@ -51,7 +51,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 
 			var attackResult = attack.RunAttack(attackData, request.DamageValue, request.AttackValue, request.DefenseValue);
 
-			Attack.DisposeCorpses(battle);
+			Attack.RemoveDeadBodies(battle);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
 			return new AttackResult { Message = attackResult };
@@ -65,8 +65,8 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 		/// <returns>Данные для расчета атаки</returns>
 		private AttackData CheckAndFormData(AttackCommand request, Battle battle)
 		{
-			var attacker = battle.Creatures.FirstOrDefault(x => x.Id == request.AttackerId)
-				?? throw new ExceptionEntityNotFound<Creature>(request.AttackerId);
+			var attacker = battle.Creatures.FirstOrDefault(x => x.Id == request.Id)
+				?? throw new ExceptionEntityNotFound<Creature>(request.Id);
 
 			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
 				?? throw new ExceptionEntityNotFound<Creature>(request.TargetCreatureId);

@@ -3,11 +3,7 @@
 	/// <summary>
 	/// Результат атаки
 	/// </summary>
-	public class AttackResult
+	public class AttackResult : TurnResult
 	{
-		/// <summary>
-		/// Сообщение
-		/// </summary>
-		public string Message { get; set; }
 	}
 }

@@ -1,8 +1,10 @@
 ﻿@model Sindie.ApiService.Core.Contracts.BattleRequests.GetBattleByIdResponse
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Name;
 }
+
+<h1>Battle is running</h1>
 
 <div>
     <hr />
@@ -20,9 +22,6 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
     </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit Battle", "Edit", Model)
 </div>
 
 <h4>Creatures in battle</h4>
@@ -46,13 +45,11 @@
                 @Html.DisplayNameFor(model => model.Creatures.First().Effects)
             </th>
             <th>
-                @Html.ActionLink("Add new creature", "CreateCreature",
-                new { BattleId = Model.Id })
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Creatures)
+        @foreach (var item in Model.Creatures.OrderByDescending(x => x.Initiative))
         {
             <tr>
                 <td>
@@ -71,24 +68,19 @@
                     @Html.DisplayFor(modelItem => item.Effects)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "ChangeCreature",
-                new { BattleId = Model.Id, Id = item.Id, Name = item.Name, Description = item.Description })
-                    | @Html.ActionLink("Details", "GetCreatureById",
-                new { BattleId = Model.Id, Id = item.Id })
-                    | @Html.ActionLink("Delete", "DeleteCreature", new { BattleId = Model.Id, Id = item.Id, Name = item.Name })
+                    <a asp-controller="Battle" asp-action="GetCreatureById" asp-route-battleId="@Model.Id" asp-route-id="@item.Id">Details</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-<p>@TempData["ErrorMessage"]</p>
-
-
 <div class="container">
-    <a asp-controller="RunBattle" asp-action="Run" asp-route-id=@Model.Id>Run Battle!</a>
+    <a asp-action="MakeTurn" asp-route-id="@Model.Id">Make next turn</a>
 </div>
 
+<p>@TempData["ErrorMessage"]</p>
+
 <div class="container">
-    <a asp-action="Index">Back to Battles</a>
+    <a asp-controller="Battle" asp-action="Index">Back to Battles</a>
 </div>

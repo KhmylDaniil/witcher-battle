@@ -40,9 +40,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasColumnName("Description")
 				.HasComment("Описание боя");
 
-			builder.Property(x => x.ActivationTime)
-				.HasColumnName("ActivationTime")
-				.HasComment("Время активации боя");
+			builder.Property(x => x.NextInitiative)
+				.HasColumnName("NextInitiative")
+				.HasComment("Значение инициативы следующего существа");
 
 			builder.HasOne(x => x.Game)
 				.WithMany(x => x.Battles)

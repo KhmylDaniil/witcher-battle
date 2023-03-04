@@ -309,10 +309,10 @@ namespace Sindie.ApiService.Core.Logic
 		/// Удаление мертвых существ
 		/// </summary>
 		/// <param name="instance"></param>
-		internal static void DisposeCorpses(Battle instance)
+		internal static bool RemoveDeadBodies(Battle instance)
 		{
-			instance.Creatures.RemoveAll(x => x is not Character
-			&& (x.HP <= 0 || x.Effects.Any(x => x is DeadEffect)));
+			return instance.Creatures.RemoveAll(x => x is not Character
+			&& (x.HP <= 0 || x.Effects.Any(x => x is DeadEffect))) > 0;
 		}
 
 		string CritMissMessage(int attackerFumble) => $"Критический промах {attackerFumble}.";

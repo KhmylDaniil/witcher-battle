@@ -16,7 +16,7 @@ namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 		/// <summary>
 		/// Айди существа
 		/// </summary>
-		public Guid CreatureId { get; set; }
+		public Guid Id { get; set; }
 
 		/// <summary>
 		/// Айди эффекта

@@ -1,0 +1,58 @@
+﻿@model Witcher.MVC.ViewModels.RunBattle.MakeTurnViewModel
+
+@{
+    ViewData["Title"] = "Make Turn";
+}
+
+<h1>@Model.CurrentCreatureName Turn</h1>
+
+<p>@Model.Message</p>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Attack" asp-route-BattleId=@Model.BattleId asp-route-id=@Model.Id>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TargetCreatureId" value="Target" class="control-label"></label>
+                <select asp-items="@(new SelectList(Model.PossibleTargets, "Key", "Value"))" asp-for="TargetCreatureId"></select><br /><br />
+                <span asp-validation-for="TargetCreatureId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AbilityId" class="control-label"></label>
+                <select asp-items="@(new SelectList(Model.MyAbilities, "Key", "Value"))" asp-for="AbilityId"></select><br /><br />
+                <span asp-validation-for="AbilityId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Attack" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Heal" asp-route-BattleId=@Model.BattleId asp-route-id=@Model.Id>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="BattleId" value=@Model.BattleId class="form-control" />
+                <input asp-for="Id" value=@Model.Id class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="EffectId" class="control-label"></label>
+                <select asp-items="@(new SelectList(Model.CurrentEffectsOnMe, "Key", "Value"))" asp-for="EffectId"></select><br /><br />
+                <span asp-validation-for="EffectId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+             <input type="submit" value="Heal" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<p>@TempData["ErrorMessage"]</p>
+
+<div>
+    <a asp-action="Run" asp-route-id=@Model.BattleId>Back to Battle</a>
+</div>
+

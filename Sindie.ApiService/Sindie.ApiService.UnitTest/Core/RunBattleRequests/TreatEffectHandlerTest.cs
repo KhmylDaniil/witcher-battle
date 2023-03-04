@@ -70,7 +70,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			var request = new TreatEffectCommand()
 			{
 				BattleId = _battle.Id,
-				CreatureId = _creature.Id,
+				Id = _creature.Id,
 				EffectId = _freezeEffect.Id,
 			};
 
