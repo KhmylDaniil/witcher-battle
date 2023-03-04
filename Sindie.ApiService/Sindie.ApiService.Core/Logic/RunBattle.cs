@@ -26,6 +26,12 @@ namespace Sindie.ApiService.Core.Logic
 			return creature.Ref + random.Next(1, DiceValue.Value);
 		}
 
+		/// <summary>
+		/// Обработка начала хода существа
+		/// </summary>
+		/// <param name="battle">Битва</param>
+		/// <param name="currentCreature">Существо</param>
+		/// <returns>Сообщнение о начале хода и эффектах этой фазы</returns>
 		static public string TurnBeginning(Battle battle, out Creature currentCreature)
 		{
 			if (!battle.Creatures.Any())
@@ -36,19 +42,25 @@ namespace Sindie.ApiService.Core.Logic
 
 			StringBuilder message = new();
 
-			foreach (var effect in currentCreature.Effects)
+			if (!currentCreature.TurnBeginningEffectsAreTriggered)
 			{
-				effect.Run(currentCreature, ref message);
-				effect.AutoEnd(currentCreature, ref message);
+				foreach (var effect in currentCreature.Effects)
+				{
+					effect.Run(currentCreature, ref message);
+					effect.AutoEnd(currentCreature, ref message);
+				}
+
+				if (Attack.RemoveDeadBodies(battle))
+				{
+					battle.NextInitiative++;
+					message.AppendLine("Существо погибло. Ход переходит к следующему существу.");
+					TurnBeginning(battle, out currentCreature);
+				}
+				else
+					currentCreature.TurnBeginningEffectsAreTriggered = true;
 			}
 
-			if (Attack.RemoveDeadBodies(battle))
-			{
-				battle.NextInitiative++;
-				message.AppendLine("Существо погибло. Ход переходит к следующему существу.");
-			}
-			else
-				message.AppendLine("Существо готово сделать ход.");
+			message.AppendLine("Существо готово сделать ход.");
 
 			return message.ToString();
 		}

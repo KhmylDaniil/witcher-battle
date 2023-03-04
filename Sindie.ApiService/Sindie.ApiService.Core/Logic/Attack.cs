@@ -166,7 +166,7 @@ namespace Sindie.ApiService.Core.Logic
 			if (data.AimedPart.CurrentArmor == 0)
 				return;
 
-			if (data.AimedPart.CurrentArmor > damage)
+			if (data.AimedPart.CurrentArmor >= damage)
 			{
 				damage = 0;
 				message.AppendLine("Броня поглотила урон");

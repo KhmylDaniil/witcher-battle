@@ -1,5 +1,6 @@
 ﻿using Sindie.ApiService.Core.BaseData;
 using Sindie.ApiService.Core.Contracts.BattleRequests;
+using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
@@ -320,6 +321,11 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int InitiativeInBattle { get; set; }
 
+		/// <summary>
+		/// Эффекты начала хода обработаны
+		/// </summary>
+		public bool TurnBeginningEffectsAreTriggered { get; set; }
+
 		#region navigation properties
 
 		/// <summary>
@@ -446,7 +452,7 @@ namespace Sindie.ApiService.Core.Entities
 		internal Ability DefaultAbility()
 		{
 			if (!Abilities.Any())
-				throw new ApplicationException($"У существа с айди {Id} отсутствуют способности.");
+				throw new LogicBaseException($"У существа с айди {Id} отсутствуют способности.");
 
 			var sortedAbilities = from a in Abilities
 								orderby a.Accuracy, a.AttackSpeed, a.AttackDiceQuantity, a.DamageModifier
@@ -463,7 +469,7 @@ namespace Sindie.ApiService.Core.Entities
 		internal int DefaultDefenseBase(Ability ability)
 		{
 			if (!ability.DefensiveSkills.Any())
-				throw new ApplicationException($"От способности {ability.Name} c айди {ability.Id} нет защиты.");
+				throw new LogicBaseException($"От способности {ability.Name} c айди {ability.Id} нет защиты.");
 
 			var defenseBase = ability.DefensiveSkills.Select(ds => SkillBase(ds.Skill)).Max();
 
