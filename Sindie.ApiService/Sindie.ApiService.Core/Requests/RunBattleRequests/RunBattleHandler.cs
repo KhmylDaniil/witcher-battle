@@ -19,7 +19,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 
 		public override async Task<RunBattleResponse> Handle(RunBattleCommand request, CancellationToken cancellationToken)
 		{
-			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.Id)
+			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureSkills)
 				.Include(i => i.Creatures)
@@ -47,19 +47,14 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 
 			var result = new RunBattleResponse
 			{
-				CreatureId = battle.Id,
 				Name = battle.Name,
 				Description = battle.Description,
-				Id = battle.Id,
+				BattleId = battle.Id,
 				Creatures = creatures,
-				Message = RunBattle.TurnBeginning(battle, out Creature currentCreature)
+				Message = RunBattle.TurnBeginning(battle, out Creature currentCreature),
+				CreatureId = currentCreature.Id,
+				CurrentCreatureName = currentCreature.Name
 			};
-
-			result.Id = currentCreature.Id;
-			result.CurrentCreatureName = currentCreature.Name;
-			//result.CurrentEffectsOnMe = currentCreature.Effects.ToDictionary(x => x.Id, x => x.Name);
-			//result.PossibleTargets = battle.Creatures.Where(x => x.Id != currentCreature.Id).ToDictionary(x => x.Id, x => x.Name);
-			//result.MyAbilities = currentCreature.Abilities.ToDictionary(x => x.Id, x => x.Name);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return result;

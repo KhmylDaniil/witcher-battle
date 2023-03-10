@@ -68,7 +68,7 @@
                     @Html.DisplayFor(modelItem => item.Effects)
                 </td>
                 <td>
-                    <a asp-controller="Battle" asp-action="GetCreatureById" asp-route-battleId="@Model.Id" asp-route-id="@item.Id">Details</a>
+                    <a asp-controller="Battle" asp-action="GetCreatureById" asp-route-battleId="@Model.BattleId" asp-route-id="@item.Id">Details</a>
                 </td>
             </tr>
         }
@@ -79,7 +79,7 @@
 
 
 <div class="container">
-    <a asp-action="MakeTurn" asp-route-id="@Model.Id">@Model.CurrentCreatureName turn</a>
+    <a asp-action="MakeTurn" asp-route-battleId="@Model.BattleId" asp-route-creatureId="@Model.CreatureId">@Model.CurrentCreatureName turn</a>
 </div>
 
 <p>@TempData["ErrorMessage"]</p>

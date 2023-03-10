@@ -5,8 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.BattleRequests;
 using Sindie.ApiService.Core.Contracts.RunBattleRequests;
+using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
+using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.ExtensionMethods;
+using System.Threading;
 using Witcher.MVC.ViewModels.RunBattle;
 
 namespace Witcher.MVC.Controllers
@@ -21,7 +24,7 @@ namespace Witcher.MVC.Controllers
 			_mapper = mapper;
 		}
 
-		[Route("[controller]/[action]/{id}")]
+		[Route("[controller]/[action]/{battleId}")]
 		public async Task<IActionResult> Run(RunBattleCommand command, CancellationToken cancellationToken)
 		{
 			try
@@ -34,12 +37,12 @@ namespace Witcher.MVC.Controllers
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 
-				var response = await _mediator.SendValidated(new GetBattleByIdQuery() { Id = command.Id}, cancellationToken);
+				var response = await _mediator.SendValidated(new GetBattleByIdQuery() { Id = command.BattleId}, cancellationToken);
 				return View(response);
 			}
 		}
 
-		[Route("[controller]/[action]/{id}")]
+		[Route("[controller]/[action]/{battleId}")]
 		public async Task<IActionResult> MakeTurn(MakeTurnCommand command, CancellationToken cancellationToken)
 		{
 			try
@@ -54,22 +57,31 @@ namespace Witcher.MVC.Controllers
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 
-				return RedirectToAction(nameof(Run), new GetBattleByIdQuery() { Id = command.Id });
+				return RedirectToAction(nameof(Run), new GetBattleByIdQuery() { Id = command.BattleId });
 			}
 		}
 
-		public ActionResult Attack(AttackCommand command) => View(command);
+		[Route("[controller]/[action]/{battleId}")]
+		public async Task<IActionResult> MakeAttack(AttackCommand command, CancellationToken cancellationToken)
+		{
+			var viewModel = await CreateVM(command, cancellationToken);
+			
+			return View(viewModel);
+		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Route("[controller]/[action]/{battleId}/{id}")]
+		[Route("[controller]/[action]/{battleId}")]
 		public async Task<IActionResult> Attack(AttackCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
-				var response = await _mediator.SendValidated(command, cancellationToken);
+				var attackResponse = await _mediator.SendValidated(command, cancellationToken);
 
-				return View(response);
+				var battle = await _mediator.SendValidated(new RunBattleCommand() { BattleId = command.BattleId }, cancellationToken);
+
+				battle.Message += attackResponse.Message; 
+				return View("Run", battle);
 			}
 			catch (RequestValidationException ex)
 			{
@@ -80,7 +92,7 @@ namespace Witcher.MVC.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Route("[controller]/[action]/{battleId}/{id}")]
+		[Route("[controller]/[action]/{battleId}")]
 		public async Task<IActionResult> Heal(TreatEffectCommand command, CancellationToken cancellationToken)
 		{
 			try
@@ -94,6 +106,24 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 			}
 			return RedirectToAction(nameof(Run), new GetBattleByIdQuery() { Id = command.BattleId });
+		}
+
+		private async Task<MakeAttackViewModel> CreateVM(AttackCommand command, CancellationToken cancellationToken)
+		{
+			var vm = _mapper.Map<MakeAttackViewModel>(command);
+
+			var formAttackCommand = new FormAttackCommand
+			{
+				AttackerId = command.Id,
+				TargetId = command.TargetCreatureId,
+				AbilityId = command.AbilityId,
+			};
+			var formAttackResponse = await _mediator.SendValidated(formAttackCommand, cancellationToken);
+
+			vm.CreatureParts = formAttackResponse.CreatureParts;
+			vm.DefensiveSkills = formAttackResponse.DefensiveSkills;
+
+			return vm;
 		}
 	}
 }

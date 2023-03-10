@@ -14,7 +14,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 	/// <summary>
 	/// Обработчик попытки снятия эффекта
 	/// </summary>
-	public class TreatEffectHandler : BaseHandler<TreatEffectCommand, TreatEffectResponse>
+	public class TreatEffectHandler : BaseHandler<TreatEffectCommand, TurnResult>
 	{
 		/// <summary>
 		/// Бросок параметра
@@ -38,7 +38,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		public override async Task<TreatEffectResponse> Handle(TreatEffectCommand request, CancellationToken cancellationToken)
+		public override async Task<TurnResult> Handle(TreatEffectCommand request, CancellationToken cancellationToken)
 		{
 			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
 				.Include(i => i.Creatures.Where(c => c.Id == request.Id))
@@ -66,7 +66,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
-			return new TreatEffectResponse() { Message = message.ToString() };
+			return new TurnResult() { Message = message.ToString() };
 		}
 	}
 }

@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 	/// <summary>
 	/// Команда попытки снятия эффекта
 	/// </summary>
-	public sealed class TreatEffectCommand : IValidatableCommand<TreatEffectResponse>
+	public sealed class TreatEffectCommand : IValidatableCommand<TurnResult>
 	{
 		/// <summary>
 		/// Айди боя

@@ -47,7 +47,7 @@
             </th>
             <th>
                 @Html.ActionLink("Add new creature", "CreateCreature",
-                new { BattleId = Model.Id })
+                new { BattleId = Model.BattleId })
             </th>
         </tr>
     </thead>
@@ -72,10 +72,10 @@
                 </td>
                 <td>
                     @Html.ActionLink("Edit", "ChangeCreature",
-                new { BattleId = Model.Id, Id = item.Id, Name = item.Name, Description = item.Description })
+                new { BattleId = Model.BattleId, Id = item.Id, Name = item.Name, Description = item.Description })
                     | @Html.ActionLink("Details", "GetCreatureById",
-                new { BattleId = Model.Id, Id = item.Id })
-                    | @Html.ActionLink("Delete", "DeleteCreature", new { BattleId = Model.Id, Id = item.Id, Name = item.Name })
+                new { BattleId = Model.BattleId, Id = item.Id })
+                    | @Html.ActionLink("Delete", "DeleteCreature", new { BattleId = Model.BattleId, Id = item.Id, Name = item.Name })
                 </td>
             </tr>
         }
@@ -86,7 +86,7 @@
 
 
 <div class="container">
-    <a asp-controller="RunBattle" asp-action="Run" asp-route-id=@Model.Id>Run Battle!</a>
+    <a asp-controller="RunBattle" asp-action="Run" asp-route-battleId=@Model.BattleId>Run Battle!</a>
 </div>
 
 <div class="container">

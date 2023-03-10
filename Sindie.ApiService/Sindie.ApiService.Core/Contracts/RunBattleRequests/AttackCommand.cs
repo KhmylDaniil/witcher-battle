@@ -8,7 +8,7 @@ namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 	// <summary>
 	/// Команда атаки существа
 	/// </summary>
-	public class AttackCommand : IValidatableCommand<AttackResult>
+	public class AttackCommand : IValidatableCommand<TurnResult>
 	{
 		/// <summary>
 		/// Айди боя

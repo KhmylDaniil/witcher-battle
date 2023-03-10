@@ -7,19 +7,14 @@ using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 {
-	/// <summary>
-	/// Команда запуска битвы
-	/// </summary>
-	public class RunBattleCommand : IValidatableCommand<RunBattleResponse>
+	public class FormAttackCommand : IValidatableCommand<FormAttackResponse>
 	{
-		/// <summary>
-		/// Айди битвы
-		/// </summary>
-		public Guid BattleId { get; set; }
+		public Guid AttackerId { get; set; }
 
-		/// <summary>
-		/// Валидация
-		/// </summary>
+		public Guid? AbilityId { get; set; }
+
+		public Guid TargetId { get; set; }
+
 		public void Validate()
 		{
 			// Method intentionally left empty.

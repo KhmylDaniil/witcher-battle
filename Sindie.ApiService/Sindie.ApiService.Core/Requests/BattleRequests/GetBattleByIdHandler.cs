@@ -43,7 +43,7 @@ namespace Sindie.ApiService.Core.Requests.BattleRequests
 			{
 				Name = battle.Name,
 				Description = battle.Description,
-				Id = battle.Id,
+				BattleId = battle.Id,
 				Creatures = creatures
 			};
 		}

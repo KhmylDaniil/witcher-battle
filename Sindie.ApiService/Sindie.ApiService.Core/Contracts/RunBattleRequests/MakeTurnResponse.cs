@@ -8,13 +8,11 @@ namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 	/// </summary>
 	public class MakeTurnResponse 
 	{
-		public Guid Id { get; set; }
+		public Guid BattleId { get; set; }
 
 		public Guid CreatureId { get; set; }
 		
 		public string CurrentCreatureName { get; set; }
-
-		public Dictionary<Guid, string> CurrentEffectsOnMe { get; set; } = new();
 
 		public Dictionary<Guid, string> PossibleTargets { get; set; } = new();
 

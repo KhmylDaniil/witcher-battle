@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 {
-	public class AttackHandler : BaseHandler<AttackCommand, AttackResult>
+	public class AttackHandler : BaseHandler<AttackCommand, TurnResult>
 	{
 		/// <summary>
 		/// Бросок параметра
@@ -25,7 +25,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 			_rollService = rollService;
 		}
 
-		public override async Task<AttackResult> Handle(AttackCommand request, CancellationToken cancellationToken)
+		public override async Task<TurnResult> Handle(AttackCommand request, CancellationToken cancellationToken)
 		{
 			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
 				.Include(i => i.Creatures)
@@ -57,7 +57,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 			
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
-			return new AttackResult { Message = attackResult };
+			return new TurnResult { Message = attackResult };
 		}
 
 		/// <summary>

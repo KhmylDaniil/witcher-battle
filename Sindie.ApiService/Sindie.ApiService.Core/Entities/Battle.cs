@@ -82,7 +82,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <summary>
 		/// Значение инициативы следующего существа
 		/// </summary>
-		public int NextInitiative { get; set; }
+		public int NextInitiative { get; set; } = 1;
 
 		#region navigation properties
 

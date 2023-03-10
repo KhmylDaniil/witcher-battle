@@ -37,6 +37,9 @@ namespace Sindie.ApiService.Core.Logic
 			if (!battle.Creatures.Any())
 				throw new LogicBaseException("Нет существ для осуществления хода");
 
+			if (battle.NextInitiative > battle.Creatures.Count)
+				battle.NextInitiative = 1;
+
 			currentCreature = battle.Creatures.OrderBy(x => x.InitiativeInBattle)
 				.First(x => x.InitiativeInBattle >= battle.NextInitiative);
 
