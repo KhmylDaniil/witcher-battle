@@ -42,13 +42,6 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			: null;
 
 		/// <summary>
-		/// Автоматически прекратить эффект
-		/// </summary>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void AutoEnd(Creature creature, ref StringBuilder message) { }
-
-		/// <summary>
 		/// Применить эффект
 		/// </summary>
 		/// <param name="creature">Существо</param>
@@ -58,21 +51,8 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			if (!IsStabile(Severity))
 			{
 				creature.HP -= 4;
-				message.AppendLine($"{Name} приводит к получению 4 урона от кислотыю");
+				message.AppendLine($"{Name} приводит к получению 4 урона от кислоты.");
 			}
-		}
-
-		/// <summary>
-		/// Попробовать снять эффект
-		/// </summary>
-		/// <param name="rollService">Сервис бросков</param>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
-		{
-			Heal heal = new(rollService);
-
-			heal.TryStabilize(creature, creature, ref message, this);
 		}
 
 		/// <summary>

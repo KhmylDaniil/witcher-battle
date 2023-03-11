@@ -48,7 +48,7 @@ namespace Sindie.ApiService.Core.Logic
 					patient.Effects.Remove(effect);
 			}
 			else
-				message.AppendLine($"Не удалось стабилизировать эффект {effect.ToString()}.");
+				message.AppendLine($"Не удалось стабилизировать эффект {effect.Name}.");
 
 			static int CalculateHealingBase(Creature healer)
 				=> Math.Max(healer.SkillBase(Skill.HealingHands), healer.SkillBase(Skill.FirstAid));
@@ -57,7 +57,6 @@ namespace Sindie.ApiService.Core.Logic
 			{
 				if (effect is ICrit critEffect)
 					return (int)critEffect.Severity - (int)Enums.Severity.Unstabilizied;
-				
 
 				if (effect is BleedEffect)
 					return 15;

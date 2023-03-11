@@ -45,42 +45,15 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		public void ApplyStatChanges(Creature creature) { }
 
 		/// <summary>
-		/// Автоматически прекратить эффект
-		/// </summary>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void AutoEnd(Creature creature, ref StringBuilder message) { }
-
-		/// <summary>
 		/// Отменить изменения характеристик
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		public void RevertStatChanges(Creature creature) { }
 
 		/// <summary>
-		/// Применить эффект
-		/// </summary>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void Run(Creature creature, ref StringBuilder message) { }
-
-		/// <summary>
 		/// Стабилизировать критический эффект
 		/// </summary>
 		/// <param name="creature">Существо</param>
 		public void Stabilize(Creature creature) { }
-
-		/// <summary>
-		/// Попробовать снять эффект
-		/// </summary>
-		/// <param name="rollService">Сервис бросков</param>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
-		{
-			Heal heal = new(rollService);
-
-			heal.TryStabilize(creature, creature, ref message, this);
-		}
 	}
 }

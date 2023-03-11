@@ -12,7 +12,7 @@ using static Sindie.ApiService.Core.BaseData.Enums;
 namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 {
 	/// <summary>
-	/// Тест для <see cref="TreatEffectHandler"/>
+	/// Тест для <see cref="HealEffectHandler"/>
 	/// </summary>
 	[TestClass]
 	public class TreatEffectHandlerTest : UnitTestBase
@@ -25,7 +25,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 		private readonly Creature _creature;
 
 		/// <summary>
-		/// Тест для <see cref="TreatEffectHandler"/>
+		/// Тест для <see cref="HealEffectHandler"/>
 		/// </summary>
 		public TreatEffectHandlerTest() : base()
 		{
@@ -67,14 +67,15 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 		[TestMethod]
 		public async Task Handle_TreatEffect_ShouldReturnUnit()
 		{
-			var request = new TreatEffectCommand()
+			var request = new HealEffectCommand()
 			{
 				BattleId = _battle.Id,
-				Id = _creature.Id,
+				CreatureId = _creature.Id,
+				TargetCreatureId = _creature.Id,
 				EffectId = _freezeEffect.Id,
 			};
 
-			var newHandler = new TreatEffectHandler(_dbContext, AuthorizationService.Object, RollService.Object);
+			var newHandler = new HealEffectHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);

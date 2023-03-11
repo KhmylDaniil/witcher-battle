@@ -66,26 +66,9 @@ namespace Sindie.ApiService.WebApi.Controllers
 		[HttpPut("Attack")]
 		[SwaggerResponse(StatusCodes.Status200OK)]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task<AttackResult> AttackAsync([FromQuery] AttackCommand command, CancellationToken cancellationToken)
+		public async Task<TurnResult> AttackAsync([FromQuery] AttackCommand command, CancellationToken cancellationToken)
 		{
 			return await _mediator.SendValidated(command, cancellationToken);
-		}
-
-		/// <summary>
-		/// Начало хода существа
-		/// </summary>
-		/// <param name="request">Запрос на обработку начала хода существа</param>
-		/// <param name="cancellationToken">Токен отмены</param>
-		/// <returns></returns>
-		[HttpPut("TurnBeginnning")]
-		[SwaggerResponse(StatusCodes.Status200OK)]
-		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task<TurnBeginningResponse> TurnBeginningAsync([FromQuery] TurnBeginningCommand request, CancellationToken cancellationToken)
-		{
-			return await _mediator.Send(
-				request == null
-				? throw new ArgumentNullException(nameof(request))
-				: request, cancellationToken);
 		}
 
 		/// <summary>
@@ -97,7 +80,7 @@ namespace Sindie.ApiService.WebApi.Controllers
 		[HttpPut("TreatEffectById")]
 		[SwaggerResponse(StatusCodes.Status200OK)]
 		[SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
-		public async Task<TreatEffectResponse> TreatEffectByIdAsync([FromQuery] TreatEffectCommand request, CancellationToken cancellationToken)
+		public async Task<TurnResult> TreatEffectByIdAsync([FromQuery] HealEffectCommand request, CancellationToken cancellationToken)
 		{
 			return await _mediator.Send(
 				request == null

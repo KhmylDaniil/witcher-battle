@@ -5,11 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.BattleRequests;
 using Sindie.ApiService.Core.Contracts.RunBattleRequests;
-using Sindie.ApiService.Core.Entities;
 using Sindie.ApiService.Core.Exceptions;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
 using Sindie.ApiService.Core.ExtensionMethods;
-using System.Threading;
 using Witcher.MVC.ViewModels.RunBattle;
 
 namespace Witcher.MVC.Controllers
@@ -80,7 +77,7 @@ namespace Witcher.MVC.Controllers
 
 				var battle = await _mediator.SendValidated(new RunBattleCommand() { BattleId = command.BattleId }, cancellationToken);
 
-				battle.Message += attackResponse.Message; 
+				battle.Message = attackResponse.Message + battle.Message; 
 				return View("Run", battle);
 			}
 			catch (RequestValidationException ex)
@@ -90,16 +87,27 @@ namespace Witcher.MVC.Controllers
 			return RedirectToAction(nameof(Run), new GetBattleByIdQuery() { Id = command.BattleId });
 		}
 
+		[Route("[controller]/[action]/{battleId}")]
+		public async Task<IActionResult> MakeHeal(HealEffectCommand command, CancellationToken cancellationToken)
+		{
+			var viewModel = await CreateVM(command, cancellationToken);
+
+			return View(viewModel);
+		}
+
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{battleId}")]
-		public async Task<IActionResult> Heal(TreatEffectCommand command, CancellationToken cancellationToken)
+		public async Task<IActionResult> Heal(HealEffectCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
 				var response = await _mediator.SendValidated(command, cancellationToken);
 
-				return View(response);
+				var battle = await _mediator.SendValidated(new RunBattleCommand() { BattleId = command.BattleId }, cancellationToken);
+
+				battle.Message = response.Message + battle.Message;
+				return View("Run", battle);
 			}
 			catch (RequestValidationException ex)
 			{
@@ -122,6 +130,21 @@ namespace Witcher.MVC.Controllers
 
 			vm.CreatureParts = formAttackResponse.CreatureParts;
 			vm.DefensiveSkills = formAttackResponse.DefensiveSkills;
+
+			return vm;
+		}
+
+		private async Task<MakeHealViewModel> CreateVM(HealEffectCommand command, CancellationToken cancellationToken)
+		{
+			var vm = _mapper.Map<MakeHealViewModel>(command);
+
+			var formHealCommand = new FormHealCommand
+			{
+				TargetCreatureId = command.TargetCreatureId,
+			};
+			var formHealResponse = await _mediator.SendValidated(formHealCommand, cancellationToken);
+
+			vm.EffectsOnTarget = formHealResponse.EffectsOnTarget;
 
 			return vm;
 		}

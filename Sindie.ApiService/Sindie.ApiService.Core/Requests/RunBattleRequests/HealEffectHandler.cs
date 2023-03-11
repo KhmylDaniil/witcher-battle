@@ -14,7 +14,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 	/// <summary>
 	/// Обработчик попытки снятия эффекта
 	/// </summary>
-	public class TreatEffectHandler : BaseHandler<TreatEffectCommand, TurnResult>
+	public class HealEffectHandler : BaseHandler<HealEffectCommand, TurnResult>
 	{
 		/// <summary>
 		/// Бросок параметра
@@ -26,7 +26,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 		/// </summary>
 		/// <param name="appDbContext"></param>
 		/// <param name="authorizationService"></param>
-		public TreatEffectHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IRollService rollService)
+		public HealEffectHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IRollService rollService)
 			: base(appDbContext, authorizationService)
 		{
 			_rollService = rollService;
@@ -38,29 +38,32 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		public override async Task<TurnResult> Handle(TreatEffectCommand request, CancellationToken cancellationToken)
+		public override async Task<TurnResult> Handle(HealEffectCommand request, CancellationToken cancellationToken)
 		{
 			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
-				.Include(i => i.Creatures.Where(c => c.Id == request.Id))
+				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureSkills)
-				.Include(i => i.Creatures.Where(c => c.Id == request.Id))
+				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureParts)
-				.Include(i => i.Creatures.Where(c => c.Id == request.Id))
+				.Include(i => i.Creatures)
 					.ThenInclude(c => c.DamageTypeModifiers)
-				.Include(i => i.Creatures.Where(c => c.Id == request.Id))
+				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Effects)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new ExceptionNoAccessToEntity<Battle>();
 
-			var creature = battle.Creatures.FirstOrDefault(x => x.Id == request.Id)
+			var healer = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
 				?? throw new ExceptionEntityNotFound<Creature>();
 
-			var effect = creature.Effects.FirstOrDefault(x => x.Id == request.EffectId)
+			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
+				?? throw new ExceptionEntityNotFound<Creature>();
+
+			var effect = target.Effects.FirstOrDefault(x => x.Id == request.EffectId)
 				?? throw new ExceptionEntityNotFound<Effect>();
 
 			StringBuilder message = new();
 
-			effect.Treat(_rollService, creature, ref message);
+			effect.Treat(_rollService, healer, target, ref message);
 			
 			battle.NextInitiative++;
 

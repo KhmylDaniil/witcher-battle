@@ -6,7 +6,6 @@
 
 <h1>Attack</h1>
 
-<h4>AttackCommand</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -19,12 +18,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="CreaturePartId" value="Aimed part" class="control-label"></label>
-                <select asp-items="@(new SelectList(Model.CreatureParts, "Value", "Key", null))" asp-for="CreaturePartId"></select><br /><br />
+                <select asp-items="@(new SelectList(Model.CreatureParts, "Value", "Key", string.Empty))" asp-for="CreaturePartId"></select><br /><br />
                 <span asp-validation-for="CreaturePartId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DefensiveSkill" value="Defensive skill" class="control-label"></label>
-                <select asp-items="@(new SelectList(Model.DefensiveSkills, "Value", "Key", null))" asp-for="DefensiveSkill"></select><br /><br />
+                <select asp-items="@(new SelectList(Model.DefensiveSkills, "Value", "Key", string.Empty))" asp-for="DefensiveSkill"></select><br /><br />
                 <span asp-validation-for="DefensiveSkill" class="text-danger"></span>
             </div>
             <div class="form-group">

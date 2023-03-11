@@ -37,13 +37,22 @@ namespace Sindie.ApiService.Core.Logic
 			if (!battle.Creatures.Any())
 				throw new LogicBaseException("Нет существ для осуществления хода");
 
+			StringBuilder message = new();
+
+
 			if (battle.NextInitiative > battle.Creatures.Count)
+			{
 				battle.NextInitiative = 1;
+
+				foreach (var creature in battle.Creatures)
+					creature.TurnBeginningEffectsAreTriggered = false;
+
+				message.AppendLine("Начался новый раунд.");
+			}
 
 			currentCreature = battle.Creatures.OrderBy(x => x.InitiativeInBattle)
 				.First(x => x.InitiativeInBattle >= battle.NextInitiative);
 
-			StringBuilder message = new();
 
 			if (!currentCreature.TurnBeginningEffectsAreTriggered)
 			{
@@ -63,7 +72,7 @@ namespace Sindie.ApiService.Core.Logic
 					currentCreature.TurnBeginningEffectsAreTriggered = true;
 			}
 
-			message.AppendLine("Существо готово сделать ход.");
+			message.AppendLine($"{currentCreature.Name} готов сделать ход.");
 
 			return message.ToString();
 		}

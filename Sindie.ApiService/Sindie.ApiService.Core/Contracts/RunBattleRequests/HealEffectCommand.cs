@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 	/// <summary>
 	/// Команда попытки снятия эффекта
 	/// </summary>
-	public sealed class TreatEffectCommand : IValidatableCommand<TurnResult>
+	public class HealEffectCommand : IValidatableCommand<TurnResult>
 	{
 		/// <summary>
 		/// Айди боя
@@ -16,7 +16,12 @@ namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 		/// <summary>
 		/// Айди существа
 		/// </summary>
-		public Guid Id { get; set; }
+		public Guid CreatureId { get; set; }
+
+		/// <summary>
+		/// Айди цели
+		/// </summary>
+		public Guid TargetCreatureId { get; set; }
 
 		/// <summary>
 		/// Айди эффекта

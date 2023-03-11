@@ -30,11 +30,11 @@
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="MakeHeal" asp-route-BattleId=@Model.BattleId asp-route-id=@Model.CreatureId>
+        <form asp-action="MakeHeal" asp-route-BattleId=@Model.BattleId asp-route-creatureId=@Model.CreatureId>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="TargetCreatureId" value="Target" class="control-label"></label>
-                <select asp-items="@(new SelectList(Model.PossibleTargets, "Key", "Value"))" asp-for="TargetCreatureId"></select><br /><br />
+                <select asp-items="@(new SelectList(Model.PossibleTargets, "Key", "Value", Model.CreatureId))" asp-for="TargetCreatureId"></select><br /><br />
                 <span asp-validation-for="TargetCreatureId" class="text-danger"></span>
             </div>
             <div class="form-group">
