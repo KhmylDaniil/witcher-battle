@@ -39,32 +39,19 @@ namespace Sindie.ApiService.Core.Entities.Effects
 				: new FreezeEffect(target, name);
 
 		/// <summary>
-		/// Применить эффект
-		/// </summary>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void Run(Creature creature, ref StringBuilder message) { }
-
-		/// <summary>
-		/// Автоматически прекратить эффект
-		/// </summary>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void AutoEnd(Creature creature, ref StringBuilder message) { }
-
-		/// <summary>
 		/// Попробовать снять эффект
 		/// </summary>
 		/// <param name="rollService">Сервис бросков</param>
-		/// <param name="creature">Существо</param>
+		/// <param name="healer">Лекарь</param>
+		/// <param name="patient">Цель</param>
 		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
+		public override void Treat(IRollService rollService, Creature healer, Creature patient, ref StringBuilder message)
 		{
-			if (rollService.BeatDifficulty(creature.SkillBase(Skill.Physique), 16))
+			if (rollService.BeatDifficulty(patient.SkillBase(Skill.Physique), 16))
 			{
-				RevertStatChanges(creature);
-				message.AppendFormat($"Эффект {Name} снят. Скорость равна {creature.Speed}, рефлексы равны {creature.Ref}.");
-				creature.Effects.Remove(this);
+				RevertStatChanges(patient);
+				message.AppendFormat($"Эффект {Name} снят. Скорость равна {patient.Speed}, рефлексы равны {patient.Ref}.");
+				patient.Effects.Remove(this);
 			}
 			else
 				message.AppendLine($"Не удалось снять эффект {Name}.");

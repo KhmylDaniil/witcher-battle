@@ -1,0 +1,65 @@
+﻿@model Witcher.MVC.ViewModels.RunBattle.MakeAttackViewModel
+
+@{
+    ViewData["Title"] = "Attack";
+}
+
+<h1>Attack</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Attack" asp-route-battleId=@Model.BattleId>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="AbilityId" value="@Model.AbilityId" hidden=true class="form-control" />
+                <input asp-for="TargetCreatureId" value="@Model.TargetCreatureId" hidden=true class="form-control" />
+                <input asp-for="Id" value="@Model.Id" hidden=true class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="CreaturePartId" value="Aimed part" class="control-label"></label>
+                <select asp-items="@(new SelectList(Model.CreatureParts, "Value", "Key", string.Empty))" asp-for="CreaturePartId"></select><br /><br />
+                <span asp-validation-for="CreaturePartId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefensiveSkill" value="Defensive skill" class="control-label"></label>
+                <select asp-items="@(new SelectList(Model.DefensiveSkills, "Value", "Key", string.Empty))" asp-for="DefensiveSkill"></select><br /><br />
+                <span asp-validation-for="DefensiveSkill" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefenseValue" class="control-label"></label>
+                <input asp-for="DefenseValue" class="form-control" />
+                <span asp-validation-for="DefenseValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DamageValue" class="control-label"></label>
+                <input asp-for="DamageValue" class="form-control" />
+                <span asp-validation-for="DamageValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AttackValue" class="control-label"></label>
+                <input asp-for="AttackValue" class="form-control" />
+                <span asp-validation-for="AttackValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SpecialToHit" class="control-label"></label>
+                <input asp-for="SpecialToHit" class="form-control" />
+                <span asp-validation-for="SpecialToHit" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SpecialToDamage" class="control-label"></label>
+                <input asp-for="SpecialToDamage" class="form-control" />
+                <span asp-validation-for="SpecialToDamage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Attack" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<p>@TempData["ErrorMessage"]</p>
+
+<div>
+    <a asp-action="Run" asp-route-battleId=@Model.BattleId>Back to Battle</a>
+</div>

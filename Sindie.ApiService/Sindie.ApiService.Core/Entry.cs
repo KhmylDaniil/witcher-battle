@@ -31,8 +31,6 @@ namespace Sindie.ApiService.Core
 			services.AddTransient<IPasswordHasher>
 				(o => new PasswordHasher(hasherOptions));
 
-			services.AddAutoMapper(typeof(Entry).Assembly);
-
 			services.AddSingleton<IGameIdService, GameIdService>();
 
 			services.AddScoped<IAuthorizationService, AuthorizationService>();

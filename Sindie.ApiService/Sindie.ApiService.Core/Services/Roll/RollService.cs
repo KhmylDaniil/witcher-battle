@@ -56,27 +56,42 @@ namespace Sindie.ApiService.Core.Services.Roll
 			return roll > difficulty;
 		}
 			
-
 		/// <summary>
 		/// Встречный бросок
 		/// </summary>
 		/// <param name="attackBase">База атаки</param>
 		/// <param name="defenseBase">База защиты</param>
+		/// <param name="attackValue">Внешний результат броска атаки</param>
+		/// <param name="defenseValue">Внешний результат броска защиты</param>
 		/// <param name="attackerFumble">Провал атаки</param>
 		/// <param name="defenderFumble">Провал защиты</param>
 		/// <returns>Успешность атаки</returns>
-		public int ContestRollWithFumble(int attackBase, int defenseBase, out int attackerFumble, out int defenderFumble)
+		public int ContestRollWithFumble(
+			int attackBase,
+			int defenseBase,
+			int? attackValue,
+			int? defenseValue,
+			out int attackerFumble,
+			out int defenderFumble)
 		{
-			int attackRoll = Roll();
-			int defenseRoll = Roll();
+			attackerFumble = 0;
+			defenderFumble = 0;
+			
+			if (attackValue is null)
+			{
+				int attackRoll = Roll();
+				attackerFumble = CheckFumble(attackRoll);
+				attackValue = attackBase + attackRoll;
+			}
 
-			attackerFumble = CheckFumble(attackRoll);
-			defenderFumble = CheckFumble(defenseRoll);
+			if (defenseValue is null)
+			{
+				int defenseRoll = Roll();
+				defenderFumble = CheckFumble(defenseRoll);
+				defenseValue = defenseBase + defenseRoll;
+			}
 
-			attackBase += attackRoll;
-			defenseBase += defenseRoll;
-
-			return attackBase - defenseBase < 0 ? 0 : attackBase - defenseBase;
+			return attackValue.Value < defenseValue.Value ? 0 : attackValue.Value - defenseValue.Value;
 		}
 
 		private int Roll()

@@ -49,22 +49,16 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		}
 
 		/// <summary>
-		/// Автоматически прекратить эффект
-		/// </summary>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void AutoEnd(Creature creature, ref StringBuilder message) { }
-
-		/// <summary>
 		/// Попробовать снять эффект
 		/// </summary>
 		/// <param name="rollService">Сервис бросков</param>
-		/// <param name="creature">Существо</param>
+		/// <param name="healer">Лекарь</param>
+		/// <param name="patient">Цель</param>
 		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
+		public override void Treat(IRollService rollService, Creature healer, Creature patient, ref StringBuilder message)
 		{
 			message.AppendLine($"Эффект {Name} снят.");
-			creature.Effects.Remove(this);
+			patient.Effects.Remove(this);
 		}
 
 		/// <summary>

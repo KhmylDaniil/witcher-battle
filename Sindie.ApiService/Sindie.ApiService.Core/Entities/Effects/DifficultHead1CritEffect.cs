@@ -1,6 +1,5 @@
 ﻿using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Logic;
 using System;
 using System.Text;
 using static Sindie.ApiService.Core.BaseData.Enums;
@@ -55,13 +54,6 @@ namespace Sindie.ApiService.Core.Entities.Effects
 				: null;
 
 		/// <summary>
-		/// Автоматически прекратить эффект
-		/// </summary>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void AutoEnd(Creature creature, ref StringBuilder message) { }
-
-		/// <summary>
 		/// Применить эффект
 		/// </summary>
 		/// <param name="creature">Существо</param>
@@ -75,19 +67,6 @@ namespace Sindie.ApiService.Core.Entities.Effects
 				NextCheck += new Random().Next(1, 6);
 				StunCheck(creature, ref message);
 			}
-		}
-
-		/// <summary>
-		/// Попробовать снять эффект
-		/// </summary>
-		/// <param name="rollService">Сервис бросков</param>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
-		{
-			Heal heal = new(rollService);
-
-			heal.TryStabilize(creature, creature, ref message, this);
 		}
 
 		/// <summary>

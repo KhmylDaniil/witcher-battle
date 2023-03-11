@@ -65,7 +65,8 @@ namespace Sindie.ApiService.Core.Services.Authorization
 				return query;
 
 			return query.Where(i => i.Id == battleId
-			&& i.Game.UserGames.Any(u => u.UserId == _userContext.CurrentUserId && u.GameRoleId == GameRoles.MasterRoleId));
+			&& i.Game.UserGames.Any(u => u.UserId == _userContext.CurrentUserId
+			&& (u.GameRoleId == GameRoles.MasterRoleId || u.GameRoleId == GameRoles.MainMasterRoleId)));
 		}
 	}
 }

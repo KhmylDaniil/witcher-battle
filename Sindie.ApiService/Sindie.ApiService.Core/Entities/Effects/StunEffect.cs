@@ -51,18 +51,12 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		}
 
 		/// <summary>
-		/// Применить эффект
-		/// </summary>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void Run(Creature creature, ref StringBuilder message) { }
-
-		/// <summary>
 		/// Попробовать снять эффект
 		/// </summary>
 		/// <param name="rollService">Сервис бросков</param>
-		/// <param name="creature">Существо</param>
+		/// <param name="healer">Лекарь</param>
+		/// <param name="patient">Цель</param>
 		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message) { }
+		public override void Treat(IRollService rollService, Creature healer, Creature patient, ref StringBuilder message) { }
 	}
 }

@@ -80,14 +80,9 @@ namespace Sindie.ApiService.Core.Entities
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Счетчик раундов
+		/// Значение инициативы следующего существа
 		/// </summary>
-		public int Round { get; private set; }
-
-		/// <summary>
-		/// Время активации боя
-		/// </summary>
-		public DateTime? ActivationTime { get; set; }
+		public int NextInitiative { get; set; } = 1;
 
 		#region navigation properties
 
@@ -161,18 +156,18 @@ namespace Sindie.ApiService.Core.Entities
 			Game game = default,
 			ImgFile imgFile = default,
 			UserGame userGameActivated = default,
-			DateTime activationTime = default,
 			string name = default,
-			string description = default)
+			string description = default,
+			int nextInitiative = default)
 		=> new Battle()
 		{
 			Id = id ?? Guid.NewGuid(),
 			Game = game,
 			ImgFile = imgFile,
 			UserGameActivated = userGameActivated,
-			ActivationTime = activationTime,
 			Name = name ?? "Экземпляр",
-			Description = description
+			Description = description,
+			NextInitiative = nextInitiative
 		};
 	}
 }

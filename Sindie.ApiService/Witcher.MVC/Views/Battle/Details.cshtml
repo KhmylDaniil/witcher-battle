@@ -40,8 +40,14 @@
                 @Html.DisplayNameFor(model => model.Creatures.First().Description)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Creatures.First().HP)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Creatures.First().Effects)
+            </th>
+            <th>
                 @Html.ActionLink("Add new creature", "CreateCreature",
-                new { BattleId = Model.Id })
+                new { BattleId = Model.BattleId })
             </th>
         </tr>
     </thead>
@@ -59,19 +65,29 @@
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
+                    @item.HP.current/@item.HP.max
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Effects)
+                </td>
+                <td>
                     @Html.ActionLink("Edit", "ChangeCreature",
-                new { BattleId = Model.Id, Id = item.Id, Name = item.Name, Description = item.Description })
+                new { BattleId = Model.BattleId, Id = item.Id, Name = item.Name, Description = item.Description })
                     | @Html.ActionLink("Details", "GetCreatureById",
-                new { BattleId = Model.Id, Id = item.Id })
-                    | @Html.ActionLink("Delete", "DeleteCreature", new { BattleId = Model.Id, Id = item.Id, Name = item.Name })
+                new { BattleId = Model.BattleId, Id = item.Id })
+                    | @Html.ActionLink("Delete", "DeleteCreature", new { BattleId = Model.BattleId, Id = item.Id, Name = item.Name })
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-
 <p>@TempData["ErrorMessage"]</p>
+
+
+<div class="container">
+    <a asp-controller="RunBattle" asp-action="Run" asp-route-battleId=@Model.BattleId>Run Battle!</a>
+</div>
 
 <div class="container">
     <a asp-action="Index">Back to Battles</a>

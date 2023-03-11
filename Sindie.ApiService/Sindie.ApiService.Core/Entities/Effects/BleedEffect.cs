@@ -44,25 +44,5 @@ namespace Sindie.ApiService.Core.Entities.Effects
 			creature.HP -=2;
 			message.AppendLine($"Существо {creature.Name} потеряло 2 хита из-за кровотечения. Осталось {creature.HP} хитов.");
 		}
-
-		/// <summary>
-		/// Автоматически прекратить эффект
-		/// </summary>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void AutoEnd(Creature creature, ref StringBuilder message) { }
-
-		/// <summary>
-		/// Попробовать снять эффект
-		/// </summary>
-		/// <param name="rollService">Сервис бросков</param>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
-		{
-			Heal heal = new(rollService);
-
-			heal.TryStabilize(creature, creature, ref message, this);
-		}
 	}
 }

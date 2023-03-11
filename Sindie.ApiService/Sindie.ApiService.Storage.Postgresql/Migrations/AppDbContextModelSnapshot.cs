@@ -240,11 +240,6 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
 
-                    b.Property<DateTime?>("ActivationTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ActivationTime")
-                        .HasComment("Время активации боя");
-
                     b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
 
@@ -280,14 +275,16 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("Name")
                         .HasComment("Название боя");
 
+                    b.Property<int>("NextInitiative")
+                        .HasColumnType("integer")
+                        .HasColumnName("NextInitiative")
+                        .HasComment("Значение инициативы следующего существа");
+
                     b.Property<string>("RoleCreatedUser")
                         .HasColumnType("text");
 
                     b.Property<string>("RoleModifiedUser")
                         .HasColumnType("text");
-
-                    b.Property<int>("Round")
-                        .HasColumnType("integer");
 
                     b.Property<Guid?>("UserGameActivatedId")
                         .HasColumnType("uuid")
@@ -492,6 +489,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnName("ImgFileId")
                         .HasComment("Айди графического файла");
 
+                    b.Property<int>("InitiativeInBattle")
+                        .HasColumnType("integer")
+                        .HasColumnName("InitiativeInBattle")
+                        .HasComment("Значение инициативы в битве");
+
                     b.Property<int>("Int")
                         .HasColumnType("integer")
                         .HasColumnName("Int")
@@ -599,6 +601,9 @@ namespace Sindie.ApiService.Storage.Postgresql.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("Stun")
                         .HasComment("Устойчивость");
+
+                    b.Property<bool>("TurnBeginningEffectsAreTriggered")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("Will")
                         .HasColumnType("integer")

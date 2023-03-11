@@ -1,5 +1,4 @@
-﻿using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using static Sindie.ApiService.Core.BaseData.Enums;
 

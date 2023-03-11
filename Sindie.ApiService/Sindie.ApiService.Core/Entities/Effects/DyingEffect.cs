@@ -68,19 +68,6 @@ namespace Sindie.ApiService.Core.Entities.Effects
 		}
 
 		/// <summary>
-		/// Попробовать снять эффект
-		/// </summary>
-		/// <param name="rollService">Сервис бросков</param>
-		/// <param name="creature">Существо</param>
-		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, Creature creature, ref StringBuilder message)
-		{
-			Heal heal = new(rollService);
-
-			heal.TryStabilize(creature, creature, ref message, this);
-		}
-
-		/// <summary>
 		/// Испытание против внезапной смерти
 		/// </summary>
 		/// <param name="creature">Существо</param>

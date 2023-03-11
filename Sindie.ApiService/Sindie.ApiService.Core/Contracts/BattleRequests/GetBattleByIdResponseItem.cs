@@ -26,5 +26,20 @@ namespace Sindie.ApiService.Core.Contracts.BattleRequests
 		/// Описание существа
 		/// </summary>
 		public string Description { get; set; }
+
+		/// <summary>
+		/// Хиты
+		/// </summary>
+		public (int current, int max) HP { get; set; }
+
+		/// <summary>
+		/// Эффекты
+		/// </summary>
+		public string Effects { get; set; }
+
+		/// <summary>
+		/// Инициатива в битве
+		/// </summary>
+		public int Initiative { get; set; }
 	}
 }

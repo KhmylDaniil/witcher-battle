@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -16,11 +17,13 @@ namespace Witcher.MVC.Controllers
 	public class CreatureTemplateController : BaseController
 	{
 		private readonly IMemoryCache _memoryCache;
+		private readonly IMapper _mapper;
 
-		public CreatureTemplateController(IMediator mediator, IGameIdService gameIdService, IMemoryCache memoryCache)
+		public CreatureTemplateController(IMediator mediator, IGameIdService gameIdService, IMemoryCache memoryCache, IMapper mapper)
 			: base(mediator, gameIdService)
 		{
 			_memoryCache = memoryCache;
+			_mapper = mapper;
 		}
 
 		[Route("[controller]")]
@@ -217,28 +220,7 @@ namespace Witcher.MVC.Controllers
 		{
 			var viewModel = command is CreateCreatureTemplateCommandViewModel vm
 				? vm
-				: new CreateCreatureTemplateCommandViewModel()
-				{
-					ImgFileId = command.ImgFileId,
-					BodyTemplateId = command.BodyTemplateId,
-					CreatureType = command.CreatureType,
-					Name = command.Name,
-					Description = command.Description,
-					HP = command.HP,
-					Sta = command.Sta,
-					Int = command.Int,
-					Ref = command.Ref,
-					Dex = command.Dex,
-					Body = command.Body,
-					Emp = command.Emp,
-					Cra = command.Cra,
-					Will = command.Will,
-					Speed = command.Speed,
-					Luck = command.Luck,
-					ArmorList = command.ArmorList,
-					Abilities = command.Abilities,
-					CreatureTemplateSkills = command.CreatureTemplateSkills,
-				};
+				: _mapper.Map<CreateCreatureTemplateCommandViewModel>(command);
 
 			viewModel.BodyTemplatesDictionary = await GetBodyTemplateListForViewModel(cancellationToken);
 			viewModel.AbilitiesDictionary = await GetAbilityListToViewModel(cancellationToken);
@@ -253,28 +235,7 @@ namespace Witcher.MVC.Controllers
 		{
 			var viewModel = command is ChangeCreatureTemplateCommandViewModel vm
 				? vm
-				: new ChangeCreatureTemplateCommandViewModel()
-				{
-					ImgFileId = command.ImgFileId,
-					BodyTemplateId = command.BodyTemplateId,
-					CreatureType = command.CreatureType,
-					Name = command.Name,
-					Description = command.Description,
-					HP = command.HP,
-					Sta = command.Sta,
-					Int = command.Int,
-					Ref = command.Ref,
-					Dex = command.Dex,
-					Body = command.Body,
-					Emp = command.Emp,
-					Cra = command.Cra,
-					Will = command.Will,
-					Speed = command.Speed,
-					Luck = command.Luck,
-					ArmorList = command.ArmorList,
-					Abilities = command.Abilities,
-					CreatureTemplateSkills = command.CreatureTemplateSkills,
-				};
+				: _mapper.Map<ChangeCreatureTemplateCommandViewModel>(command);
 
 			viewModel.BodyTemplatesDictionary = await GetBodyTemplateListForViewModel(cancellationToken);
 			viewModel.AbilitiesDictionary = await GetAbilityListToViewModel(cancellationToken);

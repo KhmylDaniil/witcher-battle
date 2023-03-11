@@ -35,8 +35,6 @@ namespace Witcher.MVC.Controllers
 		/// <returns>Список игр</returns>
 		public async Task<IActionResult> Index(GetGameQuery query, CancellationToken cancellationToken)
 		{
-			//var query = new GetGameQuery() { Name = name, Description = description, AuthorName = authorName};
-			
 			var response = await _mediator.SendValidated(query, cancellationToken);
 
 			_gameIdService.Reset();

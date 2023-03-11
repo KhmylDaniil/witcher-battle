@@ -52,7 +52,7 @@ namespace Sindie.ApiService.WebApi.ExseptionMiddelware
 			{
 				await ProcessException(context, ex, 403);
 			}
-			catch (ExceptionScryptBase ex)
+			catch (LogicBaseException ex)
 			{
 				await ProcessException(context, ex, 420);
 			}

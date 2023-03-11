@@ -169,6 +169,11 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 			.HasColumnName("LeadingArmId")
 			.HasComment("Айди ведущей руки");
 
+			builder.Property(r => r.InitiativeInBattle)
+			.HasColumnName("InitiativeInBattle")
+			.HasComment("Значение инициативы в битве")
+			.IsRequired();
+
 			builder.HasOne(x => x.Battle)
 				.WithMany(x => x.Creatures)
 				.HasForeignKey(x => x.BattleId)
