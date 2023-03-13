@@ -32,6 +32,8 @@ namespace Witcher.MVC
 			services.AddTransient<IUserContext, UserContext>();
 
 			services.AddCors(o => o.AddPolicy("AllowAll", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
+			services.AddSignalR();
 		}
 	}
 }
