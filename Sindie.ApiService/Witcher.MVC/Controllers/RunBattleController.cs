@@ -2,11 +2,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.BattleRequests;
 using Sindie.ApiService.Core.Contracts.RunBattleRequests;
 using Sindie.ApiService.Core.Exceptions;
 using Sindie.ApiService.Core.ExtensionMethods;
+using Witcher.MVC.Hubs;
 using Witcher.MVC.ViewModels.RunBattle;
 
 namespace Witcher.MVC.Controllers
@@ -15,10 +17,12 @@ namespace Witcher.MVC.Controllers
 	public class RunBattleController : BaseController
 	{
 		private readonly IMapper _mapper;
+		private readonly IHubContext<MessageHub> _messageHubContext;
 		
-		public RunBattleController(IMediator mediator, IGameIdService gameIdService, IMapper mapper) : base(mediator, gameIdService)
+		public RunBattleController(IMediator mediator, IGameIdService gameIdService, IMapper mapper, IHubContext<MessageHub> messageHub) : base(mediator, gameIdService)
 		{
 			_mapper = mapper;
+			_messageHubContext = messageHub;
 		}
 
 		[Route("[controller]/[action]/{battleId}")]
@@ -62,7 +66,7 @@ namespace Witcher.MVC.Controllers
 		public async Task<IActionResult> MakeAttack(AttackCommand command, CancellationToken cancellationToken)
 		{
 			var viewModel = await CreateVM(command, cancellationToken);
-			
+
 			return View(viewModel);
 		}
 
@@ -76,6 +80,8 @@ namespace Witcher.MVC.Controllers
 				var attackResponse = await _mediator.SendValidated(command, cancellationToken);
 
 				var battle = await _mediator.SendValidated(new RunBattleCommand() { BattleId = command.BattleId }, cancellationToken);
+
+				await _messageHubContext.Clients.All.SendAsync("ReceiveMessage", "", attackResponse.Message);
 
 				battle.Message = attackResponse.Message + battle.Message; 
 				return View("Run", battle);
