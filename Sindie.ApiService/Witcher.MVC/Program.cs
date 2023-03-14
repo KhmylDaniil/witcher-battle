@@ -1,5 +1,6 @@
 using Sindie.ApiService.Storage.Postgresql;
 using Witcher.MVC;
+using Witcher.MVC.Hubs;
 using Witcher.MVC.Logger;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,5 +35,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}");
+
+app.MapHub<MessageHub>("/messageHub");
 
 app.Run();

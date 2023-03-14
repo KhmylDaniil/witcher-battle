@@ -44,6 +44,10 @@ namespace Sindie.ApiService.Storage.Postgresql.Configurations
 				.HasColumnName("NextInitiative")
 				.HasComment("Значение инициативы следующего существа");
 
+			builder.Property(x => x.BattleLog)
+				.HasColumnName("BattleLog")
+				.HasComment("Журнал боя");
+
 			builder.HasOne(x => x.Game)
 				.WithMany(x => x.Battles)
 				.HasForeignKey(x => x.GameId)

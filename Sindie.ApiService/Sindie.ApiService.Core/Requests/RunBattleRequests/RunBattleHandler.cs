@@ -45,13 +45,15 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 				Effects = string.Join(", ", x.Effects.Select(x => x.Name))
 			}).ToList();
 
+			RunBattle.TurnBeginning(battle, out Creature currentCreature);
+
 			var result = new RunBattleResponse
 			{
 				Name = battle.Name,
 				Description = battle.Description,
 				BattleId = battle.Id,
 				Creatures = creatures,
-				Message = RunBattle.TurnBeginning(battle, out Creature currentCreature),
+				BattleLog = battle.BattleLog,
 				CreatureId = currentCreature.Id,
 				CurrentCreatureName = currentCreature.Name
 			};

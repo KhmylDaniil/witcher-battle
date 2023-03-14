@@ -75,8 +75,9 @@
     </tbody>
 </table>
 
-<p>@Model.Message</p>
-
+<div class="prokrutka" id="scroll">
+    @Model.BattleLog
+</div>
 
 <div class="container">
     <a asp-action="MakeTurn" asp-route-battleId="@Model.BattleId" asp-route-creatureId="@Model.CreatureId">@Model.CurrentCreatureName turn</a>
@@ -87,3 +88,9 @@
 <div class="container">
     <a asp-controller="Battle" asp-action="Index">Back to Battles</a>
 </div>
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/receiveMessage.js"></script>
+<script>
+    document.getElementById('scroll').scrollTop = 9999999;
+</script>

@@ -31,14 +31,13 @@ namespace Sindie.ApiService.Core.Logic
 		/// </summary>
 		/// <param name="battle">Битва</param>
 		/// <param name="currentCreature">Существо</param>
-		/// <returns>Сообщнение о начале хода и эффектах этой фазы</returns>
-		static public string TurnBeginning(Battle battle, out Creature currentCreature)
+		/// <returns></returns>
+		static public void TurnBeginning(Battle battle, out Creature currentCreature)
 		{
 			if (!battle.Creatures.Any())
 				throw new LogicBaseException("Нет существ для осуществления хода");
 
 			StringBuilder message = new();
-
 
 			if (battle.NextInitiative > battle.Creatures.Count)
 			{
@@ -52,7 +51,6 @@ namespace Sindie.ApiService.Core.Logic
 
 			currentCreature = battle.Creatures.OrderBy(x => x.InitiativeInBattle)
 				.First(x => x.InitiativeInBattle >= battle.NextInitiative);
-
 
 			if (!currentCreature.TurnBeginningEffectsAreTriggered)
 			{
@@ -72,9 +70,7 @@ namespace Sindie.ApiService.Core.Logic
 					currentCreature.TurnBeginningEffectsAreTriggered = true;
 			}
 
-			message.AppendLine($"{currentCreature.Name} готов сделать ход.");
-
-			return message.ToString();
+			battle.BattleLog += message.ToString();
 		}
 	}
 }

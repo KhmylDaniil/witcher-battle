@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Sindie.ApiService.Core.Abstractions;
 using Sindie.ApiService.Core.Contracts.RunBattleRequests;
 using Sindie.ApiService.Core.Entities;
@@ -14,7 +15,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 	/// <summary>
 	/// Обработчик попытки снятия эффекта
 	/// </summary>
-	public class HealEffectHandler : BaseHandler<HealEffectCommand, TurnResult>
+	public class HealEffectHandler : BaseHandler<HealEffectCommand, Unit>
 	{
 		/// <summary>
 		/// Бросок параметра
@@ -38,7 +39,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns></returns>
-		public override async Task<TurnResult> Handle(HealEffectCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(HealEffectCommand request, CancellationToken cancellationToken)
 		{
 			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
 				.Include(i => i.Creatures)
@@ -67,9 +68,11 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 			
 			battle.NextInitiative++;
 
+			battle.BattleLog += message;
+
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
-			return new TurnResult() { Message = message.ToString() };
+			return Unit.Value;
 		}
 	}
 }

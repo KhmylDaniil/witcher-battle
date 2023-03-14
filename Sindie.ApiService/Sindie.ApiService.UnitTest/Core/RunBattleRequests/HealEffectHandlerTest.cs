@@ -15,7 +15,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 	/// Тест для <see cref="HealEffectHandler"/>
 	/// </summary>
 	[TestClass]
-	public class TreatEffectHandlerTest : UnitTestBase
+	public class HealEffectHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -27,7 +27,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 		/// <summary>
 		/// Тест для <see cref="HealEffectHandler"/>
 		/// </summary>
-		public TreatEffectHandlerTest() : base()
+		public HealEffectHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
 			_battle = Battle.CreateForTest(game: _game);
@@ -86,7 +86,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 
 			Assert.IsNotNull(result);
 
-			var message = result.Message;
+			var message = _dbContext.Battles.FirstOrDefault(x => x.Id == _battle.Id).BattleLog;
 			Assert.IsNotNull(message);
 			Assert.IsTrue(message.Contains(CritNames.GetConditionFullName(Condition.Freeze)));
 			Assert.IsTrue(message.Contains("снят"));

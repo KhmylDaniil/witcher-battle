@@ -5,7 +5,7 @@ namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 {
 	public class RunBattleResponse : GetBattleByIdResponse
 	{
-		public string Message { get; set; }
+		public string BattleLog { get; set; }
 
 		public Guid CreatureId { get; set; }
 
