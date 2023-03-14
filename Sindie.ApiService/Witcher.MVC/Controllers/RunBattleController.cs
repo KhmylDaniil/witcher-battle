@@ -77,13 +77,12 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var attackResponse = await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.SendValidated(command, cancellationToken);
 
 				var battle = await _mediator.SendValidated(new RunBattleCommand() { BattleId = command.BattleId }, cancellationToken);
 
-				await _messageHubContext.Clients.All.SendAsync("ReceiveMessage", "", attackResponse.Message);
+				await _messageHubContext.Clients.All.SendAsync("ReceiveMessage", "", "");
 
-				battle.Message = attackResponse.Message + battle.Message; 
 				return View("Run", battle);
 			}
 			catch (RequestValidationException ex)
@@ -108,11 +107,10 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var response = await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.SendValidated(command, cancellationToken);
 
 				var battle = await _mediator.SendValidated(new RunBattleCommand() { BattleId = command.BattleId }, cancellationToken);
 
-				battle.Message = response.Message + battle.Message;
 				return View("Run", battle);
 			}
 			catch (RequestValidationException ex)

@@ -84,6 +84,11 @@ namespace Sindie.ApiService.Core.Entities
 		/// </summary>
 		public int NextInitiative { get; set; } = 1;
 
+		/// <summary>
+		/// Журнал битвы
+		/// </summary>
+		public string BattleLog { get; set; }
+
 		#region navigation properties
 
 		/// <summary>

@@ -6,7 +6,7 @@ namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
 	/// <summary>
 	/// Команда попытки снятия эффекта
 	/// </summary>
-	public class HealEffectCommand : IValidatableCommand<TurnResult>
+	public class HealEffectCommand : IValidatableCommand
 	{
 		/// <summary>
 		/// Айди боя

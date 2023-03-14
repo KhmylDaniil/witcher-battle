@@ -9,10 +9,11 @@ using Sindie.ApiService.Core.Logic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 
 namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 {
-	public class AttackHandler : BaseHandler<AttackCommand, TurnResult>
+	public class AttackHandler : BaseHandler<AttackCommand, Unit>
 	{
 		/// <summary>
 		/// Бросок параметра
@@ -25,7 +26,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 			_rollService = rollService;
 		}
 
-		public override async Task<TurnResult> Handle(AttackCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(AttackCommand request, CancellationToken cancellationToken)
 		{
 			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
 				.Include(i => i.Creatures)
@@ -49,7 +50,9 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 
 			var attack = new Attack(_rollService);
 
-			var attackResult = attack.RunAttack(attackData, request.DamageValue, request.AttackValue, request.DefenseValue);
+			var attackLog = attack.RunAttack(attackData, request.DamageValue, request.AttackValue, request.DefenseValue);
+
+			battle.BattleLog += attackLog;
 
 			Attack.RemoveDeadBodies(battle);
 
@@ -57,7 +60,7 @@ namespace Sindie.ApiService.Core.Requests.RunBattleRequests
 			
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
-			return new TurnResult { Message = attackResult };
+			return Unit.Value;
 		}
 
 		/// <summary>

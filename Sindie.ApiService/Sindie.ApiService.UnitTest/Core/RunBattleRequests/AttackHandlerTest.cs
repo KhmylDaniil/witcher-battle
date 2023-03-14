@@ -20,7 +20,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
-		private readonly Battle _instance;
+		private readonly Battle _battle;
 		private readonly CreaturePart _headPart;
 		private readonly CreaturePart _torsoPart;
 		private readonly CreaturePart _leftArmPart;
@@ -37,7 +37,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 		public AttackHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_instance = Battle.CreateForTest(game: _game);
+			_battle = Battle.CreateForTest(game: _game);
 
 			_creatureTemplate = CreatureTemplate.CreateForTest(
 				game: _game,
@@ -56,7 +56,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, Condition.BleedingWound, 100));
 
 			_creature = Creature.CreateForTest(
-				battle: _instance,
+				battle: _battle,
 				creatureTemlpate: _creatureTemplate,
 				creatureType: CreatureType.Specter,
 				@int: 10,
@@ -139,7 +139,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_game,
-				_instance,
+				_battle,
 				_creatureTemplate,
 				_ability,
 				_creature));
@@ -154,7 +154,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 		{
 			var request = new AttackCommand()
 			{
-				BattleId = _instance.Id,
+				BattleId = _battle.Id,
 				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _torsoPart.Id,
@@ -167,7 +167,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 
 			Assert.IsNotNull(result);
 
-			var message = result.Message;
+			var message = _dbContext.Battles.FirstOrDefault(x => x.Id == _battle.Id).BattleLog;
 			Assert.IsNotNull(message);
 			Assert.IsTrue(message.Contains("повреждена"));
 			Assert.IsTrue(message.Contains(CritNames.GetConditionFullName(Condition.BleedingWound)));
@@ -185,7 +185,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 		{
 			var request = new AttackCommand()
 			{
-				BattleId = _instance.Id,
+				BattleId = _battle.Id,
 				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _torsoPart.Id,
@@ -198,7 +198,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 
 			Assert.IsNotNull(result);
 
-			var message = result.Message;
+			var message = _dbContext.Battles.FirstOrDefault(x => x.Id == _battle.Id).BattleLog;
 			Assert.IsNotNull(message);
 			Assert.IsTrue(message.Contains(CritNames.GetConditionFullName(Condition.BleedingWound)));
 
@@ -210,13 +210,9 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 
 			var result2 = await newHandler.Handle(request, default);
 
-			var message2 = result2.Message;
-			Assert.IsNotNull(message2);
-			Assert.IsTrue(!message2.Contains(CritNames.GetConditionFullName(Condition.BleedingWound)));
-
 			var monster2 = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster2);
-			var effect2 = monster.Effects.FirstOrDefault();
+			var effect2 = monster.Effects.SingleOrDefault();
 			Assert.IsNotNull(effect2);
 			Assert.IsTrue(effect2 is BleedingWoundEffect);
 
@@ -232,7 +228,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 		{
 			var request = new AttackCommand()
 			{
-				BattleId = _instance.Id,
+				BattleId = _battle.Id,
 				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _torsoPart.Id,
@@ -246,7 +242,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 
 			Assert.IsNotNull(result);
 
-			var message = result.Message;
+			var message = _dbContext.Battles.FirstOrDefault(x => x.Id == _battle.Id).BattleLog;
 			Assert.IsNotNull(message);
 			Assert.IsTrue(message.Contains("погибает"));
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
@@ -262,7 +258,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 		{
 			var request = new AttackCommand()
 			{
-				BattleId = _instance.Id,
+				BattleId = _battle.Id,
 				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _leftLegPart.Id,
@@ -276,9 +272,10 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 
 			Assert.IsNotNull(result);
 
-			var message = result.Message;
+			var message = _dbContext.Battles.FirstOrDefault(x => x.Id == _battle.Id).BattleLog;
 			Assert.IsNotNull(message);
 			Assert.IsTrue(message.Contains(CritNames.GetConditionFullName(Condition.Stun)));
+
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
 			var stun = monster.Effects.FirstOrDefault(x => x is StunEffect);
@@ -302,7 +299,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			//second attack
 			request = new AttackCommand()
 			{
-				BattleId = _instance.Id,
+				BattleId = _battle.Id,
 				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _rightLegPart.Id,
@@ -312,9 +309,6 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			result = await newHandler.Handle(request, default);
 
 			Assert.IsNotNull(result);
-
-			message = result.Message;
-			Assert.IsNotNull(message);
 
 			monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
@@ -352,7 +346,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			//third attack
 			request = new AttackCommand()
 			{
-				BattleId = _instance.Id,
+				BattleId = _battle.Id,
 				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _rightLegPart.Id,
@@ -362,9 +356,6 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			result = await newHandler.Handle(request, default);
 
 			Assert.IsNotNull(result);
-
-			message = result.Message;
-			Assert.IsNotNull(message);
 
 			monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
@@ -385,7 +376,7 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			//dismember limb
 			request = new AttackCommand()
 			{
-				BattleId = _instance.Id,
+				BattleId = _battle.Id,
 				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _rightLegPart.Id,
@@ -393,8 +384,6 @@ namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
 			};
 
 			result = await newHandler.Handle(request, default);
-			message = result.Message;
-			Assert.IsNotNull(message);
 
 			monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
