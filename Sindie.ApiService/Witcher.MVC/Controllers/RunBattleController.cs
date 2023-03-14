@@ -19,7 +19,8 @@ namespace Witcher.MVC.Controllers
 		private readonly IMapper _mapper;
 		private readonly IHubContext<MessageHub> _messageHubContext;
 		
-		public RunBattleController(IMediator mediator, IGameIdService gameIdService, IMapper mapper, IHubContext<MessageHub> messageHub) : base(mediator, gameIdService)
+		public RunBattleController(IMediator mediator, IGameIdService gameIdService, IMapper mapper, IHubContext<MessageHub> messageHub)
+			: base(mediator, gameIdService)
 		{
 			_mapper = mapper;
 			_messageHubContext = messageHub;
@@ -31,7 +32,6 @@ namespace Witcher.MVC.Controllers
 			try
 			{
 				var response = await _mediator.SendValidated(command, cancellationToken);
-
 				return View(response);
 			}
 			catch (RequestValidationException ex)
@@ -58,7 +58,7 @@ namespace Witcher.MVC.Controllers
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 
-				return RedirectToAction(nameof(Run), new GetBattleByIdQuery() { Id = command.BattleId });
+				return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
 			}
 		}
 
@@ -79,17 +79,13 @@ namespace Witcher.MVC.Controllers
 			{
 				await _mediator.SendValidated(command, cancellationToken);
 
-				var battle = await _mediator.SendValidated(new RunBattleCommand() { BattleId = command.BattleId }, cancellationToken);
-
-				await _messageHubContext.Clients.All.SendAsync("ReceiveMessage", "", "");
-
-				return View("Run", battle);
+				await _messageHubContext.SendUpdateBattleMessage();
 			}
 			catch (RequestValidationException ex)
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 			}
-			return RedirectToAction(nameof(Run), new GetBattleByIdQuery() { Id = command.BattleId });
+			return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
 		}
 
 		[Route("[controller]/[action]/{battleId}")]
@@ -109,15 +105,13 @@ namespace Witcher.MVC.Controllers
 			{
 				await _mediator.SendValidated(command, cancellationToken);
 
-				var battle = await _mediator.SendValidated(new RunBattleCommand() { BattleId = command.BattleId }, cancellationToken);
-
-				return View("Run", battle);
+				await _messageHubContext.SendUpdateBattleMessage();
 			}
 			catch (RequestValidationException ex)
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 			}
-			return RedirectToAction(nameof(Run), new GetBattleByIdQuery() { Id = command.BattleId });
+			return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
 		}
 
 		private async Task<MakeAttackViewModel> CreateVM(AttackCommand command, CancellationToken cancellationToken)

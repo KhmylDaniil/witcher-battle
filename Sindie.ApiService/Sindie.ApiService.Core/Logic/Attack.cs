@@ -37,7 +37,7 @@ namespace Sindie.ApiService.Core.Logic
 		/// <returns></returns>
 		internal string RunAttack(AttackData data, int? damageValue, int? attackValue, int? defenseValue)
 		{
-			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}.");
+			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}. ");
 
 			var successValue = _rollService.ContestRollWithFumble(
 				attackBase: AttackValue(data.Attacker, data.Ability, data.ToHit),
@@ -134,11 +134,12 @@ namespace Sindie.ApiService.Core.Logic
 
 			CheckCrit(data, ref message, successValue, ref damage);
 
+			if (damage <= 0)
+				return;
+
 			data.Target.HP -= damage;
 			message.AppendLine($"Нанеcено {damage} урона.");
-
-			if (damage > 0)
-				CheckDying(data.Target, ref message);
+			CheckDying(data.Target, ref message);
 		}
 
 		void RemoveStunEffect(AttackData data)
@@ -169,12 +170,12 @@ namespace Sindie.ApiService.Core.Logic
 			if (data.AimedPart.CurrentArmor >= damage)
 			{
 				damage = 0;
-				message.AppendLine("Броня поглотила урон");
+				message.AppendLine("Броня поглотила урон.");
 				return;
 			}
 
 			damage -= data.AimedPart.CurrentArmor--;
-			message.AppendLine($"Броня повреждена. Осталось {data.AimedPart.CurrentArmor} брони");
+			message.AppendLine($"Броня повреждена. Осталось {data.AimedPart.CurrentArmor} брони.");
 		}
 
 		void CheckModifiers(AttackData data, ref int damage)

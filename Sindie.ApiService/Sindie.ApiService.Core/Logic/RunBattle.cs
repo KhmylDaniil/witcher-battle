@@ -70,8 +70,6 @@ namespace Sindie.ApiService.Core.Logic
 					currentCreature.TurnBeginningEffectsAreTriggered = true;
 			}
 
-			message.AppendLine($"{currentCreature.Name} готов сделать ход.");
-
 			battle.BattleLog += message.ToString();
 		}
 	}
