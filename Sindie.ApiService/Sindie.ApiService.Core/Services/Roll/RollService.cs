@@ -1,8 +1,8 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
 using System;
 
-namespace Sindie.ApiService.Core.Services.Roll
+namespace Witcher.Core.Services.Roll
 {
 	/// <summary>
 	/// Серввис случайных бросков

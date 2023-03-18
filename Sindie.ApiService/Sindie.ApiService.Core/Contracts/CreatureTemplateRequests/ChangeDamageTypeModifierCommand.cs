@@ -1,9 +1,9 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.Exceptions.RequestExceptions;
 using System;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests
+namespace Witcher.Core.Contracts.CreatureTemplateRequests
 {
 	/// <summary>
 	/// Команда изменения модификатора урона по типу 

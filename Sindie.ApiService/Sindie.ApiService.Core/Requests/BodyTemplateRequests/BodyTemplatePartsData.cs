@@ -1,9 +1,9 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
-using Sindie.ApiService.Core.Entities;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.BodyTemplateRequests;
+using Witcher.Core.Entities;
 using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Requests.BodyTemplateRequests
+namespace Witcher.Core.Requests.BodyTemplateRequests
 {
 	/// <summary>
 	/// Данные для обновления частей шаблона тела

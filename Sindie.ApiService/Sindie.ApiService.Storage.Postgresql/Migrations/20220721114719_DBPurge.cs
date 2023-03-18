@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Sindie.ApiService.Storage.Postgresql.Migrations
+namespace Witcher.Storage.Postgresql.Migrations
 {
     public partial class DBPurge : Migration
     {

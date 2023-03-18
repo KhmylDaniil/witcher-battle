@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Caching.Memory;
-using Sindie.ApiService.Core;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Services.Hasher;
-using Sindie.ApiService.Storage.Postgresql;
+using Witcher.Core;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Services.Hasher;
+using Witcher.Storage.Postgresql;
 
 namespace Witcher.MVC
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sindie.ApiService.Core.Exceptions.EntityExceptions
+namespace Witcher.Core.Exceptions.EntityExceptions
 {
 	/// <summary>
 	/// Исключение сущность not included

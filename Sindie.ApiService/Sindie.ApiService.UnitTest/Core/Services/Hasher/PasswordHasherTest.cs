@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sindie.ApiService.Core.Exceptions;
-using Sindie.ApiService.Core.Services.Hasher;
+using Witcher.Core.Exceptions;
+using Witcher.Core.Services.Hasher;
 using System;
 
-namespace Sindie.ApiService.UnitTest.Core.Hasher
+namespace Witcher.UnitTest.Core.Hasher
 {
 	/// <summary>
 	/// Тест для <see cref="PasswordHasher" >

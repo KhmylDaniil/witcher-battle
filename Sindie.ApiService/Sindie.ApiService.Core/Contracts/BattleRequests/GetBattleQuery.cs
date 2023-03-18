@@ -1,7 +1,7 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using Witcher.Core.Abstractions;
 using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Contracts.BattleRequests
+namespace Witcher.Core.Contracts.BattleRequests
 {
 	/// <summary>
 	/// Запрос на получение списка битв

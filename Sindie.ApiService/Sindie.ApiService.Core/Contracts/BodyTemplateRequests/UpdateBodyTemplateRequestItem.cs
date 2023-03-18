@@ -1,9 +1,7 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using System;
-using System.ComponentModel.DataAnnotations;
-using static Sindie.ApiService.Core.BaseData.Enums;
+﻿using Witcher.Core.Abstractions;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests
+namespace Witcher.Core.Contracts.BodyTemplateRequests
 {
 	/// <summary>
 	/// Элемент запроса создания или изменения шаблона тела

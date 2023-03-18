@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Drafts.AbilityDrafts
+namespace Witcher.Core.Drafts.AbilityDrafts
 {
 	public static class DefensiveSkillsDrafts
 	{

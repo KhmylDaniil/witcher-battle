@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sindie.ApiService.Core.Contracts.BattleRequests
+namespace Witcher.Core.Contracts.BattleRequests
 {
 	/// <summary>
 	/// Элемент ответа на запрос списка битв

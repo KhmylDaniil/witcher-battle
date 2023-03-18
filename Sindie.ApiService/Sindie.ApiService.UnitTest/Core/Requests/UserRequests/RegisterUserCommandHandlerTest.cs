@@ -1,16 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.UserRequests.RegisterUser;
-using Sindie.ApiService.Storage.Postgresql;
+using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Contracts.UserRequests.RegisterUser;
+using Witcher.Core.Entities;
+using Witcher.Core.Requests.UserRequests.RegisterUser;
+using Witcher.Storage.Postgresql;
 using System;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
+namespace Witcher.UnitTest.Core.Requests.UserRequests
 {
 	/// <summary>
 	/// Тест для <see cref="RegisterUserCommandHandler" >

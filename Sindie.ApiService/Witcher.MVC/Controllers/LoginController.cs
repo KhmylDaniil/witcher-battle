@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.UserRequests.LoginUser;
-using Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser;
-using Sindie.ApiService.Core.Exceptions;
-using Sindie.ApiService.Core.ExtensionMethods;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.UserRequests.LoginUser;
+using Witcher.Core.Contracts.UserRequests.RegisterUser;
+using Witcher.Core.Exceptions;
+using Witcher.Core.ExtensionMethods;
 using System.Diagnostics;
 using Witcher.MVC.Models;
 using Witcher.MVC.ViewModels.Login;

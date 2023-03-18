@@ -1,16 +1,16 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.RunBattleRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Entities.Effects;
-using Sindie.ApiService.Core.Requests.RunBattleRequests;
+using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Contracts.RunBattleRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Entities.Effects;
+using Witcher.Core.Requests.RunBattleRequests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.UnitTest.Core.RunBattleRequests
+namespace Witcher.UnitTest.Core.RunBattleRequests
 {
 	/// <summary>
 	/// Тест для <see cref="CreatureAttackHandler"/>

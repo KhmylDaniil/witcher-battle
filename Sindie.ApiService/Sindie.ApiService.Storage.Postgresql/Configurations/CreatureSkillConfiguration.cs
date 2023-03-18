@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sindie.ApiService.Core.Entities;
+using Witcher.Core.Entities;
 using System;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Storage.Postgresql.Configurations
+namespace Witcher.Storage.Postgresql.Configurations
 {
 	/// <summary>
 	/// Конфигурация для <see cref="CreatureSkill"/>

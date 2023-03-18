@@ -1,11 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Services.Authorization;
+using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Entities;
+using Witcher.Core.Services.Authorization;
 using System.Linq;
 
-namespace Sindie.ApiService.UnitTest.Core.Services.Authorization
+namespace Witcher.UnitTest.Core.Services.Authorization
 {
 	/// <summary>
 	/// Тест для <see cref="AuthorizationService" >

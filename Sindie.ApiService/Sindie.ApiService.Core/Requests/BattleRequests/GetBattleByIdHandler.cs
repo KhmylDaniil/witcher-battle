@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BattleRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
-using Sindie.ApiService.Core.Logic;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.BattleRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Exceptions.EntityExceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.BattleRequests
+namespace Witcher.Core.Requests.BattleRequests
 {
 	public class GetBattleByIdHandler : BaseHandler<GetBattleByIdQuery, GetBattleByIdResponse>
 	{

@@ -1,7 +1,7 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using Witcher.Core.Abstractions;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.GameRequests
+namespace Witcher.Core.Contracts.GameRequests
 {
 	public class DeleteGameCommand : IValidatableCommand
 	{

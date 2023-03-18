@@ -7,11 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B14D2400-D6A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{EFD4722E-0D3F-4725-9A6A-8A3C0E506BB7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sindie.ApiService.WebApi", "Sindie.ApiService.WebApi\Sindie.ApiService.WebApi.csproj", "{E537C793-ED5C-4932-AF81-24DAAD49CE19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witcher.Storage.Postgresql", "Sindie.ApiService.Storage.Postgresql\Witcher.Storage.Postgresql.csproj", "{4E96C899-BB38-4589-959A-F6744D56D261}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sindie.ApiService.Storage.Postgresql", "Sindie.ApiService.Storage.Postgresql\Sindie.ApiService.Storage.Postgresql.csproj", "{4E96C899-BB38-4589-959A-F6744D56D261}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sindie.ApiService.UnitTest", "Sindie.ApiService.UnitTest\Sindie.ApiService.UnitTest.csproj", "{16320B02-5971-4BB4-A775-454FC2432B8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witcher.UnitTest", "Sindie.ApiService.UnitTest\Witcher.UnitTest.csproj", "{16320B02-5971-4BB4-A775-454FC2432B8B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5E0F5EE0-BC41-4347-8D63-1B40489DB4FD} = {5E0F5EE0-BC41-4347-8D63-1B40489DB4FD}
 	EndProjectSection
@@ -21,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sindie.ApiService.Core", "Sindie.ApiService.Core\Sindie.ApiService.Core.csproj", "{5E0F5EE0-BC41-4347-8D63-1B40489DB4FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witcher.Core", "Sindie.ApiService.Core\Witcher.Core.csproj", "{5E0F5EE0-BC41-4347-8D63-1B40489DB4FD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witcher.MVC", "Witcher.MVC\Witcher.MVC.csproj", "{27F04267-1D55-4EDD-AA0F-B80ECDEAA9C1}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -35,10 +33,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E537C793-ED5C-4932-AF81-24DAAD49CE19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E537C793-ED5C-4932-AF81-24DAAD49CE19}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E537C793-ED5C-4932-AF81-24DAAD49CE19}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E537C793-ED5C-4932-AF81-24DAAD49CE19}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4E96C899-BB38-4589-959A-F6744D56D261}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4E96C899-BB38-4589-959A-F6744D56D261}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E96C899-BB38-4589-959A-F6744D56D261}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -60,7 +54,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{E537C793-ED5C-4932-AF81-24DAAD49CE19} = {B14D2400-D6AA-4588-9226-B771B4212361}
 		{4E96C899-BB38-4589-959A-F6744D56D261} = {B14D2400-D6AA-4588-9226-B771B4212361}
 		{16320B02-5971-4BB4-A775-454FC2432B8B} = {EFD4722E-0D3F-4725-9A6A-8A3C0E506BB7}
 		{5E0F5EE0-BC41-4347-8D63-1B40489DB4FD} = {B14D2400-D6AA-4588-9226-B771B4212361}

@@ -24,7 +24,7 @@
                 <label asp-for="CreatureType" class="control-label"></label>
                 <select asp-for="CreatureType"
                         class="form-control"
-                        asp-items="Html.GetEnumSelectList<Sindie.ApiService.Core.BaseData.Enums.CreatureType>()">
+                        asp-items="Html.GetEnumSelectList<Witcher.Core.BaseData.Enums.CreatureType>()">
                     <option>Select Creature Type ...</option>
                 </select>
                 <span asp-validation-for="CreatureType" class="text-danger"></span>

@@ -1,13 +1,13 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.GameRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Exceptions;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.GameRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Exceptions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.GameRequests
+namespace Witcher.Core.Requests.GameRequests
 {
 	public class DeleteGameHandler : BaseHandler<DeleteGameCommand, Unit>
 	{

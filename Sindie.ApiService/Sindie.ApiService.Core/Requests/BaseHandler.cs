@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using Sindie.ApiService.Core.Abstractions;
+using Witcher.Core.Abstractions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests
+namespace Witcher.Core.Requests
 {
 	/// <summary>
 	/// Базовый класс для обработчика

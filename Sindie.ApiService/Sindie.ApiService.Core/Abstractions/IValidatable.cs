@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Abstractions
+namespace Witcher.Core.Abstractions
 {
 	public interface IValidatableCommand<T> : IRequest<T>
 	{

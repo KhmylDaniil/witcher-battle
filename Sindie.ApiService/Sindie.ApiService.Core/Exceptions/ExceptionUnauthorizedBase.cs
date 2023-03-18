@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sindie.ApiService.Core.Exceptions
+namespace Witcher.Core.Exceptions
 {
 	/// <summary>
 	/// Базовое исключение авторизации (код 403 Forbidden) 

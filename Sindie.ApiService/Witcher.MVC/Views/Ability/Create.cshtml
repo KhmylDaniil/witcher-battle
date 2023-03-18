@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.AbilityRequests.CreateAbilityCommand
+﻿@model Witcher.Core.Contracts.AbilityRequests.CreateAbilityCommand
 
 @{
     ViewData["Title"] = "Create Ability";
@@ -24,7 +24,7 @@
                 <label asp-for="AttackSkill" class="control-label"></label>
                 <select asp-for="AttackSkill"
                         class="form-control"
-                        asp-items="Html.GetEnumSelectList<Sindie.ApiService.Core.BaseData.Enums.Skill>()">
+                        asp-items="Html.GetEnumSelectList<Witcher.Core.BaseData.Enums.Skill>()">
                     <option>Select AttackSkill ...</option>
                 </select>
                 <span asp-validation-for="AttackSkill" class="text-danger"></span>
@@ -53,7 +53,7 @@
                 <label asp-for="DamageType" class="control-label"></label>
                 <select asp-for="DamageType"
                         class="form-control"
-                        asp-items="Html.GetEnumSelectList<Sindie.ApiService.Core.BaseData.Enums.DamageType>()">
+                        asp-items="Html.GetEnumSelectList<Witcher.Core.BaseData.Enums.DamageType>()">
                     <option>Select DamageType ...</option>
                 </select>
                 <span asp-validation-for="DamageType" class="text-danger"></span>

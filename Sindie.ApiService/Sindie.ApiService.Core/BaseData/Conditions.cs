@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.BaseData
+namespace Witcher.Core.BaseData
 {
 	public static class CritNames
 	{

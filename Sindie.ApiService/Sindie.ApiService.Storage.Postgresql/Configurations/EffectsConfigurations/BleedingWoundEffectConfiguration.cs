@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Entities.Effects;
+using Witcher.Core.Entities.Effects;
 
-namespace Sindie.ApiService.Storage.Postgresql.Configurations.EffectsConfigurations
+namespace Witcher.Storage.Postgresql.Configurations.EffectsConfigurations
 {
 	/// <summary>
 	/// Конфигурация <see cref="BleedingWoundEffect"/>

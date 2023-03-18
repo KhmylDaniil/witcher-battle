@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.UserRequests.LoginUser;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.UserRequests.LoginUser;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.UserRequests.LoginUser;
+using Witcher.Core.Entities;
+using Witcher.Core.Requests.UserRequests.LoginUser;
 using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.UnitTest.Core.Requests.UserRequests
+namespace Witcher.UnitTest.Core.Requests.UserRequests
 {
 	/// <summary>
 	/// Тест для <see cref="LoginUserCommandHandler">

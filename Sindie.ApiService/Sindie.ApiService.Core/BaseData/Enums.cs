@@ -1,7 +1,7 @@
-﻿using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+﻿using Witcher.Core.Exceptions.EntityExceptions;
 using System;
 
-namespace Sindie.ApiService.Core.BaseData
+namespace Witcher.Core.BaseData
 {
 	/// <summary>
 	/// Перечисления

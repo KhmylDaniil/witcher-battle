@@ -1,11 +1,11 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.Entities;
+using Witcher.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sindie.ApiService.Core.Services.ChangeListService
+namespace Witcher.Core.Services.ChangeListService
 {
 	/// <summary>
 	/// Сервис изменения списков графических и текстовых файлов

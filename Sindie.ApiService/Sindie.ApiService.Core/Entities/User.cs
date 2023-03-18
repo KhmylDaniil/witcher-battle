@@ -1,8 +1,8 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using Witcher.Core.Abstractions;
 using System;
 using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Entities
+namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Пользователь

@@ -1,12 +1,12 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
-using Sindie.ApiService.Core.Exceptions;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.Exceptions.RequestExceptions;
+using Witcher.Core.Exceptions;
 using System;
 using System.Collections.Generic;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 using System.Linq;
 
-namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests
+namespace Witcher.Core.Contracts.CreatureTemplateRequests
 {
 	/// <summary>
 	/// Запрос изменения шаблона существа

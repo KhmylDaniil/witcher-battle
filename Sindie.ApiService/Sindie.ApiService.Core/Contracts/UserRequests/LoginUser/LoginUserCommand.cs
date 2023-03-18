@@ -1,10 +1,8 @@
 ﻿using MediatR;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Exceptions.RequestExceptions;
 
-namespace Sindie.ApiService.Core.Contracts.UserRequests.LoginUser
+namespace Witcher.Core.Contracts.UserRequests.LoginUser
 {
 	/// <summary>
 	/// Команда аутентификации пользователя

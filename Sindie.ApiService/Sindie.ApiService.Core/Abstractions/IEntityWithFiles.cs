@@ -1,8 +1,8 @@
-﻿using Sindie.ApiService.Core.Entities;
+﻿using Witcher.Core.Entities;
 using System;
 using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Abstractions
+namespace Witcher.Core.Abstractions
 {
 	/// <summary>
 	/// Интерфейс для сущности со списками графических и текстовых файлов

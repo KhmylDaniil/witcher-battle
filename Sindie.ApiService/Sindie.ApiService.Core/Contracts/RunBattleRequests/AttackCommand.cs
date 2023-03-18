@@ -1,9 +1,9 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.Exceptions.RequestExceptions;
 using System;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
+namespace Witcher.Core.Contracts.RunBattleRequests
 {
 	// <summary>
 	/// Команда атаки существа

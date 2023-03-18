@@ -1,9 +1,9 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.Requests.BodyTemplateRequests;
 using System.Collections.Generic;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Drafts.BodyTemplateDrafts
+namespace Witcher.Core.Drafts.BodyTemplateDrafts
 {
 	public static class CreateBodyTemplatePartsDraft
 	{

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Contracts.AbilityRequests
+namespace Witcher.Core.Contracts.AbilityRequests
 {
 	/// <summary>
 	/// Ответ на запрос способности

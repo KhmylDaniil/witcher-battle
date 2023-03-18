@@ -1,7 +1,7 @@
 ﻿using System;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Entities
+namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Навык существа

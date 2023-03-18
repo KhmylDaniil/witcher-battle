@@ -1,6 +1,6 @@
-﻿using static Sindie.ApiService.Core.BaseData.Enums;
+﻿using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Contracts.BattleRequests
+namespace Witcher.Core.Contracts.BattleRequests
 {
 	/// <summary>
 	/// Элемент ответа на запрос существа по айди - навык шаблона существа

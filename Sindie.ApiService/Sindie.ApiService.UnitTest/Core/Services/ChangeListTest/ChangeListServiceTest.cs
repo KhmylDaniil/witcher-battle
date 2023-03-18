@@ -1,12 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Abstractions;
+using Witcher.Core.Entities;
+using Witcher.Core.Abstractions;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using Sindie.ApiService.Core.Services.ChangeListService;
+using Witcher.Core.Services.ChangeListService;
 
-namespace Sindie.ApiService.UnitTest.Core.Services.ChangeListTest
+namespace Witcher.UnitTest.Core.Services.ChangeListTest
 {
 	/// <summary>
 	/// служебный класс для реализации интерфейса

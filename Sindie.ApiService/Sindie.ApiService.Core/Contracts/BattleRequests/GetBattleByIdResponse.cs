@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Contracts.BattleRequests
+namespace Witcher.Core.Contracts.BattleRequests
 {
 	/// <summary>
 	/// Ответ на запрос получения битвы по айди

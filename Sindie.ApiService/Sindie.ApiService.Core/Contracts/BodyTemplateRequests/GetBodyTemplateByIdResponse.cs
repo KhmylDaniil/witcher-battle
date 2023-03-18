@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests
+namespace Witcher.Core.Contracts.BodyTemplateRequests
 {
 	/// <summary>
 	/// Ответ на запрос шаблона тела по айди

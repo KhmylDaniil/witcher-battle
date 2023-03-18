@@ -1,7 +1,7 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using Witcher.Core.Abstractions;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests
+namespace Witcher.Core.Contracts.BodyTemplateRequests
 {
 	/// <summary>
 	/// Запрос шаблона тела по айди

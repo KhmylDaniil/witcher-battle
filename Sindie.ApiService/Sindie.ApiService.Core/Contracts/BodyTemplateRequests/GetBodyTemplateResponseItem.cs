@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests
+namespace Witcher.Core.Contracts.BodyTemplateRequests
 {
 	/// <summary>
 	/// Элемент ответа на запрос списка шаблонов тела

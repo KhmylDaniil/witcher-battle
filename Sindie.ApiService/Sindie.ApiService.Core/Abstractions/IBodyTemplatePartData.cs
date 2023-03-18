@@ -1,6 +1,6 @@
-﻿using static Sindie.ApiService.Core.BaseData.Enums;
+﻿using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Abstractions
+namespace Witcher.Core.Abstractions
 {
 	/// <summary>
 	/// Данные о части шаблона тела

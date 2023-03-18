@@ -1,12 +1,12 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Logic;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Logic;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-namespace Sindie.ApiService.Core.Entities
+namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Эффект
@@ -99,7 +99,7 @@ namespace Sindie.ApiService.Core.Entities
 		/// <returns>Эффект нужного типа</returns>
 		public static T CreateEffect<T>(IRollService rollService, Creature attacker, Creature target, Condition condition) where T : Effect
 		{
-			var name = "Sindie.ApiService.Core.Entities.Effects." + Enum.GetName(condition) + "Effect";
+			var name = "Witcher.Core.Entities.Effects." + Enum.GetName(condition) + "Effect";
 
 			Type type = Type.GetType(name);
 

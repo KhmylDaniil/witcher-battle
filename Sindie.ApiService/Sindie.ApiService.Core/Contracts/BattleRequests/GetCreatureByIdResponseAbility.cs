@@ -1,9 +1,9 @@
-﻿using static Sindie.ApiService.Core.BaseData.Enums;
+﻿using static Witcher.Core.BaseData.Enums;
 using System;
 using System.Collections.Generic;
-using Sindie.ApiService.Core.BaseData;
+using Witcher.Core.BaseData;
 
-namespace Sindie.ApiService.Core.Contracts.BattleRequests
+namespace Witcher.Core.Contracts.BattleRequests
 {
 	public sealed class GetCreatureByIdResponseAbility
 	{

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
+namespace Witcher.Core.Contracts.RunBattleRequests
 {
 	/// <summary>
 	/// Отвевт на запрос данных для совершения хода

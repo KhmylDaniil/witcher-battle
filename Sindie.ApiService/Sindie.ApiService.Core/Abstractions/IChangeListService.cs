@@ -1,11 +1,11 @@
-﻿using Sindie.ApiService.Core.Entities;
+﻿using Witcher.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Abstractions
+namespace Witcher.Core.Abstractions
 {
 	/// <summary>
 	/// Интерфейс сервиса изменения списков

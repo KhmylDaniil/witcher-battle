@@ -1,4 +1,4 @@
-using Sindie.ApiService.Storage.Postgresql;
+using Witcher.Storage.Postgresql;
 using Witcher.MVC;
 using Witcher.MVC.Hubs;
 using Witcher.MVC.Logger;

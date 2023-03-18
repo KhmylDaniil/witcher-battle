@@ -2,16 +2,16 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Caching.Memory;
 using Moq;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Storage.Postgresql;
+using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Entities;
+using Witcher.Storage.Postgresql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Sindie.ApiService.Core.Entities.UserAccount;
+using static Witcher.Core.Entities.UserAccount;
 
-namespace Sindie.ApiService.UnitTest.Core
+namespace Witcher.UnitTest.Core
 {
 	/// <summary>
 	/// Базовый класс для модульных тестов

@@ -1,7 +1,7 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using Witcher.Core.Abstractions;
 using System;
 
-namespace Sindie.ApiService.Core.Services.Authorization
+namespace Witcher.Core.Services.Authorization
 {
 	/// <summary>
 	/// Интерфейс айди игры для авторизации

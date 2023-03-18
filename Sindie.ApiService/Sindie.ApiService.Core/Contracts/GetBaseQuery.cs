@@ -1,7 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace Sindie.ApiService.Core.Contracts
+namespace Witcher.Core.Contracts
 {
 	/// <summary>
 	/// Базоввая часть гет запроса 

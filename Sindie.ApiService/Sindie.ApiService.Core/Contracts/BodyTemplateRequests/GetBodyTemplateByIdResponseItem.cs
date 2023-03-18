@@ -1,7 +1,7 @@
 ﻿using System;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Contracts.BodyTemplateRequests
+namespace Witcher.Core.Contracts.BodyTemplateRequests
 {
 	/// <summary>
 	/// Элемент ответа на запрос шаблона тела по айди - часть шаблона тела

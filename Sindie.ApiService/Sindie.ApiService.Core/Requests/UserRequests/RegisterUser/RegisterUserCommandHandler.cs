@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Contracts.UserRequests.RegisterUser;
+using Witcher.Core.Entities;
+using Witcher.Core.Exceptions.EntityExceptions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.UserRequests.RegisterUser
+namespace Witcher.Core.Requests.UserRequests.RegisterUser
 {
 	/// <summary>
 	/// Обработчик команды регистрации пользователя

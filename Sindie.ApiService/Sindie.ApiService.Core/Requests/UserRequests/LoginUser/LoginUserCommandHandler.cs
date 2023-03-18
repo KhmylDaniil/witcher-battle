@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.UserRequests.LoginUser;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.UserRequests.LoginUser;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Authentication;
@@ -12,7 +12,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.UserRequests.LoginUser
+namespace Witcher.Core.Requests.UserRequests.LoginUser
 {
 	/// <summary>
 	/// Обработчик команды аутентификации пользователя

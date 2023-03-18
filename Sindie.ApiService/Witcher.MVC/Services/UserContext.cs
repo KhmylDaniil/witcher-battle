@@ -1,5 +1,5 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
 using System.Security.Claims;
 
 namespace Witcher.MVC

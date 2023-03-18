@@ -1,7 +1,7 @@
-﻿using Sindie.ApiService.Core.BaseData;
+﻿using Witcher.Core.BaseData;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.AbilityRequests
+namespace Witcher.Core.Contracts.AbilityRequests
 {
 	/// <summary>
 	/// Элемент запроса созадния или изменения способности(накладываемое состояние) 

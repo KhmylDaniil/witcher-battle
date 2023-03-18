@@ -1,6 +1,6 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using Witcher.Core.Abstractions;
 
-namespace Sindie.ApiService.Core.Contracts.UserRequests.GetUsers
+namespace Witcher.Core.Contracts.UserRequests.GetUsers
 {
 	/// <summary>
 	/// Запрос получение списка пользователей

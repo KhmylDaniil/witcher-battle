@@ -1,7 +1,7 @@
-﻿using Sindie.ApiService.Core.BaseData;
+﻿using Witcher.Core.BaseData;
 using System;
 
-namespace Sindie.ApiService.Core.Entities
+namespace Witcher.Core.Entities
 {
 	public class AppliedCondition: EntityBase
 	{

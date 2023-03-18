@@ -1,11 +1,11 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using Witcher.Core.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
+namespace Witcher.Core.Contracts.RunBattleRequests
 {
 	public class FormAttackCommand : IValidatableCommand<FormAttackResponse>
 	{

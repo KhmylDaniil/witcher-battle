@@ -1,13 +1,13 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Entities.Effects;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Entities;
+using Witcher.Core.Entities.Effects;
+using Witcher.Core.Exceptions.EntityExceptions;
 using System;
 using System.Text;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Logic
+namespace Witcher.Core.Logic
 {
 	/// <summary>
 	/// Действие лечения

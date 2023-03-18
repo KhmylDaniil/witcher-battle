@@ -28,8 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sindie.ApiService.Core\Sindie.ApiService.Core.csproj" />
-    <ProjectReference Include="..\Sindie.ApiService.Storage.Postgresql\Sindie.ApiService.Storage.Postgresql.csproj" />
+    <ProjectReference Include="..\Sindie.ApiService.Core\Witcher.Core.csproj" />
+    <ProjectReference Include="..\Sindie.ApiService.Storage.Postgresql\Witcher.Storage.Postgresql.csproj" />
   </ItemGroup>
 
 </Project>

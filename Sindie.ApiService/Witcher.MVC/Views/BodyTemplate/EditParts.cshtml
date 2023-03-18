@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplatePartCommand
+﻿@model Witcher.Core.Contracts.BodyTemplateRequests.ChangeBodyTemplatePartCommand
 
 @{
     ViewData["Title"] = "EditParts";
@@ -21,7 +21,7 @@
                 <label asp-for="BodyPartType" class="control-label"></label>
                 <select asp-for="BodyPartType"
                         class="form-control"
-                        asp-items="Html.GetEnumSelectList<Sindie.ApiService.Core.BaseData.Enums.BodyPartType>()">
+                        asp-items="Html.GetEnumSelectList<Witcher.Core.BaseData.Enums.BodyPartType>()">
                     <option>Select BodyPartType ...</option>
                 </select>
                 <span asp-validation-for="BodyPartType" class="text-danger"></span>

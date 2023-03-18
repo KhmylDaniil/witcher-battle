@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sindie.ApiService.Core.Abstractions
+namespace Witcher.Core.Abstractions
 {
 	/// <summary>
 	/// Интерфейс получения контекста пользователя из веба

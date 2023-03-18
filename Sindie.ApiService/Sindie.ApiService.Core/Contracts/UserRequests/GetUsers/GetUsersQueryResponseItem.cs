@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sindie.ApiService.Core.Contracts.UserRequests.GetUsers
+namespace Witcher.Core.Contracts.UserRequests.GetUsers
 {
 	/// <summary>
 	/// Шаблон пользователя для отправки списка пользователей

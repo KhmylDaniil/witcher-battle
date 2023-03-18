@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.AbilityRequests.UpdateAppliedCondionCommand
+﻿@model Witcher.Core.Contracts.AbilityRequests.UpdateAppliedCondionCommand
 
 @{
     if (@Model.Id == null)
@@ -22,7 +22,7 @@
                 <label asp-for="Condition" class="control-label"></label>
                 <select asp-for="Condition"
                         class="form-control"
-                        asp-items="Html.GetEnumSelectList<Sindie.ApiService.Core.BaseData.Condition>()">
+                        asp-items="Html.GetEnumSelectList<Witcher.Core.BaseData.Condition>()">
                     <option>Select Condition ...</option>
                 </select>
                 <span asp-validation-for="Condition" class="text-danger"></span>

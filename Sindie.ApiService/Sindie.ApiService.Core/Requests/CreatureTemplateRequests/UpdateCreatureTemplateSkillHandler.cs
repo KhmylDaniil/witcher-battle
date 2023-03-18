@@ -1,15 +1,15 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
-using Sindie.ApiService.Core.Exceptions;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.CreatureTemplateRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Exceptions.RequestExceptions;
+using Witcher.Core.Exceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
+namespace Witcher.Core.Requests.CreatureTemplateRequests
 {
 	public class UpdateCreatureTemplateSkillHandler : BaseHandler<UpdateCreatureTemplateSkillCommand, Unit>
 	{

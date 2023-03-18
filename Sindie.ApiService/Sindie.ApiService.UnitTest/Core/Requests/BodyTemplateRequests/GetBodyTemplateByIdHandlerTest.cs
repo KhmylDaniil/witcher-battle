@@ -1,14 +1,14 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.BodyTemplateRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Requests.BodyTemplateRequests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.UnitTest.Core.Requests.BodyTemplateRequests
+namespace Witcher.UnitTest.Core.Requests.BodyTemplateRequests
 {
 	/// <summary>
 	/// Тест для <see cref="GetBodyTemplateByIdHandler"/>

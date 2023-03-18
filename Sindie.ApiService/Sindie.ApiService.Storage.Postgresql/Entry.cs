@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Sindie.ApiService.Core.Abstractions;
+using Witcher.Core.Abstractions;
 using System;
 
-namespace Sindie.ApiService.Storage.Postgresql
+namespace Witcher.Storage.Postgresql
 {
 	/// <summary>
 	/// точка входа

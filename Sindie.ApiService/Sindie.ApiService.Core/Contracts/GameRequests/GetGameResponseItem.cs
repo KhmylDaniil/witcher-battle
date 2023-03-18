@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.GameRequests
+namespace Witcher.Core.Contracts.GameRequests
 {
 	public class GetGameResponseItem
 	{

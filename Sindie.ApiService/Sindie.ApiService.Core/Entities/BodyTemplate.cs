@@ -1,9 +1,9 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Requests.BodyTemplateRequests;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.Requests.BodyTemplateRequests;
 using System;
 using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Entities
+namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Шаблон тела

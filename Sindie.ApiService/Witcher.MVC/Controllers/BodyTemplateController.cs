@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BodyTemplateRequests;
-using Sindie.ApiService.Core.Exceptions;
-using Sindie.ApiService.Core.ExtensionMethods;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.BodyTemplateRequests;
+using Witcher.Core.Exceptions;
+using Witcher.Core.ExtensionMethods;
 
 namespace Witcher.MVC.Controllers
 {

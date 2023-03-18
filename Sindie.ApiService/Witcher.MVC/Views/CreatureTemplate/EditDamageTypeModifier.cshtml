@@ -1,4 +1,4 @@
-﻿@model Sindie.ApiService.Core.Contracts.CreatureTemplateRequests.ChangeDamageTypeModifierCommand
+﻿@model Witcher.Core.Contracts.CreatureTemplateRequests.ChangeDamageTypeModifierCommand
 
 @{
     ViewData["Title"] = "Edit Damage Type Modifier";
@@ -13,7 +13,7 @@
                 <label asp-for="DamageType" class="control-label"></label>
                 <select asp-for="DamageType"
                         class="form-control"
-                        asp-items="Html.GetEnumSelectList<Sindie.ApiService.Core.BaseData.Enums.DamageType>()">
+                        asp-items="Html.GetEnumSelectList<Witcher.Core.BaseData.Enums.DamageType>()">
                     <option>Select Damage Type ...</option>
                 </select>
                 <span asp-validation-for="DamageType" class="text-danger"></span>
@@ -22,7 +22,7 @@
                 <label asp-for="DamageTypeModifier" class="control-label"></label>
                 <select asp-for="DamageTypeModifier"
                         class="form-control"
-                        asp-items="Html.GetEnumSelectList<Sindie.ApiService.Core.BaseData.Enums.DamageTypeModifier>()">
+                        asp-items="Html.GetEnumSelectList<Witcher.Core.BaseData.Enums.DamageTypeModifier>()">
                     <option>Select Damage Type Modifier ...</option>
                 </select>
                 <span asp-validation-for="DamageTypeModifier" class="text-danger"></span>

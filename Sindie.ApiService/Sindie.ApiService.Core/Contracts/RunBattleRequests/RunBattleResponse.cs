@@ -1,7 +1,7 @@
-﻿using Sindie.ApiService.Core.Contracts.BattleRequests;
+﻿using Witcher.Core.Contracts.BattleRequests;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
+namespace Witcher.Core.Contracts.RunBattleRequests
 {
 	public class RunBattleResponse : GetBattleByIdResponse
 	{

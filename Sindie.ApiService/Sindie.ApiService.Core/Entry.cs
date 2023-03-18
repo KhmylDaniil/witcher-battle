@@ -1,16 +1,16 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Services.Authorization;
-using Sindie.ApiService.Core.Services.ChangeListService;
-using Sindie.ApiService.Core.Services.DateTimeProvider;
-using Sindie.ApiService.Core.Services.Hasher;
-using Sindie.ApiService.Core.Services.Roll;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Entities;
+using Witcher.Core.Services.Authorization;
+using Witcher.Core.Services.ChangeListService;
+using Witcher.Core.Services.DateTimeProvider;
+using Witcher.Core.Services.Hasher;
+using Witcher.Core.Services.Roll;
 using System;
 using System.Linq;
 
-namespace Sindie.ApiService.Core
+namespace Witcher.Core
 {
 	/// <summary>
 	/// Точка входа

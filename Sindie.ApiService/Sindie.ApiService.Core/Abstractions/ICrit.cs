@@ -1,8 +1,8 @@
-﻿using Sindie.ApiService.Core.Entities;
+﻿using Witcher.Core.Entities;
 using System;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Abstractions
+namespace Witcher.Core.Abstractions
 {
 	/// <summary>
 	/// Интерфейс критического эффекта

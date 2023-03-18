@@ -1,15 +1,15 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.AbilityRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.AbilityRequests;
+using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Contracts.AbilityRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Requests.AbilityRequests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
+namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 {
 	/// <summary>
 	/// Тест для <see cref="ChangeAbilityHandler"/>

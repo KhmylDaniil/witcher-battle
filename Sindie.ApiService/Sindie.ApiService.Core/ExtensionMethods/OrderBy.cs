@@ -3,7 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Sindie.ApiService.Core.ExtensionMethods
+namespace Witcher.Core.ExtensionMethods
 {
 	/// <summary>
 	/// Перегруженный метод OrderBy

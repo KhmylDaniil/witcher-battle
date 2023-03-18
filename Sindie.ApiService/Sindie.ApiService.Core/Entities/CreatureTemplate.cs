@@ -1,12 +1,12 @@
-﻿using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
-using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
+﻿using Witcher.Core.Contracts.CreatureTemplateRequests;
+using Witcher.Core.Exceptions.EntityExceptions;
+using Witcher.Core.Requests.CreatureTemplateRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Entities
+namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Шаблон существа

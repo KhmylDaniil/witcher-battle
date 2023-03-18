@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
-using Sindie.ApiService.Core.Contracts.RunBattleRequests;
+using Witcher.Core.Contracts.CreatureTemplateRequests;
+using Witcher.Core.Contracts.RunBattleRequests;
 using Witcher.MVC.ViewModels.CreatureTemplate;
 using Witcher.MVC.ViewModels.RunBattle;
 

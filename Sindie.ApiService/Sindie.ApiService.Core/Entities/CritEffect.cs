@@ -1,12 +1,12 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Entities
+namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Критический эффект

@@ -1,7 +1,7 @@
 ﻿using System;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests
+namespace Witcher.Core.Contracts.CreatureTemplateRequests
 {
 	/// <summary>
 	/// Элемент ответа на запрос списка шаблонов существа

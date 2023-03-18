@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.CreatureTemplateRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Exceptions.EntityExceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
+namespace Witcher.Core.Requests.CreatureTemplateRequests
 {
 	/// <summary>
 	/// Обработчик запроса предоставления шаблона существа по айди

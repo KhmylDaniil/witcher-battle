@@ -1,8 +1,8 @@
-﻿using Sindie.ApiService.Core.Entities;
+﻿using Witcher.Core.Entities;
 using System;
 using System.Linq;
 
-namespace Sindie.ApiService.Core.Abstractions
+namespace Witcher.Core.Abstractions
 {
 	/// <summary>
 	/// Сервис проверки прав доступа

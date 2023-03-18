@@ -1,8 +1,8 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Exceptions;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.Exceptions;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.UserGameRequests
+namespace Witcher.Core.Contracts.UserGameRequests
 {
 	/// <summary>
 	/// Команда создания пользователя игры

@@ -1,7 +1,7 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using Witcher.Core.Abstractions;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
+namespace Witcher.Core.Contracts.RunBattleRequests
 {
 	/// <summary>
 	/// Команда запуска битвы

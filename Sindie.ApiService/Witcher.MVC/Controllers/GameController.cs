@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.GameRequests;
-using Sindie.ApiService.Core.Contracts.UserGameRequests;
-using Sindie.ApiService.Core.Contracts.UserRequests.GetUsers;
-using Sindie.ApiService.Core.Exceptions;
-using Sindie.ApiService.Core.ExtensionMethods;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.GameRequests;
+using Witcher.Core.Contracts.UserGameRequests;
+using Witcher.Core.Contracts.UserRequests.GetUsers;
+using Witcher.Core.Exceptions;
+using Witcher.Core.ExtensionMethods;
 using Witcher.MVC.ViewModels.Game;
 
 namespace Witcher.MVC.Controllers

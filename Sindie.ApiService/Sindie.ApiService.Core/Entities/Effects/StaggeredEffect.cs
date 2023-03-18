@@ -1,8 +1,8 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using Witcher.Core.Abstractions;
 using System.Linq;
 using System.Text;
 
-namespace Sindie.ApiService.Core.Entities.Effects
+namespace Witcher.Core.Entities.Effects
 {
 	/// <summary>
 	/// Эффект ошеломления

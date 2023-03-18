@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.CreatureTemplateRequests;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.CreatureTemplateRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Requests.CreatureTemplateRequests;
 using System.Linq;
 using System.Threading.Tasks;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.UnitTest.Core.Requests.CreatureTemplatesRequests
+namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 {
 	[TestClass]
 	public class UpdateCreatureTemplateSkillHandlerTest : UnitTestBase

@@ -3,11 +3,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BattleRequests;
-using Sindie.ApiService.Core.Contracts.RunBattleRequests;
-using Sindie.ApiService.Core.Exceptions;
-using Sindie.ApiService.Core.ExtensionMethods;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.BattleRequests;
+using Witcher.Core.Contracts.RunBattleRequests;
+using Witcher.Core.Exceptions;
+using Witcher.Core.ExtensionMethods;
 using Witcher.MVC.Hubs;
 using Witcher.MVC.ViewModels.RunBattle;
 

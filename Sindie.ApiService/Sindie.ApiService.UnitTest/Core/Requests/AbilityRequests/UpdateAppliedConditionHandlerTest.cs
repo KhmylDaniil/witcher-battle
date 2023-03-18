@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Entities;
+using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Entities;
 using System.Linq;
 using System.Threading.Tasks;
-using Sindie.ApiService.Core.Contracts.AbilityRequests;
-using Sindie.ApiService.Core.Requests.AbilityRequests;
+using Witcher.Core.Contracts.AbilityRequests;
+using Witcher.Core.Requests.AbilityRequests;
 
-namespace Sindie.ApiService.UnitTest.Core.Requests.AbilityRequests
+namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 {
 	/// <summary>
 	/// Тест для <see cref="UpdateAppliedConditionHandler"/>

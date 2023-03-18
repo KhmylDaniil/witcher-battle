@@ -1,4 +1,4 @@
-﻿namespace Sindie.ApiService.Core.BaseData
+﻿namespace Witcher.Core.BaseData
 {
 	/// <summary>
 	/// Значение бросаемого куба

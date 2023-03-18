@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sindie.ApiService.Core.BaseData
+namespace Witcher.Core.BaseData
 {
 	/// <summary>
 	/// Роли в игре справочник

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sindie.ApiService.Core.Exceptions.EntityExceptions
+namespace Witcher.Core.Exceptions.EntityExceptions
 {
 	/// <summary>
 	/// Исключение не найдена сущность

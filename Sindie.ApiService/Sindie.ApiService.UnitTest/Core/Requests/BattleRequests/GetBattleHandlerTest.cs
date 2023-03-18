@@ -1,19 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.AbilityRequests;
-using Sindie.ApiService.Core.Contracts.BattleRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.AbilityRequests;
-using Sindie.ApiService.Core.Requests.BattleRequests;
-using System;
-using System.Collections.Generic;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.BattleRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Requests.BattleRequests;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using static Sindie.ApiService.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
+namespace Witcher.UnitTest.Core.Requests.BattleRequests
 {
 	[TestClass]
 	public class GetBattleHandlerTest : UnitTestBase

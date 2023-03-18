@@ -1,10 +1,10 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Logic;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Logic;
 using System.Linq;
 using System.Text;
 
-namespace Sindie.ApiService.Core.Entities.Effects
+namespace Witcher.Core.Entities.Effects
 {
 	/// <summary>
 	/// Эффект кровотечения

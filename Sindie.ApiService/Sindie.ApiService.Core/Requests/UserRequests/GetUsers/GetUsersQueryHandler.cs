@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.UserRequests.GetUsers;
-using Sindie.ApiService.Core.ExtensionMethods;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.UserRequests.GetUsers;
+using Witcher.Core.ExtensionMethods;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.UserRequests.GetUsers
+namespace Witcher.Core.Requests.UserRequests.GetUsers
 {
 	/// <summary>
 	/// Обработчик <see cref="GetUsersQuery"/>

@@ -1,7 +1,7 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using Witcher.Core.Abstractions;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.UserGameRequests
+namespace Witcher.Core.Contracts.UserGameRequests
 {
 	/// <summary>
 	/// Команда удаления пользователя игры

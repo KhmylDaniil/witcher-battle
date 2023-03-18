@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Exceptions.RequestExceptions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.ExtensionMethods
+namespace Witcher.Core.ExtensionMethods
 {
 	public static class Handler
 	{

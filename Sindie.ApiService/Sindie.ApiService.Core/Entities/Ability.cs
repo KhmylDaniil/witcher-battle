@@ -1,12 +1,12 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.AbilityRequests;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.AbilityRequests;
+using Witcher.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Entities
+namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Способность

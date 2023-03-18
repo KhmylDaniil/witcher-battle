@@ -1,4 +1,4 @@
-﻿namespace Sindie.ApiService.Storage.Postgresql
+﻿namespace Witcher.Storage.Postgresql
 {
 	/// <summary>
 	/// Параметры PostgreSql

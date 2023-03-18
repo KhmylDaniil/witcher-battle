@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Sindie.ApiService.Storage.Postgresql.Migrations
+namespace Witcher.Storage.Postgresql.Migrations
 {
     public partial class battleLogProperty : Migration
     {

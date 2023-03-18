@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sindie.ApiService.Core.Contracts.UserRequests.RegisterUser
+namespace Witcher.Core.Contracts.UserRequests.RegisterUser
 {
 	/// <summary>
 	/// Ответ на команду регистрации

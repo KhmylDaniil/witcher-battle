@@ -1,5 +1,5 @@
 ﻿
-namespace Sindie.ApiService.Core.BaseData
+namespace Witcher.Core.BaseData
 {
 	/// <summary>
 	/// Тип интерфейса

@@ -1,4 +1,4 @@
-﻿using Sindie.ApiService.Core.Contracts.BattleRequests;
+﻿using Witcher.Core.Contracts.BattleRequests;
 
 namespace Witcher.MVC.ViewModels.Battle
 {

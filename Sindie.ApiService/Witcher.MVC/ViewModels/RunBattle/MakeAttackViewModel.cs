@@ -1,5 +1,5 @@
-﻿using Sindie.ApiService.Core.Contracts.RunBattleRequests;
-using static Sindie.ApiService.Core.BaseData.Enums;
+﻿using Witcher.Core.Contracts.RunBattleRequests;
+using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.MVC.ViewModels.RunBattle
 {

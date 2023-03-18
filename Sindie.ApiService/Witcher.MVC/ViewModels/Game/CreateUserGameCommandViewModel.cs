@@ -1,5 +1,5 @@
-﻿using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.UserGameRequests;
+﻿using Witcher.Core.BaseData;
+using Witcher.Core.Contracts.UserGameRequests;
 
 namespace Witcher.MVC.ViewModels.Game
 {

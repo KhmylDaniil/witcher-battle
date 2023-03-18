@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Sindie.ApiService.Core.Abstractions;
+using Witcher.Core.Abstractions;
 
 namespace Witcher.MVC.Controllers
 {

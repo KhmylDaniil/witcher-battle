@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Exceptions;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Exceptions;
 using System;
 using System.Text;
 
-namespace Sindie.ApiService.Core.Services.Hasher
+namespace Witcher.Core.Services.Hasher
 {
 	/// <summary>
 	/// хеширование пароля

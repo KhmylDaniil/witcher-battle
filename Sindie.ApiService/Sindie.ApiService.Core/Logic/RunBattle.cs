@@ -1,11 +1,11 @@
-﻿using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Exceptions;
+﻿using Witcher.Core.BaseData;
+using Witcher.Core.Entities;
+using Witcher.Core.Exceptions;
 using System;
 using System.Linq;
 using System.Text;
 
-namespace Sindie.ApiService.Core.Logic
+namespace Witcher.Core.Logic
 {
 	public class RunBattle
 	{

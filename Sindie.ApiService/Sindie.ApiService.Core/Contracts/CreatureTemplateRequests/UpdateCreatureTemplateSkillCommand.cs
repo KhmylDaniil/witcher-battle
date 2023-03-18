@@ -1,8 +1,8 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.Exceptions.RequestExceptions;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests
+namespace Witcher.Core.Contracts.CreatureTemplateRequests
 {
 	/// <summary>
 	/// Команда на создание/изменение навыка шаблона персонажа

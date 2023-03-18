@@ -1,4 +1,4 @@
-﻿namespace Sindie.ApiService.Core.Services.Hasher
+﻿namespace Witcher.Core.Services.Hasher
 {
 	/// <summary>
 	/// параметры хеширования

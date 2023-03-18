@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Contracts.RunBattleRequests
+namespace Witcher.Core.Contracts.RunBattleRequests
 {
 	public class FormAttackResponse
 	{

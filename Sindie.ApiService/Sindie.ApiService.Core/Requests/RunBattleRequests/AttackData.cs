@@ -1,9 +1,9 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Entities;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.Entities;
 using System;
 using System.Linq;
 
-namespace Sindie.ApiService.Core.Requests.RunBattleRequests
+namespace Witcher.Core.Requests.RunBattleRequests
 {
 	/// <summary>
 	/// Данные для расчета атаки

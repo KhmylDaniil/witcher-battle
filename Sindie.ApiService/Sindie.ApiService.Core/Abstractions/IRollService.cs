@@ -1,5 +1,5 @@
 ﻿
-namespace Sindie.ApiService.Core.Abstractions
+namespace Witcher.Core.Abstractions
 {
 	public interface IRollService
 	{

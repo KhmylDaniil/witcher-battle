@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sindie.ApiService.Core.Entities;
+using Witcher.Core.Entities;
 
-namespace Sindie.ApiService.Storage.Postgresql.Configurations
+namespace Witcher.Storage.Postgresql.Configurations
 {
 	public abstract class HierarchyConfiguration<TEntity> : EntityBaseConfiguration<TEntity>
 		where TEntity : EntityBase

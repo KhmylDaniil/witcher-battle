@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sindie.ApiService.Core.Entities;
+using Witcher.Core.Entities;
 
-namespace Sindie.ApiService.Storage.Postgresql.Configurations
+namespace Witcher.Storage.Postgresql.Configurations
 {
 
 	/// <summary>

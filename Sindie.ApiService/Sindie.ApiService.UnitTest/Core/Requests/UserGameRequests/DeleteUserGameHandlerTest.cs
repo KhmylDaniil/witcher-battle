@@ -1,17 +1,17 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.UserGameRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.UserGameRequests;
+using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Contracts.UserGameRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Requests.UserGameRequests;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.UnitTest.Core.Requests.UserGameRequests
+namespace Witcher.UnitTest.Core.Requests.UserGameRequests
 {
 	/// <summary>
 	/// Тест для <see cref="DeleteUserGameHandler"/>

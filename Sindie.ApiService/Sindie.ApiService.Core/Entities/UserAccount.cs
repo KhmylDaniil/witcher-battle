@@ -1,7 +1,7 @@
-﻿using Sindie.ApiService.Core.Exceptions.RequestExceptions;
+﻿using Witcher.Core.Exceptions.RequestExceptions;
 using System;
 
-namespace Sindie.ApiService.Core.Entities
+namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Аккаунт пользователя

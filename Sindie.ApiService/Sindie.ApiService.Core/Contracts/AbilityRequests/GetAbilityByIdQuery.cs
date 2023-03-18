@@ -1,7 +1,7 @@
-﻿using Sindie.ApiService.Core.Abstractions;
+﻿using Witcher.Core.Abstractions;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.AbilityRequests
+namespace Witcher.Core.Contracts.AbilityRequests
 {
 	public class GetAbilityByIdQuery : IValidatableCommand<GetAbilityByIdResponse>
 	{

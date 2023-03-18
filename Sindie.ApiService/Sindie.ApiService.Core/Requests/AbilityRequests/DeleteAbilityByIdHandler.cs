@@ -1,15 +1,15 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.AbilityRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Exceptions;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.AbilityRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Exceptions;
+using Witcher.Core.Exceptions.EntityExceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.AbilityRequests
+namespace Witcher.Core.Requests.AbilityRequests
 {
 	/// <summary>
 	/// Обработчик удаления способности

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sindie.ApiService.Core.Contracts.UserRequests.LoginUser
+namespace Witcher.Core.Contracts.UserRequests.LoginUser
 {
 	/// <summary>
 	/// Ответ на команду аутентификации

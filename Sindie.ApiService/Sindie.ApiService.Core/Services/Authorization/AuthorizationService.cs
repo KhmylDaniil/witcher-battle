@@ -1,10 +1,10 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Entities;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Entities;
 using System;
 using System.Linq;
 
-namespace Sindie.ApiService.Core.Services.Authorization
+namespace Witcher.Core.Services.Authorization
 {
 	/// <inheritdoc/>
 	public class AuthorizationService : IAuthorizationService

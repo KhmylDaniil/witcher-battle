@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BattleRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
-using Sindie.ApiService.Core.Exceptions;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.BattleRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Exceptions.EntityExceptions;
+using Witcher.Core.Exceptions.RequestExceptions;
+using Witcher.Core.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.BattleRequests
+namespace Witcher.Core.Requests.BattleRequests
 {
 	public class DeleteCreatureHandler : BaseHandler<DeleteCreatureCommand, Unit>
 	{

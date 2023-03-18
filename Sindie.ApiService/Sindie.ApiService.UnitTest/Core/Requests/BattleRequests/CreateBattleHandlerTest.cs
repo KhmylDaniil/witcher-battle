@@ -1,12 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Contracts.BattleRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.BattleRequests;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.BattleRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Requests.BattleRequests;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.UnitTest.Core.Requests.BattleRequests
+namespace Witcher.UnitTest.Core.Requests.BattleRequests
 {
 	/// <summary>
 	/// Тест для <see cref="CreateBattleHandler"/>

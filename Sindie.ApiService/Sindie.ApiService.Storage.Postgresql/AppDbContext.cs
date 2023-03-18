@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.Entities;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Entities;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Storage.Postgresql
+namespace Witcher.Storage.Postgresql
 {
 	/// <summary>
 	/// Контекст базы данных

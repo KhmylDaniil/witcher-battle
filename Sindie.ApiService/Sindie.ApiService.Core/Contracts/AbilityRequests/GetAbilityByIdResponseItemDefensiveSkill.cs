@@ -1,7 +1,7 @@
 ﻿using System;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Contracts.AbilityRequests
+namespace Witcher.Core.Contracts.AbilityRequests
 {
 	/// <summary>
 	/// Элемент ответа на запрос на получение списка способностей - защитный навык

@@ -1,5 +1,5 @@
 ﻿
-namespace Sindie.ApiService.Core.Exceptions.RequestExceptions
+namespace Witcher.Core.Exceptions.RequestExceptions
 {
 	/// <summary>
 	/// Исключение не уникальный запрос

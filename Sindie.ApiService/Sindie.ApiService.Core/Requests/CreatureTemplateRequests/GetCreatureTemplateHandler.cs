@@ -1,16 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.CreatureTemplateRequests;
-using Sindie.ApiService.Core.Exceptions.RequestExceptions;
-using Sindie.ApiService.Core.ExtensionMethods;
+using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Contracts.CreatureTemplateRequests;
+using Witcher.Core.Exceptions.RequestExceptions;
+using Witcher.Core.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Requests.CreatureTemplateRequests
+namespace Witcher.Core.Requests.CreatureTemplateRequests
 {
 	/// <summary>
 	/// Обработчик команды получения списка шаблонов существа

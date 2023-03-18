@@ -1,13 +1,13 @@
-﻿using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.BattleRequests;
-using Sindie.ApiService.Core.Exceptions;
-using Sindie.ApiService.Core.Exceptions.EntityExceptions;
+﻿using Witcher.Core.BaseData;
+using Witcher.Core.Contracts.BattleRequests;
+using Witcher.Core.Exceptions;
+using Witcher.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Entities
+namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Существо

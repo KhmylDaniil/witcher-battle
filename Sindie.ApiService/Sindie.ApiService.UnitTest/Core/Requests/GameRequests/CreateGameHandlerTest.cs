@@ -1,15 +1,15 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Contracts.GameRequests;
-using Sindie.ApiService.Core.Entities;
-using Sindie.ApiService.Core.Requests.GameRequests;
+using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
+using Witcher.Core.Contracts.GameRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Requests.GameRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.UnitTest.Core.Requests.GameRequests
+namespace Witcher.UnitTest.Core.Requests.GameRequests
 {
 	/// <summary>
 	/// Тест для <see cref="CreateGameHandler"/>

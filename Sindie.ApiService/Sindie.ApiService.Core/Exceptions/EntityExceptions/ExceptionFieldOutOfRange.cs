@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Exceptions.EntityExceptions
+namespace Witcher.Core.Exceptions.EntityExceptions
 {
 	/// <summary>
 	/// Исключение неверные данные в поле сущности

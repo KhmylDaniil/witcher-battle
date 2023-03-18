@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Contracts.UserRequests.GetUsers
+namespace Witcher.Core.Contracts.UserRequests.GetUsers
 {
 	/// <summary>
 	/// Ответ на запрос получения списка пользователей

@@ -1,8 +1,8 @@
-﻿using Sindie.ApiService.Core.BaseData;
+﻿using Witcher.Core.BaseData;
 using System;
 using System.Collections.Generic;
 
-namespace Sindie.ApiService.Core.Entities
+namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Роль в системе

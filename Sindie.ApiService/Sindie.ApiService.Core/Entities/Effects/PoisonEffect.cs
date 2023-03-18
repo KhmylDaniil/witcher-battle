@@ -1,13 +1,13 @@
-﻿using Sindie.ApiService.Core.Abstractions;
-using Sindie.ApiService.Core.BaseData;
+﻿using Witcher.Core.Abstractions;
+using Witcher.Core.BaseData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Sindie.ApiService.Core.BaseData.Enums;
+using static Witcher.Core.BaseData.Enums;
 
-namespace Sindie.ApiService.Core.Entities.Effects
+namespace Witcher.Core.Entities.Effects
 {
 	/// <summary>
 	/// Эффект отравления

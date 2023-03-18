@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sindie.ApiService.Core.Entities;
+using Witcher.Core.Entities;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sindie.ApiService.Core.Abstractions
+namespace Witcher.Core.Abstractions
 {
 	/// <summary>
 	/// Контекст базы данных

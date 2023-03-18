@@ -1,7 +1,7 @@
-﻿using Sindie.ApiService.Core.BaseData;
+﻿using Witcher.Core.BaseData;
 using System;
 
-namespace Sindie.ApiService.Core.Contracts.CreatureTemplateRequests
+namespace Witcher.Core.Contracts.CreatureTemplateRequests
 {
 	/// <summary>
 	/// Элемент ответа на запрос шаблона существа по айди - применяемое состояние

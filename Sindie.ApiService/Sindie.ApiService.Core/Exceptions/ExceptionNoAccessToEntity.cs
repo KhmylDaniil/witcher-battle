@@ -1,4 +1,4 @@
-﻿namespace Sindie.ApiService.Core.Exceptions
+﻿namespace Witcher.Core.Exceptions
 {
 	/// <summary>
 	/// Исключение нет прав доступа к сущности

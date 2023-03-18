@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sindie.ApiService.Core.BaseData;
-using Sindie.ApiService.Core.Entities;
+using Witcher.Core.BaseData;
+using Witcher.Core.Entities;
 using System;
 
-namespace Sindie.ApiService.Storage.Postgresql.Configurations
+namespace Witcher.Storage.Postgresql.Configurations
 {
 	/// <summary>
 	/// Конфигурация для роли в системе <see cref="SystemRole"/>

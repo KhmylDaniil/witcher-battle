@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sindie.ApiService.Core.Exceptions
+namespace Witcher.Core.Exceptions
 {
 	/// <summary>
 	/// Исключение ничего не найдено (код 404 Not Found)
