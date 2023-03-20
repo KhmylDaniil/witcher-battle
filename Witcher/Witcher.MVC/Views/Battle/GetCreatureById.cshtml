@@ -1,0 +1,261 @@
+﻿@model Witcher.Core.Contracts.BattleRequests.GetCreatureByIdResponse
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<h1>Creature: @Model.Name</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.CreatureType)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.CreatureType)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.CreatureTemplateName)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.CreatureTemplateName)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.BodyTemplateName)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.BodyTemplateName)
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.HP)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.HP.current/@Model.HP.max
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Sta)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Sta.current/@Model.Sta.max
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Int)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Int.current/@Model.Int.max
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Ref)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Ref.current/@Model.Ref.max
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Dex)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Dex.current/@Model.Dex.max
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Body)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Body.current/@Model.Body.max
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Emp)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Emp.current/@Model.Emp.max
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Cra)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Cra.current/@Model.Cra.max
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Will)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Will.current/@Model.Will.max
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Speed)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Speed.current/@Model.Speed.max
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Luck)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Luck.current/@Model.Luck.max
+        </dd>
+    </dl>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatureSkills.First().Skill)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatureSkills.First().SkillValue)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CreatureSkills)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Skill)
+                </td>
+                <td>
+                    @item.SkillValue.current/@item.SkillValue.max
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-controller="CreatureTemplate" asp-action="Details" asp-route-id="@Model.CreatureTemplateId">To Creature Template</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatureParts.First().Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatureParts.First().Armor)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CreatureParts)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @item.Armor.current/@item.Armor.max
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-controller="BodyTemplate" asp-action="Details" asp-route-id="@Model.BodyTemplateId">To Body Template</a>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Abilities.First().Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Abilities.First().AttackDiceQuantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Abilities.First().DamageModifier)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Abilities.First().Accuracy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Abilities.First().AttackSkill)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Abilities.First().AppliedConditions)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Abilities)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AttackDiceQuantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DamageModifier)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Accuracy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AttackSpeed)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AttackSkill)
+                </td>
+                <td>
+                    @string.Join(", ", item.AppliedConditions.Select(x => $"{x.condition} {x.applyChance}%."))
+                </td>
+                <td>
+                    <a asp-controller="Ability" asp-action="Details" asp-route-id="@item.Id">Details </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DamageTypeModifiers.First().DamageType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DamageTypeModifiers.First().Modifier)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.DamageTypeModifiers)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DamageType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Modifier)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>@TempData["ErrorMessage"]</p>
+
+<div class="container">
+    @Html.ActionLink("Back to Battle", "Details", new { id = Model.BattleId })
+</div>

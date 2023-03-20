@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Witcher.Core.Contracts.BattleRequests.GetBattleResponseItem>
+
+@{
+    ViewData["Title"] = "Battles";
+}
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<form asp-action="Index">
+    <p><input type="text" name="Name" />Name</p>
+    <p><input type="text" name="Description" />Description</p>
+    <p><input type="submit" value="Search" /></p>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", @item) |
+                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.Id, name=item.Name }) |
+                <a asp-controller="RunBattle" asp-action="Run" asp-route-battleId="@item.Id">Run Battle!</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<p>@TempData["ErrorMessage"]</p>
+
+<div class="container">
+    <a asp-controller="Game" asp-action="Enter" asp-route-id="@ViewData["GameId"]">Back to Game</a>
+</div>

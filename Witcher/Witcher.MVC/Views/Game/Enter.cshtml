@@ -1,0 +1,94 @@
+﻿@model Witcher.Core.Contracts.GameRequests.GetGameByIdResponse
+
+@{
+    ViewData["Title"] = @Html.DisplayFor(model => model.Name);
+}
+
+<h1>@Html.DisplayFor(model => model.Name)</h1>
+
+<div>
+    <h4>Game Details</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.GameMasterName)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.GameMasterName)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+    </dl>
+</div>
+
+<p>@TempData["ErrorMessage"]</p>
+
+<div>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id, name = Model.Name, description = Model.Description })
+    @Html.ActionLink("Delete", "Delete", new { id = Model.Id, name = Model.Name })
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Users)
+            </th>
+            <th>
+                <p>User roles</p>
+            </th>
+            <th>
+                <a asp-action="CreateUserGame">Add user to game</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Users.Where(x => x.Key != (Guid)ViewData["currentUser"]))
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Value.Item1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Value.Item2)
+                </td>
+                <td>
+                    <a asp-action="DeleteUserGame" asp-route-userId="@item.Key" asp-route-name="@item.Value.Item1">Remove from the game</a>
+                    <a asp-action="ChangeUserGame" asp-route-userId="@item.Key">Change game role</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<div class="container">
+    <a asp-controller="Ability" asp-action="Index">Abilities base </a>
+</div>
+
+<div class="container">
+    <a asp-controller="BodyTemplate" asp-action="Index">Body Template base </a>
+</div>
+
+<div class="container">
+    <a asp-controller="CreatureTemplate" asp-action="Index">Creature Template base </a>
+</div>
+
+<div class="container">
+    <a asp-controller="Battle" asp-action="Index">To Battles </a>
+</div>
+
+<div class="container">
+    <a asp-action="DeleteUserGame" asp-route-userId="@ViewData["currentUser"]">Leave Game </a>
+</div>

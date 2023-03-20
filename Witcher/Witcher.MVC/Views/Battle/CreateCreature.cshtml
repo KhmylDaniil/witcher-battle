@@ -1,0 +1,42 @@
+﻿@model Witcher.MVC.ViewModels.Battle.CreateCreatureCommandViewModel
+
+@{
+    ViewData["Title"] = "Add Creature";
+}
+
+<h1>Add Creature to Battle</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateCreature">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="CreatureTemplateId" class="control-label"></label>
+                <select asp-items="@(new SelectList(Model.CreatureTemplatesDictionary, "Key", "Value"))" asp-for="CreatureTemplateId"></select><br /><br />
+                <span asp-validation-for="CreatureTemplateId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<p>@TempData["ErrorMessage"]</p>
+
+<div class="container">
+    @Html.ActionLink("Back to Battle", "Details", new { id = Model.BattleId })
+</div>
+
+
