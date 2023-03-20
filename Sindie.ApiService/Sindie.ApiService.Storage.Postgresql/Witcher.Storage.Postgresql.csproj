@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sindie.ApiService.Core\Witcher.Core.csproj" />
+    <ProjectReference Include="..\Witcher.Core\Witcher.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

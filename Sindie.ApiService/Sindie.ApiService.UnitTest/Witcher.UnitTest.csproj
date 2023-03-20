@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sindie.ApiService.Core\Witcher.Core.csproj" />
-    <ProjectReference Include="..\Sindie.ApiService.Storage.Postgresql\Witcher.Storage.Postgresql.csproj" />
+    <ProjectReference Include="..\Witcher.Core\Witcher.Core.csproj" />
+    <ProjectReference Include="..\Witcher.Storage.Postgresql\Witcher.Storage.Postgresql.csproj" />
   </ItemGroup>
 
 </Project>
