@@ -35,17 +35,11 @@ namespace Witcher.Storage.Postgresql
 
 		public static void MigrateDB(IServiceProvider serviceProvider)
 		{
-			using (var scope = serviceProvider.CreateScope())
-			{
-				var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
+			using var scope = serviceProvider.CreateScope();
+			var dbContext = scope.ServiceProvider.GetService<AppDbContext>()
+				?? throw new Exception("This should never happen, the DbContext couldn't recolve!");
 
-				if (dbContext == null)
-				{
-					throw new SystemException("This should never happen, the DbContext couldn't recolve!");
-				}
-
-				dbContext.Database.Migrate();
-			}
+			dbContext.Database.Migrate();
 		}
 	}
 }

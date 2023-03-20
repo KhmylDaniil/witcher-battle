@@ -32,7 +32,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Home}/{action=Index}");
+	pattern: "{controller=Game}/{action=Index}");
 
 app.MapHub<MessageHub>("/messageHub");
 

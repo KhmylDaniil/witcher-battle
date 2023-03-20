@@ -6,8 +6,6 @@ using Witcher.Core.Contracts.UserRequests.LoginUser;
 using Witcher.Core.Contracts.UserRequests.RegisterUser;
 using Witcher.Core.Exceptions;
 using Witcher.Core.ExtensionMethods;
-using System.Diagnostics;
-using Witcher.MVC.Models;
 using Witcher.MVC.ViewModels.Login;
 
 namespace Witcher.MVC.Controllers
@@ -71,19 +69,13 @@ namespace Witcher.MVC.Controllers
 			{
 				await _mediator.SendValidated(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
 
-				return RedirectToAction("Index", "Home");
+				return RedirectToAction("Index", "Game");
 			}
 			catch (RequestValidationException ex)
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View();
 			}
-		}
-
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-		public IActionResult Error()
-		{
-			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 		}
 	}
 }
