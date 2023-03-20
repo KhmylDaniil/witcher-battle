@@ -1,5 +1,4 @@
 ﻿using Witcher.Core.Abstractions;
-using Witcher.Core.BaseData;
 using System;
 using System.Text;
 using static Witcher.Core.BaseData.Enums;
@@ -38,7 +37,7 @@ namespace Witcher.Core.Entities.Effects
 			ApplyStatChanges(creature);
 
 			Severity = Severity.Difficult | Severity.Unstabilizied;
-			BodyPartLocation = Enums.BodyPartType.Head;
+			BodyPartLocation = BodyPartType.Head;
 		}
 
 		/// <summary>
@@ -106,7 +105,8 @@ namespace Witcher.Core.Entities.Effects
 		/// <param name="creature">Существо</param>
 		public void Stabilize(Creature creature)
 		{
-			if (!IsStabile(Severity))
+			if (IsStabile(Severity))
+				return;
 			
 			Severity = Severity.Difficult;
 

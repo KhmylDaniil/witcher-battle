@@ -1,6 +1,4 @@
 ﻿using Witcher.Core.Abstractions;
-using Witcher.Core.BaseData;
-using Witcher.Core.Logic;
 using System;
 using System.Linq;
 using System.Text;

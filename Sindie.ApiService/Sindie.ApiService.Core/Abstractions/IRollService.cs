@@ -10,7 +10,7 @@ namespace Witcher.Core.Abstractions
 		/// <param name="difficuty">Сложность для переброса</param>
 		/// <param name="fumble">Провал броска</param>
 		/// <returns>Успешность броска</returns>
-		public int BeatDifficultyWithFumble(int skillBase, int difficuty, out int fumble);
+		public int BeatDifficultyWithFumble(int skillBase, int difficulty, out int fumble);
 
 		/// <summary>
 		/// Бросок против сложности

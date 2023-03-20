@@ -94,7 +94,7 @@ namespace Witcher.Core.Entities
 			string login = default,
 			string passwordHash = default,
 			User user = default)
-			=> new UserAccount()
+			=> new()
 			{
 				Login = login ?? "login",
 				PasswordHash = passwordHash ?? "passwordHash",

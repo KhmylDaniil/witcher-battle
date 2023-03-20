@@ -15,7 +15,7 @@ namespace Witcher.Core.BaseData
 		/// <summary>
 		/// Название темной темы
 		/// </summary>
-		public static readonly string SystemDarkName = "SystemDarkTheme" ?? default;
+		public static readonly string SystemDarkName = "SystemDarkTheme";
 
 		/// <summary>
 		/// Гуид темной темы
@@ -25,7 +25,7 @@ namespace Witcher.Core.BaseData
 		/// <summary>
 		/// Название темной темы
 		/// </summary>
-		public static readonly string GameDarkName = "GameDarkTheme" ?? default;
+		public static readonly string GameDarkName = "GameDarkTheme";
 
 		/// <summary>
 		/// Гуид темной темы
@@ -35,7 +35,7 @@ namespace Witcher.Core.BaseData
 		/// <summary>
 		/// Название темной темы
 		/// </summary>
-		public static readonly string CharacterDarkName = "CharacterDarkTheme" ?? default;
+		public static readonly string CharacterDarkName = "CharacterDarkTheme";
 
 		/// <summary>
 		/// Гуид светлой темы
@@ -45,7 +45,7 @@ namespace Witcher.Core.BaseData
 		/// <summary>
 		/// Название светлой темы
 		/// </summary>
-		public static readonly string SystemLightName = " SystemLightTheme" ?? default;
+		public static readonly string SystemLightName = " SystemLightTheme";
 
 		/// <summary>
 		/// Гуид светлой темы
@@ -55,7 +55,7 @@ namespace Witcher.Core.BaseData
 		/// <summary>
 		/// Название светлой темы
 		/// </summary>
-		public static readonly string GameLightName = "GameLightTheme" ?? default;
+		public static readonly string GameLightName = "GameLightTheme";
 
 		/// <summary>
 		/// Гуид светлой темы
@@ -65,6 +65,6 @@ namespace Witcher.Core.BaseData
 		/// <summary>
 		/// Название светлой темы
 		/// </summary>
-		public static readonly string CharacterLightName = "CharacterLightTheme" ?? default;
+		public static readonly string CharacterLightName = "CharacterLightTheme";
 	}
 }

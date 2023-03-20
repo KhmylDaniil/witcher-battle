@@ -75,7 +75,7 @@ namespace Witcher.Core.Entities
 		/// <returns>Критический эффект нужного типа</returns>
 		public static T CreateCritEffect<T>(Creature target, CreaturePart aimedPart, Condition crit) where T : Effect
 		{
-			var name = "Sindie.ApiService.Core.Entities.Effects." + Enum.GetName(crit) + "CritEffect";
+			var name = "Witcher.Core.Entities.Effects." + Enum.GetName(crit) + "CritEffect";
 
 			Type type = Type.GetType(name);
 
@@ -89,9 +89,7 @@ namespace Witcher.Core.Entities
 
 			Expression<Func<Creature, CreaturePart, string, T>> lambda =
 				Expression.Lambda<Func<Creature, CreaturePart, string, T>>(
-					methodCall,
-					new ParameterExpression[] { paramTarget, paramAimedPart, paramName }
-					);
+					methodCall, paramTarget, paramAimedPart, paramName);
 
 			Func<Creature, CreaturePart, string, T> func = lambda.Compile();
 

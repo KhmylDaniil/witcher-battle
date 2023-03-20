@@ -57,6 +57,9 @@ namespace Witcher.Core.Entities.Effects
 		/// <param name="healer">Лекарь</param>
 		/// <param name="patient">Цель</param>
 		/// <param name="message">Сообщение</param>
-		public override void Treat(IRollService rollService, Creature healer, Creature patient, ref StringBuilder message) { }
+		public override void Treat(IRollService rollService, Creature healer, Creature patient, ref StringBuilder message)
+		{
+			// Method intentionally left empty.
+		}
 	}
 }

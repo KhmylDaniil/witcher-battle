@@ -114,9 +114,7 @@ namespace Witcher.Core.Entities
 
 			Expression<Func<IRollService, Creature, Creature, string, T>> lambda =
 				Expression.Lambda<Func<IRollService, Creature, Creature, string, T>>(
-					methodCall,
-					new ParameterExpression[] { paramRollService, paramAttacker, paramTarget, paramName }
-					);
+					methodCall, paramRollService, paramAttacker, paramTarget, paramName);
 
 			Func<IRollService, Creature, Creature, string, T> func = lambda.Compile();
 

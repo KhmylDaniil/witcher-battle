@@ -27,14 +27,12 @@ namespace Witcher.Core.ExtensionMethods
 			var entityType = typeof(TSource);
 
 			//Create x=>x.PropName
-			var propertyInfo = entityType.GetProperty(propertyName);
-
-			if (propertyInfo == null)
-				throw new Exception("Не корректно заданo поле для сортировки");
+			var propertyInfo = entityType.GetProperty(propertyName)
+				?? throw new ArgumentException("Не корректно заданo поле для сортировки");
 
 			ParameterExpression arg = Expression.Parameter(entityType, "x");
 			MemberExpression property = Expression.Property(arg, propertyName);
-			var selector = Expression.Lambda(property, new ParameterExpression[] { arg });
+			var selector = Expression.Lambda(property, arg);
 
 			//Get System.Linq.Queryable.OrderBy() method.
 			var enumarableType = typeof(System.Linq.Queryable);

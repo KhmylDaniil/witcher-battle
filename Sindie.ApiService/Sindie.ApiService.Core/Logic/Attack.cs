@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.Exceptions;
 
 namespace Witcher.Core.Logic
 {
@@ -67,52 +68,39 @@ namespace Witcher.Core.Logic
 				ApplyConditions(data, ref message);
 
 			return message.ToString();
-		}
 
-		/// <summary>
-		/// Расчет базы атаки
-		/// </summary>
-		/// <param name="attacker">Атакующий</param>
-		/// <param name="ability">Способность</param>
-		/// <param name="toHit">Модификатор к попаданию</param>
-		/// <returns>База атаки</returns>
-		int AttackValue(Creature attacker, Ability ability, int toHit)
-		{
-			var staggeredModifier = attacker.Effects.FirstOrDefault(x => x is StaggeredEffect) is null
-				? 0
-				: StaggeredEffect.AttackAndDefenseModifier;
+			int DefenseValue(Creature defender, int defenseBase)
+			{
+				var staggeredModifier = defender.Effects.FirstOrDefault(x => x is StaggeredEffect) is null
+					? 0
+					: StaggeredEffect.AttackAndDefenseModifier;
 
-			var blindedModifier = attacker.Effects.FirstOrDefault(x => x is BlindedEffect) is null
-				? 0
-				: BlindedEffect.AttackAndDefenseModifier;
+				var blindedModifier = defender.Effects.FirstOrDefault(x => x is BlindedEffect) is null
+					? 0
+					: BlindedEffect.AttackAndDefenseModifier;
 
-			var result = attacker.SkillBase(ability.AttackSkill) + ability.Accuracy + toHit + staggeredModifier + blindedModifier;
+				var result = defenseBase + staggeredModifier + blindedModifier;
 
-			return result < 0 ? 0 : result;
-		}
+				if (defender.Effects.Any(x => x is StunEffect))
+					result = 10;
 
-		/// <summary>
-		/// Определение базы защиты
-		/// </summary>
-		/// <param name="defender">Защищающееся существо</param>
-		/// <param name="defensiveParameter">Защитный параметр</param>
-		/// <returns>База защиты</returns>
-		int DefenseValue(Creature defender, int defenseBase)
-		{
-			var staggeredModifier = defender.Effects.FirstOrDefault(x => x is StaggeredEffect) is null
-				? 0
-				: StaggeredEffect.AttackAndDefenseModifier;
+				return result < 0 ? 0 : result;
+			}
 
-			var blindedModifier = defender.Effects.FirstOrDefault(x => x is BlindedEffect) is null
-				? 0
-				: BlindedEffect.AttackAndDefenseModifier;
+			int AttackValue(Creature attacker, Ability ability, int toHit)
+			{
+				var staggeredModifier = attacker.Effects.FirstOrDefault(x => x is StaggeredEffect) is null
+					? 0
+					: StaggeredEffect.AttackAndDefenseModifier;
 
-			var result = defenseBase + staggeredModifier + blindedModifier;
+				var blindedModifier = attacker.Effects.FirstOrDefault(x => x is BlindedEffect) is null
+					? 0
+					: BlindedEffect.AttackAndDefenseModifier;
 
-			if (defender.Effects.Any(x => x is StunEffect))
-				result = 10;
+				var result = attacker.SkillBase(ability.AttackSkill) + ability.Accuracy + toHit + staggeredModifier + blindedModifier;
 
-			return result < 0 ? 0 : result;
+				return result < 0 ? 0 : result;
+			}
 		}
 
 		/// <summary>
@@ -217,10 +205,10 @@ namespace Witcher.Core.Logic
 			}	
 			else
 			{
-				var effect = CritEffect.CreateCritEffect<Effect>(data.Target, data.AimedPart, crit);
+				var effect = CritEffect.CreateCritEffect<Effect>(data.Target, data.AimedPart, crit)
+					?? throw new LogicBaseException("There is now such crit effect.");
 
-				if (effect != null)
-					data.Target.Effects.Add(effect);
+				data.Target.Effects.Add(effect);
 
 				StunCheck(data.Target, ref message);
 				

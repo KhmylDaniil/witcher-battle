@@ -10,8 +10,6 @@ builder.ConfigureSerilog(LogLevel.Warning);
 // Add services to the container.
 Startup.ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
 
-builder.Services.AddAutoMapper(typeof(Program));
-
 var app = builder.Build();
 
 Entry.MigrateDB(app.Services);

@@ -30,7 +30,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 		public CreateCreatureTemplateHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_imgFile = ImgFile.CreateForTest();;
+			_imgFile = ImgFile.CreateForTest();
 			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
 			_bodyTemplatePart = BodyTemplatePart.CreateForTest(
 				bodyTemplate: _bodyTemplate,
@@ -97,7 +97,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsNotNull(result);
 			var creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault();
 			Assert.IsNotNull(creatureTemplate);
-			Assert.AreEqual(_dbContext.CreatureTemplates.Count(), 1);
+			Assert.AreEqual(1, _dbContext.CreatureTemplates.Count());
 
 			Assert.AreEqual(_game.Id, creatureTemplate.GameId);
 			Assert.IsNotNull(creatureTemplate.Name);
@@ -121,21 +121,21 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateParts);
 			var creatureTemplatePart = creatureTemplate.CreatureTemplateParts.FirstOrDefault();
 			Assert.IsNotNull(creatureTemplatePart);
-			Assert.AreEqual(creatureTemplate.CreatureTemplateParts.Count, 1);
-			Assert.AreEqual(creatureTemplatePart.Name, "Void");
-			Assert.AreEqual(creatureTemplatePart.HitPenalty, 1);
-			Assert.AreEqual(creatureTemplatePart.DamageModifier, 1);
-			Assert.AreEqual(creatureTemplatePart.MaxToHit, 10);
-			Assert.AreEqual(creatureTemplatePart.MinToHit, 1);
-			Assert.AreEqual(creatureTemplatePart.Armor, 4);
+			Assert.AreEqual(1, creatureTemplate.CreatureTemplateParts.Count);
+			Assert.AreEqual("Void", creatureTemplatePart.Name);
+			Assert.AreEqual(1, creatureTemplatePart.HitPenalty);
+			Assert.AreEqual(1, creatureTemplatePart.DamageModifier);
+			Assert.AreEqual(10, creatureTemplatePart.MaxToHit);
+			Assert.AreEqual(1, creatureTemplatePart.MinToHit);
+			Assert.AreEqual(4, creatureTemplatePart.Armor);
 
 			Assert.IsNotNull(creatureTemplate.Abilities);
-			Assert.AreEqual(creatureTemplate.Abilities.Count(), 1);
+			Assert.AreEqual(1, creatureTemplate.Abilities.Count);
 			var ability = _dbContext.Abilities.FirstOrDefault();
 			Assert.AreEqual(ability.Id, _ability.Id);
 
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateSkills);
-			Assert.AreEqual(creatureTemplate.CreatureTemplateSkills.Count(), 1);
+			Assert.AreEqual(1, creatureTemplate.CreatureTemplateSkills.Count);
 			var creatureTemplateSkill = _dbContext.CreatureTemplateSkills
 				.FirstOrDefault(x => x.CreatureTemplateId == creatureTemplate.Id);
 

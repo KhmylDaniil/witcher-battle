@@ -165,15 +165,15 @@ namespace Witcher.Core.Entities
 			string login = default,
 			string password = default,
 			SystemRole role = default)
-		=> new ()
+		=> new()
 		{
-			Id = id ?? default,
+			Id = id ?? Guid.NewGuid(),
 			Name = name ?? "User",
-			InterfaceId = @interface?.Id ?? default,
+			InterfaceId = @interface?.Id ?? Guid.Empty,
 			Interface = @interface,
 			Email = email,
 			Phone = phone,
-			AvatarId = avatar?.Id ?? default,
+			AvatarId = avatar?.Id ?? Guid.Empty,
 			Avatar = avatar,
 			UserAccounts = new List<UserAccount>() { UserAccount.CreateForTest(login, password) },
 			UserRoles = new List<UserRole>() { UserRole.CreateForTest(role: role) }

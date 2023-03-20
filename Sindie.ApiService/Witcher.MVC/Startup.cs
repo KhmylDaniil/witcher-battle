@@ -34,6 +34,8 @@ namespace Witcher.MVC
 			services.AddCors(o => o.AddPolicy("AllowAll", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
 			services.AddSignalR();
+
+			services.AddAutoMapper(typeof(Program));
 		}
 	}
 }

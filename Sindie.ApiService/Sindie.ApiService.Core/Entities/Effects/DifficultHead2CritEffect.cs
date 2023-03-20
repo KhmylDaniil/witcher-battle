@@ -1,8 +1,5 @@
 ﻿using Witcher.Core.Abstractions;
-using Witcher.Core.BaseData;
-using Witcher.Core.Logic;
 using System.Linq;
-using System.Text;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Entities.Effects
@@ -13,16 +10,6 @@ namespace Witcher.Core.Entities.Effects
 	public class DifficultHead2CritEffect : CritEffect, ICrit
 	{
 		private const int IntAndDexModifier = -1;
-
-		/// <summary>
-		/// Тяжесть критического эффекта
-		/// </summary>
-		public Severity Severity { get; private set; } = Severity.Difficult | Severity.Unstabilizied;
-
-		/// <summary>
-		/// Тип части тела
-		/// </summary
-		public BodyPartType BodyPartLocation { get; } = BodyPartType.Head;
 
 		public DifficultHead2CritEffect() { }
 
@@ -36,7 +23,7 @@ namespace Witcher.Core.Entities.Effects
 		{
 			ApplyStatChanges(creature);
 			Severity = Severity.Difficult | Severity.Unstabilizied;
-			BodyPartLocation = Enums.BodyPartType.Head;
+			BodyPartLocation = BodyPartType.Head;
 		}
 
 		/// <summary>
@@ -65,7 +52,7 @@ namespace Witcher.Core.Entities.Effects
 			creature.Int = creature.GetRef() + IntAndDexModifier;
 			creature.Dex = creature.GetDex() + IntAndDexModifier;
 
-			creature.CreatureParts.FirstOrDefault(x => x.Id == this.CreaturePartId).DamageModifier++;
+			creature.CreatureParts.FirstOrDefault(x => x.Id == CreaturePartId).DamageModifier++;
 		}
 
 		/// <summary>
@@ -77,7 +64,7 @@ namespace Witcher.Core.Entities.Effects
 			creature.Int = creature.GetRef() - IntAndDexModifier;
 			creature.Dex = creature.GetDex() - IntAndDexModifier;
 
-			creature.CreatureParts.FirstOrDefault(x => x.Id == this.CreaturePartId).DamageModifier--;
+			creature.CreatureParts.FirstOrDefault(x => x.Id == CreaturePartId).DamageModifier--;
 		}
 
 		/// <summary>

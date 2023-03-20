@@ -25,7 +25,7 @@ namespace Witcher.Core.Entities
 		/// <param name="modifiedByUserId">Айди изменившего пользователя</param>
 		/// <param name="roleCreatedUser">Роль создавшего пользователя</param>
 		/// <param name="roleModifiedUser">Роль изменившего пользователя</param>
-		public EntityBase(
+		protected EntityBase(
 			Guid id,
 			DateTime createdOn,
 			DateTime modifiedOn,
@@ -50,7 +50,7 @@ namespace Witcher.Core.Entities
 		/// <param name="modifiedUser">Изменивший пользователь</param>
 		/// <param name="roleCreatedUser">Роль создавшего пользователя</param>
 		/// <param name="roleModifiedUser">Роль изменившего пользователя</param>
-		public EntityBase(
+		protected EntityBase(
 			User createdUser = default,
 			User modifiedUser = default,
 			SystemRole roleCreatedUser = default,

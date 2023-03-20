@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Witcher.Core.Logic
 {
-	public class RunBattle
+	public static class RunBattle
 	{
 		static public void FormInitiativeOrder(Battle battle)
 		{

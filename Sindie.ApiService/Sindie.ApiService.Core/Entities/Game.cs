@@ -70,11 +70,11 @@ namespace Witcher.Core.Entities
 		/// Текстовые файлы
 		/// </summary>
 		public List<TextFile> TextFiles { get; set; }
-		
+
 		/// <summary>
 		/// Графические файлы
 		/// </summary>
-		public List<ImgFile> ImgFiles { get; set;}
+		public List<ImgFile> ImgFiles { get; set; }
 
 		/// <summary>
 		/// Аватар игры
@@ -125,11 +125,11 @@ namespace Witcher.Core.Entities
 			string name = default,
 			ImgFile avatar = default,
 			string description = default)
-		=> new ()
+		=> new()
 		{
-			Id = id ?? default,
+			Id = id ?? Guid.NewGuid(),
 			Name = name ?? "Game",
-			AvatarId = avatar?.Id ?? default,
+			AvatarId = avatar?.Id ?? Guid.Empty,
 			_avatar = avatar,
 			Description = description,
 			UserGames = new List<UserGame>(),
@@ -161,7 +161,7 @@ namespace Witcher.Core.Entities
 				name: name,
 				description: description,
 				avatar: avatar);
-				
+
 			newGame.UserGames.Add(new UserGame(user, newGame, @interface, mainMasterRole));
 
 			return newGame;

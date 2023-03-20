@@ -76,7 +76,7 @@ namespace Witcher.Core.Services.Roll
 		{
 			attackerFumble = 0;
 			defenderFumble = 0;
-			
+			//TODO add fumble when data is manually entered
 			if (attackValue is null)
 			{
 				int attackRoll = Roll();
@@ -107,7 +107,7 @@ namespace Witcher.Core.Services.Roll
 			return roll;
 		}
 
-		private int CritSuccess(ref int input)
+		private void CritSuccess(ref int input)
 		{
 			int roll;
 			do
@@ -116,16 +116,14 @@ namespace Witcher.Core.Services.Roll
 				input += roll;
 			}
 			while (roll == 10);
-
-			return input;
 		}
 
-		private int CritMiss(ref int input)
+		private void CritMiss(ref int input)
 		{
 			input = 0;
 			CritSuccess(ref input);
 
-			return -input;
+			input *= -1;
 		}
 
 		private int CheckFumble(int input)

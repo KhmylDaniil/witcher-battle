@@ -1,6 +1,4 @@
 ﻿using Witcher.Core.Abstractions;
-using Witcher.Core.BaseData;
-using Witcher.Core.Logic;
 using System;
 using System.Linq;
 using System.Text;
@@ -30,7 +28,7 @@ namespace Witcher.Core.Entities.Effects
 		{
 			ApplyStatChanges(creature);
 			Severity = Severity.Complex | Severity.Unstabilizied;
-			BodyPartLocation = Enums.BodyPartType.Torso;
+			BodyPartLocation = BodyPartType.Torso;
 		}
 
 		/// <summary>
@@ -69,13 +67,19 @@ namespace Witcher.Core.Entities.Effects
 		/// Применить изменения характеристик
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		public void ApplyStatChanges(Creature creature) { }
+		public void ApplyStatChanges(Creature creature)
+		{
+			// Method intentionally left empty.
+		}
 
 		/// <summary>
 		/// Отменить изменения характеристик
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		public void RevertStatChanges(Creature creature) { }
+		public void RevertStatChanges(Creature creature)
+		{
+			// Method intentionally left empty.
+		}
 
 		/// <summary>
 		/// Стабилизировать критический эффект

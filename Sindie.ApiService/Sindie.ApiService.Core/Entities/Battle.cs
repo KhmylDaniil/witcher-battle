@@ -122,7 +122,7 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		public UserGame UserGameActivated
 		{
-			get => UserGameActivated;
+			get => _userGameActivated;
 			set
 			{
 				_userGameActivated = value;

@@ -1,8 +1,4 @@
 ﻿using Witcher.Core.Abstractions;
-using Witcher.Core.BaseData;
-using Witcher.Core.Logic;
-using System;
-using System.Linq;
 using System.Text;
 using static Witcher.Core.BaseData.Enums;
 
@@ -24,7 +20,7 @@ namespace Witcher.Core.Entities.Effects
 		private DeadlyHead2CritEffect(Creature creature, CreaturePart aimedPart, string name) : base(creature, aimedPart, name)
 		{
 			Severity = Severity.Deadly | Severity.Unstabilizied;
-			BodyPartLocation = Enums.BodyPartType.Head;
+			BodyPartLocation = BodyPartType.Head;
 		}
 
 		/// <summary>
@@ -59,18 +55,27 @@ namespace Witcher.Core.Entities.Effects
 		/// Применить изменения характеристик
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		public void ApplyStatChanges(Creature creature) { }
+		public void ApplyStatChanges(Creature creature)
+		{
+			// Method intentionally left empty.
+		}
 
 		/// <summary>
 		/// Отменить изменения характеристик
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		public void RevertStatChanges(Creature creature) { }
+		public void RevertStatChanges(Creature creature)
+		{
+			// Method intentionally left empty.
+		}
 
 		/// <summary>
 		/// Стабилизировать критический эффект
 		/// </summary>
 		/// <param name="creature">Существо</param>
-		public void Stabilize(Creature creature) { }
+		public void Stabilize(Creature creature)
+		{
+			// Method intentionally left empty.
+		}
 	}
 }
