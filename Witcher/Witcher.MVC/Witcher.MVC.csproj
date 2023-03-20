@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Witchere.Core\Witcher.Core.csproj" />
     <ProjectReference Include="..\Witcher.Storage.Postgresql\Witcher.Storage.Postgresql.csproj" />
   </ItemGroup>
 
