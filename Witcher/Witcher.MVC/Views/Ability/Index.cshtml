@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Witcher.Core.Contracts.AbilityRequests.GetAbilityResponseItem>
+
+@{
+    ViewData["Title"] = "Abilities";
+}
+
+<h1>Abilities</h1>
+
+<p>
+    <a asp-action="Create">Create New Ability</a>
+</p>
+
+<form asp-action="Index">
+    <p><input type="text" name="name" /> Name</p>
+    <p><input type="text" name="attackSkillName" /> Attack Skill Name</p>
+    <p><input type="text" name="damageType" /> Damage Type</p>
+    <p><input type="text" name="conditionName" /> Condtion Name</p>
+    <p><input type="number" name="minAttackDiceQuantity" /> Min attack dices</p>
+    <p><input type="number" name="maxAttackDiceQuantity" /> Max attack dices</p>
+    <p><input type="submit" value="Search" /></p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AttackSkill)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AttackDiceQuantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DamageModifier)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AttackSkill)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AttackDiceQuantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DamageModifier)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", item) |
+                @Html.ActionLink("Details", "Details", new { id=item.Id } ) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.Id, name=item.Name })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<p>@TempData["ErrorMessage"]</p>
+
+<div class="container">
+    <a asp-controller="Game" asp-action="Enter" asp-route-id=@ViewData["GameID"]>Back to Game</a>
+</div>

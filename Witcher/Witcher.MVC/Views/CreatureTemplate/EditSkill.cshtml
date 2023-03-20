@@ -1,0 +1,46 @@
+﻿@model Witcher.Core.Contracts.CreatureTemplateRequests.UpdateCreatureTemplateSkillCommand
+
+@{
+    ViewData["Title"] = "Edit Creature Template Skill";
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditSkill">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (Model.Id == null)
+            {
+                <div class="form-group">
+                    <label asp-for="Skill" class="control-label"></label>
+                    <select asp-for="Skill"
+                        class="form-control"
+                        asp-items="Html.GetEnumSelectList<Witcher.Core.BaseData.Enums.Skill>()">
+                        <option>Select Skill ...</option>
+                    </select>
+                    <span asp-validation-for="Skill" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                <p>@Model.Skill</p>
+            }
+            <div class="form-group">
+                <label asp-for="Value" class="control-label"></label>
+                <input asp-for="Value" class="form-control" />
+                <span asp-validation-for="Value" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<p>@TempData["ErrorMessage"]</p>
+
+<div class="container">
+    @Html.ActionLink("Back to Creature Template", "Details", new { id = Model.CreatureTemplateId })
+</div>
+
+
