@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.Exceptions.SystemExceptions;
+using Witcher.Core.Services.ChangeListService;
 
 namespace Witcher.Core.Entities
 {
@@ -403,10 +405,10 @@ namespace Witcher.Core.Entities
 		internal void UpdateCreatureTemplateSkills(IEnumerable<UpdateCreatureTemplateRequestSkill> data)
 		{
 			if (CreatureTemplateSkills == null)
-				throw new EntityNotIncludedException<CreatureTemplateSkill>(nameof(CreatureTemplateSkills));
+				throw new ApplicationSystemNullException(nameof(CreatureTemplate), nameof(CreatureTemplateSkills));
 
 			if (data == null)
-				throw new EntityNotIncludedException<Skill>(nameof(CreatureTemplateSkills));
+				throw new ApplicationSystemNullException(nameof(CreatureTemplate), nameof(data));
 
 			var entitiesToDelete = CreatureTemplateSkills
 					.Where(x => !data.Any(y => y.Skill == x.Skill)).ToList();

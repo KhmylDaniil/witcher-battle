@@ -6,6 +6,7 @@ using Witcher.Core.Exceptions.EntityExceptions;
 using System;
 using System.Text;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.Exceptions;
 
 namespace Witcher.Core.Logic
 {
@@ -56,7 +57,7 @@ namespace Witcher.Core.Logic
 			int CalculateStabilizationDifficulty(Effect effect)
 			{
 				if (effect is ICrit critEffect)
-					return (int)critEffect.Severity - (int)Enums.Severity.Unstabilizied;
+					return (int)critEffect.Severity - (int)Severity.Unstabilizied;
 
 				if (effect is BleedEffect)
 					return 15;
@@ -67,7 +68,7 @@ namespace Witcher.Core.Logic
 				if (effect is DyingEffect)
 					return patient.HP * -1;
 
-				throw new FieldOutOfRangeException<Effect>();
+				throw new LogicBaseException($"Эффект {effect.Name} не относится к стабилизируемым эффектам. Попытка стабилизации невозможна.");
 			}
 		}
 	}

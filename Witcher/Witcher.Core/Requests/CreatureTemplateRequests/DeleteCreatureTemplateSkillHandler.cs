@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Contracts.CreatureTemplateRequests;
-using Witcher.Core.Exceptions;
+using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.CreatureTemplateRequests
 {

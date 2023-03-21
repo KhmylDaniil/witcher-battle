@@ -2,10 +2,10 @@
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.GameRequests;
 using Witcher.Core.Entities;
-using Witcher.Core.Exceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.GameRequests
 {

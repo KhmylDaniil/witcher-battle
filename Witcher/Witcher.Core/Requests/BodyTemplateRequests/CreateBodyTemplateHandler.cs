@@ -2,7 +2,6 @@
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BodyTemplateRequests;
 using Witcher.Core.Entities;
-using Witcher.Core.Exceptions;
 using Witcher.Core.Exceptions.RequestExceptions;
 using System.Linq;
 using System.Threading;

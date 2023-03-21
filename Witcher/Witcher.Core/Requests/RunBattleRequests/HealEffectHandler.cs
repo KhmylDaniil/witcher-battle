@@ -54,13 +54,13 @@ namespace Witcher.Core.Requests.RunBattleRequests
 					?? throw new NoAccessToEntityException<Battle>();
 
 			var healer = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
-				?? throw new EntityNotFoundException<Creature>();
+				?? throw new EntityNotFoundException<Creature>(request.CreatureId);
 
 			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
-				?? throw new EntityNotFoundException<Creature>();
+				?? throw new EntityNotFoundException<Creature>(request.TargetCreatureId);
 
 			var effect = target.Effects.FirstOrDefault(x => x.Id == request.EffectId)
-				?? throw new EntityNotFoundException<Effect>();
+				?? throw new EntityNotFoundException<Effect>(request.EffectId);
 
 			StringBuilder message = new();
 

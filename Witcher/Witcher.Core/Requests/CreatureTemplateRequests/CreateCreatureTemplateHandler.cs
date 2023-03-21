@@ -2,7 +2,6 @@
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.CreatureTemplateRequests;
 using Witcher.Core.Entities;
-using Witcher.Core.Exceptions;
 using Witcher.Core.Exceptions.EntityExceptions;
 using Witcher.Core.Exceptions.RequestExceptions;
 using System;
@@ -88,7 +87,6 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 
 			if (game.CreatureTemplates.Any(x => string.Equals(x.Name, request.Name, StringComparison.Ordinal)))
 				throw new RequestNameNotUniqException<CreateCreatureTemplateCommand>(nameof(request.Name));
-
 
 			if (request.ArmorList is not null)
 				foreach (var id in request.ArmorList.Select(x => x.BodyTemplatePartId))

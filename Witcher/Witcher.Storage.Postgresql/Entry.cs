@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Witcher.Core.Abstractions;
 using System;
+using Witcher.Core.Exceptions;
 
 namespace Witcher.Storage.Postgresql
 {
@@ -37,7 +38,7 @@ namespace Witcher.Storage.Postgresql
 		{
 			using var scope = serviceProvider.CreateScope();
 			var dbContext = scope.ServiceProvider.GetService<AppDbContext>()
-				?? throw new Exception("This should never happen, the DbContext couldn't recolve!");
+				?? throw new ApplicationSystemBaseException("This should never happen, the DbContext couldn't recolve!");
 
 			dbContext.Database.Migrate();
 		}

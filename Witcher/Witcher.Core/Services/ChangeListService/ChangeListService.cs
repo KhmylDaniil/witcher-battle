@@ -3,6 +3,9 @@ using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 using System.Collections.Generic;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Witcher.Core.Exceptions.SystemExceptions;
+using Witcher.Core.Services.Authorization;
 
 namespace Witcher.Core.Services.ChangeListService
 {
@@ -20,9 +23,8 @@ namespace Witcher.Core.Services.ChangeListService
 			IEnumerable<TextFile> textFiles)
 		{
 			if (entity.TextFiles is null)
-				throw new EntityNotIncludedException<TextFile>();
+				throw new ApplicationSystemNullException(nameof(ChangeListService), nameof(entity.TextFiles));
 
-			//текстовые файлы
 			if (textFiles != null || entity.TextFiles.Any())
 			{
 				var entitiesToDelete = entity.TextFiles.Where(x => !textFiles.
@@ -50,7 +52,7 @@ namespace Witcher.Core.Services.ChangeListService
 			IEnumerable<ImgFile> imgFiles)
 		{
 			if (entity.ImgFiles is null)
-				throw new EntityNotIncludedException<ImgFile>();
+				throw new ApplicationSystemNullException(nameof(ChangeListService), nameof(entity.ImgFiles));
 
 			if (imgFiles != null || entity.ImgFiles.Any())
 			{

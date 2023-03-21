@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.GameRequests;
 using Witcher.Core.Entities;
-using Witcher.Core.Exceptions;
 using Witcher.Core.Exceptions.EntityExceptions;
 using Witcher.Core.Exceptions.RequestExceptions;
 using System.Collections.Generic;
@@ -62,7 +61,7 @@ namespace Witcher.Core.Requests.GameRequests
 				? null
 				: await _appDbContext.ImgFiles
 				.FirstOrDefaultAsync(x => x.Id == request.AvatarId, cancellationToken)
-				?? throw new EntityNotFoundException<ImgFile>(nameof(request.AvatarId));
+				?? throw new EntityNotFoundException<ImgFile>(request.AvatarId.Value);
 
 			var textFiles = new List<TextFile>();
 
@@ -72,7 +71,7 @@ namespace Witcher.Core.Requests.GameRequests
 				{
 					var textFile = await _appDbContext.TextFiles
 					.FirstOrDefaultAsync(y => y.Id == x, cancellationToken)
-					?? throw new EntityNotFoundException<TextFile>(nameof(x));
+					?? throw new EntityNotFoundException<TextFile>(x);
 					textFiles.Add(textFile);
 				}
 			}
@@ -85,7 +84,7 @@ namespace Witcher.Core.Requests.GameRequests
 				{
 					var imgFile = await _appDbContext.ImgFiles
 					.FirstOrDefaultAsync(y => y.Id == x, cancellationToken)
-					?? throw new EntityNotFoundException<ImgFile>(nameof(x));
+					?? throw new EntityNotFoundException<ImgFile>(x);
 					imgFiles.Add(imgFile);
 				}
 			}

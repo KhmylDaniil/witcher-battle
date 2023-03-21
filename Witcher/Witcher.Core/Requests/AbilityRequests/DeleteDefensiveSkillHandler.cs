@@ -5,10 +5,10 @@ using Witcher.Core.Contracts.AbilityRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 using Witcher.Core.Exceptions;
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
@@ -28,7 +28,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 				?? throw new EntityNotFoundException<Ability>(request.AbilityId);
 
 			if (ability.DefensiveSkills.Count == 1)
-				throw new ArgumentException("Can`t delete last defensive skill.");
+				throw new RequestValidationException("Can`t delete last defensive skill.");
 
 			var defensiveSkill = ability.DefensiveSkills.FirstOrDefault(ds => ds.Id == request.Id)
 				?? throw new EntityNotFoundException<DefensiveSkill>(request.Id);

@@ -3,7 +3,6 @@ using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BodyTemplateRequests;
 using Witcher.Core.Exceptions.RequestExceptions;
 using Witcher.Core.ExtensionMethods;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;

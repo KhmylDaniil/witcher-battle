@@ -3,6 +3,8 @@ using Witcher.Core.BaseData;
 using Witcher.Core.Entities;
 using System;
 using System.Linq;
+using Witcher.Core.Exceptions.SystemExceptions;
+using Witcher.Core.Services.Hasher;
 
 namespace Witcher.Core.Services.Authorization
 {
@@ -27,7 +29,7 @@ namespace Witcher.Core.Services.Authorization
 			IQueryable<Game> query, Guid gameRoleId = default)
 		{
 			if (query is null)
-				throw new ArgumentNullException(nameof(query));
+				throw new ApplicationSystemNullException(nameof(AuthorizationService), nameof(query));
 
 			gameRoleId = gameRoleId == Guid.Empty ? GameRoles.MasterRoleId : gameRoleId;
 
@@ -44,7 +46,7 @@ namespace Witcher.Core.Services.Authorization
 			IQueryable<Game> query)
 		{
 			if (query is null)
-				throw new ArgumentNullException(nameof(query));
+				throw new ApplicationSystemNullException(nameof(AuthorizationService), nameof(query));
 
 			if (string.Equals(_userContext.Role, SystemRoles.AdminRoleName, StringComparison.OrdinalIgnoreCase))
 				return query;
@@ -58,7 +60,7 @@ namespace Witcher.Core.Services.Authorization
 			IQueryable<Battle> query, Guid battleId)
 		{
 			if (query is null)
-				throw new ArgumentNullException(nameof(query));
+				throw new ApplicationSystemNullException(nameof(AuthorizationService), nameof(query));
 
 			if (string.Equals(_userContext.Role, SystemRoles.AdminRoleName, StringComparison.OrdinalIgnoreCase))
 				return query;

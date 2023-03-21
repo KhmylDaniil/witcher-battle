@@ -9,6 +9,8 @@ using Witcher.Core.Services.Hasher;
 using Witcher.Core.Services.Roll;
 using System;
 using System.Linq;
+using Witcher.Core.Exceptions;
+using Witcher.Core.Exceptions.SystemExceptions;
 
 namespace Witcher.Core
 {
@@ -25,7 +27,7 @@ namespace Witcher.Core
 		public static void AddCore(this IServiceCollection services, HasherOptions hasherOptions)
 		{
 			if (string.IsNullOrWhiteSpace(hasherOptions?.Salt))
-				throw new ArgumentNullException(nameof(hasherOptions));
+				throw new ApplicationSystemNullException(nameof(Entry), nameof(hasherOptions));
 
 			services.AddMediatR(typeof(Entry).Assembly);
 			services.AddTransient<IPasswordHasher>
