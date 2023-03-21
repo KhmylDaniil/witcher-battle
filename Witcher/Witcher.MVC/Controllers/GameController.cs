@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -17,13 +18,15 @@ namespace Witcher.MVC.Controllers
 	{
 		private readonly IMemoryCache _memoryCache;
 		private readonly IUserContext _userContext;
+		private readonly IMapper _mapper;
 
 		public GameController(IMediator mediator, IGameIdService gameIdService, IMemoryCache memoryCache,
-			IUserContext userContext)
+			IUserContext userContext, IMapper mapper)
 			: base(mediator, gameIdService)
 		{
 			_memoryCache = memoryCache;
 			_userContext = userContext;
+			_mapper = mapper;
 		}
 
 		/// <summary>
@@ -97,11 +100,11 @@ namespace Witcher.MVC.Controllers
 				await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Index));
 			}
-			//catch (RequestValidationException ex)
-			//{
-			//	TempData["ErrorMessage"] = ex.UserMessage;
-			//	return View(command);
-			//}
+			catch (RequestValidationException ex)
+			{
+				TempData["ErrorMessage"] = ex.UserMessage;
+				return View(command);
+			}
 			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
 		}
 
@@ -303,11 +306,7 @@ namespace Witcher.MVC.Controllers
 		{
 			var viewModel = command is CreateUserGameCommandViewModel vm
 				? vm
-				: new CreateUserGameCommandViewModel()
-				{
-					UserId = command.UserId,
-					RoleId = command.RoleId
-				};
+				: _mapper.Map<CreateUserGameCommandViewModel>(command);
 
 			viewModel.UserDictionary = await GetUserListToViewModel(cancellationToken);
 

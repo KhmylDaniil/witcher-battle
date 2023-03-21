@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -15,11 +16,13 @@ namespace Witcher.MVC.Controllers
 	public class BattleController : BaseController
 	{
 		private readonly IMemoryCache _memoryCache;
+		private readonly IMapper _mapper;
 
-		public BattleController(IMediator mediator, IGameIdService gameIdService, IMemoryCache memoryCache)
+		public BattleController(IMediator mediator, IGameIdService gameIdService, IMemoryCache memoryCache, IMapper mapper)
 			: base(mediator, gameIdService)
 		{
 			_memoryCache = memoryCache;
+			_mapper = mapper;
 		}
 
 		[Route("[controller]")]
@@ -222,13 +225,7 @@ namespace Witcher.MVC.Controllers
 		{
 			var viewModel = command is CreateCreatureCommandViewModel vm
 				? vm
-				: new CreateCreatureCommandViewModel()
-				{
-					BattleId = command.BattleId,
-					CreatureTemplateId = command.CreatureTemplateId,
-					Name = command.Name,
-					Description = command.Description
-				};
+				: _mapper.Map<CreateCreatureCommandViewModel>(command);
 
 			viewModel.CreatureTemplatesDictionary = await GetCreatureTemplatesListToViewModel(cancellationToken);
 

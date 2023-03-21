@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
+using Witcher.Core.Contracts.BattleRequests;
 using Witcher.Core.Contracts.CreatureTemplateRequests;
 using Witcher.Core.Contracts.RunBattleRequests;
+using Witcher.Core.Contracts.UserGameRequests;
+using Witcher.MVC.ViewModels.Battle;
 using Witcher.MVC.ViewModels.CreatureTemplate;
+using Witcher.MVC.ViewModels.Game;
 using Witcher.MVC.ViewModels.RunBattle;
 
 namespace Witcher.MVC
@@ -16,6 +20,9 @@ namespace Witcher.MVC
 
 			CreateMap<CreateCreatureTemplateCommand, CreateCreatureTemplateCommandViewModel>();
 			CreateMap<ChangeCreatureTemplateCommand, ChangeCreatureTemplateCommandViewModel>();
+
+			CreateMap<CreateCreatureCommand, CreateCreatureCommandViewModel>();
+			CreateMap<CreateUserGameCommand, CreateUserGameCommandViewModel>();
 		}
 	}
 }
