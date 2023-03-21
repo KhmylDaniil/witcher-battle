@@ -1,0 +1,1 @@
+Exception:  10:54 [l:Error] (th:) Message: В запросе Witcher.Core.Contracts.GameRequests.CreateGameCommand не заполнено обязательное поле Name

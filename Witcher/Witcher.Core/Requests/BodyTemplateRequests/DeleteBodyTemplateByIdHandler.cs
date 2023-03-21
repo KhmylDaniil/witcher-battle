@@ -31,10 +31,10 @@ namespace Witcher.Core.Requests.BodyTemplateRequests
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.BodyTemplates.Where(x => x.Id == request.Id))
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.Id)
-				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.Id);
+				?? throw new EntityNotFoundException<BodyTemplate>(request.Id);
 
 			game.BodyTemplates.Remove(bodyTemplate);
 			await _appDbContext.SaveChangesAsync();

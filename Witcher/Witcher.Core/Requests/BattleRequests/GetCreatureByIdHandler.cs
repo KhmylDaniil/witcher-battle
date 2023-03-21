@@ -39,7 +39,7 @@ namespace Witcher.Core.Requests.BattleRequests
 					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
 						.ThenInclude(c => c.Effects)
 				.SelectMany(x => x.Battles).SelectMany(b => b.Creatures).FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
-				?? throw new ExceptionEntityNotFound<Creature>(request.Id);
+				?? throw new EntityNotFoundException<Creature>(request.Id);
 
 			return new GetCreatureByIdResponse()
 			{

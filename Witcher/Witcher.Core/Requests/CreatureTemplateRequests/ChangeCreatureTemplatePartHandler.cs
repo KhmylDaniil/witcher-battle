@@ -23,7 +23,7 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 				.SelectMany(g => g.CreatureTemplates.Where(g => g.Id == request.CreatureTemplateId))
 					.Include(ct => ct.CreatureTemplateParts)
 				.FirstOrDefaultAsync(ct => ct.Id == request.CreatureTemplateId, cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			var partsToUpdate = request.Id == null
 				? creatureTemplate.CreatureTemplateParts

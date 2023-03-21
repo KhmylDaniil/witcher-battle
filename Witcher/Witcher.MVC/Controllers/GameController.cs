@@ -18,7 +18,8 @@ namespace Witcher.MVC.Controllers
 		private readonly IMemoryCache _memoryCache;
 		private readonly IUserContext _userContext;
 
-		public GameController(IMediator mediator, IGameIdService gameIdService, IMemoryCache memoryCache, IUserContext userContext)
+		public GameController(IMediator mediator, IGameIdService gameIdService, IMemoryCache memoryCache,
+			IUserContext userContext)
 			: base(mediator, gameIdService)
 		{
 			_memoryCache = memoryCache;
@@ -67,6 +68,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return RedirectToAction(nameof(Index));
 			}
+			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
 		}
 
 		/// <summary>
@@ -95,11 +97,12 @@ namespace Witcher.MVC.Controllers
 				await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Index));
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
-			}
+			//catch (RequestValidationException ex)
+			//{
+			//	TempData["ErrorMessage"] = ex.UserMessage;
+			//	return View(command);
+			//}
+			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
 		}
 
 		/// <summary>
@@ -135,6 +138,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
 		}
 
 		/// <summary>
@@ -167,6 +171,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
 		}
 
 		/// <summary>
@@ -201,6 +206,8 @@ namespace Witcher.MVC.Controllers
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 			}
+			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
+
 			if (command.UserId == _userContext.CurrentUserId)
 				return RedirectToAction(nameof(Index));
 			else
@@ -242,6 +249,8 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				ViewData["GameId"] = _gameIdService.GameId;
 			}
+			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
+
 			return View(await CreateVM(command, cancellationToken));
 		}
 
@@ -262,6 +271,8 @@ namespace Witcher.MVC.Controllers
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 			}
+			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
+
 			return RedirectToAction(nameof(Enter), new GetGameByIdCommand { Id = _gameIdService.GameId });
 		}
 

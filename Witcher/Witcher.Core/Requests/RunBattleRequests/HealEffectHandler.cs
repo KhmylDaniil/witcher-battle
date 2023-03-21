@@ -51,16 +51,16 @@ namespace Witcher.Core.Requests.RunBattleRequests
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Effects)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Battle>();
+					?? throw new NoAccessToEntityException<Battle>();
 
 			var healer = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
-				?? throw new ExceptionEntityNotFound<Creature>();
+				?? throw new EntityNotFoundException<Creature>();
 
 			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
-				?? throw new ExceptionEntityNotFound<Creature>();
+				?? throw new EntityNotFoundException<Creature>();
 
 			var effect = target.Effects.FirstOrDefault(x => x.Id == request.EffectId)
-				?? throw new ExceptionEntityNotFound<Effect>();
+				?? throw new EntityNotFoundException<Effect>();
 
 			StringBuilder message = new();
 

@@ -21,7 +21,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 				.SelectMany(x => x.Abilities);
 
 			var ability = await filter.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
-				?? throw new ExceptionEntityNotFound<Ability>(request.Id);
+				?? throw new EntityNotFoundException<Ability>(request.Id);
 
 			return new GetAbilityByIdResponse()
 			{

@@ -22,10 +22,10 @@ namespace Witcher.Core.Requests.BattleRequests
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.Battles.Where(x => x.Id == request.Id))
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			var battle = game.Battles.FirstOrDefault(x => x.Id == request.Id)
-				?? throw new ExceptionEntityNotFound<Battle>(request.Id);
+				?? throw new EntityNotFoundException<Battle>(request.Id);
 
 			game.Battles.Remove(battle);
 			await _appDbContext.SaveChangesAsync(cancellationToken);

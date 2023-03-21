@@ -50,10 +50,10 @@ namespace Witcher.Core.Requests.UserRequests.RegisterUser
 		{
 			var systemInterface = await _appDbContext.Interfaces
 				.FirstOrDefaultAsync(x => x.Id == SystemInterfaces.SystemLightId, cancellationToken)
-					?? throw new ExceptionEntityNotFound<Interface>(SystemInterfaces.SystemLightId);
+					?? throw new EntityNotFoundException<Interface>(SystemInterfaces.SystemLightId);
 			var role = await _appDbContext.SystemRoles
 				.FirstOrDefaultAsync(x => x.Id == SystemRoles.UserRoleId, cancellationToken)
-					?? throw new ExceptionEntityNotFound<SystemRole>(SystemRoles.UserRoleId);
+					?? throw new EntityNotFoundException<SystemRole>(SystemRoles.UserRoleId);
 
 			var user = new User(
 				name: request.Name,

@@ -24,10 +24,10 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 				.SelectMany(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
 					.Include(ct => ct.CreatureTemplateSkills)
 				.FirstOrDefaultAsync(ct => ct.Id == request.CreatureTemplateId, cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			var creatureTemplateSkill = creatureTemplate.CreatureTemplateSkills.FirstOrDefault(x => x.Id == request.Id)
-				?? throw new ExceptionEntityNotFound<CreatureTemplateSkill>(request.Id);
+				?? throw new EntityNotFoundException<CreatureTemplateSkill>(request.Id);
 
 			creatureTemplate.CreatureTemplateSkills.Remove(creatureTemplateSkill);
 

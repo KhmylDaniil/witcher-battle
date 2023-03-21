@@ -24,7 +24,7 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 				.SelectMany(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
 					.Include(ct => ct.CreatureTemplateSkills)
 				.FirstOrDefaultAsync(ct => ct.Id == request.CreatureTemplateId, cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			var currentSkill = creatureTemplate.CreatureTemplateSkills.FirstOrDefault(x => x.Id == request.Id);
 

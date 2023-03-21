@@ -67,7 +67,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ExceptionFieldOutOfRange<BodyPart>(nameof(HitPenalty));
+					throw new FieldOutOfRangeException<BodyPart>(nameof(HitPenalty));
 				_hitPenalty = value;
 			}
 		}

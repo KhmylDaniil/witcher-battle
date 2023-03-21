@@ -5,13 +5,13 @@ namespace Witcher.Core.Exceptions
 	/// <summary>
 	/// Исключение ничего не найдено (код 404 Not Found)
 	/// </summary>
-	public class ExceptionNotFoundBase : ArgumentException
+	public class NotFoundBaseException : ArgumentException
 	{
 		/// <summary>
 		/// Конструктор исключения ничего не найдено
 		/// </summary>
 		/// <param name="message">Текст исключения</param>
-		public ExceptionNotFoundBase(string message) : base(message)
+		public NotFoundBaseException(string message) : base(message)
 		{
 		}
 	}

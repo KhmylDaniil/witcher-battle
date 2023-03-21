@@ -5,15 +5,18 @@ namespace Witcher.MVC.Logger
 {
 	public static class LoggerCongfigurator
 	{
-		public static void ConfigureSerilog(this WebApplicationBuilder builder, LogLevel minimumLogLevel)
+		public const string LogOutputTemplate = $"Exception: {{Exception}} {{Timestamp:HH:mm}} [l:{{Level}}] (th:{{ThreadId}}) Message: {{Message}}{{NewLine}}";
+
+		public static void ConfigureSerilog(this WebApplicationBuilder builder)
 		{
-			var outputTemplate =
-				$"{{Timestamp:HH:mm}} [l:{{Level}}] (th:{{ThreadId}}) " +
-				$"Message: {{Message}}{{NewLine}}Esception: {{Exception}}";
+			var options = builder.Configuration.Get<LoggerOptions>();
+
+			Enum.TryParse(options.LogLevel, true, out LogEventLevel logEventLevel);
 
 			Log.Logger = new LoggerConfiguration()
-				.WriteTo.Console(outputTemplate: outputTemplate)
-				.MinimumLevel.Is((LogEventLevel)minimumLogLevel)
+				.WriteTo.Console(outputTemplate: LogOutputTemplate)
+				.WriteTo.File(options.LogFile, logEventLevel, LogOutputTemplate)
+				.MinimumLevel.Is(logEventLevel)
 				.CreateLogger();
 
 			builder.Host.UseSerilog();

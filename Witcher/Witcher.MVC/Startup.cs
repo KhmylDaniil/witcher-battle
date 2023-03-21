@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Caching.Memory;
+using Serilog.Extensions.Logging;
 using Witcher.Core;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Services.Hasher;

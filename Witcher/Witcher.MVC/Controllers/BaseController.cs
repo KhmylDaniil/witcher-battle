@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using Witcher.Core.Abstractions;
+using Witcher.MVC.ViewModels;
 
 namespace Witcher.MVC.Controllers
 {
@@ -28,5 +30,13 @@ namespace Witcher.MVC.Controllers
 			_mediator = mediator;
 			_gameIdService = gameIdService;
 		}
+
+		protected ActionResult RedirectToErrorPage<TController>(Exception ex) where TController : BaseController
+		{
+			var myLog = Log.ForContext<TController>();
+			myLog.Error(ex.Message);
+			return View("Error", new ErrorViewModel(ex));
+		}
+			
 	}
 }

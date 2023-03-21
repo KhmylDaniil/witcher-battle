@@ -46,10 +46,10 @@ namespace Witcher.Core.Requests.UserGameRequests
 				.Include(x => x.UserGames)
 				.ThenInclude(ug => ug.User)
 				.FirstOrDefaultAsync(cancellationToken)
-				?? throw new ExceptionNoAccessToEntity<Game>();
+				?? throw new NoAccessToEntityException<Game>();
 			
 			var userGame = game.UserGames.FirstOrDefault(x => x.UserId == request.UserId)
-				?? throw new ExceptionEntityNotFound<UserGame>(request.UserId);
+				?? throw new EntityNotFoundException<UserGame>(request.UserId);
 
 			if (userGame.GameRoleId == GameRoles.MainMasterRoleId)
 				throw new RequestValidationException("Роль главмастера не может быть удалена без удаления игры");
@@ -64,7 +64,7 @@ namespace Witcher.Core.Requests.UserGameRequests
 			else if (userGame.GameRoleId == GameRoles.PlayerRoleId)
 				game.UserGames.Remove(userGame);
 			else
-				throw new ExceptionNoAccessToEntity<UserGame>();
+				throw new NoAccessToEntityException<UserGame>();
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;

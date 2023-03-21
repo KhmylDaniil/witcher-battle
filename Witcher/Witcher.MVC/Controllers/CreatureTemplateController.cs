@@ -41,6 +41,8 @@ namespace Witcher.MVC.Controllers
 
 				response = await _mediator.SendValidated(new GetCreatureTemplateQuery() , cancellationToken);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
+
 			return View(response);
 		}
 
@@ -61,6 +63,7 @@ namespace Witcher.MVC.Controllers
 
 				return View(response);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
 		}
 
 		[HttpGet]
@@ -87,6 +90,8 @@ namespace Witcher.MVC.Controllers
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 			}
+			catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
+
 			return View(await CreateVM(command, cancellationToken));
 		}
 
@@ -112,6 +117,8 @@ namespace Witcher.MVC.Controllers
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 			}
+			catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
+
 			return View(await CreateVM(command, cancellationToken));
 		}
 
@@ -133,6 +140,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -156,6 +164,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{creatureTemplateId}")]
@@ -176,6 +185,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{creatureTemplateId}")]
@@ -191,6 +201,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{creatureTemplateId}")]
@@ -211,6 +222,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
 		}
 
 		/// <summary>

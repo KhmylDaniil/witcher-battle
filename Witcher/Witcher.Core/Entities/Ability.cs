@@ -261,7 +261,7 @@ namespace Witcher.Core.Entities
 				return;
 
 			if (AppliedConditions == null)
-				throw new ExceptionFieldOutOfRange<Ability>(nameof(AppliedConditions));
+				throw new FieldOutOfRangeException<Ability>(nameof(AppliedConditions));
 
 			var entitiesToDelete = AppliedConditions.Where(x => !data
 				.Any(y => y.Id == x.Id)).ToList();

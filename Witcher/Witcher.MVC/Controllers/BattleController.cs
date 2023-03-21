@@ -37,6 +37,8 @@ namespace Witcher.MVC.Controllers
 
 				response = await _mediator.SendValidated(new GetBattleQuery(), cancellationToken);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
+
 			return View(response);
 		}
 
@@ -57,6 +59,7 @@ namespace Witcher.MVC.Controllers
 
 				return View(response);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		[Route("[controller]/[action]")]
@@ -78,6 +81,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -100,6 +104,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -121,6 +126,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		[HttpGet]
@@ -144,6 +150,8 @@ namespace Witcher.MVC.Controllers
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 			}
+            catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
+
 			return View(await CreateVM(command, cancellationToken));
 		}
 
@@ -166,6 +174,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{battleId}/{id}")]
@@ -181,6 +190,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return RedirectToAction(nameof(Details), new GetBattleByIdQuery() { Id = command.BattleId });
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{battleId}/{id}")]
@@ -202,6 +212,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		/// <summary>

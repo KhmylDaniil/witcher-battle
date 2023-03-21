@@ -30,13 +30,13 @@ namespace Witcher.Core.Requests.BodyTemplateRequests
 				.Include(x => x.BodyTemplates)
 					.ThenInclude(x => x.BodyTemplateParts)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			if (game.BodyTemplates.Any(x => x.Name == request.Name && x.Id != request.Id))
 				throw new RequestNameNotUniqException<ChangeBodyTemplateCommand>(nameof(request.Name));
 
 			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.Id)
-				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.Id);
+				?? throw new EntityNotFoundException<BodyTemplate>(request.Id);
 
 			bodyTemplate.ChangeBodyTemplate(
 				game: game,

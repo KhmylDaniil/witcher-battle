@@ -22,10 +22,10 @@ namespace Witcher.Core.Requests.RunBattleRequests
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Abilities)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Battle>();
+					?? throw new NoAccessToEntityException<Battle>();
 
 			var currentCreature = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
-				?? throw new ExceptionEntityNotFound<Creature>(request.CreatureId);
+				?? throw new EntityNotFoundException<Creature>(request.CreatureId);
 
 			return new MakeTurnResponse
 			{ 

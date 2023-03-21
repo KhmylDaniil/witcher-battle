@@ -39,6 +39,7 @@ namespace Witcher.MVC.Controllers
 
 				return View(response);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BodyTemplateController>(ex); }
 		}
 
 		[Route("[controller]/{id}")]
@@ -58,6 +59,7 @@ namespace Witcher.MVC.Controllers
 
 				return View(response);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BodyTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]")]
@@ -81,6 +83,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BodyTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -104,6 +107,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BodyTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -124,6 +128,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BodyTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -147,6 +152,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BodyTemplateController>(ex); }
 		}
 	}
 }

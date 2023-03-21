@@ -8,12 +8,12 @@ namespace Witcher.Core.Exceptions.EntityExceptions
 	/// Исключение сущность not included
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class ExceptionEntityNotIncluded<T> : ExceptionNotFoundBase
+	public class EntityNotIncludedException<T> : NotFoundBaseException
 	{
 		/// <summary>
 		/// Конструктор исключения сущность not included
 		/// </summary>
-		public ExceptionEntityNotIncluded()
+		public EntityNotIncludedException()
 			//TODO to do придумать текст получше
 			: base($"Не присоединена (сущность {typeof(T)} not included)")
 		{
@@ -24,7 +24,7 @@ namespace Witcher.Core.Exceptions.EntityExceptions
 		/// </summary>
 		/// <param name="name">Название</param>
 		/// <param name="guid">Айди</param>
-		public ExceptionEntityNotIncluded(string name, Guid guid)
+		public EntityNotIncludedException(string name, Guid guid)
 			//TODO to do придумать текст получше
 			: base($"Сущность типа {typeof(T)} не присоединена к сущности {name} с айди {guid}")
 		{
@@ -34,7 +34,7 @@ namespace Witcher.Core.Exceptions.EntityExceptions
 		/// Конструктор исключения сущность не присоединена
 		/// </summary>
 		/// <param name="name"></param>
-		public ExceptionEntityNotIncluded(string name)
+		public EntityNotIncludedException(string name)
 			//TODO to do придумать текст получше
 			: base($"Сущность типа {typeof(T)} не присоединена к сущности {name}")
 		{

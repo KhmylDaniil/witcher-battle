@@ -12,7 +12,6 @@ namespace Witcher.Core.Services.Authorization
 		private readonly IUserContext _userContext;
 		private readonly IGameIdService _gameIdService;
 
-
 		/// <summary>
 		/// Конструктор
 		/// </summary>
