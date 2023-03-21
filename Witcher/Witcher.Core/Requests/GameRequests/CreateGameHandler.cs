@@ -72,7 +72,7 @@ namespace Witcher.Core.Requests.GameRequests
 				? null
 				: await _appDbContext.ImgFiles
 				.FirstOrDefaultAsync(x => x.Id == request.AvatarId, cancellationToken)
-				?? throw new ExceptionEntityNotFound<ImgFile>(nameof(request.AvatarId));
+				?? throw new EntityNotFoundException<ImgFile>(nameof(request.AvatarId));
 
 			var textFiles = new List<TextFile>();
 
@@ -81,7 +81,7 @@ namespace Witcher.Core.Requests.GameRequests
 				{
 					var textFile = await _appDbContext.TextFiles
 					.FirstOrDefaultAsync(y => y.Id == x, cancellationToken)
-					?? throw new ExceptionEntityNotFound<TextFile>(nameof(x));
+					?? throw new EntityNotFoundException<TextFile>(nameof(x));
 					textFiles.Add(textFile);
 				}
 
@@ -92,7 +92,7 @@ namespace Witcher.Core.Requests.GameRequests
 				{
 					var imgFile = await _appDbContext.ImgFiles
 					.FirstOrDefaultAsync(y => y.Id == x, cancellationToken)
-					?? throw new ExceptionEntityNotFound<ImgFile>(nameof(x));
+					?? throw new EntityNotFoundException<ImgFile>(nameof(x));
 					imgFiles.Add(imgFile);
 				}
 

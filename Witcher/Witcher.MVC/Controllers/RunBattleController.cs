@@ -19,7 +19,8 @@ namespace Witcher.MVC.Controllers
 		private readonly IMapper _mapper;
 		private readonly IHubContext<MessageHub> _messageHubContext;
 		
-		public RunBattleController(IMediator mediator, IGameIdService gameIdService, IMapper mapper, IHubContext<MessageHub> messageHub)
+		public RunBattleController(IMediator mediator, IGameIdService gameIdService, IMapper mapper,
+			IHubContext<MessageHub> messageHub)
 			: base(mediator, gameIdService)
 		{
 			_mapper = mapper;
@@ -41,6 +42,7 @@ namespace Witcher.MVC.Controllers
 				var response = await _mediator.SendValidated(new GetBattleByIdQuery() { Id = command.BattleId}, cancellationToken);
 				return View(response);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<RunBattleController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{battleId}")]
@@ -60,6 +62,7 @@ namespace Witcher.MVC.Controllers
 
 				return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
 			}
+			catch (Exception ex) { return RedirectToErrorPage<RunBattleController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{battleId}")]
@@ -85,6 +88,8 @@ namespace Witcher.MVC.Controllers
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 			}
+			catch (Exception ex) { return RedirectToErrorPage<RunBattleController>(ex); }
+
 			return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
 		}
 
@@ -111,6 +116,8 @@ namespace Witcher.MVC.Controllers
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 			}
+			catch (Exception ex) { return RedirectToErrorPage<RunBattleController>(ex); }
+
 			return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
 		}
 

@@ -222,7 +222,7 @@ namespace Witcher.Core.BaseData
 			Skill.EyeGouge => Stats.Dex,
 			Skill.BleedingWound => Stats.Int,
 			Skill.HealingHands => Stats.Cra,
-			_ => throw new ExceptionFieldOutOfRange<Skill>(nameof(skill)),
+			_ => throw new FieldOutOfRangeException<Skill>(nameof(skill)),
 		};
 	}
 }

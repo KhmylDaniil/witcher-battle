@@ -41,12 +41,12 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 				.Include(x => x.Abilities)
 					.ThenInclude(x => x.AppliedConditions)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			var imgFile = request.ImgFileId == null
 				? null
 				: await _appDbContext.ImgFiles.FirstOrDefaultAsync(x => x.Id == request.ImgFileId, cancellationToken)
-				?? throw new ExceptionEntityNotFound<ImgFile>(request.ImgFileId.Value);
+				?? throw new EntityNotFoundException<ImgFile>(request.ImgFileId.Value);
 
 			CheckRequest(out CreatureTemplate creatureTemplate, out BodyTemplate bodyTemplate);
 
@@ -87,23 +87,23 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 			void CheckRequest(out CreatureTemplate creatureTemplate, out BodyTemplate bodyTemplate)
 			{
 				creatureTemplate = game.CreatureTemplates.FirstOrDefault(x => x.Id == request.Id)
-					?? throw new ExceptionEntityNotFound<CreatureTemplate>(request.Id);
+					?? throw new EntityNotFoundException<CreatureTemplate>(request.Id);
 
 				if (game.CreatureTemplates.Any(x => string.Equals(x.Name, request.Name, StringComparison.Ordinal) && x.Id != request.Id))
 					throw new RequestNameNotUniqException<ChangeCreatureTemplateCommand>(nameof(request.Name));
 
 				bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId)
-					?? throw new ExceptionEntityNotFound<BodyTemplate>(request.BodyTemplateId);
+					?? throw new EntityNotFoundException<BodyTemplate>(request.BodyTemplateId);
 
 				if (request.ArmorList is not null)
 					foreach (var id in request.ArmorList.Select(x => x.BodyTemplatePartId))
 						_ = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == id)
-							?? throw new ExceptionEntityNotFound<BodyTemplatePart>(id);
+							?? throw new EntityNotFoundException<BodyTemplatePart>(id);
 
 				if (request.Abilities is not null)
 					foreach (var id in request.Abilities)
 						_ = game.Abilities.FirstOrDefault(x => x.Id == id)
-							?? throw new ExceptionEntityNotFound<Ability>(id);
+							?? throw new EntityNotFoundException<Ability>(id);
 
 				if (request.CreatureTemplateSkills is null)
 					return;
@@ -113,7 +113,7 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 					if (skill.Id != default)
 						_ = creatureTemplate.CreatureTemplateSkills
 							.FirstOrDefault(x => x.Id == skill.Id && x.Skill == skill.Skill)
-								?? throw new ExceptionEntityNotFound<CreatureTemplateSkill>(skill.Id.Value);
+								?? throw new EntityNotFoundException<CreatureTemplateSkill>(skill.Id.Value);
 					else
 						if (creatureTemplate.CreatureTemplateSkills.Any(x => x.Skill == skill.Skill))
 						throw new RequestNotUniqException<CreatureTemplateSkill>(Enum.GetName(skill.Skill));

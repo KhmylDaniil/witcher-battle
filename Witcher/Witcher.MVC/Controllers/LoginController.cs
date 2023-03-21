@@ -49,6 +49,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View();
 			}
+            catch (Exception ex) { return RedirectToErrorPage<LoginController>(ex); }
 		}
 
 		public IActionResult SuccessfulRegistration(SuccessfulRegistration registration)
@@ -76,6 +77,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View();
 			}
+			catch (Exception ex) { return RedirectToErrorPage<LoginController>(ex); }
 		}
 	}
 }

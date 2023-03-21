@@ -26,7 +26,7 @@ namespace Witcher.Core.Requests.BattleRequests
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.Battles)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			if (game.Battles.Any(x => x.Name == request.Name && x.Id != request.Id))
 				throw new RequestNameNotUniqException<ChangeBattleCommand>(nameof(request.Name));
@@ -34,10 +34,10 @@ namespace Witcher.Core.Requests.BattleRequests
 			var imgFile = request.ImgFileId == null
 				? null
 				: await _appDbContext.ImgFiles.FirstOrDefaultAsync(x => x.Id == request.ImgFileId, cancellationToken)
-				?? throw new ExceptionEntityNotFound<ImgFile>(request.ImgFileId.Value);
+				?? throw new EntityNotFoundException<ImgFile>(request.ImgFileId.Value);
 
 			var battle = game.Battles.FirstOrDefault(x => x.Id == request.Id)
-				?? throw new ExceptionEntityNotFound<Battle>(request.Id);
+				?? throw new EntityNotFoundException<Battle>(request.Id);
 
 			battle.ChangeBattle(request.Name, request.Description, imgFile);
 

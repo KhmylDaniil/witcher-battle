@@ -26,7 +26,7 @@ namespace Witcher.Core.Requests.BattleRequests
 						.ThenInclude(c => c.Effects)
 				.SelectMany(g => g.Battles)
 				.FirstOrDefaultAsync(b => b.Id == request.Id, cancellationToken)
-					?? throw new ExceptionEntityNotFound<Battle>(request.Id);
+					?? throw new EntityNotFoundException<Battle>(request.Id);
 
 			var creatures = battle.Creatures.Select(x => new GetBattleByIdResponseItem()
 			{

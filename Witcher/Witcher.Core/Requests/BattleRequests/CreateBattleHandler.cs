@@ -31,12 +31,12 @@ namespace Witcher.Core.Requests.BattleRequests
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.Battles)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			var imgFile = request.ImgFileId == null
 				? null
 				: await _appDbContext.ImgFiles.FirstOrDefaultAsync(x => x.Id == request.ImgFileId, cancellationToken)
-				?? throw new ExceptionEntityNotFound<ImgFile>(request.ImgFileId.Value);
+				?? throw new EntityNotFoundException<ImgFile>(request.ImgFileId.Value);
 
 			if (game.Battles.Any(x => x.Name == request.Name))
 				throw new RequestNameNotUniqException<CreateBattleCommand>(nameof(request.Name));

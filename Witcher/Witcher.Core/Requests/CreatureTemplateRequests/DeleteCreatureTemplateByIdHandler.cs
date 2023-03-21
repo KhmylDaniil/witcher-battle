@@ -32,10 +32,10 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			var creatureTemplate = game.CreatureTemplates.FirstOrDefault(x => x.Id == request.Id)
-				?? throw new ExceptionEntityNotFound<CreatureTemplate>(request.Id);
+				?? throw new EntityNotFoundException<CreatureTemplate>(request.Id);
 
 			game.CreatureTemplates.Remove(creatureTemplate);
 			await _appDbContext.SaveChangesAsync(cancellationToken);

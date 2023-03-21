@@ -33,7 +33,7 @@ namespace Witcher.Core.Requests.BodyTemplateRequests
 				.SelectMany(x => x.BodyTemplates);
 
 			var bodyTemplate = await filter.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
-				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.Id);
+				?? throw new EntityNotFoundException<BodyTemplate>(request.Id);
 
 			var bodyTemplateParts = bodyTemplate.BodyTemplateParts.Select(x => new GetBodyTemplateByIdResponseItem()
 			{

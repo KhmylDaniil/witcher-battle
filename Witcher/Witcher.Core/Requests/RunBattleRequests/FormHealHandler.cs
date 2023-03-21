@@ -20,7 +20,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 			var targetCreature = await _appDbContext.Creatures
 				.Include(c => c.Effects)
 				.FirstOrDefaultAsync(x => x.Id == request.TargetCreatureId, cancellationToken)
-					?? throw new ExceptionEntityNotFound<Creature>(request.TargetCreatureId);
+					?? throw new EntityNotFoundException<Creature>(request.TargetCreatureId);
 
 			return new FormHealResponse
 			{

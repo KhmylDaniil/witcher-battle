@@ -40,6 +40,7 @@ namespace Witcher.MVC.Controllers
 
 				return View(await _mediator.SendValidated(new GetAbilityQuery(), cancellationToken));
 			}
+			catch (Exception ex) { return RedirectToErrorPage<AbilityController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -55,6 +56,7 @@ namespace Witcher.MVC.Controllers
 
 				return View(await _mediator.SendValidated(new GetAbilityQuery(), cancellationToken));
 			}
+			catch (Exception ex) { return RedirectToErrorPage<AbilityController>(ex); }
 		}
 
 		[Route("[controller]/[action]")]
@@ -81,6 +83,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<AbilityController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -104,6 +107,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<AbilityController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -127,6 +131,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<AbilityController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{abilityId}")]
@@ -147,6 +152,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<AbilityController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{abilityId}")]
@@ -162,6 +168,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<AbilityController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{abilityId}")]
@@ -182,6 +189,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<AbilityController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{abilityId}")]
@@ -192,10 +200,12 @@ namespace Witcher.MVC.Controllers
 				await _mediator.SendValidated(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { Id = command.AbilityId });
 			}
-			catch
+			catch (RequestValidationException ex)
 			{
+				TempData["ErrorMessage"] = ex.UserMessage;
 				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { Id = command.AbilityId });
 			}
+			catch (Exception ex) { return RedirectToErrorPage<AbilityController>(ex); }
 		}
 	}
 }

@@ -6,12 +6,12 @@ namespace Witcher.Core.Exceptions.EntityExceptions
 	/// Исключение не найдена сущность
 	/// </summary>
 	/// <typeparam name="T">Тип сущности</typeparam>
-	public class ExceptionEntityNotFound<T> : ExceptionNotFoundBase
+	public class EntityNotFoundException<T> : NotFoundBaseException
 	{
 		/// <summary>
 		/// Конструктор исключения не найдена сущность
 		/// </summary>
-		public ExceptionEntityNotFound()
+		public EntityNotFoundException()
 			: base($"Не найдена сущность {typeof(T)}")
 		{
 		}
@@ -20,7 +20,7 @@ namespace Witcher.Core.Exceptions.EntityExceptions
 		/// Конструктор исключения не найдена сущность
 		/// </summary>
 		/// <param name="name">Название сущности</param>
-		public ExceptionEntityNotFound(string name)
+		public EntityNotFoundException(string name)
 			: base($"Не найдена сущность {typeof(T)} с именем {name}")
 		{
 		}
@@ -30,7 +30,7 @@ namespace Witcher.Core.Exceptions.EntityExceptions
 		/// </summary>
 		/// <param name="name">Название сущности</param>
 		/// <param name="id">ИД сущности</param>
-		public ExceptionEntityNotFound(string name, Guid id)
+		public EntityNotFoundException(string name, Guid id)
 			: base($"Не найдена сущность {typeof(T)} {name} с ИД {id}")
 		{
 		}
@@ -39,7 +39,7 @@ namespace Witcher.Core.Exceptions.EntityExceptions
 		/// Конструктор исключения не найдена сущность
 		/// </summary>
 		/// <param name="id">ИД сущности</param>
-		public ExceptionEntityNotFound(Guid id)
+		public EntityNotFoundException(Guid id)
 			: base($"Не найдена сущность {typeof(T)} с ИД {id}")
 		{
 		}

@@ -37,12 +37,12 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 				.Include(x => x.CreatureTemplates)
 				.Include(x => x.Abilities)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			var imgFile = request.ImgFileId == null
 				? null
 				: await _appDbContext.ImgFiles.FirstOrDefaultAsync(x => x.Id == request.ImgFileId, cancellationToken)
-				?? throw new ExceptionEntityNotFound<ImgFile>(request.ImgFileId.Value);
+				?? throw new EntityNotFoundException<ImgFile>(request.ImgFileId.Value);
 
 			CheckRequest(request, game, out BodyTemplate bodyTemplate);
 
@@ -84,7 +84,7 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 		void CheckRequest(CreateCreatureTemplateCommand request, Game game, out BodyTemplate bodyTemplate)
 		{
 			bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId)
-				?? throw new ExceptionEntityNotFound<BodyTemplate>(request.BodyTemplateId);
+				?? throw new EntityNotFoundException<BodyTemplate>(request.BodyTemplateId);
 
 			if (game.CreatureTemplates.Any(x => string.Equals(x.Name, request.Name, StringComparison.Ordinal)))
 				throw new RequestNameNotUniqException<CreateCreatureTemplateCommand>(nameof(request.Name));
@@ -93,12 +93,12 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 			if (request.ArmorList is not null)
 				foreach (var id in request.ArmorList.Select(x => x.BodyTemplatePartId))
 					_ = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == id)
-						?? throw new ExceptionEntityNotFound<BodyTemplatePart>(id);
+						?? throw new EntityNotFoundException<BodyTemplatePart>(id);
 
 			if (request.Abilities is not null)
 				foreach (var id in request.Abilities)
 					_ = game.Abilities.FirstOrDefault(x => x.Id == id)
-						?? throw new ExceptionEntityNotFound<Ability>(id);
+						?? throw new EntityNotFoundException<Ability>(id);
 		}
 
 		/// <summary>

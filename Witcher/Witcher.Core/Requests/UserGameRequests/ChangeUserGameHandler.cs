@@ -37,7 +37,7 @@ namespace Witcher.Core.Requests.UserGameRequests
 			var userGame = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games, GameRoles.MainMasterRoleId)
 				.SelectMany(g => g.UserGames)
 				.FirstOrDefaultAsync(ug => ug.UserId == request.UserId, cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			if (userGame.GameRoleId == GameRoles.MainMasterRoleId)
 				throw new RequestValidationException("Роль главного мастера не может быть изменена");
@@ -47,7 +47,7 @@ namespace Witcher.Core.Requests.UserGameRequests
 				: GameRoles.MasterRoleId;
 
 			userGame.GameRole = await _appDbContext.GameRoles.FirstOrDefaultAsync(g => g.Id == requestedGameRoleId, cancellationToken)
-				?? throw new ExceptionEntityNotFound<GameRole>(requestedGameRoleId);
+				?? throw new EntityNotFoundException<GameRole>(requestedGameRoleId);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;

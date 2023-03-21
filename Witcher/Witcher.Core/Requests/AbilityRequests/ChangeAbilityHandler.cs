@@ -31,10 +31,10 @@ namespace Witcher.Core.Requests.AbilityRequests
 				.Include(g => g.Abilities)
 					.ThenInclude(a => a.AppliedConditions)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			var ability = game.Abilities.FirstOrDefault(x => x.Id == request.Id)
-							?? throw new ExceptionEntityNotFound<Ability>(request.Id);
+							?? throw new EntityNotFoundException<Ability>(request.Id);
 
 			if (game.Abilities.Any(x => x.Name == request.Name && x.Id != ability.Id))
 				throw new RequestNameNotUniqException<ChangeAbilityCommand>(nameof(request.Name));

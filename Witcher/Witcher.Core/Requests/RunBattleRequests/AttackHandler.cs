@@ -44,7 +44,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.Effects)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Battle>();
+					?? throw new NoAccessToEntityException<Battle>();
 
 			var attackData = CheckAndFormData(request, battle);
 
@@ -72,15 +72,15 @@ namespace Witcher.Core.Requests.RunBattleRequests
 		private AttackData CheckAndFormData(AttackCommand request, Battle battle)
 		{
 			var attacker = battle.Creatures.FirstOrDefault(x => x.Id == request.Id)
-				?? throw new ExceptionEntityNotFound<Creature>(request.Id);
+				?? throw new EntityNotFoundException<Creature>(request.Id);
 
 			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
-				?? throw new ExceptionEntityNotFound<Creature>(request.TargetCreatureId);
+				?? throw new EntityNotFoundException<Creature>(request.TargetCreatureId);
 
 			var aimedPart = request.CreaturePartId == null
 				? null
 				: target.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId)
-					?? throw new ExceptionEntityNotFound<BodyTemplatePart>(request.CreaturePartId.Value);
+					?? throw new EntityNotFoundException<BodyTemplatePart>(request.CreaturePartId.Value);
 
 			if (!attacker.Abilities.Any())
 				throw new RequestValidationException($"У существа {attacker.Name} отсутствуют способности, атака невозможна.");
@@ -88,7 +88,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 			var ability = request.AbilityId == null
 				? attacker.DefaultAbility()
 				: attacker.Abilities.FirstOrDefault(x => x.Id == request.AbilityId)
-					?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId.Value);
+					?? throw new EntityNotFoundException<Ability>(request.AbilityId.Value);
 
 			if (ability == null && request.DefensiveSkill != null)
 				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(request.DefensiveSkill), null);

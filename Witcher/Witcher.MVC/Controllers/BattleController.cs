@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -15,11 +16,13 @@ namespace Witcher.MVC.Controllers
 	public class BattleController : BaseController
 	{
 		private readonly IMemoryCache _memoryCache;
+		private readonly IMapper _mapper;
 
-		public BattleController(IMediator mediator, IGameIdService gameIdService, IMemoryCache memoryCache)
+		public BattleController(IMediator mediator, IGameIdService gameIdService, IMemoryCache memoryCache, IMapper mapper)
 			: base(mediator, gameIdService)
 		{
 			_memoryCache = memoryCache;
+			_mapper = mapper;
 		}
 
 		[Route("[controller]")]
@@ -37,6 +40,8 @@ namespace Witcher.MVC.Controllers
 
 				response = await _mediator.SendValidated(new GetBattleQuery(), cancellationToken);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
+
 			return View(response);
 		}
 
@@ -57,6 +62,7 @@ namespace Witcher.MVC.Controllers
 
 				return View(response);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		[Route("[controller]/[action]")]
@@ -78,6 +84,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -100,6 +107,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -121,6 +129,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		[HttpGet]
@@ -144,6 +153,8 @@ namespace Witcher.MVC.Controllers
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 			}
+            catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
+
 			return View(await CreateVM(command, cancellationToken));
 		}
 
@@ -166,6 +177,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{battleId}/{id}")]
@@ -181,6 +193,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return RedirectToAction(nameof(Details), new GetBattleByIdQuery() { Id = command.BattleId });
 			}
+			catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{battleId}/{id}")]
@@ -202,6 +215,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
+            catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
 		/// <summary>
@@ -211,13 +225,7 @@ namespace Witcher.MVC.Controllers
 		{
 			var viewModel = command is CreateCreatureCommandViewModel vm
 				? vm
-				: new CreateCreatureCommandViewModel()
-				{
-					BattleId = command.BattleId,
-					CreatureTemplateId = command.CreatureTemplateId,
-					Name = command.Name,
-					Description = command.Description
-				};
+				: _mapper.Map<CreateCreatureCommandViewModel>(command);
 
 			viewModel.CreatureTemplatesDictionary = await GetCreatureTemplatesListToViewModel(cancellationToken);
 

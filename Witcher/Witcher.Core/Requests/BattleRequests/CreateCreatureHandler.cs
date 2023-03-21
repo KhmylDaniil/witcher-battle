@@ -37,16 +37,16 @@ namespace Witcher.Core.Requests.BattleRequests
 					.ThenInclude(ct => ct.Abilities)
 						.ThenInclude(a => a.AppliedConditions)
 				.FirstOrDefaultAsync(cancellationToken)
-				?? throw new ExceptionNoAccessToEntity<Game>();
+				?? throw new NoAccessToEntityException<Game>();
 
 			var battle = game.Battles.FirstOrDefault(a => a.Id == request.BattleId)
-				?? throw new ExceptionEntityNotFound<Battle>(request.BattleId);
+				?? throw new EntityNotFoundException<Battle>(request.BattleId);
 
 			if (battle.Creatures.Any(c => c.Name == request.Name))
 				throw new RequestNameNotUniqException<Creature>(request.Name);
 
 			var creatureTemplate = game.CreatureTemplates.FirstOrDefault(a => a.Id == request.CreatureTemplateId)
-				?? throw new ExceptionEntityNotFound<CreatureTemplate>(request.CreatureTemplateId);
+				?? throw new EntityNotFoundException<CreatureTemplate>(request.CreatureTemplateId);
 
 			battle.Creatures.Add(new Creature(creatureTemplate, battle, request.Name, request.Description));
 

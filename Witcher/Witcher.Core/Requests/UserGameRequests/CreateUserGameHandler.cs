@@ -43,18 +43,18 @@ namespace Witcher.Core.Requests.UserGameRequests
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.UserGames)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			var user = await _appDbContext.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken)
-				?? throw new ExceptionEntityNotFound<User>(request.UserId);
+				?? throw new EntityNotFoundException<User>(request.UserId);
 
 			var role = await _appDbContext.GameRoles
 				.FirstOrDefaultAsync(u => u.Id == request.RoleId, cancellationToken)
-					?? throw new ExceptionEntityNotFound<GameRole>(request.RoleId);
+					?? throw new EntityNotFoundException<GameRole>(request.RoleId);
 
 			var @interface = await _appDbContext.Interfaces
 				.FirstOrDefaultAsync(u => u.Id == SystemInterfaces.GameDarkId, cancellationToken)
-				?? throw new ExceptionEntityNotFound<Interface>(SystemInterfaces.GameDarkId);
+				?? throw new EntityNotFoundException<Interface>(SystemInterfaces.GameDarkId);
 
 			if (request.RoleId == GameRoles.MasterRoleId
 				&& !game.UserGames.Any(x => x.UserId == _userContext.CurrentUserId

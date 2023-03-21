@@ -39,7 +39,7 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 				.SelectMany(x => x.CreatureTemplates);
 
 			var creatureTemplate = await filter.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
-				?? throw new ExceptionEntityNotFound<CreatureTemplate>(request.Id);
+				?? throw new EntityNotFoundException<CreatureTemplate>(request.Id);
 
 			return new GetCreatureTemplateByIdResponse()
 			{

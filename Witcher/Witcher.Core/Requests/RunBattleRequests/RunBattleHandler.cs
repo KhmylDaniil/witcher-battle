@@ -33,7 +33,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 				.Include(i => i.Creatures)
 					.ThenInclude(c => c.CreatureTemplate)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Battle>();
+					?? throw new NoAccessToEntityException<Battle>();
 
 			var creatures = battle.Creatures.Select(x => new GetBattleByIdResponseItem()
 			{

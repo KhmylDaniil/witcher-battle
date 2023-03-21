@@ -22,13 +22,13 @@ namespace Witcher.Core.Requests.AbilityRequests
 				.Include(g => g.Abilities.Where(a => a.Id == request.AbilityId))
 					.ThenInclude(a => a.AppliedConditions)
 				.FirstOrDefaultAsync(cancellationToken)
-				?? throw new ExceptionNoAccessToEntity<Game>();
+				?? throw new NoAccessToEntityException<Game>();
 
 			var ability = game.Abilities.FirstOrDefault(a => a.Id == request.AbilityId)
-				?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId);
+				?? throw new EntityNotFoundException<Ability>(request.AbilityId);
 
 			var appliedCondition = ability.AppliedConditions.FirstOrDefault(x => x.Id == request.Id)
-				?? throw new ExceptionEntityNotFound<AppliedCondition>(request.Id);
+				?? throw new EntityNotFoundException<AppliedCondition>(request.Id);
 
 			ability.AppliedConditions.Remove(appliedCondition);
 

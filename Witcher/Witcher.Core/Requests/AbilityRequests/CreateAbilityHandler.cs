@@ -27,7 +27,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			var newAbility = Ability.CreateAbility(
 				game: game,

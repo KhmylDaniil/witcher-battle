@@ -23,7 +23,7 @@ namespace Witcher.Core.Requests.BodyTemplateRequests
 					.ThenInclude(bt => bt.BodyTemplateParts)
 				.SelectMany(g => g.BodyTemplates)
 				.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
-						?? throw new ExceptionNoAccessToEntity<Game>();
+						?? throw new NoAccessToEntityException<Game>();
 
 			bodyTemplate.CreateBodyTemplateParts(BodyTemplatePartsData.CreateBodyTemplatePartsData(bodyTemplate.BodyTemplateParts, request));
 

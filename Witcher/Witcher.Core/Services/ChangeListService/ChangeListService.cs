@@ -1,7 +1,6 @@
 ﻿using Witcher.Core.Abstractions;
 using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,7 +20,7 @@ namespace Witcher.Core.Services.ChangeListService
 			IEnumerable<TextFile> textFiles)
 		{
 			if (entity.TextFiles is null)
-				throw new ExceptionEntityNotIncluded<TextFile>();
+				throw new EntityNotIncludedException<TextFile>();
 
 			//текстовые файлы
 			if (textFiles != null || entity.TextFiles.Any())
@@ -51,7 +50,7 @@ namespace Witcher.Core.Services.ChangeListService
 			IEnumerable<ImgFile> imgFiles)
 		{
 			if (entity.ImgFiles is null)
-				throw new ExceptionEntityNotIncluded<ImgFile>();
+				throw new EntityNotIncludedException<ImgFile>();
 
 			if (imgFiles != null || entity.ImgFiles.Any())
 			{

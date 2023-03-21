@@ -27,13 +27,13 @@ namespace Witcher.Core.Requests.BattleRequests
 				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
 					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
 				.FirstOrDefaultAsync(cancellationToken)
-				?? throw new ExceptionNoAccessToEntity<Game>();
+				?? throw new NoAccessToEntityException<Game>();
 
 			var battle = game.Battles.FirstOrDefault(a => a.Id == request.BattleId)
-				?? throw new ExceptionEntityNotFound<Battle>(request.BattleId);
+				?? throw new EntityNotFoundException<Battle>(request.BattleId);
 
 			var creature = battle.Creatures.FirstOrDefault(a => a.Id == request.Id)
-				?? throw new ExceptionEntityNotFound<Creature>(request.Id);
+				?? throw new EntityNotFoundException<Creature>(request.Id);
 
 			battle.Creatures.Remove(creature);
 

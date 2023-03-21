@@ -67,7 +67,7 @@ namespace Witcher.Core.Logic
 				if (effect is DyingEffect)
 					return patient.HP * -1;
 
-				throw new ExceptionFieldOutOfRange<Effect>();
+				throw new FieldOutOfRangeException<Effect>();
 			}
 		}
 	}

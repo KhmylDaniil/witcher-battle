@@ -26,7 +26,7 @@ namespace Witcher.Core.Requests.GameRequests
 				.Include(g => g.UserGames)
 					.ThenInclude(ug => ug.GameRole)
 				.FirstOrDefaultAsync(cancellationToken: cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			return new GetGameByIdResponse
 			{

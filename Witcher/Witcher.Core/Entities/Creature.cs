@@ -212,7 +212,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Sta));
+					throw new FieldOutOfRangeException<Creature>(nameof(Sta));
 				_sta = value;
 			}
 		}
@@ -289,7 +289,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 0)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Luck));
+					throw new FieldOutOfRangeException<Creature>(nameof(Luck));
 				_luck = value;
 			}
 		}

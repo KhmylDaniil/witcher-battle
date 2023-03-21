@@ -22,16 +22,16 @@ namespace Witcher.Core.Requests.AbilityRequests
 				.Include(g => g.Abilities.Where(a => a.Id == request.AbilityId))
 					.ThenInclude(a => a.DefensiveSkills)
 				.FirstOrDefaultAsync(cancellationToken)
-				?? throw new ExceptionNoAccessToEntity<Game>();
+				?? throw new NoAccessToEntityException<Game>();
 
 			var ability = game.Abilities.FirstOrDefault(a => a.Id == request.AbilityId)
-				?? throw new ExceptionEntityNotFound<Ability>(request.AbilityId);
+				?? throw new EntityNotFoundException<Ability>(request.AbilityId);
 
 			if (ability.DefensiveSkills.Count == 1)
 				throw new ArgumentException("Can`t delete last defensive skill.");
 
 			var defensiveSkill = ability.DefensiveSkills.FirstOrDefault(ds => ds.Id == request.Id)
-				?? throw new ExceptionEntityNotFound<DefensiveSkill>(request.Id);
+				?? throw new EntityNotFoundException<DefensiveSkill>(request.Id);
 
 			ability.DefensiveSkills.Remove(defensiveSkill);
 

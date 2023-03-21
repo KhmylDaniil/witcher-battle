@@ -30,7 +30,7 @@ namespace Witcher.Core.Requests.BodyTemplateRequests
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.BodyTemplates)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new ExceptionNoAccessToEntity<Game>();
+					?? throw new NoAccessToEntityException<Game>();
 
 			if (game.BodyTemplates.Any(x => x.Name == request.Name))
 				throw new RequestNameNotUniqException<CreateBodyTemplateCommand>(nameof(request.Name));

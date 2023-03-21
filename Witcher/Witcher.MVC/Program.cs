@@ -5,7 +5,7 @@ using Witcher.MVC.Logger;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.ConfigureSerilog(LogLevel.Warning);
+builder.ConfigureSerilog();
 
 // Add services to the container.
 Startup.ConfigureServices(builder.Services, builder.Configuration, builder.Environment);

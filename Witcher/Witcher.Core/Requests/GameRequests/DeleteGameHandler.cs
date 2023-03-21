@@ -19,7 +19,7 @@ namespace Witcher.Core.Requests.GameRequests
 		{
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games, BaseData.GameRoles.MainMasterRoleId)
 				.FirstOrDefaultAsync(cancellationToken: cancellationToken)
-				?? throw new ExceptionNoAccessToEntity<Game>();
+				?? throw new NoAccessToEntityException<Game>();
 
 			_appDbContext.Games.Remove(game);
 			await _appDbContext.SaveChangesAsync(cancellationToken);

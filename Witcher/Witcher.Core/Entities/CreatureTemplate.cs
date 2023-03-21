@@ -154,7 +154,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(HP));
+					throw new FieldOutOfRangeException<Creature>(nameof(HP));
 				_hp = value;
 			}
 		}
@@ -168,7 +168,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Sta));
+					throw new FieldOutOfRangeException<Creature>(nameof(Sta));
 				_sta = value;
 			}
 		}
@@ -182,7 +182,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Int));
+					throw new FieldOutOfRangeException<Creature>(nameof(Int));
 				_int = value;
 			}
 		}
@@ -196,7 +196,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Ref));
+					throw new FieldOutOfRangeException<Creature>(nameof(Ref));
 				_ref = value;
 			}
 		}
@@ -210,7 +210,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Dex));
+					throw new FieldOutOfRangeException<Creature>(nameof(Dex));
 				_dex = value;
 			}
 		}
@@ -224,7 +224,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Body));
+					throw new FieldOutOfRangeException<Creature>(nameof(Body));
 				_body = value;
 			}
 		}
@@ -238,7 +238,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Emp));
+					throw new FieldOutOfRangeException<Creature>(nameof(Emp));
 				_emp = value;
 			}
 		}
@@ -252,7 +252,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Cra));
+					throw new FieldOutOfRangeException<Creature>(nameof(Cra));
 				_cra = value;
 			}
 		}
@@ -266,7 +266,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Will));
+					throw new FieldOutOfRangeException<Creature>(nameof(Will));
 				_will = value;
 			}
 		}
@@ -280,7 +280,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 0)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Luck));
+					throw new FieldOutOfRangeException<Creature>(nameof(Luck));
 				_luck = value;
 			}
 		}
@@ -294,7 +294,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 0)
-					throw new ExceptionFieldOutOfRange<Creature>(nameof(Speed));
+					throw new FieldOutOfRangeException<Creature>(nameof(Speed));
 				_speed = value;
 			}
 		}
@@ -377,7 +377,7 @@ namespace Witcher.Core.Entities
 				throw new ArgumentException("Необходимо передать данные для обновления способностей");
 
 			if (Abilities == null)
-				throw new ExceptionFieldOutOfRange<CreatureTemplate>(nameof(Abilities));
+				throw new FieldOutOfRangeException<CreatureTemplate>(nameof(Abilities));
 
 			var entitiesToDelete = Abilities.Where(x => !request
 				.Any(y => y.Id == x.Id)).ToList();
@@ -403,10 +403,10 @@ namespace Witcher.Core.Entities
 		internal void UpdateCreatureTemplateSkills(IEnumerable<UpdateCreatureTemplateRequestSkill> data)
 		{
 			if (CreatureTemplateSkills == null)
-				throw new ExceptionEntityNotIncluded<CreatureTemplateSkill>(nameof(CreatureTemplateSkills));
+				throw new EntityNotIncludedException<CreatureTemplateSkill>(nameof(CreatureTemplateSkills));
 
 			if (data == null)
-				throw new ExceptionEntityNotIncluded<Skill>(nameof(CreatureTemplateSkills));
+				throw new EntityNotIncludedException<Skill>(nameof(CreatureTemplateSkills));
 
 			var entitiesToDelete = CreatureTemplateSkills
 					.Where(x => !data.Any(y => y.Skill == x.Skill)).ToList();
