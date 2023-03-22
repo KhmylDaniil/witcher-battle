@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Caching.Memory;
-using Serilog.Extensions.Logging;
 using Witcher.Core;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Services.Hasher;
-using Witcher.Storage.Postgresql;
+using Witcher.Storage.MySql;
 
 namespace Witcher.MVC
 {
@@ -19,8 +18,8 @@ namespace Witcher.MVC
 				? LoggerFactory.Create(builder => builder.AddConsole())
 				: null;
 
-			services.AddPostgreSqlStorage(
-				options: configuration.Get<PostgreSqlOptions>(),
+			services.AddMySqlStorage(
+				configuration: configuration,
 				sqlLoggerFactory: sqlLoggerFactory);
 
 			services.AddCore(hasherOptions: configuration.Get<HasherOptions>());

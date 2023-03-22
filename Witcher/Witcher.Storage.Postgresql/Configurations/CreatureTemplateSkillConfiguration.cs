@@ -4,7 +4,7 @@ using Witcher.Core.Entities;
 using System;
 using static Witcher.Core.BaseData.Enums;
 
-namespace Witcher.Storage.Postgresql.Configurations
+namespace Witcher.Storage.MySql.Configurations
 {
 	/// <summary>
 	/// Конфигурация для <see cref="CreatureTemplateSkill"/>

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Witcher.Core.Entities;
 
-namespace Witcher.Storage.Postgresql.Configurations
+namespace Witcher.Storage.MySql.Configurations
 {
 	/// <summary>
 	/// Конфигурация для сущности игра

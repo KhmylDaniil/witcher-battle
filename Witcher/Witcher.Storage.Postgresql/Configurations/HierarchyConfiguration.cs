@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Witcher.Core.Entities;
 
-namespace Witcher.Storage.Postgresql.Configurations
+namespace Witcher.Storage.MySql.Configurations
 {
 	public abstract class HierarchyConfiguration<TEntity> : EntityBaseConfiguration<TEntity>
 		where TEntity : EntityBase

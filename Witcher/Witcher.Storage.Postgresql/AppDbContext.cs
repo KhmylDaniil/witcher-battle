@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Witcher.Storage.Postgresql
+namespace Witcher.Storage.MySql
 {
 	/// <summary>
 	/// Контекст базы данных

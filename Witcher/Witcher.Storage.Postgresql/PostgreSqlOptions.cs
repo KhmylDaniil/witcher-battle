@@ -1,4 +1,4 @@
-﻿namespace Witcher.Storage.Postgresql
+﻿namespace Witcher.Storage.MySql
 {
 	/// <summary>
 	/// Параметры PostgreSql

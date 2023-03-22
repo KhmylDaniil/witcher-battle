@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using Witcher.Core.Entities;
 
-namespace Witcher.Storage.Postgresql.Configurations
+namespace Witcher.Storage.MySql.Configurations
 {
 	/// <summary>
 	/// Конфигурация для базовых сущностей <see cref="TEntity"/>
@@ -11,7 +12,7 @@ namespace Witcher.Storage.Postgresql.Configurations
 	public abstract class EntityBaseConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
 		where TEntity : EntityBase
 	{
-		protected const string NowCommand = "now() at time zone 'utc'";
+		protected const string NowCommand = "UTC_TIMESTAMP()";
 
 		/// <summary>
 		/// Конфигурация для базовых сущностей
@@ -30,8 +31,8 @@ namespace Witcher.Storage.Postgresql.Configurations
 		/// <param name="builder">Строитель</param>
 		public virtual void ConfigureBase(EntityTypeBuilder<TEntity> builder)
 		{
-			builder.Property(r => r.CreatedOn)
-				.HasDefaultValueSql(NowCommand);
+			builder.Property(r => r.CreatedOn);
+				//.HasDefaultValueSql(NowCommand);
 			builder.Property(r => r.ModifiedOn);
 			builder.Property(r => r.CreatedByUserId);
 			builder.Property(r => r.ModifiedByUserId);
@@ -50,8 +51,10 @@ namespace Witcher.Storage.Postgresql.Configurations
 		public virtual void ConfigureId(EntityTypeBuilder<TEntity> builder)
 		{
 			builder.HasKey(x => x.Id);
-			builder.Property(r => r.Id)
-				.HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
+			builder.Property(r => r.Id);
+
+				//				.HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
+				//.HasDefaultValueSql("SELECT UUID() AS ID");
 		}
 	}
 }

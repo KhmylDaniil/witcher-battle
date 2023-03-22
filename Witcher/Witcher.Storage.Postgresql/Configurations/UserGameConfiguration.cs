@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Witcher.Core.Entities;
 
-namespace Witcher.Storage.Postgresql.Configurations
+namespace Witcher.Storage.MySql.Configurations
 {
 	/// <summary>
 	/// Конфигурация для сущности пользователя игры
@@ -54,13 +54,13 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.WithMany(x => x.UserGames)
 				.HasForeignKey(x => x.InterfaceId)
 				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
+				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasOne(x => x.GameRole)
 				.WithMany(x => x.UserGames)
 				.HasForeignKey(x => x.GameRoleId)
 				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
+				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasMany(x => x.Instances)
 				.WithOne(x => x.UserGameActivated)

@@ -6,7 +6,7 @@ using Witcher.Core.BaseData;
 using Witcher.Core.Contracts.UserRequests.RegisterUser;
 using Witcher.Core.Entities;
 using Witcher.Core.Requests.UserRequests.RegisterUser;
-using Witcher.Storage.Postgresql;
+using Witcher.Storage.MySql;
 using System;
 using System.Threading.Tasks;
 

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Witcher.Core.Entities.Effects;
 
-namespace Witcher.Storage.Postgresql.Configurations.EffectsConfigurations
+namespace Witcher.Storage.MySql.Configurations.EffectsConfigurations
 {
 	/// <summary>
 	/// Конфигурация <see cref="ComplexArmCritEffect"/>

@@ -16,7 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witcher.MVC", "Witcher.MVC\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witcher.Core", "Witcher.Core\Witcher.Core.csproj", "{D24E1D0F-92E0-4294-AB76-B65C63B9A56A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witcher.Storage.Postgresql", "Witcher.Storage.Postgresql\Witcher.Storage.Postgresql.csproj", "{CE01981A-D444-45DA-B2F7-D7F61B23B766}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witcher.Storage.MySql", "Witcher.Storage.Postgresql\Witcher.Storage.MySql.csproj", "{CE01981A-D444-45DA-B2F7-D7F61B23B766}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witcher.UnitTest", "Witcher.UnitTest\Witcher.UnitTest.csproj", "{6C3B9ABC-E8C2-4F89-A324-BB3ABB21E20F}"
 EndProject

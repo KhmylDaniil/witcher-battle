@@ -5,7 +5,7 @@ using Moq;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
 using Witcher.Core.Entities;
-using Witcher.Storage.Postgresql;
+using Witcher.Storage.MySql;
 using System;
 using System.Collections.Generic;
 using System.Linq;

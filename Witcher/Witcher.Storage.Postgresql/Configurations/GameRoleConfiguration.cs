@@ -4,7 +4,7 @@ using Witcher.Core.BaseData;
 using Witcher.Core.Entities;
 using System;
 
-namespace Witcher.Storage.Postgresql.Configurations
+namespace Witcher.Storage.MySql.Configurations
 {
 	/// <summary>
 	/// Конфигурация для сущности роль в игре справочник

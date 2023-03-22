@@ -1,32 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Witcher.Core.Abstractions;
 using System;
+using Witcher.Core.Abstractions;
 
-namespace Witcher.Storage.Postgresql
+namespace Witcher.Storage.MySql
 {
-	/// <summary>
-	/// точка входа
-	/// </summary>
 	public static class Entry
 	{
-		/// <summary>
-		/// Добавить зависимости проекта PostgreSql
-		/// </summary>
-		/// <param name="services">Сервисы IServiceCollection</param>
-		/// <param name="options">Параметры PostgreSqlOptions</param>
-		/// <returns>Сервисы</returns>
-		public static IServiceCollection AddPostgreSqlStorage
+		public static IServiceCollection AddMySqlStorage
 			(this IServiceCollection services,
-			PostgreSqlOptions options,
+			IConfiguration configuration,
 			Microsoft.Extensions.Logging.ILoggerFactory sqlLoggerFactory)
 		{
 			if (services == null)
 				throw new ArgumentNullException(nameof(services));
-			if (string.IsNullOrWhiteSpace(options?.ConnectionString))
-				throw new ArgumentNullException(nameof(options));
 
-			services.AddDbContext<AppDbContext>(opt => opt.UseNpgsql(options.ConnectionString)
+			var connectionString = configuration.GetConnectionString("mySql");
+			var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
+
+			services.AddDbContext<AppDbContext>(opt => opt.UseMySql(connectionString, serverVersion,
+				options => options.SchemaBehavior(Pomelo.EntityFrameworkCore.MySql.Infrastructure.MySqlSchemaBehavior.Ignore))
 				.UseLoggerFactory(sqlLoggerFactory));
 			services.AddTransient<IAppDbContext, AppDbContext>();
 

@@ -4,7 +4,7 @@ using Witcher.Core.BaseData;
 using Witcher.Core.Entities;
 using System;
 
-namespace Witcher.Storage.Postgresql.Configurations
+namespace Witcher.Storage.MySql.Configurations
 {
 	/// <summary>
 	/// Конфигурация для пользователя <see cref="User"/>
@@ -67,7 +67,7 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.WithMany(x => x.Users)
 				.HasForeignKey(x => x.InterfaceId)
 				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
+				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasMany(x => x.ImgFiles)
 				.WithMany(x => x.Users);
