@@ -52,9 +52,9 @@ namespace Witcher.Core.Entities
 				string name = default,
 				string extension = default,
 				int size = default)
-				=> new TextFile()
+				=> new()
 				{
-					Id = id ?? default,
+					Id = id ?? Guid.NewGuid(),
 					Name = name ?? "ImgFile",
 					Extension = extension ?? "Extension",
 					Size = size,

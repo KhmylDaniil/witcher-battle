@@ -10,7 +10,7 @@ namespace Witcher.Core.BaseData
 		/// <summary>
 		/// Гуид роли главмастер
 		/// </summary>
-		public static readonly Guid MainMasterRoleId = new System.Guid("8094e0d0-3147-4791-9053-9667cbe127d7");
+		public static readonly Guid MainMasterRoleId = new("8094e0d0-3147-4791-9053-9667cbe127d7");
 
 		/// <summary>
 		/// Название роли главмастер
@@ -20,7 +20,7 @@ namespace Witcher.Core.BaseData
 		/// <summary>
 		/// Гуид роли мастер
 		/// </summary>
-		public static readonly Guid MasterRoleId = new System.Guid("8094e0d0-3147-4791-9053-9667cbe117d7");
+		public static readonly Guid MasterRoleId = new("8094e0d0-3147-4791-9053-9667cbe117d7");
 
 		/// <summary>
 		/// Название роли мастер
@@ -30,7 +30,7 @@ namespace Witcher.Core.BaseData
 		/// <summary>
 		/// Гуид роли игрок
 		/// </summary>
-		public static readonly Guid PlayerRoleId = new System.Guid("8094e0d0-3148-4791-9053-9667cbe137d8");
+		public static readonly Guid PlayerRoleId = new("8094e0d0-3148-4791-9053-9667cbe137d8");
 
 		/// <summary>
 		/// Название роли игрок

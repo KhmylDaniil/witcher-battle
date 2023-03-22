@@ -11,13 +11,14 @@ using System.Security.Authentication;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Witcher.Core.Exceptions.SystemExceptions;
 
 namespace Witcher.Core.Requests.UserRequests.LoginUser
 {
 	/// <summary>
 	/// Обработчик команды аутентификации пользователя
 	/// </summary>
-	public class LoginUserCommandHandler : BaseHandler<LoginUserCommand, LoginUserCommandResponse>
+	public class LoginUserHandler : BaseHandler<LoginUserCommand, LoginUserCommandResponse>
 	{
 
 		/// <summary>
@@ -36,7 +37,7 @@ namespace Witcher.Core.Requests.UserRequests.LoginUser
 		/// <param name="appDbContext">Контекст базы данных</param>
 		/// <param name="passwordHasher">Хеширование пароля</param>
 		/// <param name="httpContextAccessor">Доступ к Http контексту</param>
-		public LoginUserCommandHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IPasswordHasher passwordHasher, IHttpContextAccessor httpContextAccessor)
+		public LoginUserHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IPasswordHasher passwordHasher, IHttpContextAccessor httpContextAccessor)
 			: base(appDbContext, authorizationService)
 		{
 			_passwordHasher = passwordHasher;
@@ -59,13 +60,13 @@ namespace Witcher.Core.Requests.UserRequests.LoginUser
 				.FirstOrDefaultAsync(x => x.Login == request.Login, cancellationToken);
 
 			if (existingUserAccount == null)
-				throw new AuthenticationException("Неверный логин");
+				throw new ApplicationSystemNullException<LoginUserHandler>(nameof(existingUserAccount));
 
 			bool isPasswordCorrect = _passwordHasher.VerifyHash
 				(request.Password, existingUserAccount.PasswordHash);
 
 			if (!isPasswordCorrect)
-				throw new AuthenticationException("Неверный пароль");
+				throw new ApplicationSystemNullException<LoginUserHandler>(nameof(isPasswordCorrect));
 
 			var claims = new List<Claim>
 				{

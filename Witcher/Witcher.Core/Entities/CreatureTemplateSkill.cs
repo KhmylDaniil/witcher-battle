@@ -1,4 +1,5 @@
 ﻿using System;
+using Witcher.Core.Exceptions.EntityExceptions;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Entities
@@ -57,7 +58,9 @@ namespace Witcher.Core.Entities
 			get => _skillValue;
 			set
 			{
-				if (value < 0 || value > BaseData.DiceValue.Value) throw new ArgumentOutOfRangeException(nameof(SkillValue));
+				if (value < 0 || value > BaseData.DiceValue.Value)
+					throw new FieldOutOfRangeException<CreatureTemplateSkill>(nameof(SkillValue));
+				
 				_skillValue = value;
 			}
 		}
@@ -72,7 +75,7 @@ namespace Witcher.Core.Entities
 			get => _creatureTemplate;
 			set
 			{
-				_creatureTemplate = value ?? throw new ApplicationException("Необходимо передать шаблон существа");
+				_creatureTemplate = value ?? throw new EntityNotIncludedException<CreatureTemplateSkill>(nameof(CreatureTemplate));
 				CreatureTemplateId = value.Id;
 			}
 		}
@@ -108,7 +111,7 @@ namespace Witcher.Core.Entities
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
-		=> new CreatureTemplateSkill()
+		=> new()
 		{
 			Id = id ?? Guid.NewGuid(),
 			CreatureTemplate = creatureTemplate,

@@ -1,5 +1,6 @@
 ﻿using Witcher.Core.BaseData;
 using System;
+using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Entities
 {
@@ -57,7 +58,7 @@ namespace Witcher.Core.Entities
 			get => _ability;
 			set
 			{
-				_ability = value ?? throw new ApplicationException("Необходимо передать способность");
+				_ability = value ?? throw new EntityNotIncludedException<AppliedCondition>(nameof(Ability));
 				AbilityId = value.Id;
 			}
 		}

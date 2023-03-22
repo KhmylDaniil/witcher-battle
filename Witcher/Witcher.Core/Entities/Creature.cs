@@ -336,7 +336,7 @@ namespace Witcher.Core.Entities
 			get => _battle;
 			protected set
 			{
-				_battle = value ?? throw new ApplicationException("Необходимо передать бой");
+				_battle = value ?? throw new EntityNotIncludedException<Creature>(nameof(Battle));
 				BattleId = value.Id;
 			}
 		}
@@ -362,7 +362,7 @@ namespace Witcher.Core.Entities
 			get => _creatureTemplate;
 			set
 			{
-				_creatureTemplate = value ?? throw new ApplicationException("Необходимо передать шаблон существа");
+				_creatureTemplate = value ?? throw new EntityNotIncludedException<Creature>(nameof(CreatureTemplate));
 				CreatureTemplateId = value.Id;
 			}
 		}

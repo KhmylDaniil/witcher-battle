@@ -1,5 +1,6 @@
 ﻿using Witcher.Core.Exceptions.RequestExceptions;
 using System;
+using Witcher.Core.Exceptions.SystemExceptions;
 
 namespace Witcher.Core.Entities
 {
@@ -70,11 +71,11 @@ namespace Witcher.Core.Entities
 		/// Установить логин
 		/// </summary>
 		/// <param name="login">Логин</param>
-		/// <param name="hasUsersWithLogin">Делегат проверки уникальности</param>
+		/// <param name="hasUsersWithEmail">Делегат проверки уникальности</param>
 		protected void SetLogin(string login, HasUsersWithLogin hasUsersWithEmail)
 		{
 			if (hasUsersWithEmail is null)
-				throw new ArgumentNullException(nameof(hasUsersWithEmail));
+				throw new ApplicationSystemNullException<UserAccount>(nameof(hasUsersWithEmail));
 
 			var isDuplicate = hasUsersWithEmail(this, login);
 			if (isDuplicate)

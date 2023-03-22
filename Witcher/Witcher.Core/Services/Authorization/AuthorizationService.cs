@@ -29,7 +29,7 @@ namespace Witcher.Core.Services.Authorization
 			IQueryable<Game> query, Guid gameRoleId = default)
 		{
 			if (query is null)
-				throw new ApplicationSystemNullException(nameof(AuthorizationService), nameof(query));
+				throw new ApplicationSystemNullException<AuthorizationService>(nameof(query));
 
 			gameRoleId = gameRoleId == Guid.Empty ? GameRoles.MasterRoleId : gameRoleId;
 
@@ -46,7 +46,7 @@ namespace Witcher.Core.Services.Authorization
 			IQueryable<Game> query)
 		{
 			if (query is null)
-				throw new ApplicationSystemNullException(nameof(AuthorizationService), nameof(query));
+				throw new ApplicationSystemNullException<AuthorizationService>(nameof(query));
 
 			if (string.Equals(_userContext.Role, SystemRoles.AdminRoleName, StringComparison.OrdinalIgnoreCase))
 				return query;
@@ -60,7 +60,7 @@ namespace Witcher.Core.Services.Authorization
 			IQueryable<Battle> query, Guid battleId)
 		{
 			if (query is null)
-				throw new ApplicationSystemNullException(nameof(AuthorizationService), nameof(query));
+				throw new ApplicationSystemNullException<AuthorizationService>(nameof(query));
 
 			if (string.Equals(_userContext.Role, SystemRoles.AdminRoleName, StringComparison.OrdinalIgnoreCase))
 				return query;

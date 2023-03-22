@@ -1,4 +1,5 @@
 ﻿using System;
+using Witcher.Core.Exceptions.EntityExceptions;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Entities
@@ -66,7 +67,7 @@ namespace Witcher.Core.Entities
 			get => _bodyTemplate;
 			protected set
 			{
-				_bodyTemplate = value ?? throw new ApplicationException("Необходимо передать тип части тела");
+				_bodyTemplate = value ?? throw new EntityNotIncludedException<BodyTemplatePart>(nameof(BodyTemplate));
 				BodyTemplateId = value.Id;
 			}
 		}
@@ -100,7 +101,7 @@ namespace Witcher.Core.Entities
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
-		=> new BodyTemplatePart()
+		=> new()
 		{
 			Id = id ?? Guid.NewGuid(),
 			BodyTemplate = bodyTemplate,

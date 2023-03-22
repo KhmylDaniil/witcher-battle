@@ -5,6 +5,7 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Entities
 {
@@ -55,7 +56,7 @@ namespace Witcher.Core.Entities
 			get => _creature;
 			set
 			{
-				_creature = value ?? throw new ApplicationException("Необходимо передать существо");
+				_creature = value ?? throw new EntityNotIncludedException<Effect>(nameof(Creature));
 				CreatureId = value.Id;
 			}
 		}

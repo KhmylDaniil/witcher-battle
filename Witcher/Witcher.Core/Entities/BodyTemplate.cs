@@ -2,6 +2,7 @@
 using Witcher.Core.Requests.BodyTemplateRequests;
 using System;
 using System.Collections.Generic;
+using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Entities
 {
@@ -64,7 +65,7 @@ namespace Witcher.Core.Entities
 			get => _game;
 			protected set
 			{
-				_game = value ?? throw new ApplicationException("Необходимо передать игру");
+				_game = value ?? throw new EntityNotIncludedException<BodyTemplate>(nameof(Game));
 				GameId = value.Id;
 			}
 		}
@@ -98,7 +99,7 @@ namespace Witcher.Core.Entities
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
-			=> new BodyTemplate()
+			=> new()
 			{
 				Id = id ?? Guid.NewGuid(),
 				Name = name ?? "BodyTemplate",

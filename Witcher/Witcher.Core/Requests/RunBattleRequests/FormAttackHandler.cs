@@ -45,6 +45,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 				DefensiveSkills = defensiveSkills.ToDictionary(x => Enum.GetName(x), x => (Skill?)x)
 			};
 
+			//added default choice
 			result.DefensiveSkills.Add(string.Empty, null);
 			result.CreatureParts.Add(string.Empty, null);
 

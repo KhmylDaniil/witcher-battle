@@ -23,7 +23,7 @@ namespace Witcher.Core.Services.ChangeListService
 			IEnumerable<TextFile> textFiles)
 		{
 			if (entity.TextFiles is null)
-				throw new ApplicationSystemNullException(nameof(ChangeListService), nameof(entity.TextFiles));
+				throw new ApplicationSystemNullException<ChangeListService>(nameof(entity.TextFiles));
 
 			if (textFiles != null || entity.TextFiles.Any())
 			{
@@ -52,7 +52,7 @@ namespace Witcher.Core.Services.ChangeListService
 			IEnumerable<ImgFile> imgFiles)
 		{
 			if (entity.ImgFiles is null)
-				throw new ApplicationSystemNullException(nameof(ChangeListService), nameof(entity.ImgFiles));
+				throw new ApplicationSystemNullException<ChangeListService>(nameof(entity.ImgFiles));
 
 			if (imgFiles != null || entity.ImgFiles.Any())
 			{

@@ -46,6 +46,5 @@ namespace Witcher.Core.Entities
 		public List<UserGameCharacter> UserGameCharacters { get; set; }
 
 		#endregion navigation properties
-
 	}
 }

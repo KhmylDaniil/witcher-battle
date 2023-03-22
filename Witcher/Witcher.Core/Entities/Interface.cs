@@ -91,7 +91,7 @@ namespace Witcher.Core.Entities
 			string name = default,
 			string type = default,
 			Guid? id = default)
-		=> new Interface()
+		=> new()
 		{
 			Name = name ?? SystemInterfaces.SystemLightName,
 			Type = type ?? InterfaceType.System,

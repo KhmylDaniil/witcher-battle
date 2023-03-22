@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Witcher.Core.Exceptions;
 
 namespace Witcher.Core.ExtensionMethods
 {
@@ -28,14 +29,14 @@ namespace Witcher.Core.ExtensionMethods
 
 			//Create x=>x.PropName
 			var propertyInfo = entityType.GetProperty(propertyName)
-				?? throw new ArgumentException("Не корректно заданo поле для сортировки");
+				?? throw new ApplicationSystemBaseException("Не корректно заданo поле для сортировки");
 
 			ParameterExpression arg = Expression.Parameter(entityType, "x");
 			MemberExpression property = Expression.Property(arg, propertyName);
 			var selector = Expression.Lambda(property, arg);
 
 			//Get System.Linq.Queryable.OrderBy() method.
-			var enumarableType = typeof(System.Linq.Queryable);
+			var enumarableType = typeof(Queryable);
 			var metodName = isAscending ? "OrderBy" : "OrderByDescending";
 			var method = enumarableType.GetMethods()
 				 .Where(m => m.Name == metodName && m.IsGenericMethodDefinition)

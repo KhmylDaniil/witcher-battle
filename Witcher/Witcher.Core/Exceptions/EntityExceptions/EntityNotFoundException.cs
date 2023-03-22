@@ -13,7 +13,7 @@ namespace Witcher.Core.Exceptions.EntityExceptions
 		/// </summary>
 		/// <param name="id">ИД сущности</param>
 		public EntityNotFoundException(Guid id)
-			: base($"Не найдена сущность {typeof(T)} с ИД {id}")
+			: base($"Не найдена сущность {typeof(T)} с ИД {id}.")
 		{
 		}
 	}

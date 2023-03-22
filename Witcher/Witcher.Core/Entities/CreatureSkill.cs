@@ -1,4 +1,5 @@
 ﻿using System;
+using Witcher.Core.Exceptions.EntityExceptions;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Entities
@@ -74,7 +75,7 @@ namespace Witcher.Core.Entities
 			get => _creature;
 			set
 			{
-				_creature = value ?? throw new ApplicationException("Необходимо передать существо");
+				_creature = value ?? throw new EntityNotIncludedException<CreatureSkill>(nameof(Creature));
 				CreatureId = value.Id;
 			}
 		}
@@ -102,7 +103,7 @@ namespace Witcher.Core.Entities
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
-		=> new CreatureSkill()
+		=> new()
 		{
 			Id = id ?? Guid.NewGuid(),
 			Creature = creature,

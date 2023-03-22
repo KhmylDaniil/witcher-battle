@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Entities
 {
@@ -90,7 +91,7 @@ namespace Witcher.Core.Entities
 			get => _user;
 			set
 			{
-				_user = value ?? throw new ApplicationException("Пустое поле Пользователь");
+				_user = value ?? throw new EntityNotIncludedException<UserGame>(nameof(User));
 				UserId = value.Id;
 			}
 		}
@@ -103,7 +104,7 @@ namespace Witcher.Core.Entities
 			get => _game;
 			set
 			{
-				_game = value ?? throw new ApplicationException("Пустое поле Игра");
+				_game = value ?? throw new EntityNotIncludedException<UserGame>(nameof(Game));
 				GameId = value.Id;
 			}
 		}
@@ -116,7 +117,7 @@ namespace Witcher.Core.Entities
 			get => _interface;
 			set
 			{
-				_interface = value ?? throw new ApplicationException("Пустое поле Интерфейс");
+				_interface = value ?? throw new EntityNotIncludedException<UserGame>(nameof(Interface));
 				InterfaceId = value.Id;
 			}
 		}
@@ -129,7 +130,7 @@ namespace Witcher.Core.Entities
 			get => _gameRole;
 			set
 			{
-				_gameRole = value ?? throw new ApplicationException("Пустое поле Роль в игре");
+				_gameRole = value ?? throw new EntityNotIncludedException<UserGame>(nameof(GameRole));
 				GameRoleId = value.Id;
 			}
 		}
@@ -160,7 +161,7 @@ namespace Witcher.Core.Entities
 			Game game = default,
 			Interface @interface = default,
 			GameRole gameRole = default)
-		=> new UserGame()
+		=> new()
 		{
 			UserId = user?.Id ?? default,
 			GameId = game?.Id ?? default,
