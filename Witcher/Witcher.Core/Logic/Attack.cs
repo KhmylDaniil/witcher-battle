@@ -303,7 +303,7 @@ namespace Witcher.Core.Logic
 			&& (x.HP <= 0 || x.Effects.Any(x => x is DeadEffect))) > 0;
 		}
 
-		string CritMissMessage(int attackerFumble) => $"Критический промах {attackerFumble}.\n";
+		string CritMissMessage(int attackerFumble) => $"Критический промах {attackerFumble}.";
 
 		/// <summary>
 		/// Проверка атаки по умирающим

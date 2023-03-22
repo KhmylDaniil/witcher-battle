@@ -24,6 +24,8 @@
             else
             {
                 <p>@Model.Skill</p>
+                <input asp-for="Skill" value="@Model.Skill" hidden=true class="form-control" />
+                <input asp-for="Id" value="@Model.Id" hidden=true class="form-control" />
             }
             <div class="form-group">
                 <label asp-for="Value" class="control-label"></label>
