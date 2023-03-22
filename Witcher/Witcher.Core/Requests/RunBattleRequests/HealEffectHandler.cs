@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.RunBattleRequests;
 using Witcher.Core.Entities;
-using Witcher.Core.Exceptions;
 using Witcher.Core.Exceptions.EntityExceptions;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {
@@ -54,13 +54,13 @@ namespace Witcher.Core.Requests.RunBattleRequests
 					?? throw new NoAccessToEntityException<Battle>();
 
 			var healer = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
-				?? throw new EntityNotFoundException<Creature>();
+				?? throw new EntityNotFoundException<Creature>(request.CreatureId);
 
 			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
-				?? throw new EntityNotFoundException<Creature>();
+				?? throw new EntityNotFoundException<Creature>(request.TargetCreatureId);
 
 			var effect = target.Effects.FirstOrDefault(x => x.Id == request.EffectId)
-				?? throw new EntityNotFoundException<Effect>();
+				?? throw new EntityNotFoundException<Effect>(request.EffectId);
 
 			StringBuilder message = new();
 

@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Witcher.Core.Exceptions;
+using Witcher.Core.Exceptions.SystemExceptions;
 using Witcher.Core.Services.Hasher;
 using System;
 
@@ -58,7 +58,7 @@ namespace Witcher.UnitTest.Core.Hasher
 			var passwordHasher = new PasswordHasher(hasherOptions);
 
 			//Assert
-			Assert.ThrowsException<ArgumentException>(() =>
+			Assert.ThrowsException<ApplicationSystemNullException<PasswordHasher>>(() =>
 				passwordHasher.Hash(null));
 		}
 
@@ -113,7 +113,7 @@ namespace Witcher.UnitTest.Core.Hasher
 			var passwordHasher = new PasswordHasher(hasherOptions);
 
 			//Assert
-			Assert.ThrowsException<ArgumentException>(() =>
+			Assert.ThrowsException<ApplicationSystemNullException<PasswordHasher>>(() =>
 				passwordHasher.VerifyHash(password, hash));
 		}
 	}

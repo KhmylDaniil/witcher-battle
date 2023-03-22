@@ -1,4 +1,4 @@
-﻿namespace Witcher.Core.Exceptions
+﻿namespace Witcher.Core.Exceptions.RequestExceptions
 {
 	/// <summary>
 	/// Исключение нет прав доступа к сущности

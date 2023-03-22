@@ -1,4 +1,5 @@
 ﻿using System;
+using Witcher.Core.Exceptions.EntityExceptions;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Entities
@@ -72,7 +73,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 0)
-					throw new ArgumentOutOfRangeException(nameof(StartingArmor));
+					throw new FieldOutOfRangeException<CreaturePart>(nameof(StartingArmor));
 				_startingArmor = value;
 			}
 		}
@@ -85,7 +86,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 0)
-					throw new ArgumentOutOfRangeException(nameof(CurrentArmor));
+					throw new FieldOutOfRangeException<CreaturePart>(nameof(CurrentArmor));
 				_currentArmor = value;
 			}
 		}
@@ -99,7 +100,7 @@ namespace Witcher.Core.Entities
 			get => _creature;
 			set
 			{
-				_creature = value ?? throw new ApplicationException("Необходимо передать существо");
+				_creature = value ?? throw new EntityNotIncludedException<CreaturePart>(nameof(Creature));
 				CreatureId = value.Id;
 			}
 		}

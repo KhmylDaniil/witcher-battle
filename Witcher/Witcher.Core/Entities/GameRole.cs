@@ -64,9 +64,9 @@ namespace Witcher.Core.Entities
 		public static GameRole CreateForTest(
 			Guid? id = default,
 			string name = default)
-			=> new GameRole()
+			=> new()
 			{
-				Id = id ?? default,
+				Id = id ?? BaseData.GameRoles.MasterRoleId,
 				Name = name ?? "GameRole",
 				UserGames = new List<UserGame>()
 			};

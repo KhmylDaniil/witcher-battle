@@ -72,7 +72,7 @@ namespace Witcher.Core.Entities
 		public static SystemRole CreateForTest(
 			string name = default,
 			Guid? id = default)
-		=> new SystemRole()
+		=> new()
 		{
 			Name = name ?? SystemRoles.UserRoleName,
 			Id = id ?? SystemRoles.UserRoleId,

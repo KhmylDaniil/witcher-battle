@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Entities
 {
@@ -50,7 +51,7 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Айди части тела
 		/// </summary>
-		public Guid? CreaturePartId { get; protected set; }
+		public Guid CreaturePartId { get; protected set; }
 
 		/// <summary>
 		/// Часть тела
@@ -60,9 +61,9 @@ namespace Witcher.Core.Entities
 			get => _creaturePart;
 			set
 			{
-				_creaturePart = value;
+				_creaturePart = value ?? throw new EntityNotIncludedException<CritEffect>(nameof(CreaturePart));
 
-				CreaturePartId = value?.Id;
+				CreaturePartId = value.Id;
 			}
 		}
 
@@ -145,9 +146,7 @@ namespace Witcher.Core.Entities
 		/// <returns>Возможность создания эффекта</returns>
 		public static bool CheckExistingEffectAndRemoveStabilizedEffect<T>(Creature creature, CreaturePart aimedPart) where T : CritEffect
 		{
-			ICrit existingCrit = creature.Effects.FirstOrDefault(x => x is T crit && crit.CreaturePartId == aimedPart.Id) as ICrit;
-			
-			if (existingCrit == null)
+			if (creature.Effects.FirstOrDefault(x => x is T crit && crit.CreaturePartId == aimedPart.Id) is not ICrit existingCrit)
 				return true;
 
 			if (!IsStabile(existingCrit.Severity))

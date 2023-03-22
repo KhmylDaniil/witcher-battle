@@ -1,4 +1,5 @@
 ﻿using System;
+using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Entities
 {
@@ -74,7 +75,7 @@ namespace Witcher.Core.Entities
 			get => _character;
 			set
 			{
-				_character = value ?? throw new ApplicationException("Необходимо передать персонажа");
+				_character = value ?? throw new EntityNotIncludedException<UserGameCharacter>(nameof(Character));
 				CharacterId = value.Id;
 			}
 		}
@@ -87,7 +88,7 @@ namespace Witcher.Core.Entities
 			get => _userGame;
 			set
 			{
-				_userGame = value ?? throw new ApplicationException("Необходимо передать пользователя игры");
+				_userGame = value ?? throw new EntityNotIncludedException<UserGameCharacter>(nameof(UserGame));
 				UserGameId = value.Id;
 			}
 		}
@@ -100,7 +101,7 @@ namespace Witcher.Core.Entities
 			get => _interface;
 			set
 			{
-				_interface = value ?? throw new ApplicationException("Необходимо передать интерфейс");
+				_interface = value ?? throw new EntityNotIncludedException<UserGameCharacter>(nameof(Interface));
 				InterfaceId = value.Id;
 			}
 		}
@@ -124,7 +125,7 @@ namespace Witcher.Core.Entities
 			Character character = default,
 			UserGame userGame = default,
 			Interface @interface = default)
-		=> new UserGameCharacter()
+		=> new()
 		{
 			Character = character,
 			UserGame = userGame,

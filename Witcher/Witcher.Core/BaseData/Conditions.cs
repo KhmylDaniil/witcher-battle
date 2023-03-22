@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Witcher.Core.Exceptions;
 
 namespace Witcher.Core.BaseData
 {
@@ -60,7 +61,7 @@ namespace Witcher.Core.BaseData
 		public static string GetConditionFullName(Condition condition)
 			=> Names.TryGetValue(condition, out string result)
 			? result
-			: throw new ArgumentException("No such condition");
+			: throw new LogicBaseException("No such condition");
 	}
 
 

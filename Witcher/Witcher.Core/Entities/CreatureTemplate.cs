@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.Exceptions.SystemExceptions;
+using Witcher.Core.Services.ChangeListService;
 
 namespace Witcher.Core.Entities
 {
@@ -309,7 +311,7 @@ namespace Witcher.Core.Entities
 			get => _game;
 			protected set
 			{
-				_game = value ?? throw new ApplicationException("Необходимо передать игру");
+				_game = value ?? throw new EntityNotIncludedException<CreatureTemplate>(nameof(Game));
 				GameId = value.Id;
 			}
 		}
@@ -335,7 +337,7 @@ namespace Witcher.Core.Entities
 			get => _bodyTemplate;
 			set
 			{
-				_bodyTemplate = value ?? throw new ApplicationException("Необходимо передать шаблон тела");
+				_bodyTemplate = value ?? throw new EntityNotIncludedException<CreatureTemplate>(nameof(BodyTemplate));
 				BodyTemplateId = value.Id;
 			}
 		}
@@ -374,10 +376,10 @@ namespace Witcher.Core.Entities
 		internal void UpdateAbililities(List<Ability> request)
 		{
 			if (request == null)
-				throw new ArgumentException("Необходимо передать данные для обновления способностей");
+				throw new ApplicationSystemNullException<CreatureTemplate>(nameof(request));
 
 			if (Abilities == null)
-				throw new FieldOutOfRangeException<CreatureTemplate>(nameof(Abilities));
+				throw new ApplicationSystemNullException<CreatureTemplate>(nameof(Abilities));
 
 			var entitiesToDelete = Abilities.Where(x => !request
 				.Any(y => y.Id == x.Id)).ToList();
@@ -403,10 +405,10 @@ namespace Witcher.Core.Entities
 		internal void UpdateCreatureTemplateSkills(IEnumerable<UpdateCreatureTemplateRequestSkill> data)
 		{
 			if (CreatureTemplateSkills == null)
-				throw new EntityNotIncludedException<CreatureTemplateSkill>(nameof(CreatureTemplateSkills));
+				throw new ApplicationSystemNullException<CreatureTemplate>(nameof(CreatureTemplateSkills));
 
 			if (data == null)
-				throw new EntityNotIncludedException<Skill>(nameof(CreatureTemplateSkills));
+				throw new ApplicationSystemNullException<CreatureTemplate>(nameof(data));
 
 			var entitiesToDelete = CreatureTemplateSkills
 					.Where(x => !data.Any(y => y.Skill == x.Skill)).ToList();

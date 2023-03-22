@@ -12,7 +12,7 @@ namespace Witcher.Core.Requests.UserRequests.RegisterUser
 	/// <summary>
 	/// Обработчик команды регистрации пользователя
 	/// </summary>
-	public class RegisterUserCommandHandler : BaseHandler<RegisterUserCommand, RegisterUserCommandResponse>
+	public class RegisterUserHandler : BaseHandler<RegisterUserCommand, RegisterUserCommandResponse>
 	{
 		/// <summary>
 		/// Хеширование пароля
@@ -29,7 +29,7 @@ namespace Witcher.Core.Requests.UserRequests.RegisterUser
 		/// </summary>
 		/// <param name="appDbContext">Контекст базы данных</param>
 		/// <param name="passwordHasher">Хеширование пароля</param>
-		public RegisterUserCommandHandler(
+		public RegisterUserHandler(
 			IAppDbContext appDbContext,
 			IAuthorizationService authorizationService,
 			IPasswordHasher passwordHasher, 

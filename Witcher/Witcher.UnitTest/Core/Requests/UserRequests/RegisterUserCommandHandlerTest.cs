@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Witcher.UnitTest.Core.Requests.UserRequests
 {
 	/// <summary>
-	/// Тест для <see cref="RegisterUserCommandHandler" >
+	/// Тест для <see cref="RegisterUserHandler" >
 	/// </summary>
 	[TestClass]
 	public class RegisterUserCommandHandlerTest : UnitTestBase
@@ -57,7 +57,7 @@ namespace Witcher.UnitTest.Core.Requests.UserRequests
 			).Returns("AAA");
 
 			//Arrange
-			var registerUserCommandHandler = new RegisterUserCommandHandler
+			var registerUserCommandHandler = new RegisterUserHandler
 				(context, AuthorizationService.Object, passwordHasherMock.Object, HasUsersWithLogin);
 
 			//Act

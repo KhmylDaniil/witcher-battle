@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Witcher.UnitTest.Core.Requests.UserRequests
 {
 	/// <summary>
-	/// Тест для <see cref="LoginUserCommandHandler">
+	/// Тест для <see cref="LoginUserHandler">
 	/// </summary>
 	[TestClass]
 	public class LoginUserCommandHandlerTest : UnitTestBase
@@ -68,7 +68,7 @@ namespace Witcher.UnitTest.Core.Requests.UserRequests
 	/// <summary>
 	/// Тестовый класс для обработчика
 	/// </summary>
-	class TestLoginUserCommandHandler : LoginUserCommandHandler
+	class TestLoginUserCommandHandler : LoginUserHandler
 	{
 		public TestLoginUserCommandHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IPasswordHasher passwordHasher, IHttpContextAccessor httpContextAccessor)
 			: base(appDbContext, authorizationService, passwordHasher, httpContextAccessor)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Entities
 {
@@ -99,7 +100,7 @@ namespace Witcher.Core.Entities
 			get => _game;
 			protected set
 			{
-				_game = value ?? throw new ApplicationException("Необходимо передать игру");
+				_game = value ?? throw new EntityNotIncludedException<Battle>(nameof(Game));
 				GameId = value.Id;
 			}
 		}
@@ -164,13 +165,13 @@ namespace Witcher.Core.Entities
 			string name = default,
 			string description = default,
 			int nextInitiative = default)
-		=> new Battle()
+		=> new()
 		{
 			Id = id ?? Guid.NewGuid(),
 			Game = game,
 			ImgFile = imgFile,
 			UserGameActivated = userGameActivated,
-			Name = name ?? "Экземпляр",
+			Name = name ?? "Битва",
 			Description = description,
 			NextInitiative = nextInitiative
 		};

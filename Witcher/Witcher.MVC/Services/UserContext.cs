@@ -1,6 +1,7 @@
 ﻿using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
 using System.Security.Claims;
+using Witcher.Core.Exceptions;
 
 namespace Witcher.MVC
 {
@@ -31,10 +32,9 @@ namespace Witcher.MVC
 					return SystemUsers.SystemUserId;
 
 				var value = _httpContextAccessor.HttpContext.User.Claims
-					.FirstOrDefault(c => c.Type == ClaimTypes.Name)
-					?.Value;
-				if (value == null)
-					throw new InvalidOperationException("Айди текущего пользователя не определено");
+					.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
+					?? throw new ApplicationSystemBaseException("Айди текущего пользователя не определено");
+
 				return new Guid(value);
 			}
 		}
@@ -50,10 +50,9 @@ namespace Witcher.MVC
 					return SystemRoles.AdminRoleName;
 
 				var value = _httpContextAccessor.HttpContext.User.Claims
-					.FirstOrDefault(c => c.Type == ClaimTypes.Role)
-					?.Value;
-				if (value == null)
-					throw new InvalidOperationException("Роль текущего пользователя не определена");
+					.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value
+					?? throw new ApplicationSystemBaseException("Роль текущего пользователя не определена");
+
 				return new string(value);
 			}
 		}

@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.CreatureTemplateRequests;
 using Witcher.Core.Entities;
-using Witcher.Core.Exceptions;
 using Witcher.Core.Exceptions.EntityExceptions;
 using Witcher.Core.Exceptions.RequestExceptions;
 using System;
@@ -116,7 +115,7 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 								?? throw new EntityNotFoundException<CreatureTemplateSkill>(skill.Id.Value);
 					else
 						if (creatureTemplate.CreatureTemplateSkills.Any(x => x.Skill == skill.Skill))
-						throw new RequestNotUniqException<CreatureTemplateSkill>(Enum.GetName(skill.Skill));
+							throw new RequestNotUniqException<CreatureTemplateSkill>(Enum.GetName(skill.Skill));
 				}
 			}
 

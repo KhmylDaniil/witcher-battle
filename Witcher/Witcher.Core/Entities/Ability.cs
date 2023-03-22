@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.Exceptions.SystemExceptions;
 
 namespace Witcher.Core.Entities
 {
@@ -100,7 +101,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 0)
-					throw new ArgumentOutOfRangeException(nameof(AttackDiceQuantity));
+					throw new FieldOutOfRangeException<Ability>(nameof(AttackDiceQuantity));
 				_attackDiceQuantity = value;
 			}
 		}
@@ -119,7 +120,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 0)
-					throw new ArgumentOutOfRangeException(nameof(AttackSpeed));
+					throw new FieldOutOfRangeException<Ability>(nameof(AttackSpeed));
 				_attackSpeed = value;
 			}
 		}
@@ -139,7 +140,7 @@ namespace Witcher.Core.Entities
 			get => _game;
 			protected set
 			{
-				_game = value ?? throw new ApplicationException("Необходимо передать игру");
+				_game = value ?? throw new EntityNotIncludedException<Ability>(nameof(Game));
 				GameId = value.Id;
 			}
 		}
@@ -261,7 +262,7 @@ namespace Witcher.Core.Entities
 				return;
 
 			if (AppliedConditions == null)
-				throw new FieldOutOfRangeException<Ability>(nameof(AppliedConditions));
+				throw new ApplicationSystemNullException<Ability>(nameof(AppliedConditions));
 
 			var entitiesToDelete = AppliedConditions.Where(x => !data
 				.Any(y => y.Id == x.Id)).ToList();
@@ -295,7 +296,7 @@ namespace Witcher.Core.Entities
 		/// <param name="data">Защитные навыки</param>
 		private void UpdateDefensiveSkills(List<Skill> data)
 			=> DefensiveSkills = data is null
-			? throw new ArgumentNullException(nameof(data))
+			? throw new ApplicationSystemNullException<Ability>(nameof(data))
 			:data.Select(x => new DefensiveSkill(Id, x)).ToList();
 
 		/// <summary>

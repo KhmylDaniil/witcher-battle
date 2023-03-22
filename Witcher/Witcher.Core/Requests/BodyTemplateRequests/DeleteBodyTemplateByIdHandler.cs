@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BodyTemplateRequests;
 using Witcher.Core.Entities;
-using Witcher.Core.Exceptions;
 using Witcher.Core.Exceptions.EntityExceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.BodyTemplateRequests
 {
@@ -37,7 +37,7 @@ namespace Witcher.Core.Requests.BodyTemplateRequests
 				?? throw new EntityNotFoundException<BodyTemplate>(request.Id);
 
 			game.BodyTemplates.Remove(bodyTemplate);
-			await _appDbContext.SaveChangesAsync();
+			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;
 		}
 	}

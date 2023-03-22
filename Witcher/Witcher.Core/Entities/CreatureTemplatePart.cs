@@ -1,4 +1,5 @@
 ﻿using System;
+using Witcher.Core.Exceptions.EntityExceptions;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Entities
@@ -70,7 +71,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 0)
-					throw new ArgumentOutOfRangeException(nameof(Armor));
+					throw new FieldOutOfRangeException<CreatureTemplatePart>(nameof(Armor));
 				_armor = value;
 			}
 		}
@@ -84,7 +85,7 @@ namespace Witcher.Core.Entities
 			get => _creatureTemplate;
 			set
 			{
-				_creatureTemplate = value ?? throw new ApplicationException("Необходимо передать швблон существа");
+				_creatureTemplate = value ?? throw new EntityNotIncludedException<CreatureTemplatePart>(nameof(CreatureTemplate));
 				CreatureTemplateId = value.Id;
 			}
 		}

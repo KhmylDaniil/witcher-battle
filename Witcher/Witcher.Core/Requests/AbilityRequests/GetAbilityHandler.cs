@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Witcher.Core.Exceptions;
+using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
@@ -27,14 +29,14 @@ namespace Witcher.Core.Requests.AbilityRequests
 		public override async Task<IEnumerable<GetAbilityResponseItem>> Handle(GetAbilityQuery request, CancellationToken cancellationToken)
 		{
 			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
-				throw new ArgumentOutOfRangeException(nameof(GetAbilityQuery.CreationMinTime));
+				throw new RequestFieldIncorrectDataException<GetAbilityHandler>(nameof(GetAbilityQuery.CreationMinTime));
 			if (request.ModificationMinTime > _dateTimeProvider.TimeProvider)
-				throw new ArgumentOutOfRangeException(nameof(GetAbilityQuery.ModificationMinTime));
+				throw new RequestFieldIncorrectDataException<GetAbilityHandler>(nameof(GetAbilityQuery.ModificationMinTime));
 
 			if (request.CreationMaxTime != default && request.CreationMinTime >= request.CreationMaxTime)
-				throw new ArgumentOutOfRangeException(nameof(GetAbilityQuery.CreationMaxTime));
+				throw new RequestFieldIncorrectDataException<GetAbilityHandler>(nameof(GetAbilityQuery.CreationMaxTime));
 			if (request.ModificationMaxTime != default && request.ModificationMinTime >= request.ModificationMaxTime)
-				throw new ArgumentOutOfRangeException(nameof(GetAbilityQuery.ModificationMaxTime));
+				throw new RequestFieldIncorrectDataException<GetAbilityHandler>(nameof(GetAbilityQuery.ModificationMaxTime));
 
 			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities)

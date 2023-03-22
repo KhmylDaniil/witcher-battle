@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions;
 using System;
 using System.Text;
+using Witcher.Core.Exceptions.SystemExceptions;
 
 namespace Witcher.Core.Services.Hasher
 {
@@ -33,7 +33,7 @@ namespace Witcher.Core.Services.Hasher
 		public string Hash(string password)
 		{
 			if (password == null)
-				throw new ArgumentException("Пустое поле пароль.");
+				throw new ApplicationSystemNullException<PasswordHasher>(nameof(password));
 
 			byte[] Salt = Encoding.ASCII.GetBytes(_salt);
 
@@ -56,9 +56,9 @@ namespace Witcher.Core.Services.Hasher
 		public bool VerifyHash(string password, string hash)
 		{
 			if (password == null)
-				throw new ArgumentException("Пустое поле пароль.");
+				throw new ApplicationSystemNullException<PasswordHasher>(nameof(password));
 			if (hash == null)
-				throw new ArgumentException("Пустое поле хешированый пароль.");
+				throw new ApplicationSystemNullException<PasswordHasher>(nameof(hash));
 
 			return string.Equals(hash, Hash(password), StringComparison.Ordinal);
 		}

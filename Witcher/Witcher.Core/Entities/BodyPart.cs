@@ -81,7 +81,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value <= 0)
-					throw new ArgumentOutOfRangeException(nameof(DamageModifier));
+					throw new FieldOutOfRangeException<BodyPart>(nameof(DamageModifier));
 				_damageModifier = value;
 			}
 		}
@@ -95,7 +95,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < 1)
-					throw new ArgumentOutOfRangeException(nameof(MinToHit));
+					throw new FieldOutOfRangeException<BodyPart>(nameof(MinToHit));
 				_minToHit = value;
 			}
 		}
@@ -109,7 +109,7 @@ namespace Witcher.Core.Entities
 			set
 			{
 				if (value < MinToHit || value > 10)
-					throw new ArgumentOutOfRangeException(nameof(MaxToHit));
+					throw new FieldOutOfRangeException<BodyPart>(nameof(MaxToHit));
 				_maxToHit = value;
 			}
 		}
