@@ -22,10 +22,20 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasColumnName("UserGameActivatedId")
 				.HasComment("Айди активировашего персонажа пользователя");
 
-
 			builder.Property(x => x.ActivationTime)
 				.HasColumnName("ActivationTime")
 				.HasComment("Время активации персонажа");
+
+			builder.Property(r => r.GameId)
+				.HasColumnName("GameId")
+				.HasComment("Айди игры")
+				.IsRequired();
+
+			builder.HasOne(x => x.Game)
+				.WithMany(x => x.Characters)
+				.HasForeignKey(x => x.GameId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasOne(x => x.UserGameActivated)
 				.WithOne(x => x.ActivateCharacter)
@@ -42,6 +52,10 @@ namespace Witcher.Storage.Postgresql.Configurations
 			var userGameActivatedNavigation = builder.Metadata.FindNavigation(nameof(Character.UserGameActivated));
 			userGameActivatedNavigation.SetField(Character.UserGameActivatedField);
 			userGameActivatedNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+			var gameNavigation = builder.Metadata.FindNavigation(nameof(Character.Game));
+			gameNavigation.SetField(Character.GameField);
+			gameNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

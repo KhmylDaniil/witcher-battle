@@ -45,12 +45,6 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.SetNull);
 
-			builder.HasMany(x => x.UserGameCharacters)
-				.WithOne(x => x.Interface)
-				.HasForeignKey(x => x.InterfaceId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
-
 			builder.HasData(new Interface
 			(
 				name: SystemInterfaces.SystemDarkName,

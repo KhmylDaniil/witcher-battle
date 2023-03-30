@@ -44,7 +44,7 @@ namespace Witcher.Core.Requests.BattleRequests
 			return new GetCreatureByIdResponse()
 			{
 				Id = creature.Id,
-				BattleId = creature.BattleId,
+				BattleId = creature.BattleId.Value,
 				CreatureTemplateId = creature.CreatureTemplateId,
 				CreatureTemplateName = creature.CreatureTemplate.Name,
 				BodyTemplateId = creature.CreatureTemplate.BodyTemplateId,

@@ -74,11 +74,6 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		public List<UserGame> UserGames { get; set; }
 
-		/// <summary>
-		/// Персонажи пользователя игры
-		/// </summary>
-		public List<UserGameCharacter> UserGameCharacters { get; set; }
-
 		#endregion navigation properties
 
 		/// <summary>

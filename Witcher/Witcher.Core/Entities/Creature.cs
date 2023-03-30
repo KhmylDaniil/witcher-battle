@@ -107,7 +107,7 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Айди боя
 		/// </summary>
-		public Guid BattleId { get; protected set; }
+		public Guid? BattleId { get; protected set; }
 
 		/// <summary>
 		/// Айди графического файла
@@ -336,8 +336,8 @@ namespace Witcher.Core.Entities
 			get => _battle;
 			protected set
 			{
-				_battle = value ?? throw new EntityNotIncludedException<Creature>(nameof(Battle));
-				BattleId = value.Id;
+				_battle = value;
+				BattleId = value?.Id;
 			}
 		}
 

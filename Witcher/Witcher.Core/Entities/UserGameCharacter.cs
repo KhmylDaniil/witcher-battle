@@ -18,14 +18,8 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		public const string UserGameField = nameof(_userGame);
 
-		/// <summary>
-		/// Поле для <see cref="_interface"/>
-		/// </summary>
-		public const string InterfaceField = nameof(_interface);
-
 		private Character _character;
 		private UserGame _userGame;
-		private Interface _interface;
 
 		/// <summary>
 		/// Пустой конструктор
@@ -39,15 +33,12 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		/// <param name="character">Персонаж</param>
 		/// <param name="userGame">Пользователь игры</param>
-		/// <param name="interface">Интерфейс</param>
 		public UserGameCharacter(
 			Character character,
-			UserGame userGame,
-			Interface @interface)
+			UserGame userGame)
 		{
 			_character = character;
 			_userGame = userGame;
-			_interface = @interface;
 		}
 
 		/// <summary>
@@ -59,11 +50,6 @@ namespace Witcher.Core.Entities
 		/// Айди пользователя игры
 		/// </summary>
 		public Guid UserGameId { get; protected set; }
-
-		/// <summary>
-		/// Айди интерфейса
-		/// </summary>
-		public Guid InterfaceId { get; protected set; }
 
 		#region navigation properties
 
@@ -94,42 +80,10 @@ namespace Witcher.Core.Entities
 		}
 
 		/// <summary>
-		/// Интерфейс
-		/// </summary>
-		public Interface Interface
-		{
-			get => _interface;
-			set
-			{
-				_interface = value ?? throw new EntityNotIncludedException<UserGameCharacter>(nameof(Interface));
-				InterfaceId = value.Id;
-			}
-		}
-
-		/// <summary>
 		/// Персонаж, активированный пользователем
 		/// </summary>
 		public Character ActivateCharacter { get; set; }
 
 		#endregion navigation properties
-
-		/// <summary>
-		/// Создать тестовую сущность с заполненными полями
-		/// </summary>
-		/// <param name="character">Персонаж</param>
-		/// <param name="userGame">Пользователь игры</param>
-		/// <param name="interface">Интерфейс</param>
-		/// <returns></returns>
-		[Obsolete("Только для тестов")]
-		public static UserGameCharacter CreateForTest(
-			Character character = default,
-			UserGame userGame = default,
-			Interface @interface = default)
-		=> new()
-		{
-			Character = character,
-			UserGame = userGame,
-			Interface = @interface ?? Interface.CreateForTest()
-		};
 	}
 }
