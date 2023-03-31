@@ -173,7 +173,8 @@ namespace Witcher.Core.Entities
 			UserGameActivated = userGameActivated,
 			Name = name ?? "Битва",
 			Description = description,
-			NextInitiative = nextInitiative
+			NextInitiative = nextInitiative,
+			Creatures = new List<Creature>()
 		};
 	}
 }

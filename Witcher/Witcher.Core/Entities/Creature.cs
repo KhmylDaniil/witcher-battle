@@ -139,7 +139,7 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Максимальные хиты
 		/// </summary>
-		public int MaxHP { get; private set; }
+		public int MaxHP { get; protected set; }
 
 		/// <summary>
 		/// Максимальная выносливость
@@ -149,7 +149,7 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Максимальный интеллект
 		/// </summary>
-		public int MaxInt { get; private set; }
+		public int MaxInt { get; protected set; }
 
 		/// <summary>
 		/// Максимальные рефлексы
@@ -159,37 +159,37 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Максимальная ловкость
 		/// </summary>
-		public int MaxDex { get; private set; }
+		public int MaxDex { get; protected set; }
 
 		/// <summary>
 		/// Максимальное телосложение
 		/// </summary>
-		public int MaxBody { get; private set; }
+		public int MaxBody { get; protected set; }
 
 		/// <summary>
 		/// Максимальная эмпатия
 		/// </summary>
-		public int MaxEmp { get; private set; }
+		public int MaxEmp { get; protected set; }
 
 		/// <summary>
 		/// Максимальное ремесло
 		/// </summary>
-		public int MaxCra { get; private set; }
+		public int MaxCra { get; protected set; }
 
 		/// <summary>
 		/// Максимальная воля
 		/// </summary>
-		public int MaxWill { get; private set; }
+		public int MaxWill { get; protected set; }
 
 		/// <summary>
 		/// Максимальная скорость
 		/// </summary>
-		public int MaxSpeed { get; private set; }
+		public int MaxSpeed { get; protected set; }
 
 		/// <summary>
 		/// Максимальная удача
 		/// </summary>
-		public int MaxLuck { get; private set; }
+		public int MaxLuck { get; protected set; }
 
 		/// <summary>
 		/// Устойчивость
@@ -334,7 +334,7 @@ namespace Witcher.Core.Entities
 		public Battle Battle
 		{
 			get => _battle;
-			protected set
+			set
 			{
 				_battle = value;
 				BattleId = value?.Id;

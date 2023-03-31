@@ -25,7 +25,7 @@ namespace Witcher.Core.Requests.CharacterRequests
 
 		public async override Task<Character> Handle(CreateCharacterCommand request, CancellationToken cancellationToken)
 		{
-			var game = await _authorizationService.UserGameFilter(_appDbContext.Games)
+			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Characters)
 				.Include(g => g.UserGames.Where(ug => ug.UserId == _userContext.CurrentUserId))
 				.Include(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))

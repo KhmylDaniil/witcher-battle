@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Exceptions.RequestExceptions;
+using Witcher.Core.Logic;
 
 namespace Witcher.Core.Requests.BattleRequests
 {
@@ -21,11 +22,14 @@ namespace Witcher.Core.Requests.BattleRequests
 		{
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.Battles.Where(x => x.Id == request.Id))
+				.ThenInclude(b => b.Creatures)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
 			var battle = game.Battles.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new EntityNotFoundException<Battle>(request.Id);
+
+			battle.RemoveNonCharacterCreaturesAndUntieCharactersFromBattle();
 
 			game.Battles.Remove(battle);
 			await _appDbContext.SaveChangesAsync(cancellationToken);

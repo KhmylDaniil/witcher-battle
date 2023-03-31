@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
 using Witcher.Core.Exceptions.EntityExceptions;
+using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Entities
 {
@@ -81,5 +81,95 @@ namespace Witcher.Core.Entities
 		}
 
 		#endregion navigation properties
+
+		/// <summary>
+		/// Создать тестовую сущность с заполненными полями
+		/// </summary>
+		/// <param name="id">Айди</param>
+		/// <param name="game">Игра</param>
+		/// <param name="battle">Бой</param>
+		/// <param name="creatureTemlpate">Шаблон существа</param>
+		/// <param name="imgFile">Графический файл</param>
+		/// <param name="name">Название</param>
+		/// <param name="description">Описание</param>
+		/// <param name="creatureType">Тип существа</param>
+		/// <param name="hp">Хиты</param>
+		/// <param name="maxHP">Максимальные хиты</param>
+		/// <param name="sta">Стамина</param>
+		/// <param name="int">Интеллект</param>
+		/// <param name="ref">Рефлексы</param>
+		/// <param name="dex">Ловкость</param>
+		/// <param name="body">Телосложение</param>
+		/// <param name="emp">Эмпатия</param>
+		/// <param name="cra">Крафт</param>
+		/// <param name="will">Воля</param>
+		/// <param name="speed">Скорость</param>
+		/// <param name="luck">Удача</param>
+		/// <param name="stun">Устойчивость</param>
+		/// <param name="createdOn">Дата создания</param>
+		/// <param name="modifiedOn">Дата изменения</param>
+		/// <param name="createdByUserId">Создавший пользователь</param>
+		/// <returns></returns>
+		[Obsolete("Только для тестов")]
+		public static Character CreateForTest(
+			Guid? id = default,
+			Game game = default,
+			Battle battle = default,
+			CreatureTemplate creatureTemlpate = default,
+			ImgFile imgFile = default,
+			CreatureType creatureType = default,
+			string name = default,
+			string description = default,
+			int hp = default,
+			int maxHP = default,
+			int sta = default,
+			int @int = default,
+			int @ref = default,
+			int dex = default,
+			int body = default,
+			int emp = default,
+			int cra = default,
+			int will = default,
+			int speed = default,
+			int luck = default,
+			int maxSpeed = default,
+			int stun = default,
+			DateTime createdOn = default,
+			DateTime modifiedOn = default,
+			Guid createdByUserId = default)
+			=> new()
+			{
+				Id = id ?? Guid.NewGuid(),
+				Game = game,
+				Battle = battle,
+				CreatureTemplate = creatureTemlpate,
+				ImgFile = imgFile,
+				CreatureType = creatureType,
+				Name = name ?? Enum.GetName(creatureType),
+				Description = description,
+				HP = hp == default ? 50 : hp,
+				MaxHP = maxHP == default ? 50 : maxHP,
+				Sta = sta == default ? 10 : sta,
+				Int = @int == default ? 1 : @int,
+				Ref = @ref == default ? 1 : @ref,
+				Dex = dex == default ? 1 : dex,
+				Body = body == default ? 1 : body,
+				Emp = emp == default ? 1 : emp,
+				Cra = cra == default ? 1 : cra,
+				Will = will == default ? 1 : will,
+				Speed = speed == default ? 1 : speed,
+				Luck = luck == default ? 1 : luck,
+				MaxSpeed = maxSpeed == default ? 1 : maxSpeed,
+				Stun = stun == default ? 1 : stun,
+				CreatedOn = createdOn,
+				ModifiedOn = modifiedOn,
+				CreatedByUserId = createdByUserId,
+				Effects = new List<Effect>(),
+				CreatureSkills = new List<CreatureSkill>(),
+				Abilities = new List<Ability>(),
+				CreatureParts = new List<CreaturePart>(),
+				DamageTypeModifiers = new List<CreatureDamageTypeModifier>(),
+				UserGameCharacters = new List<UserGameCharacter>()
+			};
 	}
 }
