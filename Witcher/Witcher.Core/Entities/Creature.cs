@@ -299,7 +299,7 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		public int Speed
 		{
-			get => _speed < 1 ? 1 : _speed;
+			get => _speed < 0 ? 0 : _speed;
 			set => _speed = value;
 		}
 

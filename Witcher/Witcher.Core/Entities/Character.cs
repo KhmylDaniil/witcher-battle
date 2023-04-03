@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Witcher.Core.Exceptions;
 using Witcher.Core.Exceptions.EntityExceptions;
 using static Witcher.Core.BaseData.Enums;
 
@@ -25,14 +27,11 @@ namespace Witcher.Core.Entities
 
 		protected Character() { }
 
-		public Character(Game game, CreatureTemplate creatureTemplate, Battle battle, string name, string Description, UserGame userGame)
+		public Character(Game game, CreatureTemplate creatureTemplate, Battle battle, string name, string Description)
 			: base(creatureTemplate, battle, name, Description)
 		{
 			Game = game;
-			UserGameCharacters = new List<UserGameCharacter>
-			{
-				new UserGameCharacter(this, userGame)
-			};
+			UserGameCharacters = new List<UserGameCharacter>();
 		}
 
 		public Guid GameId { get; protected set; }
@@ -81,6 +80,20 @@ namespace Witcher.Core.Entities
 		}
 
 		#endregion navigation properties
+
+		internal void AddUserGameCharacters(Game game, Guid currentUserId)
+		{
+			var mainMasterUserGame = game.UserGames.FirstOrDefault(x => x.GameRoleId == BaseData.GameRoles.MainMasterRoleId)
+				?? throw new LogicBaseException("В игре нет главмастера.");
+
+			var characterCreatorUserGame = game.UserGames.FirstOrDefault(x => x.UserId == currentUserId)
+				?? throw new EntityNotFoundException<UserGame>(currentUserId);
+
+			UserGameCharacters.Add(new UserGameCharacter(this, mainMasterUserGame));
+
+			if (mainMasterUserGame.Id !=characterCreatorUserGame.Id)
+				UserGameCharacters.Add(new UserGameCharacter(this, characterCreatorUserGame));
+		}
 
 		/// <summary>
 		/// Создать тестовую сущность с заполненными полями

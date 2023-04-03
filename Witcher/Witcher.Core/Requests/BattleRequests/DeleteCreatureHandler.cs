@@ -31,7 +31,10 @@ namespace Witcher.Core.Requests.BattleRequests
 			var creature = battle.Creatures.FirstOrDefault(a => a.Id == request.Id)
 				?? throw new EntityNotFoundException<Creature>(request.Id);
 
-			battle.Creatures.Remove(creature);
+			if (creature is Character character)
+				character.Battle = null;
+			else
+				battle.Creatures.Remove(creature);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;

@@ -47,6 +47,8 @@
             </th>
             <th>
                 @Html.ActionLink("Add new creature", "CreateCreature",
+                new { BattleId = Model.BattleId }) |
+                @Html.ActionLink("Add new character", "AddCharacter",
                 new { BattleId = Model.BattleId })
             </th>
         </tr>

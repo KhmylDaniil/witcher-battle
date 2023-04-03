@@ -25,13 +25,18 @@ namespace Witcher.Core.Requests.CharacterRequests
 
 		public async override Task<Character> Handle(CreateCharacterCommand request, CancellationToken cancellationToken)
 		{
-			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
+			var game = await _authorizationService.UserGameFilter(_appDbContext.Games)
 				.Include(g => g.Characters)
-				.Include(g => g.UserGames.Where(ug => ug.UserId == _userContext.CurrentUserId))
+				.Include(g => g.UserGames)
 				.Include(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
 					.ThenInclude(ct => ct.CreatureTemplateParts)
 				.Include(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
 					.ThenInclude(ct => ct.CreatureTemplateSkills)
+				.Include(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
+					.ThenInclude(ct => ct.Abilities)
+						.ThenInclude(a => a.AppliedConditions)
+				.Include(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
+					.ThenInclude(ct => ct.DamageTypeModifiers)
 			.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 
@@ -41,9 +46,8 @@ namespace Witcher.Core.Requests.CharacterRequests
 			var creatureTemplate = game.CreatureTemplates.FirstOrDefault(x => x.Id == request.CreatureTemplateId)
 				?? throw new EntityNotFoundException<CreatureTemplate>(request.CreatureTemplateId);
 
-			var userGame = game.UserGames.FirstOrDefault(x => x.UserId == _userContext.CurrentUserId);
-
-			var newCharacter = new Character(game, creatureTemplate, null, request.Name, request.Description, userGame);
+			var newCharacter = new Character(game, creatureTemplate, null, request.Name, request.Description);
+			newCharacter.AddUserGameCharacters(game, _userContext.CurrentUserId);
 
 			_appDbContext.Characters.Add(newCharacter);
 			await _appDbContext.SaveChangesAsync(cancellationToken);

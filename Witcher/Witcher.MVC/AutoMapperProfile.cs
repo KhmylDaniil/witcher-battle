@@ -22,6 +22,7 @@ namespace Witcher.MVC
 			CreateMap<ChangeCreatureTemplateCommand, ChangeCreatureTemplateCommandViewModel>();
 
 			CreateMap<CreateCreatureCommand, CreateCreatureCommandViewModel>();
+			CreateMap<AddCharacterToBattleCommand, AddCharacterToBattleViewModel>();
 			CreateMap<CreateUserGameCommand, CreateUserGameCommandViewModel>();
 		}
 	}

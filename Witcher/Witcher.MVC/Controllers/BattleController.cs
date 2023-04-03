@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BattleRequests;
+using Witcher.Core.Contracts.CharacterRequests;
 using Witcher.Core.Contracts.CreatureTemplateRequests;
 using Witcher.Core.Exceptions;
 using Witcher.Core.ExtensionMethods;
@@ -218,8 +219,34 @@ namespace Witcher.MVC.Controllers
             catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
 		}
 
+		[HttpGet]
+		[Route("[controller]/[action]/{battleId}")]
+		public async Task<IActionResult> AddCharacter(AddCharacterToBattleViewModel viewModel, CancellationToken cancellationToken)
+		{
+			return View(await CreateVM(viewModel, cancellationToken));
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Route("[controller]/[action]/{battleId}")]
+		public async Task<IActionResult> AddCharacter(AddCharacterToBattleCommand command, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await _mediator.SendValidated(command, cancellationToken);
+				return RedirectToAction(nameof(Details), new GetBattleByIdQuery() { Id = command.BattleId });
+			}
+			catch (RequestValidationException ex)
+			{
+				TempData["ErrorMessage"] = ex.UserMessage;
+			}
+			catch (Exception ex) { return RedirectToErrorPage<BattleController>(ex); }
+
+			return View(await CreateVM(command, cancellationToken));
+		}
+
 		/// <summary>
-		/// Создание модели представления для добвления существа в битву
+		/// Создание модели представления для добавления существа в битву
 		/// </summary>
 		async Task<CreateCreatureCommandViewModel> CreateVM(CreateCreatureCommand command, CancellationToken cancellationToken)
 		{
@@ -228,6 +255,20 @@ namespace Witcher.MVC.Controllers
 				: _mapper.Map<CreateCreatureCommandViewModel>(command);
 
 			viewModel.CreatureTemplatesDictionary = await GetCreatureTemplatesListToViewModel(cancellationToken);
+
+			return viewModel;
+		}
+
+		/// <summary>
+		/// Создание модели представления для добваления персонажа в битву
+		/// </summary>
+		async Task<AddCharacterToBattleViewModel> CreateVM(AddCharacterToBattleCommand command, CancellationToken cancellationToken)
+		{
+			var viewModel = command is AddCharacterToBattleViewModel vm
+				? vm
+				: _mapper.Map<AddCharacterToBattleViewModel>(command);
+
+			viewModel.CharactersDictionary = await GetCharactersListToViewModel(cancellationToken);
 
 			return viewModel;
 		}
@@ -248,6 +289,26 @@ namespace Witcher.MVC.Controllers
 				var result = creatureTemplates.ToDictionary(x => x.Id, x => x.Name);
 
 				_memoryCache.Set("creatureTemplates", result);
+				return result;
+			}
+		}
+
+		/// <summary>
+		/// Создание/извлечение из кэша данных о персонажах
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		private async Task<Dictionary<Guid, (string, string)>> GetCharactersListToViewModel(CancellationToken cancellationToken)
+		{
+			if (_memoryCache.TryGetValue("characters", out Dictionary<Guid, (string, string)> charactersFromCache))
+				return charactersFromCache;
+			else
+			{
+				var characters = await _mediator.SendValidated(new GetCharactersCommand(), cancellationToken);
+
+				var result = characters.ToDictionary(x => x.Id, x => (x.Name, x.OwnerName));
+
+				_memoryCache.Set("characters", result);
 				return result;
 			}
 		}

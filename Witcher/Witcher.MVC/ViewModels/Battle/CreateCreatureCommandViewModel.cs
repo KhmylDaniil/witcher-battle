@@ -10,6 +10,6 @@ namespace Witcher.MVC.ViewModels.Battle
 		/// <summary>
 		/// Данные шаблонов существа
 		/// </summary>
-		public Dictionary<Guid, string> CreatureTemplatesDictionary { get; set; }
+		public Dictionary<Guid, string> CreatureTemplatesDictionary { get; set; } = new();
 	}
 }
