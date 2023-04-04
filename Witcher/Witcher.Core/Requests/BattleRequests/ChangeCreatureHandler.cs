@@ -8,6 +8,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Witcher.Core.Exceptions;
 
 namespace Witcher.Core.Requests.BattleRequests
 {
@@ -33,6 +34,9 @@ namespace Witcher.Core.Requests.BattleRequests
 
 			var creature = battle.Creatures.FirstOrDefault(a => a.Id == request.Id)
 				?? throw new EntityNotFoundException<Creature>(request.Id);
+
+			if (creature is Character)
+				throw new LogicBaseException("Изменения персонажа не должны происходить по правилам изменения существа.");
 
 			creature.ChangeCreature(request.Name, request.Description);
 

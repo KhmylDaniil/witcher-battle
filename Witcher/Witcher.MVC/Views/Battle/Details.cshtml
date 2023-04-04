@@ -72,13 +72,25 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Effects)
                 </td>
-                <td>
-                    @Html.ActionLink("Edit", "ChangeCreature",
-                new { BattleId = Model.BattleId, Id = item.Id, Name = item.Name, Description = item.Description })
-                    | @Html.ActionLink("Details", "GetCreatureById",
+                @if (item.IsCharacter)
+                {
+                    <td>
+                        @Html.ActionLink("Details", "GetCreatureById",
                 new { BattleId = Model.BattleId, Id = item.Id })
-                    | @Html.ActionLink("Delete", "DeleteCreature", new { BattleId = Model.BattleId, Id = item.Id, Name = item.Name })
-                </td>
+                        | @Html.ActionLink("Delete from battle", "DeleteCreature",
+                new { BattleId = Model.BattleId, Id = item.Id, Name = item.Name })
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @Html.ActionLink("Edit", "ChangeCreature",
+                new { BattleId = Model.BattleId, Id = item.Id, Name = item.Name, Description = item.Description })
+                        | @Html.ActionLink("Details", "GetCreatureById",
+                new { BattleId = Model.BattleId, Id = item.Id })
+                        | @Html.ActionLink("Delete", "DeleteCreature", new { BattleId = Model.BattleId, Id = item.Id, Name = item.Name })
+                    </td>
+                }
             </tr>
         }
     </tbody>
