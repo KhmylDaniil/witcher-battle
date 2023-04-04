@@ -56,6 +56,21 @@ namespace Witcher.Core.Services.Authorization
 		}
 
 		/// <inheritdoc/>
+		public IQueryable<Character> CharacterOwnerFilter(
+			IQueryable<Game> query)
+		{
+			if (query is null)
+				throw new ApplicationSystemNullException<AuthorizationService>(nameof(query));
+
+			if (string.Equals(_userContext.Role, SystemRoles.AdminRoleName, StringComparison.OrdinalIgnoreCase))
+				return query.Where(x => x.Id == _gameIdService.GameId).SelectMany(g => g.Characters);
+
+			return query.Where(x => x.Id == _gameIdService.GameId)
+				.SelectMany(g => g.Characters.Where(c => c.UserGameCharacters
+				.Any(y => y.UserGame.UserId == _userContext.CurrentUserId)));
+		}
+
+		/// <inheritdoc/>
 		public IQueryable<Battle> BattleMasterFilter(
 			IQueryable<Battle> query, Guid battleId)
 		{

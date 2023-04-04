@@ -41,5 +41,10 @@ namespace Witcher.Core.Contracts.BattleRequests
 		/// Инициатива в битве
 		/// </summary>
 		public int Initiative { get; set; }
+
+		/// <summary>
+		/// Является ли существо персонажем
+		/// </summary>
+		public bool IsCharacter { get; set; }
 	}
 }

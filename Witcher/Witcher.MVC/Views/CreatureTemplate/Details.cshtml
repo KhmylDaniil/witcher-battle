@@ -259,5 +259,9 @@
 <p>@TempData["ErrorMessage"]</p>
 
 <div class="container">
+    <a asp-controller="Character" asp-action="Create"asp-route-creatureTemplateId="@Model.Id">Create a character from this template</a>
+</div>
+
+<div class="container">
     <a asp-action="Index">Back to Creature Templates</a>
 </div>

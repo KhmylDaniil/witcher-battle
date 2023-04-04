@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Witcher.Storage.Postgresql
 {
@@ -208,6 +209,17 @@ namespace Witcher.Storage.Postgresql
 					}
 				}
 			}
+
+			//разное поведение для удаления существ и персонажей
+			var creatureEntries = ChangeTracker.Entries()
+				.Where(e => e.Entity is Creature creature
+				&& creature is not Character
+				&& (e.State == EntityState.Added || e.State == EntityState.Modified)
+				&& creature.Battle is null);
+
+			foreach(var entityEntry in creatureEntries)
+				entityEntry.State = EntityState.Deleted;
+
 			return await base.SaveChangesAsync(cancellationToken);
 		}
 	}

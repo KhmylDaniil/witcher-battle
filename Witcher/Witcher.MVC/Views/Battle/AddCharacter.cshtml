@@ -1,0 +1,35 @@
+﻿@model Witcher.MVC.ViewModels.Battle.AddCharacterToBattleViewModel
+
+@{
+    ViewData["Title"] = "Add Character";
+}
+
+<h1>AddCharacter</h1>
+
+<h4>Add Character To Battle</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddCharacter">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="BattleId" value="@Model.BattleId" hidden=true class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="CharacterId" class="control-label"></label>
+                <select asp-items="@(new SelectList(Model.CharactersDictionary, "Key", "Value"))" asp-for="CharacterId"></select><br /><br />
+                <span asp-validation-for="CharacterId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add character to battle" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<p>@TempData["ErrorMessage"]</p>
+
+<div class="container">
+    @Html.ActionLink("Back to Battle", "Details", new { id = Model.BattleId })
+</div>
+

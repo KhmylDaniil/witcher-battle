@@ -72,5 +72,10 @@ namespace Witcher.Core.Logic
 
 			battle.BattleLog += message.ToString();
 		}
+
+		static public void RemoveNonCharacterCreaturesAndUntieCharactersFromBattle(this Battle battle)
+		{
+			battle.Creatures?.ForEach(x => x.Battle = null);
+		}
 	}
 }

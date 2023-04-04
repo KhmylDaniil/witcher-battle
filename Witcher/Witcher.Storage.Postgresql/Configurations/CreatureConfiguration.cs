@@ -21,8 +21,7 @@ namespace Witcher.Storage.Postgresql.Configurations
 
 			builder.Property(r => r.BattleId)
 				.HasColumnName("BattleId")
-				.HasComment("Айди боя")
-				.IsRequired();
+				.HasComment("Айди боя");
 
 			builder.Property(r => r.ImgFileId)
 				.HasColumnName("ImgFileId")
@@ -48,7 +47,7 @@ namespace Witcher.Storage.Postgresql.Configurations
 
 			builder.Property(r => r.Description)
 				.HasColumnName("Description")
-				.HasComment("Описание шаблона");
+				.HasComment("Описание");
 
 			builder.Property(r => r.HP)
 			.HasColumnName("HP")

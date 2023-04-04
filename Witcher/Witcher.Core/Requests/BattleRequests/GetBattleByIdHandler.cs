@@ -35,7 +35,8 @@ namespace Witcher.Core.Requests.BattleRequests
 				CreatureTemplateName = x.CreatureTemplate.Name,
 				Description = x.Description,	
 				HP = (x.HP, x.MaxHP),
-				Effects = string.Join(", ", x.Effects.Select(x => x.Name))
+				Effects = string.Join(", ", x.Effects.Select(x => x.Name)),
+				IsCharacter = x is Character
 			}).ToList();
 
 			return new GetBattleByIdResponse()

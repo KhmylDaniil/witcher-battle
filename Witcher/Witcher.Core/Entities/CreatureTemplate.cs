@@ -1,12 +1,10 @@
 ﻿using Witcher.Core.Contracts.CreatureTemplateRequests;
 using Witcher.Core.Exceptions.EntityExceptions;
-using Witcher.Core.Requests.CreatureTemplateRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Exceptions.SystemExceptions;
-using Witcher.Core.Services.ChangeListService;
 
 namespace Witcher.Core.Entities
 {

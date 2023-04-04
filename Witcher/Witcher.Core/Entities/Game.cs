@@ -109,6 +109,11 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		public List<Ability> Abilities { get; set; }
 
+		/// <summary>
+		/// Персонажи
+		/// </summary>
+		public List<Character> Characters { get; set; }
+
 		#endregion navigation properties
 
 		/// <summary>

@@ -1,50 +1,47 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.BattleRequests;
-using Witcher.Core.Entities;
-using Witcher.Core.Exceptions.EntityExceptions;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.BattleRequests;
+using Witcher.Core.Contracts.CharacterRequests;
+using Witcher.Core.Entities;
+using Witcher.Core.Exceptions.EntityExceptions;
 
-namespace Witcher.Core.Requests.BattleRequests
+namespace Witcher.Core.Requests.CharacterRequests
 {
-	public class GetCreatureByIdHandler : BaseHandler<GetCreatureByIdQuery, GetCreatureByIdResponse>
+	public class GetCharacterByIdHandler : BaseHandler<GetCharacterByIdCommand, GetCharacterByIdResponse>
 	{
-		public GetCreatureByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
+		public GetCharacterByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
 		}
 
-		public override async Task<GetCreatureByIdResponse> Handle(GetCreatureByIdQuery request, CancellationToken cancellationToken)
+		public async override Task<GetCharacterByIdResponse> Handle(GetCharacterByIdCommand request, CancellationToken cancellationToken)
 		{
-			var creature = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
-				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
-					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
-						.ThenInclude(c => c.CreatureTemplate)
+			var creature = await _authorizationService.UserGameFilter(_appDbContext.Games)
+				.Include(g => g.Characters.Where(c => c.Id == request.Id))
+					.ThenInclude(c => c.CreatureTemplate)
 							.ThenInclude(ct => ct.BodyTemplate)
-				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
-					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
-						.ThenInclude(c => c.CreatureParts)
-				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
-					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
-						.ThenInclude(c => c.CreatureSkills)
-				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
-					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
-						.ThenInclude(c => c.Abilities)
-							.ThenInclude(a => a.AppliedConditions)
-				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
-					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
-						.ThenInclude(c => c.DamageTypeModifiers)
-				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
-					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
-						.ThenInclude(c => c.Effects)
-				.SelectMany(x => x.Battles).SelectMany(b => b.Creatures).FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
-				?? throw new EntityNotFoundException<Creature>(request.Id);
+				.Include(g => g.Characters.Where(c => c.Id == request.Id))
+					.ThenInclude(c => c.CreatureParts)
+				.Include(g => g.Characters.Where(c => c.Id == request.Id))
+					.ThenInclude(c => c.CreatureSkills)
+				.Include(g => g.Characters.Where(c => c.Id == request.Id))
+					.ThenInclude(c => c.Abilities)
+						.ThenInclude(a => a.AppliedConditions)
+				.Include(g => g.Characters.Where(c => c.Id == request.Id))
+					.ThenInclude(c => c.DamageTypeModifiers)
+				.Include(g => g.Characters.Where(c => c.Id == request.Id))
+					.ThenInclude(c => c.Effects)
+				.SelectMany(g => g.Characters).FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken)
+				?? throw new EntityNotFoundException<Character>(request.Id);
 
-			return new GetCreatureByIdResponse()
+			return new GetCharacterByIdResponse()
 			{
 				Id = creature.Id,
-				BattleId = creature.BattleId.Value,
 				CreatureTemplateId = creature.CreatureTemplateId,
 				CreatureTemplateName = creature.CreatureTemplate.Name,
 				BodyTemplateId = creature.CreatureTemplate.BodyTemplateId,
@@ -53,7 +50,7 @@ namespace Witcher.Core.Requests.BattleRequests
 				Description = creature.Description,
 				CreatureType = creature.CreatureType,
 				HP = (creature.HP, creature.MaxHP),
-				Sta = (creature.Sta, creature.MaxSta), 
+				Sta = (creature.Sta, creature.MaxSta),
 				Int = (creature.Int, creature.MaxInt),
 				Ref = (creature.Ref, creature.MaxRef),
 				Dex = (creature.Dex, creature.MaxDex),
