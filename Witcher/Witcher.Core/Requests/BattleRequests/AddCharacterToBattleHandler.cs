@@ -34,6 +34,8 @@ namespace Witcher.Core.Requests.BattleRequests
 			var character = game.Characters.FirstOrDefault(a => a.Id == request.CharacterId)
 				?? throw new EntityNotFoundException<Character>(request.CharacterId);
 
+			character.Turn = new();
+
 			battle.Creatures.Add(character);
 
 			RunBattle.FormInitiativeOrder(battle);

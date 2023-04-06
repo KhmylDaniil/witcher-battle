@@ -188,6 +188,8 @@ namespace Witcher.MVC.Controllers
             catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{creatureTemplateId}")]
 		public async Task<IActionResult> DeleteSkill(DeleteCreatureTemplateSkillCommand command, CancellationToken cancellationToken)
 		{

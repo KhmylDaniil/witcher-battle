@@ -110,6 +110,7 @@
                 @Html.ActionLink("Add new skill", "EditSkill",
                 new { CreatureTemplateId = Model.Id })
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -125,7 +126,13 @@
                 <td>
                     @Html.ActionLink("Change value", "EditSkill",
                 new { CreatureTemplateId = Model.Id, Id = item.Id, Skill = item.Skill, Value = item.SkillValue })
-                    | @Html.ActionLink("Delete", "DeleteSkill", new { CreatureTemplateId = Model.Id, Id = item.Id })
+                </td>
+                <td>
+                    <form asp-action="DeleteSkill" asp-route-Id=@item.Id asp-route-creaturetemplateId=@Model.Id>
+                        <div class="form-group">
+                            <input type="submit" value="Delete" class="btn btn-primary" />
+                        </div>
+                    </form>
                 </td>
             </tr>
         }

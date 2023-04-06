@@ -44,7 +44,7 @@ namespace Witcher.Core.Logic
 				battle.NextInitiative = 1;
 
 				foreach (var creature in battle.Creatures)
-					creature.TurnBeginningEffectsAreTriggered = false;
+					creature.Turn = new();
 
 				message.AppendLine("Начался новый раунд.");
 			}
@@ -52,7 +52,7 @@ namespace Witcher.Core.Logic
 			currentCreature = battle.Creatures.OrderBy(x => x.InitiativeInBattle)
 				.First(x => x.InitiativeInBattle >= battle.NextInitiative);
 
-			if (!currentCreature.TurnBeginningEffectsAreTriggered)
+			if (currentCreature.Turn.TurnState == Enums.TurnState.TurnNotBeginned)
 			{
 				foreach (var effect in currentCreature.Effects)
 				{
@@ -67,7 +67,7 @@ namespace Witcher.Core.Logic
 					TurnBeginning(battle, out currentCreature);
 				}
 				else
-					currentCreature.TurnBeginningEffectsAreTriggered = true;
+					currentCreature.Turn.TurnState = Enums.TurnState.ReadyForAction;
 			}
 
 			battle.BattleLog += message.ToString();

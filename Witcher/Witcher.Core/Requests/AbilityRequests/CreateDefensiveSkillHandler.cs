@@ -33,7 +33,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 			if (ability.DefensiveSkills.Any(x => x.Skill == request.Skill))
 				throw new RequestFieldIncorrectDataException<CreateDefensiveSkillCommand>(nameof(request.Skill), "Указанный навык уже включен в список");
 
-			ability.DefensiveSkills.Add(new DefensiveSkill(ability.Id, request.Skill));
+			ability.DefensiveSkills.Add(new DefensiveSkill(request.Skill));
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 

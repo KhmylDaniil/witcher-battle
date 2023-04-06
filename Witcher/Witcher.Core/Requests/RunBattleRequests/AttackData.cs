@@ -2,6 +2,7 @@
 using Witcher.Core.Entities;
 using System;
 using System.Linq;
+using Witcher.Core.Exceptions;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {
@@ -73,6 +74,8 @@ namespace Witcher.Core.Requests.RunBattleRequests
 
 			aimedPart = AimedPartIsNullOrDismembered() ? DefaultCreaturePart() : aimedPart;
 
+			CheckHowManyAttackCanBePerformedThisTurn();
+
 			return new AttackData()
 			{
 				Attacker = attacker,
@@ -106,6 +109,36 @@ namespace Witcher.Core.Requests.RunBattleRequests
 				while (AimedPartIsNullOrDismembered());
 
 				return aimedPart;
+			}
+
+			void CheckHowManyAttackCanBePerformedThisTurn()
+			{
+				if (attacker.Turn.TurnState >= BaseData.Enums.TurnState.BaseActionIsDone)
+					specialToHit -= 3;
+
+				if (ability.AttackSpeed > 1)
+				{
+					if (attacker.Turn.TurnState == BaseData.Enums.TurnState.ReadyForAction
+						|| attacker.Turn.TurnState == BaseData.Enums.TurnState.BaseActionIsDone)
+					{
+						attacker.Turn.MuitiattackAbilityId = ability.Id;
+						attacker.Turn.MultiattackRemainsQuantity = ability.AttackSpeed;
+						attacker.Turn.TurnState++;
+					}
+					else if (ability.Id != attacker.Turn?.MuitiattackAbilityId)
+						throw new LogicBaseException("Должна быть проведена мультиатака, но выбрана другая способность");
+
+					attacker.Turn.MultiattackRemainsQuantity--;
+
+					if (attacker.Turn.MultiattackRemainsQuantity > 0)
+						return;
+
+					attacker.Turn.MuitiattackAbilityId = null;
+				}
+
+				attacker.Turn.TurnState = attacker.Turn.TurnState == BaseData.Enums.TurnState.ReadyForAction
+					? BaseData.Enums.TurnState.BaseActionIsDone
+					: BaseData.Enums.TurnState.TurnIsDone;
 			}
 		}
 	}

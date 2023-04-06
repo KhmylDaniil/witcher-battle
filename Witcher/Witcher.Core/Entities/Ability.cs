@@ -297,7 +297,7 @@ namespace Witcher.Core.Entities
 		private void UpdateDefensiveSkills(List<Skill> data)
 			=> DefensiveSkills = data is null
 			? throw new ApplicationSystemNullException<Ability>(nameof(data))
-			:data.Select(x => new DefensiveSkill(Id, x)).ToList();
+			:data.Select(x => new DefensiveSkill(x)).ToList();
 
 		/// <summary>
 		/// Создание тестовой сущности
@@ -364,26 +364,12 @@ namespace Witcher.Core.Entities
 	public class DefensiveSkill : EntityBase
 	{
 		/// <summary>
-		/// Айди способности
-		/// </summary>
-		public Guid AbilityId { get; set; }
-
-		/// <summary>
 		/// Навык
 		/// </summary>
 		public Skill Skill { get; set; }
 
-		public DefensiveSkill(Guid id, Skill skill)
-		{
-			AbilityId = id;
-			Skill = skill;
-		}
+		protected DefensiveSkill() { }
 
-		/// <summary>
-		/// Пустой конструктор
-		/// </summary>
-		protected DefensiveSkill()
-		{
-		}
+		public DefensiveSkill(Skill skill) => Skill = skill;
 	}
 }

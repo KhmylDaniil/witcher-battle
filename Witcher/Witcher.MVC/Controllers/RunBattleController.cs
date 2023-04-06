@@ -121,6 +121,46 @@ namespace Witcher.MVC.Controllers
 			return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Route("[controller]/[action]")]
+		public async Task<IActionResult> Pass(EndTurnCommand command, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await _mediator.SendValidated(command, cancellationToken);
+
+				await _messageHubContext.SendUpdateBattleMessage();
+			}
+			catch (RequestValidationException ex)
+			{
+				TempData["ErrorMessage"] = ex.UserMessage;
+			}
+			catch (Exception ex) { return RedirectToErrorPage<RunBattleController>(ex); }
+
+			return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Route("[controller]/[action]/{battleId}")]
+		public async Task<IActionResult> PassInMultiAttack(PassInMultiattackCommand command, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await _mediator.SendValidated(command, cancellationToken);
+
+				await _messageHubContext.SendUpdateBattleMessage();
+			}
+			catch (RequestValidationException ex)
+			{
+				TempData["ErrorMessage"] = ex.UserMessage;
+			}
+			catch (Exception ex) { return RedirectToErrorPage<RunBattleController>(ex); }
+
+			return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
+		}
+
 		private async Task<MakeAttackViewModel> CreateVM(AttackCommand command, CancellationToken cancellationToken)
 		{
 			var vm = _mapper.Map<MakeAttackViewModel>(command);
