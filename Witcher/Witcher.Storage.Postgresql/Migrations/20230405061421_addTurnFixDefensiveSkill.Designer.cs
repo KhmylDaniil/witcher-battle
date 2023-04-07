@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Witcher.Storage.Postgresql;
@@ -11,9 +12,10 @@ using Witcher.Storage.Postgresql;
 namespace Witcher.Storage.Postgresql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230405061421_addTurnFixDefensiveSkill")]
+    partial class addTurnFixDefensiveSkill
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2672,10 +2674,13 @@ namespace Witcher.Storage.Postgresql.Migrations
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("uuid");
 
-                            b1.Property<int>("EnergySpendInThisTurn")
+                            b1.Property<bool>("AdditionalAttackMaked")
+                                .HasColumnType("boolean");
+
+                            b1.Property<int>("DefenseInThisTurnMaked")
                                 .HasColumnType("integer");
 
-                            b1.Property<int>("IsDefenseInThisTurnPerformed")
+                            b1.Property<int>("EnergySpendInThisTurn")
                                 .HasColumnType("integer");
 
                             b1.Property<Guid>("MuitiattackAbilityId")
@@ -2684,8 +2689,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                             b1.Property<int>("MultiattackRemainsQuantity")
                                 .HasColumnType("integer");
 
-                            b1.Property<int>("TurnState")
-                                .HasColumnType("integer");
+                            b1.Property<bool>("TurnBeginningEffectsAreTriggered")
+                                .HasColumnType("boolean");
 
                             b1.HasKey("CreatureId");
 

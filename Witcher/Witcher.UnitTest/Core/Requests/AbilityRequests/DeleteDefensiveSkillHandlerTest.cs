@@ -4,7 +4,6 @@ using Witcher.Core.BaseData;
 using Witcher.Core.Contracts.AbilityRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Requests.AbilityRequests;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -28,7 +27,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 		{
 			_game = Game.CreateForTest();
 			_ability = Ability.CreateForTest(game: _game);
-			_defensiveSkill = new(_ability.Id, Enums.Skill.Sword);
+			_defensiveSkill = new DefensiveSkill(Enums.Skill.Sword);
 
 			_ability.DefensiveSkills.Add(_defensiveSkill);
 

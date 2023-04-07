@@ -79,7 +79,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
-			Assert.AreEqual(monster.Speed, 1);
+			Assert.AreEqual(monster.Speed, 0);
 			Assert.AreEqual(monster.Ref, 1);
 
 			var result = await newHandler.Handle(request, default);

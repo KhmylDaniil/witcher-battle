@@ -7,38 +7,90 @@
 <h1>@Model.CurrentCreatureName Turn</h1>
 
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="MakeAttack" asp-route-BattleId=@Model.BattleId asp-route-id=@Model.CreatureId>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="TargetCreatureId" value="Target" class="control-label"></label>
-                <select asp-items="@(new SelectList(Model.PossibleTargets.Where(x => x.Key != Model.CreatureId), "Key", "Value"))" asp-for="TargetCreatureId"></select><br /><br />
-                <span asp-validation-for="TargetCreatureId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AbilityId" class="control-label"></label>
-                <select asp-items="@(new SelectList(Model.MyAbilities, "Key", "Value"))" asp-for="AbilityId"></select><br /><br />
-                <span asp-validation-for="AbilityId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Attack" class="btn btn-primary" />
-            </div>
-        </form>
+@if (Model.TurnState >= Witcher.Core.BaseData.Enums.TurnState.ReadyForAction &&
+Model.TurnState < Witcher.Core.BaseData.Enums.TurnState.TurnIsDone)
+{
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="MakeAttack" asp-route-BattleId=@Model.BattleId asp-route-id=@Model.CreatureId>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="TargetCreatureId" value="Target" class="control-label"></label>
+                    <select asp-items="@(new SelectList(Model.PossibleTargets.Where(x => x.Key != Model.CreatureId), "Key", "Value"))" asp-for="TargetCreatureId"></select><br /><br />
+                    <span asp-validation-for="TargetCreatureId" class="text-danger"></span>
+                </div>
+                
+                @if(Model.MultiAttackAbilityId != null)
+                {
+                    <div class="form-group">
+                        <input asp-for="AbilityId" value="@Model.MultiAttackAbilityId.Value" hidden=true class="form-control" />
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label asp-for="AbilityId" class="control-label"></label>
+                        <select asp-items="@(new SelectList(Model.MyAbilities, "Key", "Value"))" asp-for="AbilityId"></select><br /><br />
+                        <span asp-validation-for="AbilityId" class="text-danger"></span>
+                    </div>
+                }
+                <div class="form-group">
+                    <input type="submit" value=@Model.AttackButtonValue() class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+}
+
+@if (Model.TurnState == Witcher.Core.BaseData.Enums.TurnState.InProcessOfBaseAction
+|| Model.TurnState == Witcher.Core.BaseData.Enums.TurnState.InProcessOfAdditionAction)
+{
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="PassInMultiAttack" asp-route-BattleId=@Model.BattleId asp-route-creatureId=@Model.CreatureId>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <input asp-for="BattleId" value="@Model.BattleId" hidden=true class="form-control" />
+                    <input asp-for="CreatureId" value="@Model.CreatureId" hidden=true class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Pass in miltiattack" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+@if (Model.TurnState == Witcher.Core.BaseData.Enums.TurnState.ReadyForAction)
+{
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="MakeHeal" asp-route-BattleId=@Model.BattleId asp-route-creatureId=@Model.CreatureId>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="TargetCreatureId" value="Target" class="control-label"></label>
+                    <select asp-items="@(new SelectList(Model.PossibleTargets, "Key", "Value", Model.CreatureId))" asp-for="TargetCreatureId"></select><br /><br />
+                    <span asp-validation-for="TargetCreatureId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Heal" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="MakeHeal" asp-route-BattleId=@Model.BattleId asp-route-creatureId=@Model.CreatureId>
+        <form asp-action="Pass" asp-route-BattleId=@Model.BattleId asp-route-creatureId=@Model.CreatureId>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="TargetCreatureId" value="Target" class="control-label"></label>
-                <select asp-items="@(new SelectList(Model.PossibleTargets, "Key", "Value", Model.CreatureId))" asp-for="TargetCreatureId"></select><br /><br />
-                <span asp-validation-for="TargetCreatureId" class="text-danger"></span>
+                <input asp-for="BattleId" value="@Model.BattleId" hidden=true class="form-control" />
+                <input asp-for="CreatureId" value="@Model.CreatureId" hidden=true class="form-control" />
             </div>
             <div class="form-group">
-             <input type="submit" value="Heal" class="btn btn-primary" />
+                <input type="submit" value="Pass" class="btn btn-primary" />
             </div>
         </form>
     </div>

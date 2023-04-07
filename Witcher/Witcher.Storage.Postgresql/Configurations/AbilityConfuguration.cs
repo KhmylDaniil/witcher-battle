@@ -69,8 +69,7 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasComment("Точность атаки")
 				.IsRequired();
 
-			builder.OwnsMany(x => x.DefensiveSkills)
-				.HasKey(r => r.Id);
+			builder.OwnsMany(x => x.DefensiveSkills);
 
 			builder.HasOne(x => x.Game)
 				.WithMany(x => x.Abilities)

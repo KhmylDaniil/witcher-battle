@@ -65,10 +65,9 @@ namespace Witcher.Core.Requests.RunBattleRequests
 			StringBuilder message = new();
 
 			effect.Treat(_rollService, healer, target, ref message);
-			
-			battle.NextInitiative++;
 
 			battle.BattleLog += message;
+			healer.Turn.TurnState = BaseData.Enums.TurnState.BaseActionIsDone;
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 

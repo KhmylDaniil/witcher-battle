@@ -56,8 +56,6 @@ namespace Witcher.Core.Requests.RunBattleRequests
 
 			Attack.RemoveDeadBodies(battle);
 
-			battle.NextInitiative++;
-			
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
 			return Unit.Value;

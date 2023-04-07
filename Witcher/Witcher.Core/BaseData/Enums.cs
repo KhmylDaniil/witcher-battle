@@ -224,5 +224,15 @@ namespace Witcher.Core.BaseData
 			Skill.HealingHands => Stats.Cra,
 			_ => throw new FieldOutOfRangeException<Skill>(nameof(skill)),
 		};
+
+		public enum TurnState
+		{
+			TurnNotBeginned,
+			ReadyForAction,
+			InProcessOfBaseAction,
+			BaseActionIsDone,
+			InProcessOfAdditionAction,
+			TurnIsDone
+		};
 	}
 }

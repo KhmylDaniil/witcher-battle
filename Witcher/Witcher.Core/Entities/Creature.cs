@@ -1,6 +1,4 @@
-﻿using Witcher.Core.BaseData;
-using Witcher.Core.Contracts.BattleRequests;
-using Witcher.Core.Exceptions;
+﻿using Witcher.Core.Exceptions;
 using Witcher.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
@@ -321,11 +319,6 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		public int InitiativeInBattle { get; set; }
 
-		/// <summary>
-		/// Эффекты начала хода обработаны
-		/// </summary>
-		public bool TurnBeginningEffectsAreTriggered { get; set; }
-
 		#region navigation properties
 
 		/// <summary>
@@ -391,6 +384,11 @@ namespace Witcher.Core.Entities
 		/// Модификаторы типа урона
 		/// </summary>
 		public List<CreatureDamageTypeModifier> DamageTypeModifiers { get; protected set; }
+
+		/// <summary>
+		/// Ход существа в битве
+		/// </summary>
+		public Turn Turn { get; set; } = new();
 
 		#endregion navigation properties
 
@@ -640,5 +638,36 @@ namespace Witcher.Core.Entities
 
 			return result > 10 ? 10 : result;
 		}
+	}
+
+	/// <summary>
+	/// Ход существа
+	/// </summary>
+	public class Turn
+	{
+		/// <summary>
+		/// Завершенность хода существа
+		/// </summary>
+		public TurnState TurnState { get; set; }
+
+		/// <summary>
+		/// В этом ходу выполнялась бесплатная защита
+		/// </summary>
+		public int IsDefenseInThisTurnPerformed { get; set; }
+
+		/// <summary>
+		/// Количество оставшихся в этом действии мультиатак
+		/// </summary>
+		public int MultiattackRemainsQuantity { get; set; }
+
+		/// <summary>
+		/// Способность для мультиатаки
+		/// </summary>
+		public Guid? MuitiattackAbilityId { get; set; }
+
+		/// <summary>
+		/// Количество потраченной за ход энергии
+		/// </summary>
+		public int EnergySpendInThisTurn { get; set; }
 	}
 }

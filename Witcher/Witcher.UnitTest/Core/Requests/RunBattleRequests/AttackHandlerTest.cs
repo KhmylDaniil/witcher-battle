@@ -303,7 +303,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _rightLegPart.Id,
-				SpecialToHit = 3
+				SpecialToHit = 6
 			};
 
 			result = await newHandler.Handle(request, default);
@@ -350,7 +350,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 				Id = _creature.Id,
 				TargetCreatureId = _creature.Id,
 				CreaturePartId = _rightLegPart.Id,
-				SpecialToHit = 8
+				SpecialToHit = 11
 			};
 
 			result = await newHandler.Handle(request, default);

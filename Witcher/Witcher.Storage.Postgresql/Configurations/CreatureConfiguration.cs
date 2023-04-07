@@ -216,6 +216,8 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
+			builder.OwnsOne(x => x.Turn);
+
 			var battleNavigation = builder.Metadata.FindNavigation(nameof(Creature.Battle));
 			battleNavigation.SetField(Creature.BattleField);
 			battleNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
