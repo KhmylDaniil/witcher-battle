@@ -60,7 +60,7 @@ namespace Witcher.Core.Logic
 					effect.AutoEnd(currentCreature, ref message);
 				}
 
-				if (Attack.RemoveDeadBodies(battle))
+				if (AttackProcess.RemoveDeadBodies(battle))
 				{
 					battle.NextInitiative++;
 					message.AppendLine("Существо погибло. Ход переходит к следующему существу.");

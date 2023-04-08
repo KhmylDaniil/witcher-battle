@@ -2,7 +2,6 @@
 using Witcher.Core.BaseData;
 using Witcher.Core.Entities;
 using Witcher.Core.Entities.Effects;
-using Witcher.Core.Requests.RunBattleRequests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +14,7 @@ namespace Witcher.Core.Logic
 	/// <summary>
 	/// Действие атаки
 	/// </summary>
-	public sealed class Attack
+	public sealed class AttackProcess
 	{
 		private readonly IRollService _rollService;
 
@@ -23,7 +22,7 @@ namespace Witcher.Core.Logic
 		/// Конструктор
 		/// </summary>
 		/// <param name="rollService"></param>
-		public Attack(IRollService rollService)
+		public AttackProcess(IRollService rollService)
 		{
 			_rollService = rollService;
 		}
@@ -38,10 +37,10 @@ namespace Witcher.Core.Logic
 		/// <returns></returns>
 		internal string RunAttack(AttackData data, int? damageValue, int? attackValue, int? defenseValue)
 		{
-			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.Ability.Name} в {data.AimedPart.Name}. ");
+			var message = new StringBuilder($"{data.Attacker.Name} атакует существо {data.Target.Name} способностью {data.IAbility.Name} в {data.AimedPart.Name}. ");
 
 			var successValue = _rollService.ContestRollWithFumble(
-				attackBase: AttackValue(data.Attacker, data.Ability, data.ToHit),
+				attackBase: AttackValue(data.Attacker, data.IAbility, data.ToHit),
 				defenseBase: DefenseValue(data.Target, data.DefenseBase),
 				attackValue: attackValue,
 				defenseValue: defenseValue,
@@ -87,7 +86,7 @@ namespace Witcher.Core.Logic
 				return result < 0 ? 0 : result;
 			}
 
-			int AttackValue(Creature attacker, Ability ability, int toHit)
+			int AttackValue(Creature attacker, IAbility ability, int toHit)
 			{
 				var staggeredModifier = attacker.Effects.FirstOrDefault(x => x is StaggeredEffect) is null
 					? 0
@@ -114,7 +113,7 @@ namespace Witcher.Core.Logic
 			message.AppendLine($"Попадание с превышением на {successValue}.");
 			RemoveStunEffect(data);
 
-			int damage = damageValue is null ? RollDamage(data.Ability, data.ToDamage) : damageValue.Value;
+			int damage = damageValue is null ? RollDamage(data.IAbility, data.ToDamage) : damageValue.Value;
 
 			ArmorMutigation(data, ref damage, ref message);
 
@@ -141,7 +140,7 @@ namespace Witcher.Core.Logic
 		/// Расчет урона от атаки
 		/// </summary>
 		/// <returns>Нанесенный урон</returns>
-		int RollDamage(Ability ability, int specialBonus = default)
+		int RollDamage(IAbility ability, int specialBonus = default)
 		{
 			Random random = new();
 			var result = ability.DamageModifier + specialBonus;
@@ -170,7 +169,7 @@ namespace Witcher.Core.Logic
 		{
 			damage = (int)Math.Truncate(damage * data.AimedPart.DamageModifier);
 
-			var damageTypeModifier = data.Target.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == data.Ability.DamageType);
+			var damageTypeModifier = data.Target.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == data.IAbility.DamageType);
 
 			if (damageTypeModifier is null) return;
 
@@ -345,7 +344,7 @@ namespace Witcher.Core.Logic
 		/// <param name="message">Сообщение</param>
 		void ApplyConditions(AttackData data, ref StringBuilder message)
 		{
-			foreach (var condition in RollConditions(data.Ability))
+			foreach (var condition in RollConditions(data.IAbility))
 			{
 				var effect = Effect.CreateEffect<Effect>(rollService: _rollService, data.Attacker, data.Target, condition);
 
@@ -361,7 +360,7 @@ namespace Witcher.Core.Logic
 			/// Расчет применения состояний
 			/// </summary>
 			/// <returns>Наложенные состояния</returns>
-			List<Condition> RollConditions(Ability ability)
+			List<Condition> RollConditions(IAbility ability)
 			{
 				var result = new List<Condition>();
 				Random random = new();

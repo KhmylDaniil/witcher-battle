@@ -15,7 +15,7 @@ namespace Witcher.MVC
 		public AutoMapperProfile()
 		{
 			CreateMap<MakeTurnResponse, MakeTurnViewModel>();
-			CreateMap<AttackCommand, MakeAttackViewModel>();
+			CreateMap<AttackWithAbilityCommand, MakeAttackViewModel>();
 			CreateMap<HealEffectCommand, MakeHealViewModel>();
 
 			CreateMap<CreateCreatureTemplateCommand, CreateCreatureTemplateCommandViewModel>();

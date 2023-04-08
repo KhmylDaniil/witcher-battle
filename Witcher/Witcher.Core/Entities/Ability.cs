@@ -1,18 +1,18 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.AbilityRequests;
+﻿using Witcher.Core.Contracts.AbilityRequests;
 using Witcher.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Exceptions.SystemExceptions;
+using Witcher.Core.Abstractions;
 
 namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Способность
 	/// </summary>
-	public class Ability : EntityBase
+	public class Ability : EntityBase, IAbility
 	{
 		/// <summary>
 		/// Поле для <see cref="_game"/>

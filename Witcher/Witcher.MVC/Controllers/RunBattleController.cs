@@ -66,7 +66,7 @@ namespace Witcher.MVC.Controllers
 		}
 
 		[Route("[controller]/[action]/{battleId}")]
-		public async Task<IActionResult> MakeAttack(AttackCommand command, CancellationToken cancellationToken)
+		public async Task<IActionResult> MakeAttack(AttackWithAbilityCommand command, CancellationToken cancellationToken)
 		{
 			var viewModel = await CreateVM(command, cancellationToken);
 
@@ -76,7 +76,7 @@ namespace Witcher.MVC.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{battleId}")]
-		public async Task<IActionResult> Attack(AttackCommand command, CancellationToken cancellationToken)
+		public async Task<IActionResult> Attack(AttackWithAbilityCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -161,7 +161,7 @@ namespace Witcher.MVC.Controllers
 			return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
 		}
 
-		private async Task<MakeAttackViewModel> CreateVM(AttackCommand command, CancellationToken cancellationToken)
+		private async Task<MakeAttackViewModel> CreateVM(AttackWithAbilityCommand command, CancellationToken cancellationToken)
 		{
 			var vm = _mapper.Map<MakeAttackViewModel>(command);
 

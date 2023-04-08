@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using Witcher.Core.Exceptions;
 
-namespace Witcher.Core.Requests.RunBattleRequests
+namespace Witcher.Core.Logic
 {
 	/// <summary>
 	/// Данные для расчета атаки
@@ -24,7 +24,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 		/// <summary>
 		/// Атакующая способность
 		/// </summary>
-		internal Ability Ability { get; private set; }
+		internal IAbility IAbility { get; private set; }
 
 		/// <summary>
 		/// Часть тела цели
@@ -47,7 +47,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 		internal int ToDamage { get; private set; }
 
 		/// <summary>
-		/// Создание данных для расчета атаки
+		/// Создание данных для расчета атаки способностью
 		/// </summary>
 		/// <param name="attacker">Атакующее существо</param>
 		/// <param name="target">Существо цель</param>
@@ -80,7 +80,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 			{
 				Attacker = attacker,
 				Target = target,
-				Ability = ability,
+				IAbility = ability,
 				AimedPart = aimedPart,
 				DefenseBase = defenseBase,
 				ToHit = specialToHit,

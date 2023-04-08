@@ -13,20 +13,20 @@ using MediatR;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {
-	public class AttackHandler : BaseHandler<AttackCommand, Unit>
+	public class AttackWithAbilityHandler : BaseHandler<AttackWithAbilityCommand, Unit>
 	{
 		/// <summary>
 		/// Бросок параметра
 		/// </summary>
 		private readonly IRollService _rollService;
 
-		public AttackHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IRollService rollService)
+		public AttackWithAbilityHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IRollService rollService)
 			: base(appDbContext, authorizationService)
 		{
 			_rollService = rollService;
 		}
 
-		public override async Task<Unit> Handle(AttackCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(AttackWithAbilityCommand request, CancellationToken cancellationToken)
 		{
 			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
 				.Include(i => i.Creatures)
@@ -48,13 +48,13 @@ namespace Witcher.Core.Requests.RunBattleRequests
 
 			var attackData = CheckAndFormData(request, battle);
 
-			var attack = new Attack(_rollService);
+			var attack = new AttackProcess(_rollService);
 
 			var attackLog = attack.RunAttack(attackData, request.DamageValue, request.AttackValue, request.DefenseValue);
 
 			battle.BattleLog += attackLog;
 
-			Attack.RemoveDeadBodies(battle);
+			AttackProcess.RemoveDeadBodies(battle);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
@@ -67,7 +67,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 		/// <param name="request">Запрос</param>
 		/// <param name="battle">Бой</param>
 		/// <returns>Данные для расчета атаки</returns>
-		private AttackData CheckAndFormData(AttackCommand request, Battle battle)
+		private AttackData CheckAndFormData(AttackWithAbilityCommand request, Battle battle)
 		{
 			var attacker = battle.Creatures.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new EntityNotFoundException<Creature>(request.Id);
@@ -89,12 +89,12 @@ namespace Witcher.Core.Requests.RunBattleRequests
 					?? throw new EntityNotFoundException<Ability>(request.AbilityId.Value);
 
 			if (ability == null && request.DefensiveSkill != null)
-				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(request.DefensiveSkill), null);
+				throw new RequestFieldIncorrectDataException<AttackWithAbilityCommand>(nameof(request.DefensiveSkill), null);
 
 			var defensiveSkill = request.DefensiveSkill == null
 				? null
 				: target.CreatureSkills.FirstOrDefault(x => x.Skill == request.DefensiveSkill)
-					?? throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(request.DefensiveSkill));
+					?? throw new RequestFieldIncorrectDataException<AttackWithAbilityCommand>(nameof(request.DefensiveSkill));
 
 			return AttackData.CreateData(
 				attacker: attacker,

@@ -152,7 +152,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 		[TestMethod]
 		public async Task Handle_Attack_ShouldReturnUnit()
 		{
-			var request = new AttackCommand()
+			var request = new AttackWithAbilityCommand()
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,
@@ -161,7 +161,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 				SpecialToHit = 3
 			};
 
-			var newHandler = new AttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);
+			var newHandler = new AttackWithAbilityHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 
 			var result = await newHandler.Handle(request, default);
 
@@ -183,7 +183,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 		[TestMethod]
 		public async Task Handle_EffectIsSingleton_ShouldReturnUnit()
 		{
-			var request = new AttackCommand()
+			var request = new AttackWithAbilityCommand()
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,
@@ -192,7 +192,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 				SpecialToHit = 3
 			};
 
-			var newHandler = new AttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);
+			var newHandler = new AttackWithAbilityHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 
 			var result = await newHandler.Handle(request, default);
 
@@ -226,7 +226,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 		[TestMethod]
 		public async Task Handle_MonsterIsDead_ShouldReturnUnit()
 		{
-			var request = new AttackCommand()
+			var request = new AttackWithAbilityCommand()
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,
@@ -236,7 +236,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 				SpecialToDamage = 100
 			};
 
-			var newHandler = new AttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);
+			var newHandler = new AttackWithAbilityHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 
 			var result = await newHandler.Handle(request, default);
 
@@ -256,7 +256,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 		[TestMethod]
 		public async Task Handle_SharedPenaltyCrits_ShouldReturnUnit()
 		{
-			var request = new AttackCommand()
+			var request = new AttackWithAbilityCommand()
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,
@@ -265,7 +265,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 				SpecialToHit = 8
 			};
 
-			var newHandler = new AttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);
+			var newHandler = new AttackWithAbilityHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 
 			//first attack
 			var result = await newHandler.Handle(request, default);
@@ -297,7 +297,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			Assert.AreEqual(3, athletics.SkillValue);
 
 			//second attack
-			request = new AttackCommand()
+			request = new AttackWithAbilityCommand()
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,
@@ -344,7 +344,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			Assert.AreEqual(3, athletics.SkillValue);
 
 			//third attack
-			request = new AttackCommand()
+			request = new AttackWithAbilityCommand()
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,
@@ -374,7 +374,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			Assert.AreEqual(1, athletics.SkillValue);
 
 			//dismember limb
-			request = new AttackCommand()
+			request = new AttackWithAbilityCommand()
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,

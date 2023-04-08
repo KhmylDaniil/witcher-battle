@@ -1,14 +1,10 @@
-﻿using Witcher.Core.Abstractions;
+﻿using System;
 using Witcher.Core.Exceptions.RequestExceptions;
-using System;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
-	// <summary>
-	/// Команда атаки существа
-	/// </summary>
-	public class AttackCommand : IValidatableCommand
+	public abstract class AttackBaseCommand
 	{
 		/// <summary>
 		/// Айди боя
@@ -24,11 +20,6 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		/// Айди цели
 		/// </summary>
 		public Guid TargetCreatureId { get; set; }
-
-		/// <summary>
-		/// Айди способности атаки
-		/// </summary>
-		public Guid? AbilityId { get; set; }
 
 		/// <summary>
 		/// Айди части тела при прицельной атаке
@@ -68,19 +59,19 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		/// <summary>
 		/// Валидация
 		/// </summary>
-		public void Validate()
+		public virtual void Validate()
 		{
 			if (DamageValue is not null && DamageValue.Value < 0)
-				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(DamageValue), "Значение не может быть отрицательным.");
+				throw new RequestFieldIncorrectDataException<AttackWithAbilityCommand>(nameof(DamageValue), "Значение не может быть отрицательным.");
 
 			if (AttackValue is not null && AttackValue.Value < 0)
-				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(AttackValue), "Значение не может быть отрицательным.");
+				throw new RequestFieldIncorrectDataException<AttackWithAbilityCommand>(nameof(AttackValue), "Значение не может быть отрицательным.");
 
 			if (DefenseValue is not null && DefenseValue.Value < 0)
-				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(DefenseValue), "Значение не может быть отрицательным.");
+				throw new RequestFieldIncorrectDataException<AttackWithAbilityCommand>(nameof(DefenseValue), "Значение не может быть отрицательным.");
 
 			if (DefensiveSkill is not null && !Enum.IsDefined(DefensiveSkill.Value))
-				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(DefensiveSkill));
+				throw new RequestFieldIncorrectDataException<AttackWithAbilityCommand>(nameof(DefensiveSkill));
 		}
 	}
 }
