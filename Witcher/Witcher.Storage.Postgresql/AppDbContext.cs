@@ -90,6 +90,11 @@ namespace Witcher.Storage.Postgresql
 		public DbSet<ImgFile> ImgFiles { get; set; }
 
 		/// <summary>
+		/// Предметы
+		/// </summary>
+		public DbSet<Item> Items { get; set; }
+
+		/// <summary>
 		/// Экземпляры
 		/// </summary>
 		public DbSet<Battle> Battles { get; set; }

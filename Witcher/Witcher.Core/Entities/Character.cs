@@ -79,6 +79,16 @@ namespace Witcher.Core.Entities
 			}
 		}
 
+		/// <summary>
+		/// Предметы
+		/// </summary>
+		public List<Item> Items { get; set; }
+
+		/// <summary>
+		/// Список экипированного оружия
+		/// </summary>
+		public List<Weapon> EquippedWeapons { get; set; }
+
 		#endregion navigation properties
 
 		internal void AddUserGameCharacters(Game game, Guid currentUserId)

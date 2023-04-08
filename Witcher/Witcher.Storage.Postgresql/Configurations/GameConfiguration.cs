@@ -82,6 +82,12 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
+			builder.HasMany(x => x.Items)
+				.WithOne(x => x.Game)
+				.HasForeignKey(x => x.GameId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
 			var avatarNavigation = builder.Metadata.FindNavigation(nameof(Game.Avatar));
 			avatarNavigation.SetField(Game.AvatarField);
 			avatarNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
