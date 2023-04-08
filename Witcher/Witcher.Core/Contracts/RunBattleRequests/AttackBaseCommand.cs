@@ -19,7 +19,7 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		/// <summary>
 		/// Айди цели
 		/// </summary>
-		public Guid TargetCreatureId { get; set; }
+		public Guid TargetId { get; set; }
 
 		/// <summary>
 		/// Айди части тела при прицельной атаке
@@ -62,16 +62,16 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		public virtual void Validate()
 		{
 			if (DamageValue is not null && DamageValue.Value < 0)
-				throw new RequestFieldIncorrectDataException<AttackWithAbilityCommand>(nameof(DamageValue), "Значение не может быть отрицательным.");
+				throw new RequestFieldIncorrectDataException<AttackBaseCommand>(nameof(DamageValue), "Значение не может быть отрицательным.");
 
 			if (AttackValue is not null && AttackValue.Value < 0)
-				throw new RequestFieldIncorrectDataException<AttackWithAbilityCommand>(nameof(AttackValue), "Значение не может быть отрицательным.");
+				throw new RequestFieldIncorrectDataException<AttackBaseCommand>(nameof(AttackValue), "Значение не может быть отрицательным.");
 
 			if (DefenseValue is not null && DefenseValue.Value < 0)
-				throw new RequestFieldIncorrectDataException<AttackWithAbilityCommand>(nameof(DefenseValue), "Значение не может быть отрицательным.");
+				throw new RequestFieldIncorrectDataException<AttackBaseCommand>(nameof(DefenseValue), "Значение не может быть отрицательным.");
 
 			if (DefensiveSkill is not null && !Enum.IsDefined(DefensiveSkill.Value))
-				throw new RequestFieldIncorrectDataException<AttackWithAbilityCommand>(nameof(DefensiveSkill));
+				throw new RequestFieldIncorrectDataException<AttackBaseCommand>(nameof(DefensiveSkill));
 		}
 	}
 }

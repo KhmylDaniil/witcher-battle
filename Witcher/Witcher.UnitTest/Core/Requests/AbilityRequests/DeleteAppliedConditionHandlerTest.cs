@@ -27,7 +27,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 		{
 			_game = Game.CreateForTest();
 			_ability = Ability.CreateForTest(game: _game);
-			_appliedCondition = AppliedCondition.CreateAppliedCondition(_ability, Condition.Bleed, 50);
+			_appliedCondition = new AppliedCondition(Condition.Bleed, 50);
 			_ability.AppliedConditions.Add(_appliedCondition);
 			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _ability));
 		}
@@ -50,7 +50,11 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 			var result = await newHandler.Handle(command, default);
 
 			Assert.IsNotNull(result);
-			Assert.IsNull(_dbContext.AppliedConditions
+
+			var ability = _dbContext.Abilities.FirstOrDefault(x => x.Id == _ability.Id);
+			Assert.IsNotNull(ability);
+
+			Assert.IsNull(ability.AppliedConditions
 				.FirstOrDefault(x => x.Id == _appliedCondition.Id));
 
 		}

@@ -12,7 +12,7 @@ namespace Witcher.Core.Entities
 	/// <summary>
 	/// Способность
 	/// </summary>
-	public class Ability : EntityBase, IAbility
+	public class Ability : EntityBase, IAttackFormula
 	{
 		/// <summary>
 		/// Поле для <see cref="_game"/>
@@ -278,11 +278,7 @@ namespace Witcher.Core.Entities
 			{
 				var appliedCondition = AppliedConditions.FirstOrDefault(x => x.Id == dataItem.Id);
 				if (appliedCondition == null)
-					AppliedConditions.Add(
-						AppliedCondition.CreateAppliedCondition(
-							ability: this,
-							condition: dataItem.Condition,
-							applyChance: dataItem.ApplyChance));
+					AppliedConditions.Add(new AppliedCondition(dataItem.Condition, dataItem.ApplyChance));
 				else
 					appliedCondition.ChangeAppliedCondition(
 						condition: dataItem.Condition,
@@ -356,20 +352,5 @@ namespace Witcher.Core.Entities
 			ability.UpdateDefensiveSkills(defensiveSkills ?? Drafts.AbilityDrafts.DefensiveSkillsDrafts.BaseDefensiveSkills);
 			return ability;
 		}
-	}
-
-	/// <summary>
-	/// Защитный навык
-	/// </summary>
-	public class DefensiveSkill : EntityBase
-	{
-		/// <summary>
-		/// Навык
-		/// </summary>
-		public Skill Skill { get; set; }
-
-		protected DefensiveSkill() { }
-
-		public DefensiveSkill(Skill skill) => Skill = skill;
 	}
 }

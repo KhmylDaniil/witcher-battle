@@ -49,7 +49,6 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 					.ThenInclude(ct => ct.CreatureTemplateParts)
 				.Include(g => g.CreatureTemplates)
 					.ThenInclude(ct => ct.Abilities)
-						.ThenInclude(a => a.AppliedConditions)
 				.SelectMany(x => x.CreatureTemplates
 					.Where(x => request.UserName == null || x.Game.UserGames
 						.Any(u => u.User.Name.Contains(request.UserName) && u.UserId == x.CreatedByUserId))

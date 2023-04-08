@@ -31,7 +31,6 @@ namespace Witcher.Core.Requests.CharacterRequests
 					.ThenInclude(c => c.CreatureSkills)
 				.Include(g => g.Characters.Where(c => c.Id == request.Id))
 					.ThenInclude(c => c.Abilities)
-						.ThenInclude(a => a.AppliedConditions)
 				.Include(g => g.Characters.Where(c => c.Id == request.Id))
 					.ThenInclude(c => c.DamageTypeModifiers)
 				.Include(g => g.Characters.Where(c => c.Id == request.Id))

@@ -1,11 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Witcher.Core.Entities;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Abstractions
 {
-	public interface IAbility
+	public interface IAttackFormula
 	{
+		/// <summary>
+		/// Айди
+		/// </summary>
+		Guid Id { get; }
+		
 		/// <summary>
 		/// Наазвание способности
 		/// </summary>

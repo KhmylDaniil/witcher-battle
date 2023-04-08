@@ -34,7 +34,6 @@ namespace Witcher.Core.Requests.CharacterRequests
 					.ThenInclude(ct => ct.CreatureTemplateSkills)
 				.Include(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
 					.ThenInclude(ct => ct.Abilities)
-						.ThenInclude(a => a.AppliedConditions)
 				.Include(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
 					.ThenInclude(ct => ct.DamageTypeModifiers)
 			.FirstOrDefaultAsync(cancellationToken)

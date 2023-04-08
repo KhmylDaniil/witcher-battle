@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Witcher.Storage.Postgresql;
@@ -11,9 +12,10 @@ using Witcher.Storage.Postgresql;
 namespace Witcher.Storage.Postgresql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230408063638_fixAppliedConditions")]
+    partial class fixAppliedConditions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,36 +52,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasIndex("CreatureTemplatesId");
 
                     b.ToTable("CreatureTemplateAbilities", "GameRules");
-                });
-
-            modelBuilder.Entity("CharacterItem", b =>
-                {
-                    b.Property<Guid>("CharactersId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ItemsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("CharactersId", "ItemsId");
-
-                    b.HasIndex("ItemsId");
-
-                    b.ToTable("CharacterItem");
-                });
-
-            modelBuilder.Entity("CharacterWeapon", b =>
-                {
-                    b.Property<Guid>("EquippedByCharacterId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("EquippedWeaponsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("EquippedByCharacterId", "EquippedWeaponsId");
-
-                    b.HasIndex("EquippedWeaponsId");
-
-                    b.ToTable("EquippedWeapons", "Items");
                 });
 
             modelBuilder.Entity("GameImgFile", b =>
@@ -1218,6 +1190,11 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
 
+                    b.Property<Guid?>("CharacterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CharacterId")
+                        .HasComment("Айди персонажа");
+
                     b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
 
@@ -1920,42 +1897,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты удушья");
                 });
 
-            modelBuilder.Entity("Witcher.Core.Entities.Weapon", b =>
-                {
-                    b.HasBaseType("Witcher.Core.Entities.Item");
-
-                    b.Property<int>("Accuracy")
-                        .HasColumnType("integer")
-                        .HasColumnName("Accuracy")
-                        .HasComment("Точность атаки");
-
-                    b.Property<int>("AttackDiceQuantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("AttackDiceQuantity")
-                        .HasComment("Количество кубов атаки");
-
-                    b.Property<string>("AttackSkill")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("AttackSkill")
-                        .HasComment("Навык атаки");
-
-                    b.Property<int>("DamageModifier")
-                        .HasColumnType("integer")
-                        .HasColumnName("DamageModifier")
-                        .HasComment("Модификатор атаки");
-
-                    b.Property<string>("DamageType")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("DamageType")
-                        .HasComment("Тип урона");
-
-                    b.ToTable("Weapons", "Items");
-
-                    b.HasComment("Оружие");
-                });
-
             modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexArmCritEffect", b =>
                 {
                     b.HasBaseType("Witcher.Core.Entities.CritEffect");
@@ -2529,36 +2470,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CharacterItem", b =>
-                {
-                    b.HasOne("Witcher.Core.Entities.Character", null)
-                        .WithMany()
-                        .HasForeignKey("CharactersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Witcher.Core.Entities.Item", null)
-                        .WithMany()
-                        .HasForeignKey("ItemsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CharacterWeapon", b =>
-                {
-                    b.HasOne("Witcher.Core.Entities.Character", null)
-                        .WithMany()
-                        .HasForeignKey("EquippedByCharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Witcher.Core.Entities.Weapon", null)
-                        .WithMany()
-                        .HasForeignKey("EquippedWeaponsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("GameImgFile", b =>
                 {
                     b.HasOne("Witcher.Core.Entities.Game", null)
@@ -2667,7 +2578,7 @@ namespace Witcher.Storage.Postgresql.Migrations
 
                             b1.HasKey("AbilityId", "Id");
 
-                            b1.ToTable("Abilities_AppliedConditions", "GameRules");
+                            b1.ToTable("AppliedConditions", "GameRules");
 
                             b1.WithOwner()
                                 .HasForeignKey("AbilityId");
@@ -2700,15 +2611,12 @@ namespace Witcher.Storage.Postgresql.Migrations
                             b1.Property<string>("RoleModifiedUser")
                                 .HasColumnType("text");
 
-                            b1.Property<string>("Skill")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("DefensiveSkill")
-                                .HasComment("Защитный навык");
+                            b1.Property<int>("Skill")
+                                .HasColumnType("integer");
 
                             b1.HasKey("AbilityId", "Id");
 
-                            b1.ToTable("Abilities_DefensiveSkills", "GameRules");
+                            b1.ToTable("DefensiveSkill", "GameRules");
 
                             b1.WithOwner()
                                 .HasForeignKey("AbilityId");
@@ -2980,11 +2888,19 @@ namespace Witcher.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("Witcher.Core.Entities.Item", b =>
                 {
+                    b.HasOne("Witcher.Core.Entities.Character", "Character")
+                        .WithMany("Items")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
                     b.HasOne("Witcher.Core.Entities.Game", "Game")
                         .WithMany("Items")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Character");
 
                     b.Navigation("Game");
                 });
@@ -3271,106 +3187,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasForeignKey("Witcher.Core.Entities.Effects.SufflocationEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Witcher.Core.Entities.Weapon", b =>
-                {
-                    b.HasOne("Witcher.Core.Entities.Item", null)
-                        .WithOne()
-                        .HasForeignKey("Witcher.Core.Entities.Weapon", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsMany("Witcher.Core.Entities.AppliedCondition", "AppliedConditions", b1 =>
-                        {
-                            b1.Property<Guid>("WeaponId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
-
-                            b1.Property<int>("ApplyChance")
-                                .HasColumnType("integer")
-                                .HasColumnName("ApplyChance")
-                                .HasComment("Шанс применения");
-
-                            b1.Property<string>("Condition")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("Condition")
-                                .HasComment("Тип состояния");
-
-                            b1.Property<Guid>("CreatedByUserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("CreatedOn")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<Guid>("ModifiedByUserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("ModifiedOn")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<string>("RoleCreatedUser")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("RoleModifiedUser")
-                                .HasColumnType("text");
-
-                            b1.HasKey("WeaponId", "Id");
-
-                            b1.ToTable("Weapons_AppliedConditions", "Items");
-
-                            b1.WithOwner()
-                                .HasForeignKey("WeaponId");
-                        });
-
-                    b.OwnsMany("Witcher.Core.Entities.DefensiveSkill", "DefensiveSkills", b1 =>
-                        {
-                            b1.Property<Guid>("WeaponId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid>("CreatedByUserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("CreatedOn")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<Guid>("ModifiedByUserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("ModifiedOn")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<string>("RoleCreatedUser")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("RoleModifiedUser")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Skill")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("DefensiveSkill")
-                                .HasComment("Защитный навык");
-
-                            b1.HasKey("WeaponId", "Id");
-
-                            b1.ToTable("Weapons_DefensiveSkills", "Items");
-
-                            b1.WithOwner()
-                                .HasForeignKey("WeaponId");
-                        });
-
-                    b.Navigation("AppliedConditions");
-
-                    b.Navigation("DefensiveSkills");
                 });
 
             modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexArmCritEffect", b =>
@@ -3761,6 +3577,8 @@ namespace Witcher.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("Witcher.Core.Entities.Character", b =>
                 {
+                    b.Navigation("Items");
+
                     b.Navigation("UserGameCharacters");
                 });
 #pragma warning restore 612, 618

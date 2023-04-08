@@ -17,7 +17,6 @@ namespace Witcher.Core.Requests.AbilityRequests
 		{
 			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.Abilities.Where(x => x.Id == request.Id))
-					.ThenInclude(x => x.AppliedConditions)
 				.SelectMany(x => x.Abilities);
 
 			var ability = await filter.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)

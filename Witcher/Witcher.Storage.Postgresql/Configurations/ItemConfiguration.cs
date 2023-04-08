@@ -16,10 +16,6 @@ namespace Witcher.Storage.Postgresql.Configurations
 			builder.ToTable("Items", "Items").
 				HasComment("Предметы");
 
-			builder.Property(r => r.CharacterId)
-				.HasColumnName("CharacterId")
-				.HasComment("Айди персонажа");
-
 			builder.Property(r => r.GameId)
 				.HasColumnName("GameId")
 				.HasComment("Айди игры")
@@ -59,19 +55,12 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasOne(x => x.Character)
-				.WithMany(x => x.Items)
-				.HasForeignKey(x => x.GameId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.SetNull);
+			builder.HasMany(x => x.Characters)
+				.WithMany(x => x.Items);
 
 			var gameNavigation = builder.Metadata.FindNavigation(nameof(Item.Game));
 			gameNavigation.SetField(Item.GameField);
 			gameNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
-
-			var characterNavigation = builder.Metadata.FindNavigation(nameof(Item.Character));
-			characterNavigation.SetField(Item.CharacterField);
-			characterNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

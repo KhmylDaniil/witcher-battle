@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.Abstractions;
 
 namespace Witcher.Core.Entities
 {
@@ -464,12 +465,12 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		/// <param name="ability">Способность</param>
 		/// <returns>Защитный навык существа</returns>
-		internal int DefaultDefenseBase(Ability ability)
+		internal int DefaultDefenseBase(IAttackFormula attackFormula)
 		{
-			if (!ability.DefensiveSkills.Any())
-				throw new LogicBaseException($"От способности {ability.Name} c айди {ability.Id} нет защиты.");
+			if (!attackFormula.DefensiveSkills.Any())
+				throw new LogicBaseException($"От способности {attackFormula.Name} c айди {attackFormula.Id} нет защиты.");
 
-			var defenseBase = ability.DefensiveSkills.Select(ds => SkillBase(ds.Skill)).Max();
+			var defenseBase = attackFormula.DefensiveSkills.Select(ds => SkillBase(ds.Skill)).Max();
 
 			return defenseBase;
 		}
@@ -661,9 +662,9 @@ namespace Witcher.Core.Entities
 		public int MultiattackRemainsQuantity { get; set; }
 
 		/// <summary>
-		/// Способность для мультиатаки
+		/// Айди формулы для мультиатаки
 		/// </summary>
-		public Guid? MuitiattackAbilityId { get; set; }
+		public Guid? MuitiattackAttackFormulaId { get; set; }
 
 		/// <summary>
 		/// Количество потраченной за ход энергии

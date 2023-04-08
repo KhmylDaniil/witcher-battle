@@ -168,7 +168,7 @@ namespace Witcher.MVC.Controllers
 			var formAttackCommand = new FormAttackCommand
 			{
 				AttackerId = command.Id,
-				TargetId = command.TargetCreatureId,
+				TargetId = command.TargetId,
 				AbilityId = command.AbilityId,
 			};
 			var formAttackResponse = await _mediator.SendValidated(formAttackCommand, cancellationToken);

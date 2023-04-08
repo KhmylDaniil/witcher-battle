@@ -16,7 +16,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 	/// Тест для <see cref="CreatureAttackHandler"/>
 	/// </summary>
 	[TestClass]
-	public class AttackHandlerTest : UnitTestBase
+	public class AttackWithAbilityHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -34,7 +34,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 		/// <summary>
 		/// Тест для <see cref="CreatureAttackHandler"/>
 		/// </summary>
-		public AttackHandlerTest() : base()
+		public AttackWithAbilityHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
 			_battle = Battle.CreateForTest(game: _game);
@@ -53,7 +53,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 				attackSpeed: 1,
 				accuracy: 1,
 				defensiveSkills: new List<Skill> { Skill.Melee, Skill.Dodge, Skill.Athletics });
-			_ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(_ability, Condition.BleedingWound, 100));
+			_ability.AppliedConditions.Add(new AppliedCondition(Condition.BleedingWound, 100));
 
 			_creature = Creature.CreateForTest(
 				battle: _battle,
@@ -156,7 +156,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,
-				TargetCreatureId = _creature.Id,
+				TargetId = _creature.Id,
 				CreaturePartId = _torsoPart.Id,
 				SpecialToHit = 3
 			};
@@ -187,7 +187,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,
-				TargetCreatureId = _creature.Id,
+				TargetId = _creature.Id,
 				CreaturePartId = _torsoPart.Id,
 				SpecialToHit = 3
 			};
@@ -230,7 +230,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,
-				TargetCreatureId = _creature.Id,
+				TargetId = _creature.Id,
 				CreaturePartId = _torsoPart.Id,
 				SpecialToHit = 3,
 				SpecialToDamage = 100
@@ -260,7 +260,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,
-				TargetCreatureId = _creature.Id,
+				TargetId = _creature.Id,
 				CreaturePartId = _leftLegPart.Id,
 				SpecialToHit = 8
 			};
@@ -301,7 +301,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,
-				TargetCreatureId = _creature.Id,
+				TargetId = _creature.Id,
 				CreaturePartId = _rightLegPart.Id,
 				SpecialToHit = 6
 			};
@@ -348,7 +348,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,
-				TargetCreatureId = _creature.Id,
+				TargetId = _creature.Id,
 				CreaturePartId = _rightLegPart.Id,
 				SpecialToHit = 11
 			};
@@ -378,7 +378,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			{
 				BattleId = _battle.Id,
 				Id = _creature.Id,
-				TargetCreatureId = _creature.Id,
+				TargetId = _creature.Id,
 				CreaturePartId = _rightLegPart.Id,
 				SpecialToHit = 17
 			};

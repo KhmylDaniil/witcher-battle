@@ -82,7 +82,7 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Предметы
 		/// </summary>
-		public List<Item> Items { get; set; }
+		public List<Item> Items { get; set; } = new();
 
 		/// <summary>
 		/// Список экипированного оружия

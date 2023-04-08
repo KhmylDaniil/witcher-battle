@@ -27,7 +27,6 @@ namespace Witcher.Core.Requests.RunBattleRequests
 
 			var attacker = await _appDbContext.Creatures
 					.Include(c => c.Abilities)
-					.ThenInclude(a => a.DefensiveSkills)
 					.FirstOrDefaultAsync(x => x.Id == request.AttackerId, cancellationToken)
 						?? throw new EntityNotFoundException<Creature>(request.AttackerId);
 

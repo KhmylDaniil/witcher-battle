@@ -32,7 +32,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 				BattleId = battle.Id,
 				CreatureId = currentCreature.Id,
 				CurrentCreatureName = currentCreature.Name,
-				MultiAttackAbilityId = currentCreature.Turn.MuitiattackAbilityId,
+				MultiAttackAbilityId = currentCreature.Turn.MuitiattackAttackFormulaId,
 				PossibleTargets = battle.Creatures.ToDictionary(x => x.Id, x => x.Name),
 				MyAbilities = currentCreature.Abilities.ToDictionary(x => x.Id, x => x.Name),
 				TurnState = currentCreature.Turn.TurnState

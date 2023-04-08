@@ -38,7 +38,6 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 				.Include(x => x.CreatureTemplates)
 					.ThenInclude(x => x.Abilities)
 				.Include(x => x.Abilities)
-					.ThenInclude(x => x.AppliedConditions)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 

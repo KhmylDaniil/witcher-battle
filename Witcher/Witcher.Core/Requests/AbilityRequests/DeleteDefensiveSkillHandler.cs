@@ -20,7 +20,6 @@ namespace Witcher.Core.Requests.AbilityRequests
 		{	
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities.Where(a => a.Id == request.AbilityId))
-					.ThenInclude(a => a.DefensiveSkills)
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 

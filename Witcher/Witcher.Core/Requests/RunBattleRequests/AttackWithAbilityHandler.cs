@@ -10,6 +10,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Witcher.Core.ExtensionMethods;
+using System.ComponentModel.DataAnnotations;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {
@@ -28,23 +30,13 @@ namespace Witcher.Core.Requests.RunBattleRequests
 
 		public override async Task<Unit> Handle(AttackWithAbilityCommand request, CancellationToken cancellationToken)
 		{
-			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.CreatureSkills)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.CreatureParts)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.Abilities)
-					.ThenInclude(a => a.AppliedConditions)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.Abilities)
-					.ThenInclude(a => a.DefensiveSkills)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.DamageTypeModifiers)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.Effects)
+			var game = await _authorizationService.CharacterOwnerFilter(_appDbContext.Games, request.Id)
+				.GetCreaturesAndCharactersFormBattle(request.BattleId)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new NoAccessToEntityException<Battle>();
+				?? throw new NoAccessToEntityException<Game>();
+
+			var battle = game.Battles.FirstOrDefault()
+				?? throw new EntityNotFoundException<Battle>(request.BattleId);
 
 			var attackData = CheckAndFormData(request, battle);
 
@@ -72,8 +64,8 @@ namespace Witcher.Core.Requests.RunBattleRequests
 			var attacker = battle.Creatures.FirstOrDefault(x => x.Id == request.Id)
 				?? throw new EntityNotFoundException<Creature>(request.Id);
 
-			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
-				?? throw new EntityNotFoundException<Creature>(request.TargetCreatureId);
+			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetId)
+				?? throw new EntityNotFoundException<Creature>(request.TargetId);
 
 			var aimedPart = request.CreaturePartId == null
 				? null

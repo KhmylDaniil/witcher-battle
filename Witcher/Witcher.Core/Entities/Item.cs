@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Entities
@@ -10,13 +11,7 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		public const string GameField = nameof(_game);
 
-		/// <summary>
-		/// Поле для <see cref="_character"/>
-		/// </summary>
-		public const string CharacterField = nameof(_character);
-
 		private Game _game;
-		private Character _character;
 		private int _price;
 		private int _quantity;
 		private int _weight;
@@ -32,7 +27,6 @@ namespace Witcher.Core.Entities
 		/// Конструктор
 		/// </summary>
 		/// <param name="game">Игра</param>
-		/// <param name="character"></param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
 		/// <param name="isStackable">Можно ли положить в стак</param>
@@ -41,7 +35,6 @@ namespace Witcher.Core.Entities
 		/// <param name="weight">Вес</param>
 		public Item(
 			Game game,
-			Character character,
 			string name,
 			string description,
 			bool isStackable,
@@ -50,7 +43,6 @@ namespace Witcher.Core.Entities
 			int weight)
 		{
 			Game = game;
-			Character = character;
 			Name = name;
 			Description = description;
 			IsStackable = isStackable;
@@ -63,11 +55,6 @@ namespace Witcher.Core.Entities
 		/// Айди игры
 		/// </summary>
 		public Guid GameId { get; protected set; }
-
-		/// <summary>
-		/// Айди персонажа
-		/// </summary>
-		public Guid? CharacterId { get; protected set; }
 
 		/// <summary>
 		/// Наазвание
@@ -142,17 +129,10 @@ namespace Witcher.Core.Entities
 		}
 
 		/// <summary>
-		/// Персонаж
+		/// Персонажи
 		/// </summary>
-		public Character Character
-		{
-			get => _character;
-			protected set
-			{
-				_character = value;
-				CharacterId = value?.Id;
-			}
-		}
+		public List<Character> Characters { get; set; } = new();
+
 		#endregion navigation properties
 	}
 }

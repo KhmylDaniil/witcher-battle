@@ -16,14 +16,9 @@ namespace Witcher.Core.Abstractions
 		DbSet<Ability> Abilities { get; }
 
 		/// <summary>
-		/// Применяемые состояния
+		/// Битвы
 		/// </summary>
-		DbSet<AppliedCondition> AppliedConditions { get; }
-
-		/// <summary>
-		/// Части тела
-		/// </summary>
-		DbSet<BodyPart> BodyParts { get; }
+		DbSet<Battle> Battles { get; }
 
 		/// <summary>
 		/// Шаблоны тел
@@ -86,14 +81,14 @@ namespace Witcher.Core.Abstractions
 		DbSet<ImgFile> ImgFiles { get; }
 
 		/// <summary>
-		/// Экземпляры
-		/// </summary>
-		DbSet<Battle> Battles { get; }
-
-		/// <summary>
 		/// Интерфейсы
 		/// </summary>
 		DbSet<Interface> Interfaces { get; }
+
+		/// <summary>
+		/// Предметы
+		/// </summary>
+		DbSet<Item> Items { get; }
 
 		/// <summary>
 		/// Роли в системе
@@ -129,6 +124,11 @@ namespace Witcher.Core.Abstractions
 		/// Роли пользователей
 		/// </summary>
 		DbSet<UserRole> UserRoles { get; }
+
+		/// <summary>
+		/// Оружие
+		/// </summary>
+		DbSet<Weapon> Weapons { get; }
 
 		/// <summary>
 		/// Сохранить изменения

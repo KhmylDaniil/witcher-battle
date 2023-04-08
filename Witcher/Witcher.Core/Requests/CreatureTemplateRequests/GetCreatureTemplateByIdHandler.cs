@@ -33,7 +33,6 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 					.ThenInclude(x => x.CreatureTemplateSkills)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.Abilities)
-					.ThenInclude(x => x.AppliedConditions)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.CreatureTemplateParts)
 				.SelectMany(x => x.CreatureTemplates);

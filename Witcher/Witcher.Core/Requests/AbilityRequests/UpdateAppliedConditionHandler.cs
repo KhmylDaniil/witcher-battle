@@ -20,7 +20,6 @@ namespace Witcher.Core.Requests.AbilityRequests
 		{
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities.Where(a => a.Id == request.AbilityId))
-					.ThenInclude(a => a.AppliedConditions)
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 
@@ -33,7 +32,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 				throw new RequestNotUniqException<UpdateAppliedCondionCommand>(nameof(request.Condition));
 
 			if (currentAppliedCondition is null)
-				ability.AppliedConditions.Add(AppliedCondition.CreateAppliedCondition(ability, request.Condition, request.ApplyChance));
+				ability.AppliedConditions.Add(new AppliedCondition(request.Condition, request.ApplyChance));
 			else
 				currentAppliedCondition.ChangeAppliedCondition(request.Condition, request.ApplyChance);
 
