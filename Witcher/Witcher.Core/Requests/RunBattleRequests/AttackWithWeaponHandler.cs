@@ -48,7 +48,9 @@ namespace Witcher.Core.Requests.RunBattleRequests
 
 			battle.BattleLog += attackLog;
 
-			AttackProcess.RemoveDeadBodies(battle);
+			RunBattle.RemoveDeadBodies(battle);
+
+			TurnStateProcessing.EndOfAttackProcessing(attackData);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
@@ -65,13 +67,13 @@ namespace Witcher.Core.Requests.RunBattleRequests
 				var aimedPart = request.CreaturePartId == null
 					? null
 					: target.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId)
-						?? throw new EntityNotFoundException<BodyTemplatePart>(request.CreaturePartId.Value);
+						?? throw new EntityNotFoundException<CreaturePart>(request.CreaturePartId.Value);
 
 				if (!attacker.EquippedWeapons.Any())
 					throw new RequestValidationException($"У существа {attacker.Name} нет экипированного оружия, атака невозможна.");
 
 				var weapon = attacker.EquippedWeapons.FirstOrDefault(x => x.Id == request.WeaponId)
-						?? throw new EntityNotFoundException<Weapon>(request.WeaponId);
+					?? throw new EntityNotFoundException<Weapon>(request.WeaponId);
 
 				var defensiveSkill = request.DefensiveSkill == null
 					? null
@@ -82,15 +84,12 @@ namespace Witcher.Core.Requests.RunBattleRequests
 					attacker: attacker,
 					target: target,
 					aimedPart: aimedPart,
-					weapon: weapon,
+					attackFormula: weapon,
 					isStrongAttack: request.IsStrongAttack,
 					defensiveSkill: defensiveSkill,
 					specialToHit: request.SpecialToHit,
 					specialToDamage: request.SpecialToDamage);
 			}
 		}
-
-
-		
 	}
 }

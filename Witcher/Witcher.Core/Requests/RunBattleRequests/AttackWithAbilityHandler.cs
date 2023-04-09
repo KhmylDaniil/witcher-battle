@@ -46,7 +46,8 @@ namespace Witcher.Core.Requests.RunBattleRequests
 
 			battle.BattleLog += attackLog;
 
-			AttackProcess.RemoveDeadBodies(battle);
+			RunBattle.RemoveDeadBodies(battle);
+			TurnStateProcessing.EndOfAttackProcessing(attackData);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
@@ -92,7 +93,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 				attacker: attacker,
 				target: target,
 				aimedPart: aimedPart,
-				ability: ability,
+				attackFormula: ability,
 				defensiveSkill: defensiveSkill,
 				specialToHit: request.SpecialToHit,
 				specialToDamage: request.SpecialToDamage);

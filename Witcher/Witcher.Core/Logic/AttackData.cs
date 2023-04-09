@@ -3,7 +3,6 @@ using Witcher.Core.Entities;
 using System;
 using System.Linq;
 using Witcher.Core.Exceptions;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Witcher.Core.Logic
 {
@@ -50,7 +49,7 @@ namespace Witcher.Core.Logic
 		/// <summary>
 		/// Флаг сильной атаки оружием
 		/// </summary>
-		internal bool isStrong { get; private set; }
+		internal bool? isStrongWeaponAttack { get; private set; }
 
 		/// <summary>
 		/// Создание данных для расчета атаки способностью
@@ -58,7 +57,7 @@ namespace Witcher.Core.Logic
 		/// <param name="attacker">Атакующее существо</param>
 		/// <param name="target">Существо цель</param>
 		/// <param name="aimedPart">Часть тела цель</param>
-		/// <param name="ability">Атакующая способность</param>
+		/// <param name="attackFormula">Интерфейс формулы атаки</param>
 		/// <param name="defensiveSkill">Навык защиты</param>
 		/// <param name="specialToHit">Специальный бонус к попаданию</param>
 		/// <param name="specialToDamage">Специальный бонус к урону</param>
@@ -67,116 +66,37 @@ namespace Witcher.Core.Logic
 			Creature attacker,
 			Creature target,
 			CreaturePart aimedPart,
-			Ability ability,
+			IAttackFormula attackFormula,
 			CreatureSkill defensiveSkill,
 			int specialToHit,
-			int specialToDamage)
+			int specialToDamage,
+			bool? isStrongAttack = default)
 		{
-			ability = ability is null ? attacker.DefaultAbility() : ability;
+			var defenseBase = defensiveSkill is null ? target.DefaultDefenseBase(attackFormula) : target.SkillBase(defensiveSkill.Skill);
 
-			var defenseBase = defensiveSkill is null ? target.DefaultDefenseBase(ability) : target.SkillBase(defensiveSkill.Skill);
+			specialToHit = DefineSpecialToHit(attacker, aimedPart, specialToHit);
 
-			specialToHit = aimedPart is null ? specialToHit : specialToHit - aimedPart.HitPenalty;
+			aimedPart = DefineCreaturePartIfNotAimed(target, aimedPart);
 
-			aimedPart = AimedPartIsNullOrDismembered() ? DefaultCreaturePart() : aimedPart;
-
-			CheckHowManyAttackCanBePerformedThisTurn();
+			if (attacker.Turn.MuitiattackAttackFormulaId is not null && attacker.Turn.MuitiattackAttackFormulaId.Value != attackFormula.Id)
+				throw new LogicBaseException("Должна быть проведена мультиатака, но выбрана другая способность");
 
 			return new AttackData()
 			{
 				Attacker = attacker,
 				Target = target,
-				AttackFormula = ability,
-				AimedPart = aimedPart,
-				DefenseBase = defenseBase,
-				ToHit = specialToHit,
-				ToDamage = specialToDamage
-			};
-
-			bool AimedPartIsNullOrDismembered()
-			{
-				if (aimedPart is null)
-					return true;
-
-				return target.Effects.Any(x => x is CritEffect crit && crit.CreaturePartId == aimedPart.Id
-					&& crit is ISharedPenaltyCrit limbCrit && limbCrit.Severity >= BaseData.Enums.Severity.Deadly);
-			}
-
-			CreaturePart DefaultCreaturePart()
-			{
-				Random random = new();
-				int roll;
-
-				do
-				{
-					roll = random.Next(1, 10);
-					aimedPart = target.CreatureParts.First(x => x.MinToHit <= roll && x.MaxToHit >= roll);
-				}
-				while (AimedPartIsNullOrDismembered());
-
-				return aimedPart;
-			}
-
-			void CheckHowManyAttackCanBePerformedThisTurn()
-			{
-				if (attacker.Turn.TurnState >= BaseData.Enums.TurnState.BaseActionIsDone)
-					specialToHit -= 3;
-
-				if (ability.AttackSpeed > 1)
-				{
-					if (attacker.Turn.TurnState == BaseData.Enums.TurnState.ReadyForAction
-						|| attacker.Turn.TurnState == BaseData.Enums.TurnState.BaseActionIsDone)
-					{
-						attacker.Turn.MuitiattackAttackFormulaId = ability.Id;
-						attacker.Turn.MultiattackRemainsQuantity = ability.AttackSpeed;
-						attacker.Turn.TurnState++;
-					}
-					else if (ability.Id != attacker.Turn?.MuitiattackAttackFormulaId)
-						throw new LogicBaseException("Должна быть проведена мультиатака, но выбрана другая способность");
-
-					attacker.Turn.MultiattackRemainsQuantity--;
-
-					if (attacker.Turn.MultiattackRemainsQuantity > 0)
-						return;
-
-					attacker.Turn.MuitiattackAttackFormulaId = null;
-				}
-
-				attacker.Turn.TurnState = attacker.Turn.TurnState == BaseData.Enums.TurnState.ReadyForAction
-					? BaseData.Enums.TurnState.BaseActionIsDone
-					: BaseData.Enums.TurnState.TurnIsDone;
-			}
-		}
-
-		internal static AttackData CreateData(
-			Creature attacker,
-			Creature target,
-			CreaturePart aimedPart,
-			Weapon weapon,
-			bool? isStrongAttack,
-			CreatureSkill defensiveSkill,
-			int specialToHit,
-			int specialToDamage)
-		{
-			var defenseBase = defensiveSkill is null ? target.DefaultDefenseBase(weapon) : target.SkillBase(defensiveSkill.Skill);
-
-			specialToHit = aimedPart is null ? specialToHit : specialToHit - aimedPart.HitPenalty;
-
-			aimedPart = AimedPartIsNullOrDismembered() ? DefaultCreaturePart() : aimedPart;
-
-			CheckHowManyAttackCanBePerformedThisTurn();
-
-			return new AttackData()
-			{
-				Attacker = attacker,
-				Target = target,
-				AttackFormula = weapon,
+				AttackFormula = attackFormula,
 				AimedPart = aimedPart,
 				DefenseBase = defenseBase,
 				ToHit = specialToHit,
 				ToDamage = specialToDamage,
-				isStrong = isStrongAttack is not null && isStrongAttack.Value,
+				isStrongWeaponAttack = isStrongAttack
 			};
+		}
+
+		private static CreaturePart DefineCreaturePartIfNotAimed(Creature target, CreaturePart aimedPart)
+		{
+			return AimedPartIsNullOrDismembered() ? DefaultCreaturePart() : aimedPart;
 
 			bool AimedPartIsNullOrDismembered()
 			{
@@ -201,36 +121,15 @@ namespace Witcher.Core.Logic
 
 				return aimedPart;
 			}
+		}
 
-			void CheckHowManyAttackCanBePerformedThisTurn()
-			{
-				if (attacker.Turn.TurnState >= BaseData.Enums.TurnState.BaseActionIsDone)
-					specialToHit -= 3;
+		private static int DefineSpecialToHit(Creature attacker, CreaturePart aimedPart, int specialToHit)
+		{
+			specialToHit = aimedPart is null ? specialToHit : specialToHit - aimedPart.HitPenalty;
 
-				if (isStrongAttack is not null && !isStrongAttack.Value)
-				{
-					if (attacker.Turn.TurnState == BaseData.Enums.TurnState.ReadyForAction
-						|| attacker.Turn.TurnState == BaseData.Enums.TurnState.BaseActionIsDone)
-					{
-						attacker.Turn.MuitiattackAttackFormulaId = weapon.Id;
-						attacker.Turn.MultiattackRemainsQuantity = 2;
-						attacker.Turn.TurnState++;
-					}
-					else if (weapon.Id != attacker.Turn?.MuitiattackAttackFormulaId)
-						throw new LogicBaseException("Должна быть проведена мультиатака, но выбрана другая способность");
-
-					attacker.Turn.MultiattackRemainsQuantity--;
-
-					if (attacker.Turn.MultiattackRemainsQuantity > 0)
-						return;
-
-					attacker.Turn.MuitiattackAttackFormulaId = null;
-				}
-
-				attacker.Turn.TurnState = attacker.Turn.TurnState == BaseData.Enums.TurnState.ReadyForAction
-					? BaseData.Enums.TurnState.BaseActionIsDone
-					: BaseData.Enums.TurnState.TurnIsDone;
-			}
+			if (attacker.Turn.TurnState >= BaseData.Enums.TurnState.BaseActionIsDone)
+				specialToHit -= 3;
+			return specialToHit;
 		}
 	}
 }
