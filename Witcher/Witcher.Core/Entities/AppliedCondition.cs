@@ -31,7 +31,7 @@ namespace Witcher.Core.Entities
 			get => _applyChance;
 			private set
 			{
-				if (value < 0 || value > 100)
+				if (value < 1 || value > 100)
 					throw new FieldOutOfRangeException<AppliedCondition>(nameof(ApplyChance));
 				_applyChance = value;
 			}

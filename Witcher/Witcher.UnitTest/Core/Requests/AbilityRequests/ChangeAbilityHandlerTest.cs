@@ -51,9 +51,9 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 				AttackSkill = Skill.Staff,
 				DefensiveSkills = new List<Skill> { Skill.Dodge },
 				DamageType = DamageType.Piercing,
-				AppliedConditions = new List<UpdateAbilityCommandItemAppledCondition>
+				AppliedConditions = new List<UpdateAttackFormulaCommandItemAppledCondition>
 				{
-					new UpdateAbilityCommandItemAppledCondition()
+					new UpdateAttackFormulaCommandItemAppledCondition()
 					{
 						Condition = Condition.Bleed,
 						ApplyChance = 50

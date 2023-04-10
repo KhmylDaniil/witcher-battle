@@ -1,63 +1,39 @@
-﻿using System.Collections.Generic;
-using static Witcher.Core.BaseData.Enums;
-using Witcher.Core.Exceptions.EntityExceptions;
-using Witcher.Core.Abstractions;
+﻿using Witcher.Core.Exceptions.EntityExceptions;
+using System;
 
 namespace Witcher.Core.Entities
 {
-	public class Weapon : Item, IAttackFormula
+	public class Weapon : Item
 	{
-		private int _attackDiceQuantity;
+		private Character _equippedByCharacter;
+		public const string EquippedByCharacterField = nameof(_equippedByCharacter);
+		private int _currentDurability;
 
-		/// <summary>
-		/// Навык атаки
-		/// </summary>
-		public Skill AttackSkill { get; set; }
+		protected Weapon() { }
 
-		/// <summary>
-		/// Тип урона
-		/// </summary>
-		public DamageType DamageType { get; set; }
-
-		/// <summary>
-		/// Количество кубов атаки
-		/// </summary>
-		public int AttackDiceQuantity
+		public int CurrentDurability
 		{
-			get => _attackDiceQuantity;
+			get => _currentDurability;
 			set
 			{
 				if (value < 0)
-					throw new FieldOutOfRangeException<Ability>(nameof(AttackDiceQuantity));
-				_attackDiceQuantity = value;
+					throw new FieldOutOfRangeException<Weapon>(nameof(CurrentDurability));
+				_currentDurability = value;
 			}
 		}
 
-		/// <summary>
-		/// Модификатор атаки
-		/// </summary>
-		public int DamageModifier { get; set; }
-
-		/// <summary>
-		/// Точность атаки
-		/// </summary>
-		public int Accuracy { get; set; }
+		public Guid? EquippedByCharacterId { get; protected set; }
 
 		#region navigation properties
-		/// <summary>
-		/// Накладываемые состояния
-		/// </summary>
-		public List<AppliedCondition> AppliedConditions { get; set; }
-
-		/// <summary>
-		/// Защитные навыки
-		/// </summary>
-		public List<DefensiveSkill> DefensiveSkills { get; set; }
-
-		/// <summary>
-		/// Кем экипированно
-		/// </summary>
-		public List<Character> EquippedByCharacter { get; set; }
+		public Character EquippedByCharacter
+		{ 
+			get => _equippedByCharacter;
+			set
+			{
+				_equippedByCharacter = value;
+				EquippedByCharacterId = value?.Id;
+			}
+		}
 
 		#endregion navigation properties
 	}

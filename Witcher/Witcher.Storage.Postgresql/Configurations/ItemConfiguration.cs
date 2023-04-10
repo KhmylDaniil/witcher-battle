@@ -16,51 +16,39 @@ namespace Witcher.Storage.Postgresql.Configurations
 			builder.ToTable("Items", "Items").
 				HasComment("Предметы");
 
-			builder.Property(r => r.GameId)
-				.HasColumnName("GameId")
-				.HasComment("Айди игры")
+			builder.Property(r => r.BagId)
+				.HasColumnName("BagId")
+				.HasComment("Айди сумки")
 				.IsRequired();
 
-			builder.Property(r => r.Name)
-				.HasColumnName("Name")
-				.HasComment("Название")
-				.IsRequired();
-
-			builder.Property(r => r.Description)
-				.HasColumnName("Description")
-				.HasComment("Описание");
-
-			builder.Property(r => r.IsStackable)
-				.HasColumnName("IsStackable")
+			builder.Property(r => r.ItemTemplateId)
+				.HasColumnName("ItemTemplateId")
+				.HasComment("Айди шаблона предмета")
 				.IsRequired();
 
 			builder.Property(r => r.Quantity)
 				.HasColumnName("Quantity")
-				.HasComment("Количество")
-				.IsRequired();
+				.HasComment("Количество");
 
-			builder.Property(r => r.Weight)
-				.HasColumnName("Weight")
-				.HasComment("Вес")
-				.IsRequired();
-
-			builder.Property(r => r.Price)
-				.HasColumnName("Price")
-				.HasComment("Цена")
-				.IsRequired();
-
-			builder.HasOne(x => x.Game)
+			builder.HasOne(x => x.Bag)
 				.WithMany(x => x.Items)
-				.HasForeignKey(x => x.GameId)
+				.HasForeignKey(x => x.BagId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasMany(x => x.Characters)
-				.WithMany(x => x.Items);
+			builder.HasOne(x => x.ItemTemplate)
+				.WithMany(x => x.Exemplars)
+				.HasForeignKey(x => x.ItemTemplateId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 
-			var gameNavigation = builder.Metadata.FindNavigation(nameof(Item.Game));
-			gameNavigation.SetField(Item.GameField);
-			gameNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+			var bagNavigation = builder.Metadata.FindNavigation(nameof(Item.Bag));
+			bagNavigation.SetField(Item.BagField);
+			bagNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+			var itemTemplateNavigation = builder.Metadata.FindNavigation(nameof(Item.ItemTemplate));
+			itemTemplateNavigation.SetField(Item.ItemTemplateField);
+			itemTemplateNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

@@ -36,7 +36,8 @@ namespace Witcher.Core.ExtensionMethods
 				.Include(g => g.Characters.Where(ch => ch.BattleId == battleId))
 					.ThenInclude(c => c.Effects)
 				.Include(g => g.Characters.Where(ch => ch.BattleId == battleId))
-					.ThenInclude(c => c.EquippedWeapons);
+					.ThenInclude(c => c.EquippedWeapons)
+					.ThenInclude(ew => ew.ItemTemplate);
 		}
 	}
 }

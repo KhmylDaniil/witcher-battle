@@ -72,7 +72,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 				if (!attacker.EquippedWeapons.Any())
 					throw new RequestValidationException($"У существа {attacker.Name} нет экипированного оружия, атака невозможна.");
 
-				var weapon = attacker.EquippedWeapons.FirstOrDefault(x => x.Id == request.WeaponId)
+				var weaponTemplate = attacker.EquippedWeapons.FirstOrDefault(x => x.Id == request.WeaponId).ItemTemplate as WeaponTemplate
 					?? throw new EntityNotFoundException<Weapon>(request.WeaponId);
 
 				var defensiveSkill = request.DefensiveSkill == null
@@ -84,7 +84,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 					attacker: attacker,
 					target: target,
 					aimedPart: aimedPart,
-					attackFormula: weapon,
+					attackFormula: weaponTemplate,
 					isStrongAttack: request.IsStrongAttack,
 					defensiveSkill: defensiveSkill,
 					specialToHit: request.SpecialToHit,

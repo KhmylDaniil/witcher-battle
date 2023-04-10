@@ -12,18 +12,13 @@ namespace Witcher.Core.Entities
 	/// </summary>
 	public class Character : Creature
 	{
-		/// <summary>
-		/// Поле для <see cref="_userGameActivated"/>
-		/// </summary>
 		public const string UserGameActivatedField = nameof(_userGameActivated);
-
-		/// <summary>
-		/// Поле для <see cref="_game"/>
-		/// </summary>
 		public const string GameField = nameof(_game);
+		public const string BagField = nameof(_bag);
 
 		private Game _game;
 		private UserGameCharacter _userGameActivated;
+		private Bag _bag;
 
 		protected Character() { }
 
@@ -32,9 +27,12 @@ namespace Witcher.Core.Entities
 		{
 			Game = game;
 			UserGameCharacters = new List<UserGameCharacter>();
+			Bag = new Bag(this);
 		}
 
 		public Guid GameId { get; protected set; }
+
+		public Guid BagId { get; protected set; }
 
 		/// <summary>
 		/// Айди активировавшего пользователя
@@ -80,9 +78,17 @@ namespace Witcher.Core.Entities
 		}
 
 		/// <summary>
-		/// Предметы
+		/// Сумка
 		/// </summary>
-		public List<Item> Items { get; set; } = new();
+		public Bag Bag
+		{
+			get => _bag;
+			protected set
+			{
+				_bag = value ?? throw new EntityNotIncludedException<Character>(nameof(Bag));
+				BagId = value.Id;
+			}
+		}
 
 		/// <summary>
 		/// Список экипированного оружия

@@ -49,12 +49,11 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasMany(x => x.Items)
-				.WithMany(x => x.Characters);
-
-			builder.HasMany(x => x.EquippedWeapons)
-				.WithMany(x => x.EquippedByCharacter)
-				.UsingEntity(x => x.ToTable("EquippedWeapons", "Items"));
+			builder.HasOne(x => x.Bag)
+				.WithOne(x => x.Character)
+				.HasForeignKey<Bag>(x => x.CharacterId)
+				.HasPrincipalKey<Character>(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 
 			var userGameActivatedNavigation = builder.Metadata.FindNavigation(nameof(Character.UserGameActivated));
 			userGameActivatedNavigation.SetField(Character.UserGameActivatedField);
@@ -63,6 +62,10 @@ namespace Witcher.Storage.Postgresql.Configurations
 			var gameNavigation = builder.Metadata.FindNavigation(nameof(Character.Game));
 			gameNavigation.SetField(Character.GameField);
 			gameNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+			var bagNavigation = builder.Metadata.FindNavigation(nameof(Character.Bag));
+			bagNavigation.SetField(Character.BagField);
+			bagNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 }

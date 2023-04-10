@@ -28,7 +28,6 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		public const string CreatureTemplateField = nameof(_creatureTemplate);
 
-
 		private Battle _battle;
 		private ImgFile _imgFile;
 		private CreatureTemplate _creatureTemplate;

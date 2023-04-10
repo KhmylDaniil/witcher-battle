@@ -14,7 +14,7 @@ namespace Witcher.Core.Logic
 		
 		private static void CheckAttackerTurnStateWithMultiAttacks(Creature attacker, IAttackFormula attackFormula, bool? isStrongAttack)
 		{
-			if (attackFormula is Weapon && (isStrongAttack is null || isStrongAttack.Value))
+			if (attackFormula is WeaponTemplate && (isStrongAttack is null || isStrongAttack.Value))
 				return;
 
 			int attackSpeed = 2;

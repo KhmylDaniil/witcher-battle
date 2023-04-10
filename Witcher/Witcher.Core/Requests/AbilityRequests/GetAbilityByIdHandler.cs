@@ -35,7 +35,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 				Accuracy = ability.Accuracy,
 				CreatedOn = ability.CreatedOn,
 				ModifiedOn = ability.ModifiedOn,
-				AppliedConditions = ability.AppliedConditions.Select(x => new UpdateAbilityCommandItemAppledCondition()
+				AppliedConditions = ability.AppliedConditions.Select(x => new UpdateAttackFormulaCommandItemAppledCondition()
 				{
 					Id = x.Id,
 					ApplyChance = x.ApplyChance,

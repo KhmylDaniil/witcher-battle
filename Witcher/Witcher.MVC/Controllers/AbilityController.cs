@@ -72,11 +72,11 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var draft = await _mediator.SendValidated(command, cancellationToken);
+				var abilityId = await _mediator.SendValidated(command, cancellationToken);
 
 				_memoryCache.Remove("abilities");
 
-				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { Id = draft.Id });
+				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { Id = abilityId });
 			}
 			catch (RequestValidationException ex)
 			{

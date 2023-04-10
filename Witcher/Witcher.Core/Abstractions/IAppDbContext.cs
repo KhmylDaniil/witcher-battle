@@ -88,7 +88,7 @@ namespace Witcher.Core.Abstractions
 		/// <summary>
 		/// Предметы
 		/// </summary>
-		DbSet<Item> Items { get; }
+		DbSet<ItemTemplate> ItemTemplates { get; }
 
 		/// <summary>
 		/// Роли в системе

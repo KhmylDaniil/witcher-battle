@@ -93,7 +93,7 @@ namespace Witcher.Storage.Postgresql
 		/// <summary>
 		/// Предметы
 		/// </summary>
-		public DbSet<Item> Items { get; set; }
+		public DbSet<ItemTemplate> ItemTemplates { get; set; }
 
 		/// <summary>
 		/// Роли в системе

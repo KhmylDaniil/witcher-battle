@@ -48,9 +48,9 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 				AttackSkill = Skill.Melee,
 				DefensiveSkills = new List<Skill> { Skill.Melee },
 				DamageType = DamageType.Slashing,
-				AppliedConditions = new List<UpdateAbilityCommandItemAppledCondition>
+				AppliedConditions = new List<UpdateAttackFormulaCommandItemAppledCondition>
 				{
-					new UpdateAbilityCommandItemAppledCondition()
+					new UpdateAttackFormulaCommandItemAppledCondition()
 					{
 						Condition = Condition.Bleed,
 						ApplyChance = 50
@@ -64,7 +64,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(1, _dbContext.Abilities.Count());
-			var ability = _dbContext.Abilities.FirstOrDefault();
+			var ability = _dbContext.Abilities.FirstOrDefault(x => x.Id == result);
 
 			Assert.AreEqual(_game.Id, ability.GameId);
 			Assert.IsNotNull(ability.Name);

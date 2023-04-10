@@ -42,7 +42,7 @@ namespace Witcher.Core.Entities
 		/// <param name="accuracy">Точность атаки</param>
 		/// <param name="attackSkill">Навык атаки</param>
 		/// <param name="damageType">Типы урона</param>
-		public Ability(
+		private Ability(
 			Game game,
 			string name,
 			string description,
@@ -193,7 +193,7 @@ namespace Witcher.Core.Entities
 			Skill attackSkill,
 			DamageType damageType,
 			List<Skill> defensiveSkills,
-			IEnumerable<UpdateAbilityCommandItemAppledCondition> appliedConditions)
+			IEnumerable<UpdateAttackFormulaCommandItemAppledCondition> appliedConditions)
 		{
 			var ability = new Ability(
 				game: game,
@@ -235,7 +235,7 @@ namespace Witcher.Core.Entities
 			int accuracy,
 			DamageType damageType,
 			List<Skill> defensiveSkills,
-			IEnumerable<UpdateAbilityCommandItemAppledCondition> appliedConditions)
+			IEnumerable<UpdateAttackFormulaCommandItemAppledCondition> appliedConditions)
 		{
 			Name = name;
 			Description = description;
@@ -256,7 +256,7 @@ namespace Witcher.Core.Entities
 		/// Обновление списка применяемых состояний
 		/// </summary>
 		/// <param name="data">Данные</param>
-		private void UpdateAplliedConditions(IEnumerable<UpdateAbilityCommandItemAppledCondition> data)
+		private void UpdateAplliedConditions(IEnumerable<UpdateAttackFormulaCommandItemAppledCondition> data)
 		{
 			if (data == null)
 				return;
