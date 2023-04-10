@@ -117,7 +117,7 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Предметы
 		/// </summary>
-		public List<ItemTemplate> Items { get; set; }
+		public List<ItemTemplate> ItemTemplates { get; set; }
 
 		#endregion navigation properties
 

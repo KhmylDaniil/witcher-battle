@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 {
 	/// <summary>
-	/// Тест для <see cref="DeleteAppliedConditionHandler"/>
+	/// Тест для <see cref="DeleteAppliedConditionForAbilityHandler"/>
 	/// </summary>
 	[TestClass]
-	public class DeleteAppliedConditionHandlerTest : UnitTestBase
+	public class DeleteAppliedConditionForAbilityHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -21,9 +21,9 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 		private readonly AppliedCondition _appliedCondition;
 
 		/// <summary>
-		/// Конструктор для теста <see cref="DeleteAppliedConditionHandler"/>
+		/// Конструктор для теста <see cref="DeleteAppliedConditionForAbilityHandler"/>
 		/// </summary>
-		public DeleteAppliedConditionHandlerTest() : base()
+		public DeleteAppliedConditionForAbilityHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
 			_ability = Ability.CreateForTest(game: _game);
@@ -39,13 +39,13 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 		[TestMethod]
 		public async Task Handle_DeleteApliedCondition_ShouldReturnUnit()
 		{
-			var command = new DeleteAppliedCondionCommand
+			var command = new DeleteAppliedConditionForAbilityCommand
 			{
 				AbilityId = _ability.Id,
 				Id = _appliedCondition.Id,
 			};
 
-			var newHandler = new DeleteAppliedConditionHandler(_dbContext, AuthorizationService.Object);
+			var newHandler = new DeleteAppliedConditionForAbilityHandler(_dbContext, AuthorizationService.Object);
 
 			var result = await newHandler.Handle(command, default);
 

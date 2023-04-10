@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
-	public class UpdateAppliedConditionHandler : BaseHandler<UpdateAppliedCondionCommand, Unit>
+	public class UpdateAppliedConditionForAbilityHandler : BaseHandler<UpdateAppliedConditionForAbilityCommand, Unit>
 	{
-		public UpdateAppliedConditionHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
+		public UpdateAppliedConditionForAbilityHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 			: base(appDbContext, authorizationService) { }
 
-		public override async Task<Unit> Handle(UpdateAppliedCondionCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(UpdateAppliedConditionForAbilityCommand request, CancellationToken cancellationToken)
 		{
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities.Where(a => a.Id == request.AbilityId))
@@ -29,7 +29,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 			var currentAppliedCondition = ability.AppliedConditions.FirstOrDefault(x => x.Id == request.Id);
 
 			if (ability.AppliedConditions.Any(x => x.Condition == request.Condition && x.Id != request.Id))
-				throw new RequestNotUniqException<UpdateAppliedCondionCommand>(nameof(request.Condition));
+				throw new RequestNotUniqException<UpdateAppliedConditionForAbilityCommand>(nameof(request.Condition));
 
 			if (currentAppliedCondition is null)
 				ability.AppliedConditions.Add(new AppliedCondition(request.Condition, request.ApplyChance));

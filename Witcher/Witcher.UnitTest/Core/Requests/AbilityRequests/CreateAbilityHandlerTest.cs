@@ -30,10 +30,6 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 			_dbContext = CreateInMemoryContext(x => x.AddRange(_game));
 		}
 
-		/// <summary>
-		/// Тест метода Handle - создание шаблона тела
-		/// </summary>
-		/// <returns></returns>
 		[TestMethod]
 		public async Task Handle_CreateAbility_ShouldReturnUnit()
 		{

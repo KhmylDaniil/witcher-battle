@@ -32,7 +32,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 					?? throw new NoAccessToEntityException<Game>();
 
 			var ability = game.Abilities.FirstOrDefault(x => x.Id == request.Id)
-							?? throw new EntityNotFoundException<Ability>(request.Id);
+				?? throw new EntityNotFoundException<Ability>(request.Id);
 
 			if (game.Abilities.Any(x => x.Name == request.Name && x.Id != ability.Id))
 				throw new RequestNameNotUniqException<ChangeAbilityCommand>(nameof(request.Name));

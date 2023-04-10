@@ -117,5 +117,14 @@ namespace Witcher.Core.Entities
 		public List<Item> Exemplars { get; set; }
 
 		#endregion navigation properties
+
+		protected void ChangeItemTemplate(string name, string description, bool isStackable, int price, int weight)
+		{
+			Name = name;
+			Description = description;
+			IsStackable = isStackable;
+			Price = price;
+			Weight = weight;
+		}
 	}
 }

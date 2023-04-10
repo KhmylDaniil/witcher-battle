@@ -50,6 +50,10 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasComment("Прочность")
 				.IsRequired();
 
+			builder.Property(r => r.Range)
+				.HasColumnName("Range")
+				.HasComment("Дальность");
+
 			builder.OwnsMany(x => x.DefensiveSkills).
 				Property(ds => ds.Skill)
 				.HasColumnName("DefensiveSkill")

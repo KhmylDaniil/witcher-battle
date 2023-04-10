@@ -40,7 +40,7 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.IsRequired();
 
 			builder.HasOne(x => x.Game)
-				.WithMany(x => x.Items)
+				.WithMany(x => x.ItemTemplates)
 				.HasForeignKey(x => x.GameId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);

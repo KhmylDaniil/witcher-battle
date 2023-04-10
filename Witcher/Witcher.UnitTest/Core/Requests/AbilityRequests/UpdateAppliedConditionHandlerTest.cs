@@ -10,7 +10,7 @@ using Witcher.Core.Requests.AbilityRequests;
 namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 {
 	/// <summary>
-	/// Тест для <see cref="UpdateAppliedConditionHandler"/>
+	/// Тест для <see cref="UpdateAppliedConditionForAbilityHandler"/>
 	/// </summary>
 	[TestClass]
 	public class UpdateAppliedConditionHandlerTest : UnitTestBase
@@ -20,7 +20,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 		private readonly Ability _ability;
 
 		/// <summary>
-		/// Конструктор для теста <see cref="UpdateAppliedConditionHandler"/>
+		/// Конструктор для теста <see cref="UpdateAppliedConditionForAbilityHandler"/>
 		/// </summary>
 		public UpdateAppliedConditionHandlerTest() : base()
 		{
@@ -36,7 +36,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 		[TestMethod]
 		public async Task Handle_UpdateApliedCondition_ShouldReturnUnit()
 		{
-			var createCommand = new UpdateAppliedCondionCommand
+			var createCommand = new UpdateAppliedConditionForAbilityCommand
 			{
 				AbilityId = _ability.Id,
 				Id = null,
@@ -44,7 +44,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 				Condition = Condition.Bleed
 			};
 
-			var newHandler = new UpdateAppliedConditionHandler(_dbContext, AuthorizationService.Object);
+			var newHandler = new UpdateAppliedConditionForAbilityHandler(_dbContext, AuthorizationService.Object);
 
 			var result = await newHandler.Handle(createCommand, default);
 
@@ -58,7 +58,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 			Assert.AreEqual(Condition.Bleed, appliedCondition.Condition);
 			Assert.AreEqual(50, appliedCondition.ApplyChance);
 
-			var updateCommand = new UpdateAppliedCondionCommand
+			var updateCommand = new UpdateAppliedConditionForAbilityCommand
 			{
 				AbilityId = _ability.Id,
 				Id = appliedCondition.Id,

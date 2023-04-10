@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Exceptions.RequestExceptions;
 using System;
+using System.Linq;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
@@ -29,6 +30,9 @@ namespace Witcher.Core.Requests.AbilityRequests
 				.Include(g => g.Abilities)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
+
+			if (game.Abilities.Any(x => x.Name == request.Name))
+				throw new RequestNameNotUniqException<CreateAbilityCommand>(nameof(request.Name));
 
 			var newAbility = Ability.CreateAbility(
 				game: game,

@@ -135,12 +135,12 @@ namespace Witcher.MVC.Controllers
 		}
 
 		[Route("[controller]/[action]/{abilityId}")]
-		public ActionResult UpdateAppliedCondition(UpdateAppliedCondionCommand command) => View(command);
+		public ActionResult UpdateAppliedCondition(UpdateAppliedConditionForAbilityCommand command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{abilityId}")]
-		public async Task<IActionResult> UpdateAppliedCondition(UpdateAppliedCondionCommand command, CancellationToken cancellationToken)
+		public async Task<IActionResult> UpdateAppliedCondition(UpdateAppliedConditionForAbilityCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -156,7 +156,7 @@ namespace Witcher.MVC.Controllers
 		}
 
 		[Route("[controller]/[action]/{abilityId}")]
-		public async Task<IActionResult> DeleteAppliedCondition(DeleteAppliedCondionCommand command, CancellationToken cancellationToken)
+		public async Task<IActionResult> DeleteAppliedCondition(DeleteAppliedConditionForAbilityCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{

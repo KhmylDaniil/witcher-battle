@@ -4,7 +4,7 @@ using System;
 namespace Witcher.Core.Contracts.AbilityRequests
 {
 	/// <summary>
-	/// Элемент запроса созадния или изменения способности(накладываемое состояние) 
+	/// Элемент запроса создfния или изменения способности(накладываемое состояние) 
 	/// </summary>
 	public class UpdateAttackFormulaCommandItemAppledCondition
 	{

@@ -11,12 +11,12 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
-	public class DeleteAppliedConditionHandler : BaseHandler<DeleteAppliedCondionCommand, Unit>
+	public class DeleteAppliedConditionForAbilityHandler : BaseHandler<DeleteAppliedConditionForAbilityCommand, Unit>
 	{
-		public DeleteAppliedConditionHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
+		public DeleteAppliedConditionForAbilityHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 			: base(appDbContext, authorizationService) { }
 
-		public override async Task<Unit> Handle(DeleteAppliedCondionCommand request, CancellationToken cancellationToken)
+		public override async Task<Unit> Handle(DeleteAppliedConditionForAbilityCommand request, CancellationToken cancellationToken)
 		{
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities.Where(a => a.Id == request.AbilityId))

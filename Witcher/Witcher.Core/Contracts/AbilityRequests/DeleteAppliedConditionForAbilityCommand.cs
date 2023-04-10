@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.AbilityRequests
 	/// <summary>
 	/// Команда удаления накладываемого состояния
 	/// </summary>
-	public class DeleteAppliedCondionCommand : IValidatableCommand
+	public class DeleteAppliedConditionForAbilityCommand : IValidatableCommand
 	{
 		/// <summary>
 		/// Айди способности
