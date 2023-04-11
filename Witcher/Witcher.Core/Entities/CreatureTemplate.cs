@@ -570,7 +570,7 @@ namespace Witcher.Core.Entities
 				Id = id ?? Guid.NewGuid(),
 				Game = game,
 				ImgFile = imgFile,
-				BodyTemplate = bodyTemplate,
+				BodyTemplate = bodyTemplate ?? BodyTemplate.CreateForTest(game: game),
 				Name = name ?? Enum.GetName(creatureType),
 				Description = description,
 				CreatureType = creatureType,

@@ -11,6 +11,11 @@ namespace Witcher.Core.Entities
 
 		protected Weapon() { }
 
+		public Weapon(Bag bag, WeaponTemplate weaponTemplate, int quantity) : base(bag, weaponTemplate, quantity)
+		{
+			CurrentDurability = weaponTemplate.Durability;
+		}
+
 		public int CurrentDurability
 		{
 			get => _currentDurability;

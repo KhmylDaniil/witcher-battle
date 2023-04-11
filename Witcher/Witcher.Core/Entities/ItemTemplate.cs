@@ -4,7 +4,7 @@ using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Entities
 {
-	public class ItemTemplate : EntityBase
+	public abstract class ItemTemplate : EntityBase
 	{
 		/// <summary>
 		/// Поле для <see cref="_game"/>

@@ -1,15 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
-using Witcher.Core.Contracts.AbilityRequests;
 using Witcher.Core.Entities;
-using Witcher.Core.Requests.AbilityRequests;
 using Witcher.Core.Contracts.WeaponTemplateRequests;
 using Witcher.Core.Requests.WeaponTemplateRequests;
 
@@ -51,7 +46,7 @@ namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 		}
 
 		[TestMethod]
-		public async Task Handle_GetWeaponTemplate_ShouldReturn_GetAbilityResponse()
+		public async Task Handle_GetWeaponTemplate_ShouldReturn_GetWeaponTemplateResponse()
 		{
 			var request = new GetWeaponTemplateCommand()
 			{

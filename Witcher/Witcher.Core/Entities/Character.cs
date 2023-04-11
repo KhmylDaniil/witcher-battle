@@ -166,12 +166,13 @@ namespace Witcher.Core.Entities
 			DateTime createdOn = default,
 			DateTime modifiedOn = default,
 			Guid createdByUserId = default)
-			=> new()
+		{
+			Character character = new()
 			{
 				Id = id ?? Guid.NewGuid(),
 				Game = game,
 				Battle = battle,
-				CreatureTemplate = creatureTemlpate,
+				CreatureTemplate = creatureTemlpate ?? CreatureTemplate.CreateForTest(game: game),
 				ImgFile = imgFile,
 				CreatureType = creatureType,
 				Name = name ?? Enum.GetName(creatureType),
@@ -198,7 +199,11 @@ namespace Witcher.Core.Entities
 				Abilities = new List<Ability>(),
 				CreatureParts = new List<CreaturePart>(),
 				DamageTypeModifiers = new List<CreatureDamageTypeModifier>(),
-				UserGameCharacters = new List<UserGameCharacter>()
+				UserGameCharacters = new List<UserGameCharacter>(),
 			};
+
+			character.Bag = new(character);
+			return character;
+		}	
 	}
 }
