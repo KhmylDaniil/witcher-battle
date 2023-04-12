@@ -41,6 +41,7 @@ namespace Witcher.Core.Entities
 			Range = range;
 			AppliedConditions = new();
 			DefensiveSkills = new();
+			ItemType = ItemType.Weapon;
 		}
 
 		/// <summary>

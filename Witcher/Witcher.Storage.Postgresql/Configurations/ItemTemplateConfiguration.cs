@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using Witcher.Core.Entities;
+using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Storage.Postgresql.Configurations
 {
@@ -37,6 +39,14 @@ namespace Witcher.Storage.Postgresql.Configurations
 			builder.Property(r => r.Price)
 				.HasColumnName("Price")
 				.HasComment("Цена")
+				.IsRequired();
+
+			builder.Property(r => r.ItemType)
+				.HasColumnName("ItemType")
+				.HasComment("Тип предмета")
+				.HasConversion(
+					v => v.ToString(),
+					v => Enum.Parse<ItemType>(v))
 				.IsRequired();
 
 			builder.HasOne(x => x.Game)

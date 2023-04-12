@@ -234,5 +234,13 @@ namespace Witcher.Core.BaseData
 			InProcessOfAdditionAction,
 			TurnIsDone
 		};
+
+		public enum ItemType
+		{
+			Junk,
+			Weapon,
+			Armor,
+			Usable
+		}
 	}
 }

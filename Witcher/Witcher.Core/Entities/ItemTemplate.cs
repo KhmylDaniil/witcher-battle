@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Witcher.Core.Exceptions.EntityExceptions;
+using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Entities
 {
@@ -95,6 +96,11 @@ namespace Witcher.Core.Entities
 		/// Можно ли положить предмет в стак
 		/// </summary>
 		public bool IsStackable { get; set; }
+
+		/// <summary>
+		/// Тип предмета
+		/// </summary>
+		public ItemType ItemType { get; set; }
 
 		#region navigation properties
 

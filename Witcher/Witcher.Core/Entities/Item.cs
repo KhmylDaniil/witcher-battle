@@ -1,7 +1,7 @@
 ﻿using System;
-using Witcher.Core.BaseData;
 using Witcher.Core.Exceptions;
 using Witcher.Core.Exceptions.EntityExceptions;
+using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Entities
 {
@@ -21,6 +21,7 @@ namespace Witcher.Core.Entities
 			Bag = bag;
 			ItemTemplate = itemTemplate;
 			Quantity = quantity;
+			ItemType = itemTemplate.ItemType;
 		}
 
 		public Guid BagId { get; protected set; }
@@ -37,6 +38,11 @@ namespace Witcher.Core.Entities
 				_quantity = value;
 			}
 		}
+
+		/// <summary>
+		/// Тип предмета
+		/// </summary>
+		public ItemType ItemType { get; set; }
 
 		#region navigation properties
 
@@ -70,9 +76,9 @@ namespace Witcher.Core.Entities
 
 		public static Item CreateItem(Bag bag, ItemTemplate itemTemplate, int quantity)
 		{
-			return itemTemplate switch
+			return itemTemplate.ItemType switch
 			{
-				WeaponTemplate weaponTemplate => new Weapon(bag, weaponTemplate, quantity),
+				ItemType.Weapon => new Weapon(bag, (WeaponTemplate)itemTemplate, quantity),
 				_ => throw new LogicBaseException("Шаблон предмета не принадлежит к известным типам предметов.")
 			};
 		}

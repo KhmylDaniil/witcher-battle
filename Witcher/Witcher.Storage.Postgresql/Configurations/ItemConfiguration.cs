@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Witcher.Core.Entities;
+using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Storage.Postgresql.Configurations
 {
@@ -29,6 +30,14 @@ namespace Witcher.Storage.Postgresql.Configurations
 			builder.Property(r => r.Quantity)
 				.HasColumnName("Quantity")
 				.HasComment("Количество");
+
+			builder.Property(r => r.ItemType)
+				.HasColumnName("ItemType")
+				.HasComment("Тип предмета")
+				.HasConversion(
+					v => v.ToString(),
+					v => Enum.Parse<ItemType>(v))
+				.IsRequired();
 
 			builder.HasOne(x => x.Bag)
 				.WithMany(x => x.Items)
