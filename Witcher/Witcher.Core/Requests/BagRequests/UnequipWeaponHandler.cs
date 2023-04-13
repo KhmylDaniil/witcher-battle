@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,18 +11,19 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.BagRequests
 {
-	public class AddItemToBagHandler : BaseHandler<AddItemToBagCommand, Unit>
+	public class UnequipWeaponHandler : BaseHandler<UnequipWeaponCommand, Unit>
 	{
-		public AddItemToBagHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
+		public UnequipWeaponHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
 		}
 
-		public async override Task<Unit> Handle(AddItemToBagCommand request, CancellationToken cancellationToken)
+		public async override Task<Unit> Handle(UnequipWeaponCommand request, CancellationToken cancellationToken)
 		{
-			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
+			var game = await _authorizationService.CharacterOwnerFilter(_appDbContext.Games, request.CharacterId)
 				.Include(g => g.Characters.Where(c => c.Id == request.CharacterId))
 					.ThenInclude(c => c.Bag)
-				.Include(g => g.ItemTemplates.Where(it => it.Id == request.ItemTemplateId))
+				.Include(g => g.Characters.Where(c => c.Id == request.CharacterId))
+					.ThenInclude(c => c.EquippedWeapons)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
@@ -32,10 +32,10 @@ namespace Witcher.Core.Requests.BagRequests
 
 			var bag = character.Bag ?? throw new EntityNotIncludedException<Character>(nameof(Bag));
 
-			var itemTemplate = game.ItemTemplates.FirstOrDefault(x => x.Id == request.ItemTemplateId)
-				?? throw new EntityNotFoundException<ItemTemplate>(request.ItemTemplateId);
+			var weapon = bag.Items.FirstOrDefault(x => x.Id == request.WeaponId) as Weapon
+				?? throw new EntityNotFoundException<ItemTemplate>(request.WeaponId);
 
-			bag.AddItems(itemTemplate, request.Quantity);
+			character.UnequipWeapon(weapon);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;

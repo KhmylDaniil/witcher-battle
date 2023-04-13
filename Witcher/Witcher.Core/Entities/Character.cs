@@ -93,7 +93,7 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Список экипированного оружия
 		/// </summary>
-		public List<Weapon> EquippedWeapons { get; set; }
+		public List<Weapon> EquippedWeapons { get; set; } = new();
 
 		#endregion navigation properties
 
@@ -204,6 +204,16 @@ namespace Witcher.Core.Entities
 
 			character.Bag = new(character);
 			return character;
-		}	
+		}
+
+		internal void EquipWeapon(Weapon weapon)
+		{
+			EquippedWeapons.Add(weapon);
+		}
+
+		internal void UnequipWeapon(Weapon weapon)
+		{
+			EquippedWeapons.Remove(weapon);
+		}
 	}
 }

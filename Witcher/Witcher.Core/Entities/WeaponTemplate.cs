@@ -249,6 +249,7 @@ namespace Witcher.Core.Entities
 				AttackSkill = attackSkill,
 				DefensiveSkills = new List<DefensiveSkill>(),
 				DamageType = damageType,
+				ItemType = ItemType.Weapon,
 				CreatedOn = createdOn,
 				ModifiedOn = modifiedOn,
 				CreatedByUserId = createdByUserId,

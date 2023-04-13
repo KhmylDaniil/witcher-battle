@@ -146,6 +146,8 @@ namespace Witcher.Core.Entities
 			ImgFiles = new List<ImgFile>(),
 			TextFiles = new List<TextFile>(),
 			Battles = new List<Battle>(),
+			ItemTemplates = new List<ItemTemplate>(),
+			Characters = new List<Character>(),
 		};
 
 		/// <summary>
