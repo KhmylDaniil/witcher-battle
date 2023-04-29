@@ -32,9 +32,7 @@ namespace Witcher.MVC.Controllers
 		/// <summary>
 		/// Получение списка игр с возможностью поиска
 		/// </summary>
-		/// <param name="name">Поле поиска по имени</param>
-		/// <param name="description">Поле поиска по описанию</param>
-		/// <param name="authorName">Поле поиска по имени автора</param>
+		/// <param name="query">Запрос</param>
 		/// <param name="cancellationToken"></param>
 		/// <returns>Список игр</returns>
 		public async Task<IActionResult> Index(GetGameQuery query, CancellationToken cancellationToken)
@@ -89,7 +87,7 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var notification = await _mediator.SendValidated(request, cancellationToken);
+				await _mediator.SendValidated(request, cancellationToken);
 				return RedirectToAction(nameof(Index));
 			}
 			catch (RequestValidationException ex)

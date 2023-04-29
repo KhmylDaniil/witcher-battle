@@ -11,7 +11,7 @@ namespace Witcher.Core.Contracts.NotificationRequests
 
 		public void Validate()
 		{
-			throw new NotImplementedException();
+			// Method intentionally left empty.
 		}
 	}
 }

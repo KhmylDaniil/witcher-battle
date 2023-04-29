@@ -29,8 +29,13 @@ namespace Witcher.Core.Requests.NotificationRequests
 				.Where(u => u.Id == _userContext.CurrentUserId)
 				.SelectMany(u => u.Notifications);
 
-			return await filter.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
+			var notification =  await filter.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
 				?? throw new EntityNotFoundException<Notification>(request.Id);
+
+			notification.IsReaded = true;
+			await _appDbContext.SaveChangesAsync(cancellationToken);
+
+			return notification;
 		}
 	}
 }

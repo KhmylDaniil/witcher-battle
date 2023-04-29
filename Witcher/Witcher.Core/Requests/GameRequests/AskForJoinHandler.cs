@@ -8,22 +8,24 @@ using Witcher.Core.Contracts.GameRequests;
 using Witcher.Core.Notifications;
 using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
+using MediatR;
 
 namespace Witcher.Core.Requests.GameRequests
 {
-	public class AskForJoinHandler : BaseHandler<JoinGameRequest, JoinGameRequestNotification>
+	public class AskForJoinHandler : BaseHandler<JoinGameRequest, Unit>
 	{
 		public AskForJoinHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
 		}
 
-		public async override Task<JoinGameRequestNotification> Handle(JoinGameRequest request, CancellationToken cancellationToken)
+		public async override Task<Unit> Handle(JoinGameRequest request, CancellationToken cancellationToken)
 		{
 			var game = await _appDbContext.Games
 				.Include(g => g.UserGames.Where(ug => ug.GameRoleId == GameRoles.MainMasterRoleId))
 				.ThenInclude(ug => ug.User)
-				.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
-				?? throw new EntityNotFoundException<Game>(request.Id);
+				.ThenInclude(u => u.Notifications)
+				.FirstOrDefaultAsync(x => x.Id == request.GameId, cancellationToken)
+				?? throw new EntityNotFoundException<Game>(request.GameId);
 
 			var sender = await _appDbContext.Users.FirstOrDefaultAsync(x => x.Id == request.UserId)
 				?? throw new EntityNotFoundException<User>(request.UserId);
@@ -35,7 +37,7 @@ namespace Witcher.Core.Requests.GameRequests
 			receiver.Notifications.Add(notification);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
-			return notification;
+			return Unit.Value;
 		}
 	}
 }

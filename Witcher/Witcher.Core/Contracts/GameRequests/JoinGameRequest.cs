@@ -1,15 +1,14 @@
 ﻿using System;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Notifications;
 using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Contracts.GameRequests
 {
-	public class JoinGameRequest : IValidatableCommand<JoinGameRequestNotification>
+	public class JoinGameRequest : IValidatableCommand
 	{
 		public Guid UserId { get; set; }
 
-		public Guid Id { get; set; }
+		public Guid GameId { get; set; }
 
 		public string Message { get; set; }
 
