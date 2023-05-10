@@ -12,7 +12,7 @@ namespace Witcher.Core.Contracts
 		/// Колоичество записей на одной странице 
 		/// </summary>
 		[Range(1, 50)]
-		public int PageSize { get; set; } = 10;
+		public int PageSize { get; set; } = 20;
 
 		/// <summary>
 		/// Номер страницы, с которой вывести записи

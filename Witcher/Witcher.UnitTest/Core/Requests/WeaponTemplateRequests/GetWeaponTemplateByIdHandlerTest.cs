@@ -48,7 +48,7 @@ namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 		[TestMethod]
 		public async Task Handle_GetWeaponTemplate_ShouldReturn_GetWeaponTemplateByIdResponse()
 		{
-			var request = new GetWeaponTemplateByIdCommand()
+			var request = new GetWeaponTemplateByIdQuery()
 			{
 				Id = _weaponTemplate.Id
 			};

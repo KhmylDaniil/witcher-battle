@@ -10,13 +10,13 @@ using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Requests.WeaponTemplateRequests
 {
-	public class GetWeaponTemplateByIdHandler : BaseHandler<GetWeaponTemplateByIdCommand, GetWeaponTemplateByIdResponse>
+	public class GetWeaponTemplateByIdHandler : BaseHandler<GetWeaponTemplateByIdQuery, GetWeaponTemplateByIdResponse>
 	{
 		public GetWeaponTemplateByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
 		}
 
-		public async override Task<GetWeaponTemplateByIdResponse> Handle(GetWeaponTemplateByIdCommand request, CancellationToken cancellationToken)
+		public async override Task<GetWeaponTemplateByIdResponse> Handle(GetWeaponTemplateByIdQuery request, CancellationToken cancellationToken)
 		{
 			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.ItemTemplates.Where(x => x.Id == request.Id))

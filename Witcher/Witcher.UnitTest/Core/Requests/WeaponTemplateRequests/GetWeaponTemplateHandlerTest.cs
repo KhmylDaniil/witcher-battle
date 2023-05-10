@@ -48,7 +48,7 @@ namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 		[TestMethod]
 		public async Task Handle_GetWeaponTemplate_ShouldReturn_GetWeaponTemplateResponse()
 		{
-			var request = new GetWeaponTemplateCommand()
+			var request = new GetWeaponTemplateQuery()
 			{
 				Name = "test",
 				AttackSkillName = "Melee",

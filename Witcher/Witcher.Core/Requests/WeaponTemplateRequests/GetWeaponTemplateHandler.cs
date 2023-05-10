@@ -13,13 +13,13 @@ using Witcher.Core.ExtensionMethods;
 
 namespace Witcher.Core.Requests.WeaponTemplateRequests
 {
-	public class GetWeaponTemplateHandler : BaseHandler<GetWeaponTemplateCommand, IEnumerable<GetWeaponTemplateResponse>>
+	public class GetWeaponTemplateHandler : BaseHandler<GetWeaponTemplateQuery, IEnumerable<GetWeaponTemplateResponse>>
 	{
 		public GetWeaponTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
 		}
 
-		public async override Task<IEnumerable<GetWeaponTemplateResponse>> Handle(GetWeaponTemplateCommand request, CancellationToken cancellationToken)
+		public async override Task<IEnumerable<GetWeaponTemplateResponse>> Handle(GetWeaponTemplateQuery request, CancellationToken cancellationToken)
 		{
 			var filter =  _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.ItemTemplates.Where(it => it.ItemType == Enums.ItemType.Weapon))
