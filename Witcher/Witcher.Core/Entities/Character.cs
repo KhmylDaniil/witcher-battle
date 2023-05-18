@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Witcher.Core.Contracts.ItemRequests;
 using Witcher.Core.Exceptions;
 using Witcher.Core.Exceptions.EntityExceptions;
+using Witcher.Core.Exceptions.RequestExceptions;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Entities
@@ -14,11 +16,9 @@ namespace Witcher.Core.Entities
 	{
 		public const string UserGameActivatedField = nameof(_userGameActivated);
 		public const string GameField = nameof(_game);
-		public const string BagField = nameof(_bag);
 
 		private Game _game;
 		private UserGameCharacter _userGameActivated;
-		private Bag _bag;
 
 		protected Character() { }
 
@@ -27,12 +27,9 @@ namespace Witcher.Core.Entities
 		{
 			Game = game;
 			UserGameCharacters = new List<UserGameCharacter>();
-			Bag = new Bag(this);
 		}
 
 		public Guid GameId { get; protected set; }
-
-		public Guid BagId { get; protected set; }
 
 		/// <summary>
 		/// Айди активировавшего пользователя
@@ -65,6 +62,11 @@ namespace Witcher.Core.Entities
 		public List<UserGameCharacter> UserGameCharacters { get; set; }
 
 		/// <summary>
+		/// Предметы
+		/// </summary>
+		public List<Item> Items { get; set; } = new();
+
+		/// <summary>
 		/// Игра
 		/// </summary>
 		public Game Game
@@ -76,24 +78,6 @@ namespace Witcher.Core.Entities
 				GameId = value.Id;
 			}
 		}
-
-		/// <summary>
-		/// Сумка
-		/// </summary>
-		public Bag Bag
-		{
-			get => _bag;
-			protected set
-			{
-				_bag = value ?? throw new EntityNotIncludedException<Character>(nameof(Bag));
-				BagId = value.Id;
-			}
-		}
-
-		/// <summary>
-		/// Список экипированного оружия
-		/// </summary>
-		public List<Weapon> EquippedWeapons { get; set; } = new();
 
 		#endregion navigation properties
 
@@ -109,6 +93,30 @@ namespace Witcher.Core.Entities
 
 			if (mainMasterUserGame.Id !=characterCreatorUserGame.Id)
 				UserGameCharacters.Add(new UserGameCharacter(this, characterCreatorUserGame));
+		}
+
+		internal void AddItems(ItemTemplate itemTemplate, int quantity)
+		{
+			if (itemTemplate.IsStackable && Items.FirstOrDefault(x => x.ItemTemplateId == itemTemplate.Id) is Item currentItem && currentItem is not null)
+			{
+				currentItem.Quantity += quantity;
+				return;
+			}
+
+			var switcher = itemTemplate.IsStackable ? quantity : 1;
+
+			for (int i = switcher; i <= quantity; i++)
+				Items.Add(Item.CreateItem(this, itemTemplate, switcher));
+		}
+
+		internal void RemoveItems(Item item, int quantity)
+		{
+			if (item.Quantity < quantity)
+				throw new RequestFieldIncorrectDataException<DeleteItemCommand>(nameof(quantity), "Превышено текущее количество предметов.");
+			else if (item.Quantity > quantity)
+				item.Quantity -= quantity;
+			else
+				Items.Remove(item);
 		}
 
 		/// <summary>
@@ -202,18 +210,22 @@ namespace Witcher.Core.Entities
 				UserGameCharacters = new List<UserGameCharacter>(),
 			};
 
-			character.Bag = new(character);
 			return character;
 		}
 
 		internal void EquipWeapon(Weapon weapon)
 		{
-			EquippedWeapons.Add(weapon);
+			weapon.IsEquipped = true;
 		}
 
 		internal void UnequipWeapon(Weapon weapon)
 		{
-			EquippedWeapons.Remove(weapon);
+			weapon.IsEquipped = false;
+		}
+
+		internal void ChangeItemIsEquipped(Item item)
+		{
+			item.IsEquipped = !item.IsEquipped;
 		}
 	}
 }

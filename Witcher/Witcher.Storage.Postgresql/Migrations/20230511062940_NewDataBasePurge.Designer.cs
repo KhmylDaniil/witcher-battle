@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Witcher.Storage.Postgresql;
@@ -11,9 +12,10 @@ using Witcher.Storage.Postgresql;
 namespace Witcher.Storage.Postgresql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230511062940_NewDataBasePurge")]
+    partial class NewDataBasePurge
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1201,11 +1203,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now() at time zone 'utc'");
 
-                    b.Property<bool?>("IsEquipped")
-                        .HasColumnType("boolean")
-                        .HasColumnName("IsEquipped")
-                        .HasComment("Экипировано");
-
                     b.Property<Guid>("ItemTemplateId")
                         .HasColumnType("uuid")
                         .HasColumnName("ItemTemplateId")
@@ -1963,6 +1960,11 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("CurrentDurability")
                         .HasComment("Текущая прочность");
+
+                    b.Property<bool>("IsEquipped")
+                        .HasColumnType("boolean")
+                        .HasColumnName("IsEquipped")
+                        .HasComment("Экипировано");
 
                     b.ToTable("Weapons", "Items");
 

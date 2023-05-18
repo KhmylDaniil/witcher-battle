@@ -256,6 +256,51 @@
     </table>
 }
 
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Items.First().Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Items.First().ItemType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Items.First().IsEquipped)
+            </th>
+            <th>
+                <a asp-controller="Item" asp-action="Create" asp-route-characterId="@Model.Id">Create </a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemType)
+                </td>
+                <td>
+                    @if (item.IsEquipped.HasValue)
+                    {
+                        <form asp-controller="Item" asp-action="ChangeItemIsEquipped" asp-route-characterId=@Model.Id asp-route-itemId=@item.Id>
+                            <div class="form-group">
+                                <input type="checkbox" checked="@item.IsEquipped.Value" onClick="this.form.submit()">
+                            </div>
+                        </form>
+                    }
+                </td>
+                <td>
+                    <a asp-controller="Item" asp-action="Delete" asp-route-characterId="@Model.Id" asp-route-itemId="@item.Id" asp-route-name="@item.Name">Delete </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 <p>@TempData["ErrorMessage"]</p>
 
 <div>

@@ -36,7 +36,7 @@ namespace Witcher.MVC.Controllers
 
 				response = await _mediator.SendValidated(new GetCharactersCommand(), cancellationToken);
 			}
-			catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
+			catch (Exception ex) { return RedirectToErrorPage<CharacterController>(ex); }
 
 			return View(response);
 		}
@@ -86,7 +86,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
-			catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
+			catch (Exception ex) { return RedirectToErrorPage<CharacterController>(ex); }
 		}
 
 		// GET: CharacterController/Edit/5

@@ -174,8 +174,6 @@ namespace Witcher.Storage.Postgresql
 		{
 			base.OnModelCreating(modelBuilder);
 			modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-
-			modelBuilder.Entity<Bag>().Navigation(e => e.Items).AutoInclude();
 		}
 
 		/// <summary>

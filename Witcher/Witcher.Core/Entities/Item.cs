@@ -7,24 +7,24 @@ namespace Witcher.Core.Entities
 {
 	public abstract class Item : EntityBase
 	{
-		private Bag _bag;
+		private Character _character;
 		private ItemTemplate _itemTemplate;
 		private int _quantity;
 
-		public const string BagField = nameof(_bag);
+		public const string CharacterField = nameof(_character);
 		public const string ItemTemplateField = nameof(_itemTemplate);
 
 		protected Item() { }
 
-		protected Item(Bag bag, ItemTemplate itemTemplate, int quantity)
+		protected Item(Character character, ItemTemplate itemTemplate, int quantity)
 		{
-			Bag = bag;
+			Character = character;
 			ItemTemplate = itemTemplate;
 			Quantity = quantity;
 			ItemType = itemTemplate.ItemType;
 		}
 
-		public Guid BagId { get; protected set; }
+		public Guid CharacterId { get; protected set; }
 
 		public Guid ItemTemplateId { get; protected set; }
 
@@ -44,6 +44,8 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		public ItemType ItemType { get; set; }
 
+		public bool? IsEquipped { get; set; }
+
 		#region navigation properties
 
 		/// <summary>
@@ -60,25 +62,25 @@ namespace Witcher.Core.Entities
 		}
 
 		/// <summary>
-		/// Сумка
+		/// Персонаж
 		/// </summary>
-		public Bag Bag
+		public Character Character
 		{
-			get => _bag;
+			get => _character;
 			protected set
 			{
-				_bag = value ?? throw new EntityNotIncludedException<Item>(nameof(Bag));
-				BagId = value.Id;
+				_character = value ?? throw new EntityNotIncludedException<Item>(nameof(Character));
+				CharacterId = value.Id;
 			}
 		}
 
 		#endregion navigation properties
 
-		public static Item CreateItem(Bag bag, ItemTemplate itemTemplate, int quantity)
+		public static Item CreateItem(Character character, ItemTemplate itemTemplate, int quantity)
 		{
 			return itemTemplate.ItemType switch
 			{
-				ItemType.Weapon => new Weapon(bag, (WeaponTemplate)itemTemplate, quantity),
+				ItemType.Weapon => new Weapon(character, (WeaponTemplate)itemTemplate, quantity),
 				_ => throw new LogicBaseException("Шаблон предмета не принадлежит к известным типам предметов.")
 			};
 		}

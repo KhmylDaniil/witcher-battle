@@ -67,9 +67,9 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 
 			_character = Character.CreateForTest(game: _game, battle: _battle);
 
-			_weapon = (Weapon)Item.CreateItem(_character.Bag, _weaponTemplate, 1);
-			_character.Bag.Items.Add(_weapon);
-			_character.EquippedWeapons.Add(_weapon);
+			_weapon = (Weapon)Item.CreateItem(_character, _weaponTemplate, 1);
+			_character.Items.Add(_weapon);
+			_weapon.IsEquipped = true;
 
 			_creature.CreatureSkills.Add(CreatureSkill.CreateForTest(
 				creature: _creature,

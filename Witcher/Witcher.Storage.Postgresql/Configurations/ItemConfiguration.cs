@@ -1,10 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Witcher.Core.Entities;
 using static Witcher.Core.BaseData.Enums;
 
@@ -17,9 +13,9 @@ namespace Witcher.Storage.Postgresql.Configurations
 			builder.ToTable("Items", "Items").
 				HasComment("Предметы");
 
-			builder.Property(r => r.BagId)
-				.HasColumnName("BagId")
-				.HasComment("Айди сумки")
+			builder.Property(r => r.CharacterId)
+				.HasColumnName("CharacterId")
+				.HasComment("Айди персонажа")
 				.IsRequired();
 
 			builder.Property(r => r.ItemTemplateId)
@@ -39,9 +35,13 @@ namespace Witcher.Storage.Postgresql.Configurations
 					v => Enum.Parse<ItemType>(v))
 				.IsRequired();
 
-			builder.HasOne(x => x.Bag)
+			builder.Property(r => r.IsEquipped)
+				.HasColumnName("IsEquipped")
+				.HasComment("Экипировано");
+
+			builder.HasOne(x => x.Character)
 				.WithMany(x => x.Items)
-				.HasForeignKey(x => x.BagId)
+				.HasForeignKey(x => x.CharacterId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
@@ -51,9 +51,9 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			var bagNavigation = builder.Metadata.FindNavigation(nameof(Item.Bag));
-			bagNavigation.SetField(Item.BagField);
-			bagNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+			var characterNavigation = builder.Metadata.FindNavigation(nameof(Item.Character));
+			characterNavigation.SetField(Item.CharacterField);
+			characterNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
 			var itemTemplateNavigation = builder.Metadata.FindNavigation(nameof(Item.ItemTemplate));
 			itemTemplateNavigation.SetField(Item.ItemTemplateField);

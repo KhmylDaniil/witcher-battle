@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = "Index";
 }
-
+<p>
+    <a asp-action="Create">Create New Weapon template</a>
+</p>
 <form asp-action="Index">
     <p><input type="text" name="name" /> Name</p>
     <p><input type="text" name="attackSkillName" /> Attack Skill Name</p>
@@ -13,9 +15,7 @@
     <p><input type="number" name="maxAttackDiceQuantity" /> Max attack dices</p>
     <p><input type="submit" value="Search" /></p>
 </form>
-<p>
-    <a asp-action="Create">Create New Weapon template</a>
-</p>
+
 <table class="table">
     <thead>
         <tr>

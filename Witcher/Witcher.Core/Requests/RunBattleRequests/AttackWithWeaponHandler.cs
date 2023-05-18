@@ -69,11 +69,12 @@ namespace Witcher.Core.Requests.RunBattleRequests
 					: target.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId)
 						?? throw new EntityNotFoundException<CreaturePart>(request.CreaturePartId.Value);
 
-				if (!attacker.EquippedWeapons.Any())
-					throw new RequestValidationException($"У существа {attacker.Name} нет экипированного оружия, атака невозможна.");
-
-				var weaponTemplate = attacker.EquippedWeapons.FirstOrDefault(x => x.Id == request.WeaponId).ItemTemplate as WeaponTemplate
+				var weapon = attacker.Items
+					.FirstOrDefault(i => i is Weapon weapon && weapon.IsEquipped.Value && i.Id == request.WeaponId)
 					?? throw new EntityNotFoundException<Weapon>(request.WeaponId);
+
+				var weaponTemplate = weapon.ItemTemplate as WeaponTemplate
+					?? throw new EntityNotIncludedException<Weapon>(nameof(WeaponTemplate));
 
 				var defensiveSkill = request.DefensiveSkill == null
 					? null

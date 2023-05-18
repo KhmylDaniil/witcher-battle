@@ -15,9 +15,9 @@ Model.TurnState < Witcher.Core.BaseData.Enums.TurnState.TurnIsDone)
             <form asp-action="MakeAttack" asp-route-BattleId=@Model.BattleId asp-route-id=@Model.CreatureId>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
-                    <label asp-for="TargetCreatureId" value="Target" class="control-label"></label>
-                    <select asp-items="@(new SelectList(Model.PossibleTargets.Where(x => x.Key != Model.CreatureId), "Key", "Value"))" asp-for="TargetCreatureId"></select><br /><br />
-                    <span asp-validation-for="TargetCreatureId" class="text-danger"></span>
+                    <label asp-for="TargetId" value="Target" class="control-label"></label>
+                    <select asp-items="@(new SelectList(Model.PossibleTargets.Where(x => x.Key != Model.CreatureId), "Key", "Value"))" asp-for="TargetId"></select><br /><br />
+                    <span asp-validation-for="TargetId" class="text-danger"></span>
                 </div>
                 
                 @if(Model.MultiAttackAbilityId != null)
@@ -68,9 +68,9 @@ Model.TurnState < Witcher.Core.BaseData.Enums.TurnState.TurnIsDone)
             <form asp-action="MakeHeal" asp-route-BattleId=@Model.BattleId asp-route-creatureId=@Model.CreatureId>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
-                    <label asp-for="TargetCreatureId" value="Target" class="control-label"></label>
-                    <select asp-items="@(new SelectList(Model.PossibleTargets, "Key", "Value", Model.CreatureId))" asp-for="TargetCreatureId"></select><br /><br />
-                    <span asp-validation-for="TargetCreatureId" class="text-danger"></span>
+                    <label asp-for="TargetId" value="Target" class="control-label"></label>
+                    <select asp-items="@(new SelectList(Model.PossibleTargets, "Key", "Value", Model.CreatureId))" asp-for="TargetId"></select><br /><br />
+                    <span asp-validation-for="TargetId" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <input type="submit" value="Heal" class="btn btn-primary" />

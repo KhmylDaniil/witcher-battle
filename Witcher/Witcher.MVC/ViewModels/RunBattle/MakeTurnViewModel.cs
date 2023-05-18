@@ -7,7 +7,7 @@ namespace Witcher.MVC.ViewModels.RunBattle
 		/// <summary>
 		/// Айди цели
 		/// </summary>
-		public Guid TargetCreatureId { get; set; }
+		public Guid TargetId { get; set; }
 
 		/// <summary>
 		/// Айди способности атаки
