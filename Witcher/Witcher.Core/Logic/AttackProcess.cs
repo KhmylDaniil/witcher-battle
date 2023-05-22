@@ -169,6 +169,9 @@ namespace Witcher.Core.Logic
 		{
 			damage = (int)Math.Truncate(damage * data.AimedPart.DamageModifier);
 
+			if (data.isStrongWeaponAttack.Value)
+				damage *= 2;
+
 			var damageTypeModifier = data.Target.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == data.AttackFormula.DamageType);
 
 			if (damageTypeModifier is null) return;

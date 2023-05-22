@@ -6,7 +6,7 @@ connection.on("ReceiveMessage", function () {
 
     setTimeout(function () {
         document.location.reload();
-    }, 2000);
+    }, 1000);
     
 });
 
