@@ -1,4 +1,5 @@
-﻿using Witcher.Core.Abstractions;
+﻿using System.ComponentModel.Design;
+using Witcher.Core.Abstractions;
 using Witcher.Core.Entities;
 using static Witcher.Core.BaseData.Enums;
 
@@ -14,27 +15,21 @@ namespace Witcher.Core.Logic
 		
 		private static void CheckAttackerTurnStateWithMultiAttacks(Creature attacker, IAttackFormula attackFormula, bool? isStrongAttack)
 		{
-			if (attackFormula is WeaponTemplate && (isStrongAttack is null || isStrongAttack.Value))
-				return;
+			int baseAttackSpeed = 0;
 
-			int attackSpeed = 2;
+			if (attackFormula is WeaponTemplate && isStrongAttack is not null && !isStrongAttack.Value)
+				baseAttackSpeed = 2;
+			else if (attackFormula is Ability ability)
+					baseAttackSpeed = ability.AttackSpeed;
 
-			if (attackFormula is Ability ability)
-				if (ability.AttackSpeed > 1)
-					attackSpeed = ability.AttackSpeed;
-				else
-					return;
-
-			if (attacker.Turn.MuitiattackAttackFormulaId is null)
+			if (attacker.Turn.MuitiattackAttackFormulaId is null && baseAttackSpeed > 1)
 			{
 				attacker.Turn.MuitiattackAttackFormulaId = attackFormula.Id;
-				attacker.Turn.MultiattackRemainsQuantity = attackSpeed;
+				attacker.Turn.MultiattackRemainsQuantity = baseAttackSpeed;
 				attacker.Turn.TurnState++;
 			}
 
-			attacker.Turn.MultiattackRemainsQuantity--;
-
-			if (attacker.Turn.MultiattackRemainsQuantity > 0)
+			if (--attacker.Turn.MultiattackRemainsQuantity > 0)
 				return;
 
 			attacker.Turn.MuitiattackAttackFormulaId = null;
@@ -43,7 +38,7 @@ namespace Witcher.Core.Logic
 		private static void MarkAttackAsDone(Creature attacker)
 		{
 			if (attacker.Turn.MuitiattackAttackFormulaId is null)
-				attacker.Turn.TurnState = attacker.Turn.TurnState == TurnState.ReadyForAction
+				attacker.Turn.TurnState = attacker.Turn.TurnState < TurnState.BaseActionIsDone
 					? TurnState.BaseActionIsDone
 					: TurnState.TurnIsDone;
 		}

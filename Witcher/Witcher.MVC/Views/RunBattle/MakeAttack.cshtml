@@ -12,7 +12,8 @@
         <form asp-action="Attack" id="sendButton" asp-route-battleId=@Model.BattleId>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <input asp-for="AbilityId" value="@Model.AbilityId" hidden=true class="form-control" />
+                <input asp-for="AttackFormulaId" value="@Model.AttackFormulaId" hidden=true class="form-control" />
+                <input asp-for="AttackType" value="@Model.AttackType" hidden=true class="form-control" />
                 <input asp-for="TargetId" value="@Model.TargetId" hidden=true class="form-control" />
                 <input asp-for="Id" value="@Model.Id" hidden=true class="form-control" />
             </div>
@@ -51,6 +52,18 @@
                 <input asp-for="SpecialToDamage" class="form-control" />
                 <span asp-validation-for="SpecialToDamage" class="text-danger"></span>
             </div>
+            @if (Model.AttackType == Witcher.Core.BaseData.Enums.AttackType.Weapon && !Model.IsPartOfMultiattack)
+            {
+                <div>
+                    <input type="radio" id="swift" name="IsStrongAttack" value="false"
+                           checked>
+                    <label for="swift">Swift Attack</label>
+                </div>
+                <div>
+                    <input type="radio" id="strong" name="IsStrongAttack" value="true">
+                    <label for="strong">Strong Attack</label>
+                </div>
+            }
             <div class="form-group">
                 <input type="submit" value="Attack" class="btn btn-primary" />
             </div>

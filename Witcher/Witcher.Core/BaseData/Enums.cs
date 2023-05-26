@@ -242,5 +242,11 @@ namespace Witcher.Core.BaseData
 			Armor,
 			Usable
 		}
+
+		public enum AttackType
+		{
+			Ability,
+			Weapon
+		}
 	}
 }

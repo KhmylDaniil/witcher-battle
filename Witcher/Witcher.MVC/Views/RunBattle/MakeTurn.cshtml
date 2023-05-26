@@ -12,7 +12,7 @@ Model.TurnState < Witcher.Core.BaseData.Enums.TurnState.TurnIsDone)
 {
     <div class="row">
         <div class="col-md-4">
-            <form asp-action="MakeAttack" asp-route-BattleId=@Model.BattleId asp-route-id=@Model.CreatureId>
+            <form asp-action="MakeAbilityAttack" asp-route-BattleId=@Model.BattleId asp-route-id=@Model.CreatureId>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="TargetId" value="Target" class="control-label"></label>
@@ -23,15 +23,16 @@ Model.TurnState < Witcher.Core.BaseData.Enums.TurnState.TurnIsDone)
                 @if(Model.MultiAttackAbilityId != null)
                 {
                     <div class="form-group">
-                        <input asp-for="AbilityId" value="@Model.MultiAttackAbilityId.Value" hidden=true class="form-control" />
+                        <input asp-for="AttackFormulaId" value="@Model.MultiAttackAbilityId.Value" hidden=true class="form-control" />
+                        <input name="IsPartOfMultiattack" value="true" hidden="" class="form-control" />
                     </div>
                 }
                 else
                 {
                     <div class="form-group">
-                        <label asp-for="AbilityId" class="control-label"></label>
-                        <select asp-items="@(new SelectList(Model.MyAbilities, "Key", "Value"))" asp-for="AbilityId"></select><br /><br />
-                        <span asp-validation-for="AbilityId" class="text-danger"></span>
+                        <label asp-for="AttackFormulaId" class="control-label"></label>
+                        <select asp-items="@(new SelectList(Model.MyAbilities, "Key", "Value"))" asp-for="AttackFormulaId"></select><br /><br />
+                        <span asp-validation-for="AttackFormulaId" class="text-danger"></span>
                     </div>
                 }
                 <div class="form-group">
@@ -40,6 +41,41 @@ Model.TurnState < Witcher.Core.BaseData.Enums.TurnState.TurnIsDone)
             </form>
         </div>
     </div>
+
+    @if (Model.EquippedWeapons.Any())
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="MakeWeaponAttack" asp-route-BattleId=@Model.BattleId asp-route-id=@Model.CreatureId>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="TargetId" value="Target" class="control-label"></label>
+                        <select asp-items="@(new SelectList(Model.PossibleTargets.Where(x => x.Key != Model.CreatureId), "Key", "Value"))" asp-for="TargetId"></select><br /><br />
+                        <span asp-validation-for="TargetId" class="text-danger"></span>
+                    </div>
+
+                    @if (Model.MultiAttackAbilityId != null)
+                    {
+                        <div class="form-group">
+                            <input asp-for="AttackFormulaId" value="@Model.MultiAttackAbilityId.Value" hidden=true class="form-control" />
+                            <input name="IsPartOfMultiattack" value="true" hidden="" class="form-control" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <label asp-for="AttackFormulaId" class="control-label"></label>
+                            <select asp-items="@(new SelectList(Model.EquippedWeapons, "Key", "Value"))" asp-for="AttackFormulaId"></select><br /><br />
+                            <span asp-validation-for="AttackFormulaId" class="text-danger"></span>
+                        </div>
+                    }
+                    <div class="form-group">
+                        <input type="submit" value=@Model.AttackButtonValue() class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
 }
 
 @if (Model.TurnState == Witcher.Core.BaseData.Enums.TurnState.InProcessOfBaseAction
@@ -54,7 +90,7 @@ Model.TurnState < Witcher.Core.BaseData.Enums.TurnState.TurnIsDone)
                     <input asp-for="CreatureId" value="@Model.CreatureId" hidden=true class="form-control" />
                 </div>
                 <div class="form-group">
-                    <input type="submit" value="Pass in miltiattack" class="btn btn-primary" />
+                    <input type="submit" value="Pass in multiattack" class="btn btn-primary" />
                 </div>
             </form>
         </div>
@@ -79,7 +115,6 @@ Model.TurnState < Witcher.Core.BaseData.Enums.TurnState.TurnIsDone)
         </div>
     </div>
 }
-
 
 <div class="row">
     <div class="col-md-4">

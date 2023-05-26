@@ -1,10 +1,14 @@
 ﻿using System;
+using Witcher.Core.Abstractions;
 using Witcher.Core.Exceptions.RequestExceptions;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
-	public abstract class AttackBaseCommand
+	/// <summary>
+	/// Команда проведения атаки
+	/// </summary>
+	public class AttackCommand : IValidatableCommand
 	{
 		/// <summary>
 		/// Айди боя
@@ -20,6 +24,11 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		/// Айди цели
 		/// </summary>
 		public Guid TargetId { get; set; }
+
+		/// <summary>
+		/// Айди формулы атаки
+		/// </summary>
+		public Guid AttackFormulaId { get; set; }
 
 		/// <summary>
 		/// Айди части тела при прицельной атаке
@@ -57,21 +66,39 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		public int SpecialToDamage { get; set; }
 
 		/// <summary>
+		/// Флаг сильной атаки оружием
+		/// </summary>
+		public bool? IsStrongAttack { get; set; }
+
+		/// <summary>
+		/// Тип атаки
+		/// </summary>
+		public AttackType AttackType { get; set; }
+
+		/// <summary>
+		/// Флаг части мультиатаки
+		/// </summary>
+		public bool IsPartOfMultiattack { get; set; }
+
+		/// <summary>
 		/// Валидация
 		/// </summary>
 		public virtual void Validate()
 		{
 			if (DamageValue is not null && DamageValue.Value < 0)
-				throw new RequestFieldIncorrectDataException<AttackBaseCommand>(nameof(DamageValue), "Значение не может быть отрицательным.");
+				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(DamageValue), "Значение не может быть отрицательным.");
 
 			if (AttackValue is not null && AttackValue.Value < 0)
-				throw new RequestFieldIncorrectDataException<AttackBaseCommand>(nameof(AttackValue), "Значение не может быть отрицательным.");
+				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(AttackValue), "Значение не может быть отрицательным.");
 
 			if (DefenseValue is not null && DefenseValue.Value < 0)
-				throw new RequestFieldIncorrectDataException<AttackBaseCommand>(nameof(DefenseValue), "Значение не может быть отрицательным.");
+				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(DefenseValue), "Значение не может быть отрицательным.");
 
 			if (DefensiveSkill is not null && !Enum.IsDefined(DefensiveSkill.Value))
-				throw new RequestFieldIncorrectDataException<AttackBaseCommand>(nameof(DefensiveSkill));
+				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(DefensiveSkill));
+
+			if (Enum.IsDefined(AttackType))
+				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(AttackType));
 		}
 	}
 }

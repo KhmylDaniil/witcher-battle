@@ -36,6 +36,9 @@ namespace Witcher.Core.Requests.RunBattleRequests
 				_ => throw new LogicBaseException("Цель не находится в процессе мультиатаки")
 			};
 
+			currentCreature.Turn.MultiattackRemainsQuantity = 0;
+			currentCreature.Turn.MuitiattackAttackFormulaId = null;
+
 			battle.BattleLog += $"{currentCreature.Name} пасует в процессе мультиатаки.";
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);

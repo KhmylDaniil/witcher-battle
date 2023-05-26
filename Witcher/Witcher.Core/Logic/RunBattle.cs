@@ -40,7 +40,7 @@ namespace Witcher.Core.Logic
 
 			StringBuilder message = new();
 
-			if (battle.NextInitiative > battle.Creatures.Count)
+			if (battle.NextInitiative > battle.Creatures.Max(x => x.InitiativeInBattle))
 			{
 				battle.NextInitiative = 1;
 

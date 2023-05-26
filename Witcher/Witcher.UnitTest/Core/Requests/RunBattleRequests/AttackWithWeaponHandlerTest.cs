@@ -152,17 +152,18 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 		[TestMethod]
 		public async Task Handle_Attack_ShouldReturnUnit()
 		{
-			var request = new AttackWithWeaponCommand()
+			var request = new AttackCommand()
 			{
 				BattleId = _battle.Id,
 				Id = _character.Id,
 				TargetId = _creature.Id,
-				WeaponId = _weapon.Id,
+				AttackFormulaId = _weaponTemplate.Id,
 				CreaturePartId = _torsoPart.Id,
-				SpecialToHit = 3
+				SpecialToHit = 3,
+				AttackType = AttackType.Weapon
 			};
 
-			var newHandler = new AttackWithWeaponHandler(_dbContext, AuthorizationService.Object, RollService.Object);
+			var newHandler = new AttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);
 
 			var result = await newHandler.Handle(request, default);
 
