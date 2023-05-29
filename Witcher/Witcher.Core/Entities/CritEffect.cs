@@ -144,20 +144,15 @@ namespace Witcher.Core.Entities
 		/// <param name="creature">Существо</param>
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Возможность создания эффекта</returns>
-		public static bool CheckExistingEffectAndRemoveStabilizedEffect<T>(Creature creature, CreaturePart aimedPart) where T : CritEffect
+		public static void CheckExistingEffectAndRemoveStabilizedEffect<T>(Creature creature, CreaturePart aimedPart) where T : CritEffect
 		{
 			if (creature.Effects.FirstOrDefault(x => x is T crit && crit.CreaturePartId == aimedPart.Id) is not ICrit existingCrit)
-				return true;
-
-			if (!IsStabile(existingCrit.Severity))
-				return false;
+				return;
 
 			if (existingCrit is not ISharedPenaltyCrit sharedPenaltyCrit || sharedPenaltyCrit.PenaltyApplied)
 				existingCrit.RevertStatChanges(creature);
 
 			creature.Effects.Remove((CritEffect)existingCrit);
-
-			return true;
 		}
 	}
 }

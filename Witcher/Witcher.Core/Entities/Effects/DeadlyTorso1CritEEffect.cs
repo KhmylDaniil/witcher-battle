@@ -59,9 +59,8 @@ namespace Witcher.Core.Entities.Effects
 			if (!creature.Effects.Any(x => x is PoisonEffect))
 				creature.Effects.Add(PoisonEffect.Create(null, null, creature, poisonName));
 
-			return CheckExistingEffectAndRemoveStabilizedEffect<DeadlyTorso1CritEffect>(creature, aimedPart)
-				? new DeadlyTorso1CritEffect(creature, aimedPart, name)
-				: null;
+			CheckExistingEffectAndRemoveStabilizedEffect<DeadlyTorso1CritEffect>(creature, aimedPart);
+			return new DeadlyTorso1CritEffect(creature, aimedPart, name);
 		}
 
 		/// <summary>

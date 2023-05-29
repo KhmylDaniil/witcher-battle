@@ -50,9 +50,10 @@ namespace Witcher.Core.Entities.Effects
 		/// <param name="aimedPart">Часть тела</param>
 		/// <returns>Эффект</returns>
 		public static SimpleHead1CritEffect Create(Creature creature, CreaturePart aimedPart, string name)
-			=> CheckExistingEffectAndRemoveStabilizedEffect<SimpleHead1CritEffect>(creature, aimedPart)
-				? new SimpleHead1CritEffect(creature, aimedPart, name)
-				: null;
+		{
+			CheckExistingEffectAndRemoveStabilizedEffect<SimpleHead1CritEffect>(creature, aimedPart);
+			return new SimpleHead1CritEffect(creature, aimedPart, name);
+		}
 
 		/// <summary>
 		/// Применить изменения характеристик

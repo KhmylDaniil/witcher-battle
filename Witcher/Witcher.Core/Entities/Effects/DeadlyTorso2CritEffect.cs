@@ -84,9 +84,8 @@ namespace Witcher.Core.Entities.Effects
 			if (!creature.Effects.Any(x => x is BleedEffect))
 				creature.Effects.Add(BleedEffect.Create(null, null, creature, "Secondary Bleed"));
 
-			return CheckExistingEffectAndRemoveStabilizedEffect<DeadlyTorso2CritEffect>(creature, aimedPart)
-				? new DeadlyTorso2CritEffect(creature, aimedPart, name)
-				: null;
+			CheckExistingEffectAndRemoveStabilizedEffect<DeadlyTorso2CritEffect>(creature, aimedPart);
+			return new DeadlyTorso2CritEffect(creature, aimedPart, name);
 		}
 
 		/// <summary>

@@ -58,9 +58,8 @@ namespace Witcher.Core.Entities.Effects
 			if (!creature.Effects.Any(x => x is BleedEffect))
 				creature.Effects.Add(BleedEffect.Create(null, null, creature, "Secondary Bleed"));
 
-			var effect = CheckExistingEffectAndRemoveStabilizedEffect<DeadlyTailCritEffect>(creature, aimedPart)
-				? new DeadlyTailCritEffect(creature, aimedPart, name)
-				: null;
+			CheckExistingEffectAndRemoveStabilizedEffect<DeadlyTailCritEffect>(creature, aimedPart);
+            var effect = new DeadlyTailCritEffect(creature, aimedPart, name);
 
 			ApplySharedPenalty(creature, effect);
 

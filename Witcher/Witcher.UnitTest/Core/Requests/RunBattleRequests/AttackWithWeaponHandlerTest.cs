@@ -47,6 +47,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			_weaponTemplate = WeaponTemplate.CreateForTest(
 				game: _game,
 				name: "sword",
+				attackSkill: Skill.Melee,
 				attackDiceQuantity: 2,
 				damageModifier: 2,
 				accuracy: 1);
@@ -145,10 +146,6 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 				_creature));
 		}
 
-		/// <summary>
-		/// Тест метода Handle - получение монстром урона
-		/// </summary>
-		/// <returns></returns>
 		[TestMethod]
 		public async Task Handle_Attack_ShouldReturnUnit()
 		{
@@ -180,6 +177,62 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			var torsoPart = monster.CreatureParts.FirstOrDefault(x => x.BodyPartType == BodyPartType.Torso);
 			Assert.IsNotNull(torsoPart);
 			Assert.AreEqual(2, torsoPart.CurrentArmor);
+		}
+
+		[TestMethod]
+		public async Task Handle_CritAttack()
+		{
+			var request = new AttackCommand()
+			{
+				BattleId = _battle.Id,
+				Id = _character.Id,
+				TargetId = _creature.Id,
+				AttackFormulaId = _weaponTemplate.Id,
+				CreaturePartId = _leftArmPart.Id,
+				SpecialToHit = 25,
+				AttackType = AttackType.Weapon
+			};
+
+			var newHandler = new AttackHandler(_dbContext, AuthorizationService.Object, RollService.Object);
+
+			var result = await newHandler.Handle(request, default);
+
+			Assert.IsNotNull(result);
+
+			var message = _dbContext.Battles.FirstOrDefault(x => x.Id == _battle.Id).BattleLog;
+			Assert.IsNotNull(message);
+
+			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
+			Assert.IsNotNull(monster);
+			var crit = monster.Effects.FirstOrDefault();
+			Assert.IsNotNull(crit);
+			Assert.IsTrue(crit is SimpleArmCritEffect);
+
+
+			var secondRequest = new AttackCommand()
+			{
+				BattleId = _battle.Id,
+				Id = _character.Id,
+				TargetId = _creature.Id,
+				AttackFormulaId = _weaponTemplate.Id,
+				CreaturePartId = _leftArmPart.Id,
+				SpecialToHit = 22,
+				AttackType = AttackType.Weapon
+			};
+
+
+			result = await newHandler.Handle(secondRequest, default);
+
+			Assert.IsNotNull(result);
+
+			message = _dbContext.Battles.FirstOrDefault(x => x.Id == _battle.Id).BattleLog;
+			Assert.IsNotNull(message);
+
+			monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
+			Assert.IsNotNull(monster);
+			var newCrit = monster.Effects.FirstOrDefault(x => x is SimpleArmCritEffect);
+			Assert.IsTrue(monster.Effects.Count(x => x is SimpleArmCritEffect) == 1);
+			Assert.AreNotEqual(newCrit.Id, crit.Id);
 		}
 	}
 }

@@ -208,7 +208,7 @@ namespace Witcher.Core.Logic
 			else
 			{
 				var effect = CritEffect.CreateCritEffect<Effect>(data.Target, data.AimedPart, crit)
-					?? throw new LogicBaseException("There is now such crit effect.");
+					?? throw new LogicBaseException("There is not such crit effect.");
 
 				data.Target.Effects.Add(effect);
 
