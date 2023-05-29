@@ -97,7 +97,7 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 			if (DefensiveSkill is not null && !Enum.IsDefined(DefensiveSkill.Value))
 				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(DefensiveSkill));
 
-			if (Enum.IsDefined(AttackType))
+			if (!Enum.IsDefined(AttackType))
 				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(AttackType));
 		}
 	}
