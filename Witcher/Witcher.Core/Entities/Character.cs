@@ -206,7 +206,7 @@ namespace Witcher.Core.Entities
 				CreatureSkills = new List<CreatureSkill>(),
 				Abilities = new List<Ability>(),
 				CreatureParts = new List<CreaturePart>(),
-				DamageTypeModifiers = new List<CreatureDamageTypeModifier>(),
+				DamageTypeModifiers = new List<EntityDamageTypeModifier>(),
 				UserGameCharacters = new List<UserGameCharacter>(),
 			};
 

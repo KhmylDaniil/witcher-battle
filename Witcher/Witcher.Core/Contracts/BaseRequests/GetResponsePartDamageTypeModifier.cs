@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Witcher.Core.Contracts.CreatureTemplateRequests
+namespace Witcher.Core.Contracts.BaseRequests
 {
 	/// <summary>
 	/// Элемент ответа на запрос шаблона существа по айди - модификаторы урона
 	/// </summary>
-	public class GetCreatureTemplateByIdResponseDamageTypeModifier
+	public class GetResponsePartDamageTypeModifier
 	{
 		/// <summary>
 		/// Айди

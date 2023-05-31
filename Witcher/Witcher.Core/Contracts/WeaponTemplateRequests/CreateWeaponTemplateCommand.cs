@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Witcher.Core.Abstractions;
 using static Witcher.Core.BaseData.Enums;
-using Witcher.Core.Contracts.AbilityRequests;
 using Witcher.Core.Exceptions.RequestExceptions;
 using Witcher.Core.Contracts.ItemTemplateBase;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Contracts.WeaponTemplateRequests
 {

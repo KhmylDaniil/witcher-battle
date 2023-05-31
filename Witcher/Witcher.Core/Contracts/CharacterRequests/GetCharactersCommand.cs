@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Contracts.CharacterRequests
 {

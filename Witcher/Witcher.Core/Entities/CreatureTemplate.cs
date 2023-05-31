@@ -363,7 +363,7 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Модификаторы типа урона
 		/// </summary>
-		public List<CreatureTemplateDamageTypeModifier> DamageTypeModifiers { get; protected set; }
+		public List<EntityDamageTypeModifier> DamageTypeModifiers { get; protected set; }
 
 		#endregion navigation properties
 
@@ -592,7 +592,7 @@ namespace Witcher.Core.Entities
 				CreatureTemplateSkills = new List<CreatureTemplateSkill>(),
 				Abilities = new List<Ability>(),
 				CreatureTemplateParts = new List<CreatureTemplatePart>(),
-				DamageTypeModifiers = new List<CreatureTemplateDamageTypeModifier>()
+				DamageTypeModifiers = new List<EntityDamageTypeModifier>()
 			};
 	}
 }

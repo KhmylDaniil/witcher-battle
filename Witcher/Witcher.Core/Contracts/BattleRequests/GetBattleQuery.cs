@@ -1,5 +1,6 @@
 ﻿using Witcher.Core.Abstractions;
 using System.Collections.Generic;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Contracts.BattleRequests
 {

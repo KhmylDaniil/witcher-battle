@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Contracts.AbilityRequests
 {

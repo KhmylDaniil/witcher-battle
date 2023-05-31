@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Witcher.Core.Contracts.AbilityRequests;
+using Witcher.Core.Contracts.BaseRequests;
 using Witcher.Core.Contracts.ItemTemplateBase;
 using static Witcher.Core.BaseData.Enums;
 

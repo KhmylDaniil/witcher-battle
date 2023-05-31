@@ -11,7 +11,7 @@ namespace Witcher.Storage.Postgresql.Configurations
 	{
 		public override void ConfigureChild(EntityTypeBuilder<WeaponTemplate> builder)
 		{
-			builder.ToTable("WeaponTeemplates", "Items").
+			builder.ToTable("WeaponTemplates", "Items").
 				HasComment("Шаблоны оружия");
 
 			builder.Property(r => r.AttackSkill)

@@ -2,6 +2,7 @@
 using Witcher.Core.Exceptions.RequestExceptions;
 using System;
 using System.Collections.Generic;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Contracts.CreatureTemplateRequests
 {

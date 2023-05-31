@@ -383,7 +383,7 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Модификаторы типа урона
 		/// </summary>
-		public List<CreatureDamageTypeModifier> DamageTypeModifiers { get; protected set; }
+		public List<EntityDamageTypeModifier> DamageTypeModifiers { get; protected set; }
 
 		/// <summary>
 		/// Ход существа в битве
@@ -605,7 +605,7 @@ namespace Witcher.Core.Entities
 				CreatureSkills = new List<CreatureSkill>(),
 				Abilities = new List<Ability>(),
 				CreatureParts = new List<CreaturePart>(),
-				DamageTypeModifiers = new List<CreatureDamageTypeModifier>()
+				DamageTypeModifiers = new List<EntityDamageTypeModifier>()
 			};
 
 		internal int GetInt() => _int;

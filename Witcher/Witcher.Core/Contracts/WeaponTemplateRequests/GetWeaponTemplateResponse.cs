@@ -11,12 +11,12 @@ namespace Witcher.Core.Contracts.WeaponTemplateRequests
 		public Guid Id { get; set; }
 
 		/// <summary>
-		/// Наазвание способности
+		/// Наазвание
 		/// </summary>
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Описание способности
+		/// Описание
 		/// </summary>
 		public string Description { get; set; }
 

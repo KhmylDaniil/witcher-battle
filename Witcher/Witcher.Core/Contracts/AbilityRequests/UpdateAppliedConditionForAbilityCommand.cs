@@ -1,5 +1,6 @@
 ﻿using Witcher.Core.Abstractions;
 using System;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Contracts.AbilityRequests
 {

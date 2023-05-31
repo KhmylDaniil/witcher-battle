@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Contracts.AbilityRequests
 {

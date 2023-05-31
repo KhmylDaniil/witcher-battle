@@ -6,12 +6,12 @@ namespace Witcher.Core.Entities
 	/// <summary>
 	/// Модификатор по типу урона для шаблона существа
 	/// </summary>
-	public class CreatureTemplateDamageTypeModifier : EntityBase 
+	public class EntityDamageTypeModifier : EntityBase 
 	{
 		/// <summary>
 		/// Пустой конструктор для EF
 		/// </summary>
-		protected CreatureTemplateDamageTypeModifier()
+		protected EntityDamageTypeModifier()
 		{
 		}
 
@@ -21,7 +21,7 @@ namespace Witcher.Core.Entities
 		/// <param name="primaryEntityid"></param>
 		/// <param name="damageType"></param>
 		/// <param name="modifier"></param>
-		public CreatureTemplateDamageTypeModifier(Guid primaryEntityid, DamageType damageType, DamageTypeModifier modifier)
+		public EntityDamageTypeModifier(Guid primaryEntityid, DamageType damageType, DamageTypeModifier modifier)
 		{
 			PrimaryEntityid = primaryEntityid;
 			DamageType = damageType;
@@ -42,12 +42,5 @@ namespace Witcher.Core.Entities
 		/// Айди первичной сущности
 		/// </summary>
 		public Guid PrimaryEntityid { get; set; }
-	}
-
-	/// <summary>
-	/// Модификатор по типу урона для существа
-	/// </summary>
-	public class CreatureDamageTypeModifier : CreatureTemplateDamageTypeModifier
-	{
 	}
 }

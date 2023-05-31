@@ -80,6 +80,11 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		public List<CreatureTemplate> CreatureTemplates { get; set; }
 
+		/// <summary>
+		/// Шаблоны брони
+		/// </summary>
+		public List<ArmorTemplate> ArmorsTemplates { get; set; }
+
 		#endregion navigation properties
 
 		/// <summary>

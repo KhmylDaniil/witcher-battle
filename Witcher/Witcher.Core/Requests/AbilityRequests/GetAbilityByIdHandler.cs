@@ -6,6 +6,7 @@ using Witcher.Core.Exceptions.EntityExceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {

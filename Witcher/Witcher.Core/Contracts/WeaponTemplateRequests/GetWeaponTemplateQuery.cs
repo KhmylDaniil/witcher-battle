@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.AbilityRequests;
+using Witcher.Core.Contracts.BaseRequests;
 using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Contracts.WeaponTemplateRequests
@@ -48,11 +49,11 @@ namespace Witcher.Core.Contracts.WeaponTemplateRequests
 		public void Validate()
 		{
 			if (MinAttackDiceQuantity < 0)
-				throw new RequestFieldIncorrectDataException<GetAbilityQuery>(nameof(MinAttackDiceQuantity),
+				throw new RequestFieldIncorrectDataException<GetWeaponTemplateQuery>(nameof(MinAttackDiceQuantity),
 					"Значение должно быть больше нуля.");
 
 			if (MaxAttackDiceQuantity < MinAttackDiceQuantity)
-				throw new RequestFieldIncorrectDataException<GetAbilityQuery>(nameof(MaxAttackDiceQuantity),
+				throw new RequestFieldIncorrectDataException<GetWeaponTemplateQuery>(nameof(MaxAttackDiceQuantity),
 					"Значение должно быть больше минимального значения фильтра по количеству кубов атаки.");
 		}
 	}

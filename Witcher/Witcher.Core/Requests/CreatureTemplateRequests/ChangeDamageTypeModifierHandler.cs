@@ -10,14 +10,14 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.CreatureTemplateRequests
 {
-	public class ChangeDamageTypeModifierHandler : BaseHandler<ChangeDamageTypeModifierCommand, Unit>
+	public class ChangeDamageTypeModifierHandler : BaseHandler<ChangeDamageTypeModifierForCreatureTemplateCommand, Unit>
 	{
 		public ChangeDamageTypeModifierHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 			: base(appDbContext, authorizationService)
 		{
 		}
 
-		public async override Task<Unit> Handle(ChangeDamageTypeModifierCommand request, CancellationToken cancellationToken)
+		public async override Task<Unit> Handle(ChangeDamageTypeModifierForCreatureTemplateCommand request, CancellationToken cancellationToken)
 		{
 			var creatureTemplate = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.SelectMany(g => g.CreatureTemplates.Where(g => g.Id == request.CreatureTemplateId))
@@ -29,7 +29,7 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 				.FirstOrDefault(x => x.DamageType == request.DamageType);
 
 			if (creatureTemplateDamageTypeModifier == null && request.DamageTypeModifier != BaseData.Enums.DamageTypeModifier.Normal)
-				creatureTemplate.DamageTypeModifiers.Add(new CreatureTemplateDamageTypeModifier(
+				creatureTemplate.DamageTypeModifiers.Add(new EntityDamageTypeModifier(
 					request.CreatureTemplateId, request.DamageType, request.DamageTypeModifier));
 			else if (creatureTemplateDamageTypeModifier != null && request.DamageTypeModifier != BaseData.Enums.DamageTypeModifier.Normal)
 				creatureTemplateDamageTypeModifier.DamageTypeModifier = request.DamageTypeModifier;

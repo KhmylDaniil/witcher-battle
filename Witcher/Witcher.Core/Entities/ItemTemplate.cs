@@ -32,7 +32,7 @@ namespace Witcher.Core.Entities
 		/// <param name="isStackable">Можно ли положить в стак</param>
 		/// <param name="price">Цена</param>
 		/// <param name="weight">Вес</param>
-		public ItemTemplate(
+		protected ItemTemplate(
 			Game game,
 			string name,
 			string description,

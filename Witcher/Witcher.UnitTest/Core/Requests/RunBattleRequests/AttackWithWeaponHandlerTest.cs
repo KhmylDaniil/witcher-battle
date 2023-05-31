@@ -42,7 +42,8 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 				game: _game,
 				bodyTemplate: BodyTemplate.CreateForTest(game: _game),
 				creatureType: CreatureType.Specter,
-				speed: 4);
+				speed: 4,
+				body: 8);
 
 			_weaponTemplate = WeaponTemplate.CreateForTest(
 				game: _game,

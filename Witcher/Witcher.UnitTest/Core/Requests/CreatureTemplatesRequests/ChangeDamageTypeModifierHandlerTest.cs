@@ -35,7 +35,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 		public async Task Handle_UpdateDamageTypeModifier()
 		{
 			//create
-			var request = new ChangeDamageTypeModifierCommand()
+			var request = new ChangeDamageTypeModifierForCreatureTemplateCommand()
 			{
 				CreatureTemplateId = _creatureTemplate.Id,
 				DamageType = DamageType.Slashing,
@@ -56,7 +56,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(DamageTypeModifier.Vulnerability, modifier.DamageTypeModifier);
 
 			//update
-			request = new ChangeDamageTypeModifierCommand()
+			request = new ChangeDamageTypeModifierForCreatureTemplateCommand()
 			{
 				CreatureTemplateId = _creatureTemplate.Id,
 				DamageType = DamageType.Slashing,
@@ -75,7 +75,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(DamageTypeModifier.Resistance, modifier.DamageTypeModifier);
 
 			//delete
-			request = new ChangeDamageTypeModifierCommand()
+			request = new ChangeDamageTypeModifierForCreatureTemplateCommand()
 			{
 				CreatureTemplateId = _creatureTemplate.Id,
 				DamageType = DamageType.Slashing,

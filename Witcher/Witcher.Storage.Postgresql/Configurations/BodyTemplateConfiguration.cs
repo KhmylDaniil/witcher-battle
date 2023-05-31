@@ -50,6 +50,12 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
+			builder.HasMany(x => x.ArmorsTemplates)
+				.WithOne(x => x.BodyTemplate)
+				.HasForeignKey(x => x.BodyTemplateId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
 			var gameNavigation = builder.Metadata.FindNavigation(nameof(BodyTemplate.Game));
 			gameNavigation.SetField(BodyTemplate.GameField);
 			gameNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);

@@ -207,12 +207,12 @@ namespace Witcher.MVC.Controllers
 		}
 
 		[Route("[controller]/[action]/{creatureTemplateId}")]
-		public ActionResult EditDamageTypeModifier(ChangeDamageTypeModifierCommand command) => View(command);
+		public ActionResult EditDamageTypeModifier(ChangeDamageTypeModifierForCreatureTemplateCommand command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{creatureTemplateId}")]
-		public async Task<IActionResult> EditDamageTypeModifier(ChangeDamageTypeModifierCommand command, CancellationToken cancellationToken)
+		public async Task<IActionResult> EditDamageTypeModifier(ChangeDamageTypeModifierForCreatureTemplateCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{

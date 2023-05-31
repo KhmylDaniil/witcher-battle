@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Witcher.Core.Exceptions.EntityExceptions;
 using static Witcher.Core.BaseData.Enums;
 
@@ -71,6 +72,9 @@ namespace Witcher.Core.Entities
 				BodyTemplateId = value.Id;
 			}
 		}
+
+		public List<ArmorTemplate> ArmorTemplates { get; protected set; } = new();
+
 		#endregion navigation properties
 
 		/// <summary>

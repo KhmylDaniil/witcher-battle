@@ -1,6 +1,6 @@
 ﻿using System;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.AbilityRequests;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Contracts.WeaponTemplateRequests
 {

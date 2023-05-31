@@ -1,7 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace Witcher.Core.Contracts
+namespace Witcher.Core.Contracts.BaseRequests
 {
 	/// <summary>
 	/// Базоввая часть гет запроса 

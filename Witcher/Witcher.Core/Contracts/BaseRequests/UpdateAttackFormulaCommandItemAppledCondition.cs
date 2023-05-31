@@ -1,10 +1,10 @@
 ﻿using Witcher.Core.BaseData;
 using System;
 
-namespace Witcher.Core.Contracts.AbilityRequests
+namespace Witcher.Core.Contracts.BaseRequests
 {
 	/// <summary>
-	/// Элемент запроса создfния или изменения способности(накладываемое состояние) 
+	/// Элемент запроса создания или изменения способности(накладываемое состояние) 
 	/// </summary>
 	public class UpdateAttackFormulaCommandItemAppledCondition
 	{

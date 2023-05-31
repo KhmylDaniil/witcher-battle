@@ -3,9 +3,9 @@ using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Exceptions.EntityExceptions;
 using Witcher.Core.Abstractions;
 using System.Linq;
-using Witcher.Core.Contracts.AbilityRequests;
 using Witcher.Core.Exceptions.SystemExceptions;
 using System;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Entities
 {
