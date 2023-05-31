@@ -113,7 +113,7 @@ namespace Witcher.Core.Logic
 			message.AppendLine($"Попадание с превышением на {successValue}.");
 			RemoveStunEffect(data);
 
-			int damage = damageValue is null ? RollDamage(data.AttackFormula, data.ToDamage) : damageValue.Value;
+			int damage = damageValue is null ? RollDamage(data.AttackFormula, data.Attacker, data.ToDamage) : damageValue.Value;
 
 			ArmorMutigation(data, ref damage, ref message);
 
@@ -140,11 +140,17 @@ namespace Witcher.Core.Logic
 		/// Расчет урона от атаки
 		/// </summary>
 		/// <returns>Нанесенный урон</returns>
-		int RollDamage(IAttackFormula ability, int specialBonus = default)
+		int RollDamage(IAttackFormula attackFormula, Creature attacker, int specialBonus = default)
 		{
 			Random random = new();
-			var result = ability.DamageModifier + specialBonus;
-			for (int i = 0; i < ability.AttackDiceQuantity; i++)
+
+			if (attackFormula is WeaponTemplate && CorrespondingStat(attackFormula.AttackSkill) == Stats.Ref)
+			{
+				specialBonus += (int)Math.Ceiling((attacker.Body - 6) / 2d) * 2;
+			}
+
+			var result = attackFormula.DamageModifier + specialBonus;
+			for (int i = 0; i < attackFormula.AttackDiceQuantity; i++)
 				result += random.Next(1, 6);
 			return result < 0 ? 0 : result;
 		}
