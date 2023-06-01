@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using Witcher.Core.Abstractions;
 using Witcher.Core.Exceptions.EntityExceptions;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Entities
 {
-	public class ArmorTemplate : ItemTemplate
+	public class ArmorTemplate : ItemTemplate, IEntityWithDamageModifiers
 	{
 		/// <summary>
 		/// Поле для <see cref="_bodyTemplate"/>
@@ -29,7 +31,7 @@ namespace Witcher.Core.Entities
 			BodyTemplate bodyTemplate,
 			int armor,
 			int encumbranceValue)
-			: base (game, name, description, isStackable: false, weight, price)
+			: base (game, name, description, isStackable: false, price, weight)
 		{
 			BodyTemplate = bodyTemplate;
 			Armor = armor;
@@ -109,6 +111,58 @@ namespace Witcher.Core.Entities
 			};
 
 			return result;
+		}
+
+		public void ChangeArmorTemplate(
+			string name,
+			string description,
+			int weight,
+			int price,
+			int armor,
+			int encumbranceValue,
+			BodyTemplate bodyTemplate,
+			List<BodyPartType> bodyPartTypes)
+		{
+			ChangeItemTemplate(name, description, isStackable: false, price, weight);
+			Armor = armor;
+			EncumbranceValue = encumbranceValue;
+			BodyTemplateParts = bodyTemplate.BodyTemplateParts.Where(x => bodyPartTypes.Contains(x.BodyPartType)).ToList();
+		}
+
+		[Obsolete("Только для тестов")]
+		public static ArmorTemplate CreateForTest(
+			Guid? id = default,
+			Game game = default,
+			BodyTemplate bodyTemplate = default,
+			string name = default,
+			string description = default,
+			int price = default,
+			int weight = default,
+			int armor = default,
+			int encumbranceValue = default,
+			DateTime createdOn = default,
+			DateTime modifiedOn = default,
+			Guid createdByUserId = default)
+		{
+			return new()
+			{
+				Id = id ?? Guid.NewGuid(),
+				Game = game,
+				BodyTemplate = bodyTemplate,
+				Name = name ?? "name",
+				Description = description,
+				Price = price,
+				Weight = weight,
+				IsStackable = false,
+				Armor = armor,
+				EncumbranceValue = encumbranceValue,
+				BodyTemplateParts = new(),
+				ItemType = ItemType.Armor,
+				CreatedOn = createdOn,
+				ModifiedOn = modifiedOn,
+				CreatedByUserId = createdByUserId,
+				DamageTypeModifiers = new()
+			};
 		}
 	}
 }

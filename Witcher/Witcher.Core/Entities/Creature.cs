@@ -11,7 +11,7 @@ namespace Witcher.Core.Entities
 	/// <summary>
 	/// Существо
 	/// </summary>
-	public class Creature: EntityBase
+	public class Creature: EntityBase, IEntityWithDamageModifiers
 	{
 		/// <summary>
 		/// Поле для <see cref="_battle"/>
@@ -100,6 +100,7 @@ namespace Witcher.Core.Entities
 			Abilities = creatureTemplate.Abilities;
 			Effects = new List<Effect>();
 			CreatureSkills = CreateSkills(creatureTemplate.CreatureTemplateSkills);
+			DamageTypeModifiers = new();
 		}
 
 		/// <summary>

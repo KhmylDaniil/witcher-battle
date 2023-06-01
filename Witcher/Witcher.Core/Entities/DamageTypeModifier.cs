@@ -1,4 +1,5 @@
 ﻿using System;
+using Witcher.Core.Abstractions;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Entities
@@ -42,5 +43,20 @@ namespace Witcher.Core.Entities
 		/// Айди первичной сущности
 		/// </summary>
 		public Guid PrimaryEntityid { get; set; }
+
+		public static void ChangeDamageTypeModifer(
+			DamageTypeModifier damageTypeModifier,
+			DamageType damageType,
+			IEntityWithDamageModifiers entity,
+			EntityDamageTypeModifier entityDamageTypeModifier)
+		{
+			if (entityDamageTypeModifier == null && damageTypeModifier != DamageTypeModifier.Normal)
+				entity.DamageTypeModifiers.Add(new EntityDamageTypeModifier(
+					entity.Id, damageType, damageTypeModifier));
+			else if (entityDamageTypeModifier != null && damageTypeModifier != DamageTypeModifier.Normal)
+				entityDamageTypeModifier.DamageTypeModifier = damageTypeModifier;
+			else if (entityDamageTypeModifier != null)
+				entity.DamageTypeModifiers.Remove(entityDamageTypeModifier);
+		}
 	}
 }

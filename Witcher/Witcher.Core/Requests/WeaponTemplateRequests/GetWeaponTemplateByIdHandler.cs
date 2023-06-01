@@ -23,7 +23,7 @@ namespace Witcher.Core.Requests.WeaponTemplateRequests
 				.SelectMany(x => x.ItemTemplates);
 
 			var weaponTemplate = await filter.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken) as WeaponTemplate
-				?? throw new EntityNotFoundException<Ability>(request.Id);
+				?? throw new EntityNotFoundException<WeaponTemplate>(request.Id);
 
 			return new GetWeaponTemplateByIdResponse()
 			{

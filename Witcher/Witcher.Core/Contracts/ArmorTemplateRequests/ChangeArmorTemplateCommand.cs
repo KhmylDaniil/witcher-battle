@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.ItemTemplateBase;
 using static Witcher.Core.BaseData.Enums;
@@ -16,11 +14,6 @@ namespace Witcher.Core.Contracts.ArmorTemplateRequests
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
-
-		/// <summary>
-		/// Айди шаблона тела
-		/// </summary>
-		public Guid BodyTemplateId { get; set; }
 
 		/// <summary>
 		/// Броня

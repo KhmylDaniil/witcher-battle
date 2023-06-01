@@ -114,7 +114,8 @@ namespace Witcher.Core.Entities
 				ModifiedOn = modifiedOn,
 				CreatedByUserId = createdByUserId,
 				CreatureTemplates = new List<CreatureTemplate>(),
-				BodyTemplateParts = new List<BodyTemplatePart>()
+				BodyTemplateParts = new List<BodyTemplatePart>(),
+				ArmorsTemplates = new List<ArmorTemplate>(),
 			};
 
 		/// <summary>

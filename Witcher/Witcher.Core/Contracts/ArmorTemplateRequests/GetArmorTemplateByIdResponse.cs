@@ -1,26 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Witcher.Core.Contracts.BaseRequests;
+using Witcher.Core.Contracts.ItemTemplateBase;
 
 namespace Witcher.Core.Contracts.ArmorTemplateRequests
 {
-	public class GetArmorTemplateByIdResponse
+	public class GetArmorTemplateByIdResponse : GetItemByIdResponseBase
 	{
-		/// <summary>
-		/// Айди
-		/// </summary>
-		public Guid Id { get; set; }
-
-		/// <summary>
-		/// Наазвание
-		/// </summary>
-		public string Name { get; set; }
-
-		/// <summary>
-		/// Описание
-		/// </summary>
-		public string Description { get; set; }
-
 		/// <summary>
 		/// Броня
 		/// </summary>
@@ -35,6 +21,11 @@ namespace Witcher.Core.Contracts.ArmorTemplateRequests
 		/// Название шаблона тела
 		/// </summary>
 		public string BodyTemplateName { get; set; }
+
+		/// <summary>
+		/// Названия защищаемых частей тела
+		/// </summary>
+		public List<string> BodyTemplatePartsNames { get; set; }
 
 		/// <summary>
 		/// Список модификаторов по типу урона

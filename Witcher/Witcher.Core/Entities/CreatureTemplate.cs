@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Exceptions.SystemExceptions;
+using Witcher.Core.Abstractions;
 
 namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Шаблон существа
 	/// </summary>
-	public class CreatureTemplate: EntityBase
+	public class CreatureTemplate: EntityBase, IEntityWithDamageModifiers
 	{
 		/// <summary>
 		/// Поле для <see cref="_game"/>
@@ -113,6 +114,7 @@ namespace Witcher.Core.Entities
 			CreatureTemplateSkills = new List<CreatureTemplateSkill>();
 			Creatures = new List<Creature>();
 			CreatureTemplateParts = UpdateBody(armorList);
+			DamageTypeModifiers = new();
 		}
 
 		/// <summary>

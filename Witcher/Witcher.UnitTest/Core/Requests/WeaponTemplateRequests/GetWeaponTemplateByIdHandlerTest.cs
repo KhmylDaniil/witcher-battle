@@ -76,7 +76,6 @@ namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 			var appliedCondition = result.AppliedConditions.First();
 			Assert.AreEqual(Witcher.Core.BaseData.Condition.Poison, appliedCondition.Condition);
 			Assert.AreEqual(33, appliedCondition.ApplyChance);
-
 		}
 	}
 }

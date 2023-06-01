@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Exceptions.RequestExceptions;
+using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Requests.CreatureTemplateRequests
 {
@@ -28,13 +29,7 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 			var creatureTemplateDamageTypeModifier = creatureTemplate.DamageTypeModifiers
 				.FirstOrDefault(x => x.DamageType == request.DamageType);
 
-			if (creatureTemplateDamageTypeModifier == null && request.DamageTypeModifier != BaseData.Enums.DamageTypeModifier.Normal)
-				creatureTemplate.DamageTypeModifiers.Add(new EntityDamageTypeModifier(
-					request.CreatureTemplateId, request.DamageType, request.DamageTypeModifier));
-			else if (creatureTemplateDamageTypeModifier != null && request.DamageTypeModifier != BaseData.Enums.DamageTypeModifier.Normal)
-				creatureTemplateDamageTypeModifier.DamageTypeModifier = request.DamageTypeModifier;
-			else if (creatureTemplateDamageTypeModifier != null && request.DamageTypeModifier == BaseData.Enums.DamageTypeModifier.Normal)
-				creatureTemplate.DamageTypeModifiers.Remove(creatureTemplateDamageTypeModifier);
+			EntityDamageTypeModifier.ChangeDamageTypeModifer(request.DamageTypeModifier, request.DamageType, creatureTemplate, creatureTemplateDamageTypeModifier);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;

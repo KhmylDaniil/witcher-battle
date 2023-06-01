@@ -1,10 +1,12 @@
-﻿using Witcher.Core.Abstractions;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BaseRequests;
 using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Contracts.ArmorTemplateRequests
 {
-	public class GetArmorTemplateQuery : GetBaseQuery, IValidatableCommand<GetArmorTemplateResponse>
+	public class GetArmorTemplateQuery : GetBaseQuery, IValidatableCommand<IEnumerable<GetArmorTemplateResponse>>
 	{
 		/// <summary>
 		/// Фильтр по названию
