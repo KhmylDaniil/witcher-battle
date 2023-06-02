@@ -1,0 +1,66 @@
+﻿@model Witcher.MVC.ViewModels.ArmorTemplate.CreateArmorTemplateViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>CreateArmorTemplateCommand</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="BodyTemplateId" class="control-label"></label>
+                <select asp-items="@(new SelectList(Model.BodyTemplatesDictionary, "Key", "Value"))" asp-for="BodyTemplateId"></select><br /><br />
+                <span asp-validation-for="BodyTemplateId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BodyPartTypes" class="control-label"></label>
+                <select asp-items="Html.GetEnumSelectList<Witcher.Core.BaseData.Enums.BodyPartType>()" asp-for="BodyPartTypes"></select><br /><br />
+                <span asp-validation-for="BodyPartTypes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Weight" class="control-label"></label>
+                <input asp-for="Weight" class="form-control" />
+                <span asp-validation-for="Weight" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Armor" class="control-label"></label>
+                <input asp-for="Armor" class="form-control" />
+                <span asp-validation-for="Armor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EncumbranceValue" class="control-label"></label>
+                <input asp-for="EncumbranceValue" class="form-control" />
+                <span asp-validation-for="EncumbranceValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<p>@TempData["ErrorMessage"]</p>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
