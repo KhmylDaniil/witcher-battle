@@ -89,27 +89,6 @@ namespace Witcher.MVC.Controllers
 			catch (Exception ex) { return RedirectToErrorPage<CharacterController>(ex); }
 		}
 
-		// GET: CharacterController/Edit/5
-		public ActionResult Edit(int id)
-		{
-			return View();
-		}
-
-		// POST: CharacterController/Edit/5
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult Edit(int id, IFormCollection collection)
-		{
-			try
-			{
-				return RedirectToAction(nameof(Index));
-			}
-			catch
-			{
-				return View();
-			}
-		}
-
 		[Route("[controller]/[action]/{id}")]
 		public ActionResult Delete(DeleteCharacterCommand command) => View(command);
 

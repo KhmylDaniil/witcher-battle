@@ -49,7 +49,7 @@ namespace Witcher.Core.Logic
 		/// <summary>
 		/// Флаг сильной атаки оружием
 		/// </summary>
-		internal bool? isStrongWeaponAttack { get; private set; }
+		internal bool? IsStrongWeaponAttack { get; private set; }
 
 		/// <summary>
 		/// Создание данных для расчета атаки способностью
@@ -90,7 +90,7 @@ namespace Witcher.Core.Logic
 				DefenseBase = defenseBase,
 				ToHit = specialToHit,
 				ToDamage = specialToDamage,
-				isStrongWeaponAttack = isStrongAttack
+				IsStrongWeaponAttack = isStrongAttack
 			};
 		}
 

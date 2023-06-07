@@ -81,6 +81,7 @@ namespace Witcher.Core.Entities
 			return itemTemplate.ItemType switch
 			{
 				ItemType.Weapon => new Weapon(character, (WeaponTemplate)itemTemplate, quantity),
+				ItemType.Armor => new Armor(character, (ArmorTemplate)itemTemplate, quantity),
 				_ => throw new LogicBaseException("Шаблон предмета не принадлежит к известным типам предметов.")
 			};
 		}

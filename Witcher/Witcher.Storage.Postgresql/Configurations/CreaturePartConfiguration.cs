@@ -43,6 +43,12 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
+			builder.HasMany(x => x.ArmorParts)
+				.WithOne(x => x.CreaturePart)
+				.HasForeignKey(x => x.CreaturePartId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
 			var creatureNavigation = builder.Metadata.FindNavigation(nameof(CreaturePart.Creature));
 			creatureNavigation.SetField(CreaturePart.CreatureField);
 			creatureNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);

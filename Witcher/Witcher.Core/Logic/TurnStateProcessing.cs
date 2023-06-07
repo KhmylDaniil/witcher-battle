@@ -9,7 +9,7 @@ namespace Witcher.Core.Logic
 	{
 		internal static void EndOfAttackProcessing(AttackData attackData)
 		{
-			CheckAttackerTurnStateWithMultiAttacks(attackData.Attacker, attackData.AttackFormula, attackData.isStrongWeaponAttack);
+			CheckAttackerTurnStateWithMultiAttacks(attackData.Attacker, attackData.AttackFormula, attackData.IsStrongWeaponAttack);
 			MarkAttackAsDone(attackData.Attacker);
 		}
 		
