@@ -155,20 +155,32 @@ namespace Witcher.Core.Logic
 			return result < 0 ? 0 : result;
 		}
 
-		void ArmorMutigation(AttackData data, ref int damage, ref StringBuilder message)
+		static void ArmorMutigation(AttackData data, ref int damage, ref StringBuilder message)
 		{
-			if (data.AimedPart.CurrentArmor == 0)
+			var currentArmor = data.AimedPart.ArmorParts is null
+				? data.AimedPart.CurrentArmor
+				: data.AimedPart.CurrentArmor + data.AimedPart.ArmorParts.Sum(x => x.CurrentArmor);
+
+			if (currentArmor == 0)
 				return;
 
-			if (data.AimedPart.CurrentArmor >= damage)
+			if (currentArmor >= damage)
 			{
 				damage = 0;
 				message.AppendLine("Броня поглотила урон.");
 				return;
 			}
 
-			damage -= data.AimedPart.CurrentArmor--;
-			message.AppendLine($"Броня повреждена. Осталось {data.AimedPart.CurrentArmor} брони.");
+			damage -= currentArmor--;
+
+			var possibleArmorPart = data.AimedPart.ArmorParts?.FirstOrDefault(x => x.CurrentArmor > 0);
+
+			if (possibleArmorPart != null)
+				possibleArmorPart.CurrentArmor--;				
+			else
+				data.AimedPart.CurrentArmor--;
+
+			message.AppendLine($"Броня повреждена. Осталось {currentArmor} брони.");
 		}
 
 		void CheckModifiers(AttackData data, ref int damage)
@@ -178,8 +190,32 @@ namespace Witcher.Core.Logic
 			if (data.IsStrongWeaponAttack.GetValueOrDefault())
 				damage *= 2;
 
-			var damageTypeModifier = data.Target.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == data.AttackFormula.DamageType);
+			var damageTypeModifiers = new List<EntityDamageTypeModifier>
+			{ 
+				data.Target.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == data.AttackFormula.DamageType)
+			};
 
+			if (data.AimedPart.ArmorParts is not null)
+			{
+				damageTypeModifiers.AddRange(data.AimedPart.ArmorParts
+					.Select(ap => (ArmorTemplate)ap.Armor.ItemTemplate)
+					.SelectMany(at => at.DamageTypeModifiers.Where(x => x.DamageType == data.AttackFormula.DamageType)));
+			}
+			//var damageTypeModifiers = data.AimedPart.ArmorParts.Select(ap => (ArmorTemplate)ap.Armor.ItemTemplate)
+			//	.SelectMany(at => at.DamageTypeModifiers.Where(x => x.DamageType == data.AttackFormula.DamageType)).ToList();
+
+			//damageTypeModifiers.Add(data.Target.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == data.AttackFormula.DamageType));
+
+			foreach (var item in damageTypeModifiers)
+				ModifyDamageDependDamageType(ref damage, item);
+
+			//var damageTypeModifier = data.Target.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == data.AttackFormula.DamageType);
+			//ModifyDamageDependDamageType(ref damage, damageTypeModifier);
+
+
+		}
+		static void ModifyDamageDependDamageType(ref int damage, EntityDamageTypeModifier damageTypeModifier)
+		{
 			if (damageTypeModifier is null) return;
 
 			damage = damageTypeModifier.DamageTypeModifier switch

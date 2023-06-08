@@ -30,9 +30,6 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 		private readonly Character _character;
 		private readonly Weapon _weapon;
 
-		/// <summary>
-		/// Тест для <see cref="CreatureAttackHandler"/>
-		/// </summary>
 		public AttackWithWeaponHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();

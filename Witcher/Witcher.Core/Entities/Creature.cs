@@ -100,7 +100,7 @@ namespace Witcher.Core.Entities
 			Abilities = creatureTemplate.Abilities;
 			Effects = new List<Effect>();
 			CreatureSkills = CreateSkills(creatureTemplate.CreatureTemplateSkills);
-			DamageTypeModifiers = new();
+			DamageTypeModifiers = CreateDamageTypeModifers(creatureTemplate.DamageTypeModifiers);
 		}
 
 		/// <summary>
@@ -442,6 +442,11 @@ namespace Witcher.Core.Entities
 					armor: part.Armor));
 
 			return result;
+		}
+
+		private List<EntityDamageTypeModifier> CreateDamageTypeModifers(List<EntityDamageTypeModifier> damageTypeModifiers)
+		{
+			return damageTypeModifiers.Select(x => new EntityDamageTypeModifier(Id, x.DamageType, x.DamageTypeModifier)).ToList();
 		}
 
 		/// <summary>

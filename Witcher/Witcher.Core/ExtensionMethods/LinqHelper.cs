@@ -29,6 +29,8 @@ namespace Witcher.Core.ExtensionMethods
 					.ThenInclude(c => c.CreatureSkills)
 				.Include(g => g.Characters.Where(ch => ch.BattleId == battleId))
 					.ThenInclude(c => c.CreatureParts)
+						.ThenInclude(cp => cp.ArmorParts)
+							.ThenInclude(ap => ap.Armor)
 				.Include(g => g.Characters.Where(ch => ch.BattleId == battleId))
 					.ThenInclude(c => c.Abilities)
 				.Include(g => g.Characters.Where(ch => ch.BattleId == battleId))

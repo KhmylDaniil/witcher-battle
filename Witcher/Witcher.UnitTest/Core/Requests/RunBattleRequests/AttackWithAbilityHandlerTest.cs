@@ -31,9 +31,6 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 		private readonly Ability _ability;
 		private readonly Creature _creature;
 
-		/// <summary>
-		/// Тест для <see cref="CreatureAttackHandler"/>
-		/// </summary>
 		public AttackWithAbilityHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
