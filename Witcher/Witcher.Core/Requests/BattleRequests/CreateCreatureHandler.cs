@@ -34,7 +34,6 @@ namespace Witcher.Core.Requests.BattleRequests
 					.ThenInclude(ct => ct.DamageTypeModifiers)
 				.Include(g => g.CreatureTemplates.Where(ct => ct.Id == request.CreatureTemplateId))
 					.ThenInclude(ct => ct.Abilities)
-						.ThenInclude(a => a.AppliedConditions)
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 

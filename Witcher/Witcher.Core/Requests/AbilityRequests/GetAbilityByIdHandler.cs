@@ -6,6 +6,7 @@ using Witcher.Core.Exceptions.EntityExceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
@@ -17,7 +18,6 @@ namespace Witcher.Core.Requests.AbilityRequests
 		{
 			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(x => x.Abilities.Where(x => x.Id == request.Id))
-					.ThenInclude(x => x.AppliedConditions)
 				.SelectMany(x => x.Abilities);
 
 			var ability = await filter.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
@@ -36,7 +36,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 				Accuracy = ability.Accuracy,
 				CreatedOn = ability.CreatedOn,
 				ModifiedOn = ability.ModifiedOn,
-				AppliedConditions = ability.AppliedConditions.Select(x => new UpdateAbilityCommandItemAppledCondition()
+				AppliedConditions = ability.AppliedConditions.Select(x => new UpdateAttackFormulaCommandItemAppledCondition()
 				{
 					Id = x.Id,
 					ApplyChance = x.ApplyChance,

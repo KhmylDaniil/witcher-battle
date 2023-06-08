@@ -1,4 +1,5 @@
 ﻿using System;
+using Witcher.Core.Abstractions;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Entities
@@ -6,12 +7,12 @@ namespace Witcher.Core.Entities
 	/// <summary>
 	/// Модификатор по типу урона для шаблона существа
 	/// </summary>
-	public class CreatureTemplateDamageTypeModifier : EntityBase 
+	public class EntityDamageTypeModifier : EntityBase 
 	{
 		/// <summary>
 		/// Пустой конструктор для EF
 		/// </summary>
-		protected CreatureTemplateDamageTypeModifier()
+		protected EntityDamageTypeModifier()
 		{
 		}
 
@@ -21,7 +22,7 @@ namespace Witcher.Core.Entities
 		/// <param name="primaryEntityid"></param>
 		/// <param name="damageType"></param>
 		/// <param name="modifier"></param>
-		public CreatureTemplateDamageTypeModifier(Guid primaryEntityid, DamageType damageType, DamageTypeModifier modifier)
+		public EntityDamageTypeModifier(Guid primaryEntityid, DamageType damageType, DamageTypeModifier modifier)
 		{
 			PrimaryEntityid = primaryEntityid;
 			DamageType = damageType;
@@ -42,12 +43,20 @@ namespace Witcher.Core.Entities
 		/// Айди первичной сущности
 		/// </summary>
 		public Guid PrimaryEntityid { get; set; }
-	}
 
-	/// <summary>
-	/// Модификатор по типу урона для существа
-	/// </summary>
-	public class CreatureDamageTypeModifier : CreatureTemplateDamageTypeModifier
-	{
+		public static void ChangeDamageTypeModifer(
+			DamageTypeModifier damageTypeModifier,
+			DamageType damageType,
+			IEntityWithDamageModifiers entity,
+			EntityDamageTypeModifier entityDamageTypeModifier)
+		{
+			if (entityDamageTypeModifier == null && damageTypeModifier != DamageTypeModifier.Normal)
+				entity.DamageTypeModifiers.Add(new EntityDamageTypeModifier(
+					entity.Id, damageType, damageTypeModifier));
+			else if (entityDamageTypeModifier != null && damageTypeModifier != DamageTypeModifier.Normal)
+				entityDamageTypeModifier.DamageTypeModifier = damageTypeModifier;
+			else if (entityDamageTypeModifier != null)
+				entity.DamageTypeModifiers.Remove(entityDamageTypeModifier);
+		}
 	}
 }

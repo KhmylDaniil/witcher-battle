@@ -67,7 +67,6 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 				game: _game,
 				attackSkill: Skill.Melee);
 			_ability.AppliedConditions.Add(new AppliedCondition(
-				ability: _ability,
 				condition: Condition.Bleed,
 				applyChance: 100));
 			_creatureTemplate.Abilities.Add(_ability);

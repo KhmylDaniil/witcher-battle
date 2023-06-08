@@ -31,11 +31,13 @@ namespace Witcher.Core.Requests.CharacterRequests
 					.ThenInclude(c => c.CreatureSkills)
 				.Include(g => g.Characters.Where(c => c.Id == request.Id))
 					.ThenInclude(c => c.Abilities)
-						.ThenInclude(a => a.AppliedConditions)
 				.Include(g => g.Characters.Where(c => c.Id == request.Id))
 					.ThenInclude(c => c.DamageTypeModifiers)
 				.Include(g => g.Characters.Where(c => c.Id == request.Id))
 					.ThenInclude(c => c.Effects)
+				.Include(g => g.Characters.Where(c => c.Id == request.Id))
+					.ThenInclude(c => c.Items)
+					.ThenInclude(i => i.ItemTemplate)
 				.SelectMany(g => g.Characters).FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken)
 				?? throw new EntityNotFoundException<Character>(request.Id);
 
@@ -93,6 +95,13 @@ namespace Witcher.Core.Requests.CharacterRequests
 				}).ToList(),
 				DamageTypeModifiers = creature.DamageTypeModifiers
 				.Select(x => (x.DamageType, x.DamageTypeModifier)).ToList(),
+				Items = creature.Items.Select(x => new GetCharacterByIdResponseItem()
+				{
+					Id = x.Id,
+					Name = x.ItemTemplate.Name,
+					ItemType = x.ItemType,
+					IsEquipped = x.IsEquipped,
+				}).ToList()
 			};
 		}
 	}

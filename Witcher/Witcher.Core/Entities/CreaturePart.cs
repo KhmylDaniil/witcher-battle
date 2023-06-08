@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Witcher.Core.Exceptions.EntityExceptions;
 using static Witcher.Core.BaseData.Enums;
 
@@ -104,6 +105,12 @@ namespace Witcher.Core.Entities
 				CreatureId = value.Id;
 			}
 		}
+
+		/// <summary>
+		/// Слои брони
+		/// </summary>
+		public List<ArmorPart> ArmorParts { get; set; }
+
 		#endregion navigation properties
 
 		/// <summary>

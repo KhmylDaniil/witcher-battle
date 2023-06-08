@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Security.Policy;
 
 namespace Witcher.Storage.Postgresql
 {
@@ -20,14 +21,9 @@ namespace Witcher.Storage.Postgresql
 		public DbSet<Ability> Abilities { get; set; }
 
 		/// <summary>
-		/// Применяемые состояния
+		/// Битвы
 		/// </summary>
-		public DbSet<AppliedCondition> AppliedConditions { get; set; }
-
-		/// <summary>
-		/// Части тела
-		/// </summary>
-		public DbSet<BodyPart> BodyParts { get; set; }
+		public DbSet<Battle> Battles { get; set; }
 
 		/// <summary>
 		/// Шаблоны тел
@@ -90,14 +86,14 @@ namespace Witcher.Storage.Postgresql
 		public DbSet<ImgFile> ImgFiles { get; set; }
 
 		/// <summary>
-		/// Экземпляры
-		/// </summary>
-		public DbSet<Battle> Battles { get; set; }
-
-		/// <summary>
 		/// Интерфейсы
 		/// </summary>
 		public DbSet<Interface> Interfaces { get; set; }
+
+		/// <summary>
+		/// Предметы
+		/// </summary>
+		public DbSet<ItemTemplate> ItemTemplates { get; set; }
 
 		/// <summary>
 		/// Роли в системе
@@ -134,6 +130,10 @@ namespace Witcher.Storage.Postgresql
 		/// </summary>
 		public DbSet<UserRole> UserRoles { get; set; }
 
+		/// <summary>
+		/// Оружие
+		/// </summary>
+		public DbSet<Weapon> Weapons { get; set; }
 
 		/// <summary>
 		/// Интерфейс получения данных пользователя из веба

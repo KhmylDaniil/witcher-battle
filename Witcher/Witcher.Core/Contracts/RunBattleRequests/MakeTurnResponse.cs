@@ -22,5 +22,7 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		public Dictionary<Guid, string> PossibleTargets { get; set; } = new();
 
 		public Dictionary<Guid, string> MyAbilities { get; set; } = new();
+
+		public Dictionary<Guid, string> EquippedWeapons { get; set; } = new();
 	}
 }

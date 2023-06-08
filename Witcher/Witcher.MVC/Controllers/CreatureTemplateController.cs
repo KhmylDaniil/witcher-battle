@@ -207,12 +207,12 @@ namespace Witcher.MVC.Controllers
 		}
 
 		[Route("[controller]/[action]/{creatureTemplateId}")]
-		public ActionResult EditDamageTypeModifier(ChangeDamageTypeModifierCommand command) => View(command);
+		public ActionResult EditDamageTypeModifier(ChangeDamageTypeModifierForCreatureTemplateCommand command) => View(command);
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{creatureTemplateId}")]
-		public async Task<IActionResult> EditDamageTypeModifier(ChangeDamageTypeModifierCommand command, CancellationToken cancellationToken)
+		public async Task<IActionResult> EditDamageTypeModifier(ChangeDamageTypeModifierForCreatureTemplateCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -268,7 +268,7 @@ namespace Witcher.MVC.Controllers
 				return abilitiesFromCache;
 			else
 			{
-				var abilities = await _mediator.SendValidated(new GetAbilityQuery(), cancellationToken);
+				var abilities = await _mediator.SendValidated(new GetAbilityQuery() { PageSize = int.MaxValue }, cancellationToken);
 
 				var result =  abilities.ToDictionary(x => x.Id, x => x.Name);
 
@@ -288,7 +288,7 @@ namespace Witcher.MVC.Controllers
 				return bodyTemplatesFromCache;
 			else
 			{
-				var bodyTemplates = await _mediator.SendValidated(new GetBodyTemplateQuery(), cancellationToken);
+				var bodyTemplates = await _mediator.SendValidated(new GetBodyTemplateQuery() { PageSize = int.MaxValue }, cancellationToken);
 
 				var result = bodyTemplates.ToDictionary(x => x.Id, x => x.Name);
 

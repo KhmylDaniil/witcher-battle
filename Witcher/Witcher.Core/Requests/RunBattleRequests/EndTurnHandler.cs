@@ -22,10 +22,14 @@ namespace Witcher.Core.Requests.RunBattleRequests
 
 		public async override Task<Unit> Handle(EndTurnCommand request, CancellationToken cancellationToken)
 		{
-			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
-				.Include(i => i.Creatures)
+			var game = await _authorizationService.CharacterOwnerFilter(_appDbContext.Games, request.CreatureId)
+				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
+				.ThenInclude(b => b.Creatures)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new NoAccessToEntityException<Battle>();
+					?? throw new NoAccessToEntityException<Game>();
+
+			var battle = game.Battles.FirstOrDefault()
+				?? throw new EntityNotFoundException<Battle>(request.BattleId);
 
 			var currentCreature = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
 				?? throw new EntityNotFoundException<Creature>(request.CreatureId);

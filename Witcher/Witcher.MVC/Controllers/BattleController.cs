@@ -284,7 +284,7 @@ namespace Witcher.MVC.Controllers
 				return creatureTemplatesFromCache;
 			else
 			{
-				var creatureTemplates = await _mediator.SendValidated(new GetCreatureTemplateQuery(), cancellationToken);
+				var creatureTemplates = await _mediator.SendValidated(new GetCreatureTemplateQuery() { PageSize = int.MaxValue }, cancellationToken);
 
 				var result = creatureTemplates.ToDictionary(x => x.Id, x => x.Name);
 
@@ -304,7 +304,7 @@ namespace Witcher.MVC.Controllers
 				return charactersFromCache;
 			else
 			{
-				var characters = await _mediator.SendValidated(new GetCharactersCommand(), cancellationToken);
+				var characters = await _mediator.SendValidated(new GetCharactersCommand() { PageSize = int.MaxValue }, cancellationToken);
 
 				var result = characters.ToDictionary(x => x.Id, x => (x.Name, x.OwnerName));
 

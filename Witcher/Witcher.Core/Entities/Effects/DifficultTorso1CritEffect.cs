@@ -43,9 +43,8 @@ namespace Witcher.Core.Entities.Effects
 			if (!creature.Effects.Any(x => x is SufflocationEffect))
 				creature.Effects.Add(SufflocationEffect.Create(null, null, creature, sufflocationName));
 
-			return CheckExistingEffectAndRemoveStabilizedEffect<DifficultTorso1CritEffect>(creature, aimedPart)
-				? new DifficultTorso1CritEffect(creature, aimedPart, name)
-				: null;
+			CheckExistingEffectAndRemoveStabilizedEffect<DifficultTorso1CritEffect>(creature, aimedPart);
+			return new DifficultTorso1CritEffect(creature, aimedPart, name);
 		}
 
 		/// <summary>

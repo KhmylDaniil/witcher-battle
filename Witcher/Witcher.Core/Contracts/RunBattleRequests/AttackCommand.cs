@@ -1,12 +1,12 @@
-﻿using Witcher.Core.Abstractions;
+﻿using System;
+using Witcher.Core.Abstractions;
 using Witcher.Core.Exceptions.RequestExceptions;
-using System;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
-	// <summary>
-	/// Команда атаки существа
+	/// <summary>
+	/// Команда проведения атаки
 	/// </summary>
 	public class AttackCommand : IValidatableCommand
 	{
@@ -23,12 +23,12 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		/// <summary>
 		/// Айди цели
 		/// </summary>
-		public Guid TargetCreatureId { get; set; }
+		public Guid TargetId { get; set; }
 
 		/// <summary>
-		/// Айди способности атаки
+		/// Айди формулы атаки
 		/// </summary>
-		public Guid? AbilityId { get; set; }
+		public Guid AttackFormulaId { get; set; }
 
 		/// <summary>
 		/// Айди части тела при прицельной атаке
@@ -66,9 +66,24 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		public int SpecialToDamage { get; set; }
 
 		/// <summary>
+		/// Флаг сильной атаки оружием
+		/// </summary>
+		public bool? IsStrongAttack { get; set; }
+
+		/// <summary>
+		/// Тип атаки
+		/// </summary>
+		public AttackType AttackType { get; set; }
+
+		/// <summary>
+		/// Флаг части мультиатаки
+		/// </summary>
+		public bool IsPartOfMultiattack { get; set; }
+
+		/// <summary>
 		/// Валидация
 		/// </summary>
-		public void Validate()
+		public virtual void Validate()
 		{
 			if (DamageValue is not null && DamageValue.Value < 0)
 				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(DamageValue), "Значение не может быть отрицательным.");
@@ -81,6 +96,9 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 
 			if (DefensiveSkill is not null && !Enum.IsDefined(DefensiveSkill.Value))
 				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(DefensiveSkill));
+
+			if (!Enum.IsDefined(AttackType))
+				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(AttackType));
 		}
 	}
 }

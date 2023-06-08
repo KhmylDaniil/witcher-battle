@@ -5,13 +5,15 @@ using Witcher.Core.Entities;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Exceptions.RequestExceptions;
+using System;
+using System.Linq;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
 	/// <summary>
 	/// Обработчик создания способности
 	/// </summary>
-	public class CreateAbilityHandler : BaseHandler<CreateAbilityCommand, Ability>
+	public class CreateAbilityHandler : BaseHandler<CreateAbilityCommand, Guid>
 	{
 		public CreateAbilityHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
 
@@ -21,13 +23,16 @@ namespace Witcher.Core.Requests.AbilityRequests
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены</param>
 		/// <returns>Способность</returns>
-		public override async Task<Ability> Handle(CreateAbilityCommand request, CancellationToken cancellationToken)
+		public override async Task<Guid> Handle(CreateAbilityCommand request, CancellationToken cancellationToken)
 		{
 
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
+
+			if (game.Abilities.Any(x => x.Name == request.Name))
+				throw new RequestNameNotUniqException<CreateAbilityCommand>(nameof(request.Name));
 
 			var newAbility = Ability.CreateAbility(
 				game: game,
@@ -44,7 +49,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 
 			_appDbContext.Abilities.Add(newAbility);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
-			return newAbility;
+			return newAbility.Id;
 		}
 	}
 }

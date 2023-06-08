@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 {
@@ -51,9 +52,9 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 				AttackSkill = Skill.Staff,
 				DefensiveSkills = new List<Skill> { Skill.Dodge },
 				DamageType = DamageType.Piercing,
-				AppliedConditions = new List<UpdateAbilityCommandItemAppledCondition>
+				AppliedConditions = new List<UpdateAttackFormulaCommandItemAppledCondition>
 				{
-					new UpdateAbilityCommandItemAppledCondition()
+					new UpdateAttackFormulaCommandItemAppledCondition()
 					{
 						Condition = Condition.Bleed,
 						ApplyChance = 50

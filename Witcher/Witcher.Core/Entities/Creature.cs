@@ -4,13 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.Abstractions;
 
 namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Существо
 	/// </summary>
-	public class Creature: EntityBase
+	public class Creature: EntityBase, IEntityWithDamageModifiers
 	{
 		/// <summary>
 		/// Поле для <see cref="_battle"/>
@@ -26,7 +27,6 @@ namespace Witcher.Core.Entities
 		/// Поле для <see cref="_creatureTemplate"/>
 		/// </summary>
 		public const string CreatureTemplateField = nameof(_creatureTemplate);
-
 
 		private Battle _battle;
 		private ImgFile _imgFile;
@@ -100,6 +100,7 @@ namespace Witcher.Core.Entities
 			Abilities = creatureTemplate.Abilities;
 			Effects = new List<Effect>();
 			CreatureSkills = CreateSkills(creatureTemplate.CreatureTemplateSkills);
+			DamageTypeModifiers = CreateDamageTypeModifers(creatureTemplate.DamageTypeModifiers);
 		}
 
 		/// <summary>
@@ -383,7 +384,7 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Модификаторы типа урона
 		/// </summary>
-		public List<CreatureDamageTypeModifier> DamageTypeModifiers { get; protected set; }
+		public List<EntityDamageTypeModifier> DamageTypeModifiers { get; protected set; }
 
 		/// <summary>
 		/// Ход существа в битве
@@ -443,6 +444,11 @@ namespace Witcher.Core.Entities
 			return result;
 		}
 
+		private List<EntityDamageTypeModifier> CreateDamageTypeModifers(List<EntityDamageTypeModifier> damageTypeModifiers)
+		{
+			return damageTypeModifiers.Select(x => new EntityDamageTypeModifier(Id, x.DamageType, x.DamageTypeModifier)).ToList();
+		}
+
 		/// <summary>
 		/// Выбор способности по умолчанию
 		/// </summary>
@@ -464,12 +470,12 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		/// <param name="ability">Способность</param>
 		/// <returns>Защитный навык существа</returns>
-		internal int DefaultDefenseBase(Ability ability)
+		internal int DefaultDefenseBase(IAttackFormula attackFormula)
 		{
-			if (!ability.DefensiveSkills.Any())
-				throw new LogicBaseException($"От способности {ability.Name} c айди {ability.Id} нет защиты.");
+			if (!attackFormula.DefensiveSkills.Any())
+				throw new LogicBaseException($"От способности {attackFormula.Name} c айди {attackFormula.Id} нет защиты.");
 
-			var defenseBase = ability.DefensiveSkills.Select(ds => SkillBase(ds.Skill)).Max();
+			var defenseBase = attackFormula.DefensiveSkills.Select(ds => SkillBase(ds.Skill)).Max();
 
 			return defenseBase;
 		}
@@ -605,7 +611,7 @@ namespace Witcher.Core.Entities
 				CreatureSkills = new List<CreatureSkill>(),
 				Abilities = new List<Ability>(),
 				CreatureParts = new List<CreaturePart>(),
-				DamageTypeModifiers = new List<CreatureDamageTypeModifier>()
+				DamageTypeModifiers = new List<EntityDamageTypeModifier>()
 			};
 
 		internal int GetInt() => _int;
@@ -661,9 +667,9 @@ namespace Witcher.Core.Entities
 		public int MultiattackRemainsQuantity { get; set; }
 
 		/// <summary>
-		/// Способность для мультиатаки
+		/// Айди формулы для мультиатаки
 		/// </summary>
-		public Guid? MuitiattackAbilityId { get; set; }
+		public Guid? MuitiattackAttackFormulaId { get; set; }
 
 		/// <summary>
 		/// Количество потраченной за ход энергии

@@ -2,6 +2,7 @@
 using Witcher.Core.Entities;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Witcher.Core.Abstractions
 {
@@ -16,14 +17,9 @@ namespace Witcher.Core.Abstractions
 		DbSet<Ability> Abilities { get; }
 
 		/// <summary>
-		/// Применяемые состояния
+		/// Битвы
 		/// </summary>
-		DbSet<AppliedCondition> AppliedConditions { get; }
-
-		/// <summary>
-		/// Части тела
-		/// </summary>
-		DbSet<BodyPart> BodyParts { get; }
+		DbSet<Battle> Battles { get; }
 
 		/// <summary>
 		/// Шаблоны тел
@@ -86,14 +82,14 @@ namespace Witcher.Core.Abstractions
 		DbSet<ImgFile> ImgFiles { get; }
 
 		/// <summary>
-		/// Экземпляры
-		/// </summary>
-		DbSet<Battle> Battles { get; }
-
-		/// <summary>
 		/// Интерфейсы
 		/// </summary>
 		DbSet<Interface> Interfaces { get; }
+
+		/// <summary>
+		/// Предметы
+		/// </summary>
+		DbSet<ItemTemplate> ItemTemplates { get; }
 
 		/// <summary>
 		/// Роли в системе
@@ -131,10 +127,17 @@ namespace Witcher.Core.Abstractions
 		DbSet<UserRole> UserRoles { get; }
 
 		/// <summary>
+		/// Оружие
+		/// </summary>
+		DbSet<Weapon> Weapons { get; }
+
+		/// <summary>
 		/// Сохранить изменения
 		/// </summary>
 		/// <param name="cancellationToken">Токен отмены запроса</param>
 		/// <returns>Токен</returns>
 		Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+		public EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
 	}
 }

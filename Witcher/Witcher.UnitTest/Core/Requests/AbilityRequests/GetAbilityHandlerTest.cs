@@ -46,10 +46,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 				modifiedOn: DateTimeProvider.Object.TimeProvider,
 				createdByUserId: _user.Id);
 
-			_ability.AppliedConditions.Add(new AppliedCondition(
-				ability: _ability,
-				condition: Condition.Bleed,
-				applyChance: 100));
+			_ability.AppliedConditions.Add(new AppliedCondition(Condition.Bleed, 100));
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(
 				_user,

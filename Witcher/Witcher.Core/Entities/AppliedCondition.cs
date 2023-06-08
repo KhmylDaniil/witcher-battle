@@ -1,18 +1,11 @@
 ﻿using Witcher.Core.BaseData;
-using System;
 using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Entities
 {
 	public class AppliedCondition: EntityBase
 	{
-		/// <summary>
-		/// Поле для <see cref="_ability"/>
-		/// </summary>
-		public const string AbilityField = nameof(_ability);
-
-		private Ability _ability;
-
+		private int _applyChance;
 		/// <summary>
 		/// Пустой конструктор
 		/// </summary>
@@ -22,58 +15,32 @@ namespace Witcher.Core.Entities
 
 		/// <summary>
 		/// Конструктор
-		/// </summary>
-		/// <param name="ability">Способность</param>
+		/// </summary>>
 		/// <param name="condition">Состояние</param>
 		/// <param name="applyChance">Шанс применения</param>
-		public AppliedCondition(Ability ability, Condition condition, int applyChance)
+		public AppliedCondition(Condition condition, int applyChance)
 		{
-			Ability = ability;
 			Condition = condition;
 			ApplyChance = applyChance;
 		}
-
-		/// <summary>
-		/// Айди способности
-		/// </summary>
-		public Guid AbilityId { get; set; }
-
 		/// <summary>
 		/// Шанс применения
 		/// </summary>
-		public int ApplyChance { get; set; }
+		public int ApplyChance
+		{
+			get => _applyChance;
+			private set
+			{
+				if (value < 1 || value > 100)
+					throw new FieldOutOfRangeException<AppliedCondition>(nameof(ApplyChance));
+				_applyChance = value;
+			}
+		}
 
 		/// <summary>
 		/// Тип состояния
 		/// </summary>
 		public Condition Condition { get; set; }
-
-		#region navigation properties
-
-		/// <summary>
-		/// Способность
-		/// </summary>
-		public Ability Ability
-		{
-			get => _ability;
-			set
-			{
-				_ability = value ?? throw new EntityNotIncludedException<AppliedCondition>(nameof(Ability));
-				AbilityId = value.Id;
-			}
-		}
-
-		#endregion navigation properties
-
-		/// <summary>
-		/// Создание накладываемого состояния
-		/// </summary>
-		/// <param name="ability"></param>
-		/// <param name="condition"></param>
-		/// <param name="applyChance"></param>
-		/// <returns></returns>
-		public static AppliedCondition CreateAppliedCondition(Ability ability, Condition condition, int applyChance)
-		=> new AppliedCondition(ability, condition, applyChance);
 
 		/// <summary>
 		/// Изменение накладываемого состояния

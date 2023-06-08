@@ -46,9 +46,8 @@ namespace Witcher.Core.Entities.Effects
 		/// <returns>Эффект</returns>
 		public static ComplexTailCritEffect Create(Creature creature, CreaturePart aimedPart, string name)
 		{
-			var effect = CheckExistingEffectAndRemoveStabilizedEffect<ComplexTailCritEffect>(creature, aimedPart)
-				? new ComplexTailCritEffect(creature, aimedPart, name)
-				: null;
+			CheckExistingEffectAndRemoveStabilizedEffect<ComplexTailCritEffect>(creature, aimedPart);
+            var effect = new ComplexTailCritEffect(creature, aimedPart, name);
 
 			ApplySharedPenalty(creature, effect);
 

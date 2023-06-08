@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Exceptions.SystemExceptions;
+using Witcher.Core.Abstractions;
 
 namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Шаблон существа
 	/// </summary>
-	public class CreatureTemplate: EntityBase
+	public class CreatureTemplate: EntityBase, IEntityWithDamageModifiers
 	{
 		/// <summary>
 		/// Поле для <see cref="_game"/>
@@ -113,6 +114,7 @@ namespace Witcher.Core.Entities
 			CreatureTemplateSkills = new List<CreatureTemplateSkill>();
 			Creatures = new List<Creature>();
 			CreatureTemplateParts = UpdateBody(armorList);
+			DamageTypeModifiers = new();
 		}
 
 		/// <summary>
@@ -363,7 +365,7 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Модификаторы типа урона
 		/// </summary>
-		public List<CreatureTemplateDamageTypeModifier> DamageTypeModifiers { get; protected set; }
+		public List<EntityDamageTypeModifier> DamageTypeModifiers { get; protected set; }
 
 		#endregion navigation properties
 
@@ -570,7 +572,7 @@ namespace Witcher.Core.Entities
 				Id = id ?? Guid.NewGuid(),
 				Game = game,
 				ImgFile = imgFile,
-				BodyTemplate = bodyTemplate,
+				BodyTemplate = bodyTemplate ?? BodyTemplate.CreateForTest(game: game),
 				Name = name ?? Enum.GetName(creatureType),
 				Description = description,
 				CreatureType = creatureType,
@@ -592,7 +594,7 @@ namespace Witcher.Core.Entities
 				CreatureTemplateSkills = new List<CreatureTemplateSkill>(),
 				Abilities = new List<Ability>(),
 				CreatureTemplateParts = new List<CreatureTemplatePart>(),
-				DamageTypeModifiers = new List<CreatureTemplateDamageTypeModifier>()
+				DamageTypeModifiers = new List<EntityDamageTypeModifier>()
 			};
 	}
 }

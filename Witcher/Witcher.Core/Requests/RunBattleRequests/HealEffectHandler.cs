@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Exceptions.RequestExceptions;
+using Witcher.Core.ExtensionMethods;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {
@@ -41,23 +42,19 @@ namespace Witcher.Core.Requests.RunBattleRequests
 		/// <returns></returns>
 		public override async Task<Unit> Handle(HealEffectCommand request, CancellationToken cancellationToken)
 		{
-			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.CreatureSkills)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.CreatureParts)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.DamageTypeModifiers)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.Effects)
+			var game = await _authorizationService.CharacterOwnerFilter(_appDbContext.Games, request.CreatureId)
+				.GetCreaturesAndCharactersFormBattle(request.BattleId)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new NoAccessToEntityException<Battle>();
+					?? throw new NoAccessToEntityException<Game>();
+
+			var battle = game.Battles.FirstOrDefault()
+				?? throw new EntityNotFoundException<Battle>(request.BattleId);
 
 			var healer = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
 				?? throw new EntityNotFoundException<Creature>(request.CreatureId);
 
-			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
-				?? throw new EntityNotFoundException<Creature>(request.TargetCreatureId);
+			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetId)
+				?? throw new EntityNotFoundException<Creature>(request.TargetId);
 
 			var effect = target.Effects.FirstOrDefault(x => x.Id == request.EffectId)
 				?? throw new EntityNotFoundException<Effect>(request.EffectId);

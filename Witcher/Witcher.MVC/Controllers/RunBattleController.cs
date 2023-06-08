@@ -66,11 +66,19 @@ namespace Witcher.MVC.Controllers
 		}
 
 		[Route("[controller]/[action]/{battleId}")]
-		public async Task<IActionResult> MakeAttack(AttackCommand command, CancellationToken cancellationToken)
+		public async Task<IActionResult> MakeAbilityAttack(AttackCommand command, CancellationToken cancellationToken)
 		{
-			var viewModel = await CreateVM(command, cancellationToken);
+			var viewModel = await CreateVM(command, Core.BaseData.Enums.AttackType.Ability, cancellationToken);
 
-			return View(viewModel);
+			return View("MakeAttack", viewModel);
+		}
+
+		[Route("[controller]/[action]/{battleId}")]
+		public async Task<IActionResult> MakeWeaponAttack(AttackCommand command, CancellationToken cancellationToken)
+		{
+			var viewModel = await CreateVM(command, Core.BaseData.Enums.AttackType.Weapon, cancellationToken);
+
+			return View("MakeAttack", viewModel);
 		}
 
 		[HttpPost]
@@ -161,15 +169,17 @@ namespace Witcher.MVC.Controllers
 			return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
 		}
 
-		private async Task<MakeAttackViewModel> CreateVM(AttackCommand command, CancellationToken cancellationToken)
+		private async Task<MakeAttackViewModel> CreateVM(AttackCommand command, Core.BaseData.Enums.AttackType attackType, CancellationToken cancellationToken)
 		{
 			var vm = _mapper.Map<MakeAttackViewModel>(command);
+			vm.AttackType = attackType;
 
 			var formAttackCommand = new FormAttackCommand
 			{
 				AttackerId = command.Id,
-				TargetId = command.TargetCreatureId,
-				AbilityId = command.AbilityId,
+				TargetId = command.TargetId,
+				AttackFormulaId = command.AttackFormulaId,
+				AttackType = attackType,
 			};
 			var formAttackResponse = await _mediator.SendValidated(formAttackCommand, cancellationToken);
 
@@ -185,7 +195,7 @@ namespace Witcher.MVC.Controllers
 
 			var formHealCommand = new FormHealCommand
 			{
-				TargetCreatureId = command.TargetCreatureId,
+				TargetCreatureId = command.TargetId,
 			};
 			var formHealResponse = await _mediator.SendValidated(formHealCommand, cancellationToken);
 

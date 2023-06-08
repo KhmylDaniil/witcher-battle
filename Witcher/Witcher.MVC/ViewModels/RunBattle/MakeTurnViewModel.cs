@@ -7,12 +7,12 @@ namespace Witcher.MVC.ViewModels.RunBattle
 		/// <summary>
 		/// Айди цели
 		/// </summary>
-		public Guid TargetCreatureId { get; set; }
+		public Guid TargetId { get; set; }
 
 		/// <summary>
 		/// Айди способности атаки
 		/// </summary>
-		public Guid? AbilityId { get; set; }
+		public Guid? AttackFormulaId { get; set; }
 
 		public string AttackButtonValue() => TurnState switch
 			{

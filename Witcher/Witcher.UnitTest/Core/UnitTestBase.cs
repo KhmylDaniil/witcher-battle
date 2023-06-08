@@ -141,6 +141,10 @@ namespace Witcher.UnitTest.Core
 				.Setup(x => x.AuthorizedGameFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>()))
 				.Returns<IQueryable<Game>, Guid>((x, y) => x);
 
+			AuthorizationService
+				.Setup(x => x.CharacterOwnerFilter(It.IsAny<IQueryable<Game>>(), It.IsAny<Guid>()))
+				.Returns<IQueryable<Game>, Guid>((x, y) => x);
+
 			AuthorizationServiceWithGameId = new Mock<IAuthorizationService>();
 
 			RollService = new Mock<IRollService>();

@@ -4,6 +4,7 @@ using Witcher.Core.Exceptions;
 using System;
 using System.Linq;
 using System.Text;
+using Witcher.Core.Entities.Effects;
 
 namespace Witcher.Core.Logic
 {
@@ -39,7 +40,7 @@ namespace Witcher.Core.Logic
 
 			StringBuilder message = new();
 
-			if (battle.NextInitiative > battle.Creatures.Count)
+			if (battle.NextInitiative > battle.Creatures.Max(x => x.InitiativeInBattle))
 			{
 				battle.NextInitiative = 1;
 
@@ -60,7 +61,7 @@ namespace Witcher.Core.Logic
 					effect.AutoEnd(currentCreature, ref message);
 				}
 
-				if (Attack.RemoveDeadBodies(battle))
+				if (RemoveDeadBodies(battle))
 				{
 					battle.NextInitiative++;
 					message.AppendLine("Существо погибло. Ход переходит к следующему существу.");
@@ -76,6 +77,16 @@ namespace Witcher.Core.Logic
 		static public void RemoveNonCharacterCreaturesAndUntieCharactersFromBattle(this Battle battle)
 		{
 			battle.Creatures?.ForEach(x => x.Battle = null);
+		}
+
+		/// <summary>
+		/// Удаление мертвых существ
+		/// </summary>
+		/// <param name="battle"></param>
+		internal static bool RemoveDeadBodies(Battle battle)
+		{
+			return battle.Creatures.RemoveAll(x => x is not Character
+			&& (x.HP <= 0 || x.Effects.Any(x => x is DeadEffect))) > 0;
 		}
 	}
 }

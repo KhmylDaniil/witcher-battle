@@ -1,4 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.RunBattleRequests;
 using Witcher.Core.Entities;
@@ -6,18 +12,13 @@ using Witcher.Core.Exceptions.EntityExceptions;
 using Witcher.Core.Exceptions.RequestExceptions;
 using Witcher.Core.Exceptions;
 using Witcher.Core.Logic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Witcher.Core.ExtensionMethods;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {
 	public class AttackHandler : BaseHandler<AttackCommand, Unit>
 	{
-		/// <summary>
-		/// Бросок параметра
-		/// </summary>
 		private readonly IRollService _rollService;
 
 		public AttackHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IRollService rollService)
@@ -28,82 +29,78 @@ namespace Witcher.Core.Requests.RunBattleRequests
 
 		public override async Task<Unit> Handle(AttackCommand request, CancellationToken cancellationToken)
 		{
-			var battle = await _authorizationService.BattleMasterFilter(_appDbContext.Battles, request.BattleId)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.CreatureSkills)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.CreatureParts)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.Abilities)
-					.ThenInclude(a => a.AppliedConditions)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.Abilities)
-					.ThenInclude(a => a.DefensiveSkills)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.DamageTypeModifiers)
-				.Include(i => i.Creatures)
-					.ThenInclude(c => c.Effects)
+			var game = await _authorizationService.CharacterOwnerFilter(_appDbContext.Games, request.Id)
+				.GetCreaturesAndCharactersFormBattle(request.BattleId)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new NoAccessToEntityException<Battle>();
+					?? throw new NoAccessToEntityException<Game>();
 
-			var attackData = CheckAndFormData(request, battle);
+			var battle = game.Battles.FirstOrDefault()
+				?? throw new EntityNotFoundException<Battle>(request.BattleId);
 
-			var attack = new Attack(_rollService);
+			var attackData = CheckAndFormData();
+
+			var attack = new AttackProcess(_rollService);
 
 			var attackLog = attack.RunAttack(attackData, request.DamageValue, request.AttackValue, request.DefenseValue);
 
 			battle.BattleLog += attackLog;
 
-			Attack.RemoveDeadBodies(battle);
+			RunBattle.RemoveDeadBodies(battle);
+
+			TurnStateProcessing.EndOfAttackProcessing(attackData);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
 			return Unit.Value;
+
+			AttackData CheckAndFormData()
+			{
+				var attacker = battle.Creatures.FirstOrDefault(x => x.Id == request.Id)
+					?? throw new EntityNotFoundException<Character>(request.Id);
+
+				var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetId)
+					?? throw new EntityNotFoundException<Creature>(request.TargetId);
+
+				var aimedPart = request.CreaturePartId == null
+					? null
+					: target.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId)
+						?? throw new EntityNotFoundException<CreaturePart>(request.CreaturePartId.Value);
+
+				var defensiveSkill = request.DefensiveSkill == null
+					? null
+					: target.CreatureSkills.FirstOrDefault(x => x.Skill == request.DefensiveSkill)
+						?? throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(request.DefensiveSkill));
+
+				return AttackData.CreateData(
+					attacker: attacker,
+					target: target,
+					aimedPart: aimedPart,
+					attackFormula: GetAttackFormula(request, attacker),
+					isStrongAttack: request.IsStrongAttack,
+					defensiveSkill: defensiveSkill,
+					specialToHit: request.SpecialToHit,
+					specialToDamage: request.SpecialToDamage);
+			}
 		}
 
-		/// <summary>
-		/// Проверка запроса и формирование данных
-		/// </summary>
-		/// <param name="request">Запрос</param>
-		/// <param name="battle">Бой</param>
-		/// <returns>Данные для расчета атаки</returns>
-		private AttackData CheckAndFormData(AttackCommand request, Battle battle)
+		private IAttackFormula GetAttackFormula(AttackCommand request, Creature attacker)
 		{
-			var attacker = battle.Creatures.FirstOrDefault(x => x.Id == request.Id)
-				?? throw new EntityNotFoundException<Creature>(request.Id);
+			if (request.AttackType == BaseData.Enums.AttackType.Weapon && attacker is Character character)
+			{
+				var weapon = character.Items
+					.FirstOrDefault(i => i.ItemType == BaseData.Enums.ItemType.Weapon && i.IsEquipped.Value && i.ItemTemplateId == request.AttackFormulaId)
+						?? throw new EntityNotFoundException<Weapon>(request.AttackFormulaId);
 
-			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetCreatureId)
-				?? throw new EntityNotFoundException<Creature>(request.TargetCreatureId);
-
-			var aimedPart = request.CreaturePartId == null
-				? null
-				: target.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId)
-					?? throw new EntityNotFoundException<BodyTemplatePart>(request.CreaturePartId.Value);
-
-			if (!attacker.Abilities.Any())
-				throw new RequestValidationException($"У существа {attacker.Name} отсутствуют способности, атака невозможна.");
-
-			var ability = request.AbilityId == null
-				? attacker.DefaultAbility()
-				: attacker.Abilities.FirstOrDefault(x => x.Id == request.AbilityId)
-					?? throw new EntityNotFoundException<Ability>(request.AbilityId.Value);
-
-			if (ability == null && request.DefensiveSkill != null)
-				throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(request.DefensiveSkill), null);
-
-			var defensiveSkill = request.DefensiveSkill == null
-				? null
-				: target.CreatureSkills.FirstOrDefault(x => x.Skill == request.DefensiveSkill)
-					?? throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(request.DefensiveSkill));
-
-			return AttackData.CreateData(
-				attacker: attacker,
-				target: target,
-				aimedPart: aimedPart,
-				ability: ability,
-				defensiveSkill: defensiveSkill,
-				specialToHit: request.SpecialToHit,
-				specialToDamage: request.SpecialToDamage);
+				return weapon.ItemTemplate as WeaponTemplate
+					?? throw new EntityNotIncludedException<Weapon>(nameof(WeaponTemplate));
+			}
+			else if (request.AttackType == BaseData.Enums.AttackType.Ability)
+			{
+				return attacker.Abilities.FirstOrDefault(x => x.Id == request.AttackFormulaId)
+					?? throw new EntityNotFoundException<Ability>(request.AttackFormulaId);
+			}
+			else
+				throw new NotImplementedException();
 		}
 	}
 }

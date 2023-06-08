@@ -27,17 +27,21 @@ namespace Witcher.Core.Requests.RunBattleRequests
 
 			var attacker = await _appDbContext.Creatures
 					.Include(c => c.Abilities)
-					.ThenInclude(a => a.DefensiveSkills)
 					.FirstOrDefaultAsync(x => x.Id == request.AttackerId, cancellationToken)
 						?? throw new EntityNotFoundException<Creature>(request.AttackerId);
 
-			var ability = request.AbilityId is null
-				? attacker.DefaultAbility()
-				: attacker.Abilities.FirstOrDefault(a => a.Id == request.AbilityId)
-					?? throw new EntityNotFoundException<Ability>(request.AbilityId.Value);
+			var baseDefensiveSkills = Drafts.AbilityDrafts.DefensiveSkillsDrafts.BaseDefensiveSkills;
+
+			if (request.AttackType == AttackType.Ability)
+			{
+				var ability = attacker.Abilities.FirstOrDefault(a => a.Id == request.AttackFormulaId)
+					?? throw new EntityNotFoundException<Ability>(request.AttackFormulaId);
+
+				baseDefensiveSkills = ability.DefensiveSkills.Select(x => x.Skill).ToList();
+			}
 
 			var defensiveSkills = targetCreature.CreatureSkills.Select(x => x.Skill)
-				.Intersect(ability.DefensiveSkills.Select(x => x.Skill));
+				.Intersect(baseDefensiveSkills);
 
 			var result =  new FormAttackResponse
 			{

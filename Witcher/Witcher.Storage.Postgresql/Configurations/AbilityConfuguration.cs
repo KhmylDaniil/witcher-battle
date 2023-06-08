@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Witcher.Core.Entities;
 using static Witcher.Core.BaseData.Enums;
 using System;
+using Witcher.Core.BaseData;
 
 namespace Witcher.Storage.Postgresql.Configurations
 {
@@ -69,7 +70,29 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasComment("Точность атаки")
 				.IsRequired();
 
-			builder.OwnsMany(x => x.DefensiveSkills);
+			builder.OwnsMany(x => x.DefensiveSkills).
+				Property(ds => ds.Skill)
+				.HasColumnName("DefensiveSkill")
+				.HasComment("Защитный навык")
+				.HasConversion(
+					v => v.ToString(),
+					v => Enum.Parse<Skill>(v))
+				.IsRequired();
+
+			builder.OwnsMany(x => x.AppliedConditions)
+				.Property(ac => ac.Condition)
+				.HasColumnName("Condition")
+				.HasComment("Тип состояния")
+					.HasConversion(
+					v => v.ToString(),
+					v => Enum.Parse<Condition>(v))
+				.IsRequired();
+
+			builder.OwnsMany(x => x.AppliedConditions)
+				.Property(ac => ac.ApplyChance)
+				.HasColumnName("ApplyChance")
+				.HasComment("Шанс применения")
+				.IsRequired();
 
 			builder.HasOne(x => x.Game)
 				.WithMany(x => x.Abilities)
@@ -80,12 +103,6 @@ namespace Witcher.Storage.Postgresql.Configurations
 			builder.HasMany(x => x.Creatures)
 				.WithMany(x => x.Abilities)
 				.UsingEntity(x => x.ToTable("CreatureAbilities", "Battles"));
-
-			builder.HasMany(x => x.AppliedConditions)
-				.WithOne(x => x.Ability)
-				.HasForeignKey(x => x.AbilityId)
-				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
 
 			var gameNavigation = builder.Metadata.FindNavigation(nameof(Ability.Game));
 			gameNavigation.SetField(Ability.GameField);

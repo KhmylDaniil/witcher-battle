@@ -36,7 +36,7 @@ namespace Witcher.MVC.Controllers
 
 				response = await _mediator.SendValidated(new GetCharactersCommand(), cancellationToken);
 			}
-			catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
+			catch (Exception ex) { return RedirectToErrorPage<CharacterController>(ex); }
 
 			return View(response);
 		}
@@ -86,28 +86,7 @@ namespace Witcher.MVC.Controllers
 				TempData["ErrorMessage"] = ex.UserMessage;
 				return View(command);
 			}
-			catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
-		}
-
-		// GET: CharacterController/Edit/5
-		public ActionResult Edit(int id)
-		{
-			return View();
-		}
-
-		// POST: CharacterController/Edit/5
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult Edit(int id, IFormCollection collection)
-		{
-			try
-			{
-				return RedirectToAction(nameof(Index));
-			}
-			catch
-			{
-				return View();
-			}
+			catch (Exception ex) { return RedirectToErrorPage<CharacterController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]

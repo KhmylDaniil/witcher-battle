@@ -1,9 +1,6 @@
 ﻿using Witcher.Core.Abstractions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
@@ -11,9 +8,11 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 	{
 		public Guid AttackerId { get; set; }
 
-		public Guid? AbilityId { get; set; }
+		public Guid AttackFormulaId { get; set; }
 
 		public Guid TargetId { get; set; }
+
+		public AttackType AttackType { get; set; }
 
 		public void Validate()
 		{

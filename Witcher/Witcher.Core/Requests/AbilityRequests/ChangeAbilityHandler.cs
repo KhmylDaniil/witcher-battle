@@ -28,12 +28,11 @@ namespace Witcher.Core.Requests.AbilityRequests
 		{
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities)
-					.ThenInclude(a => a.AppliedConditions)
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
 			var ability = game.Abilities.FirstOrDefault(x => x.Id == request.Id)
-							?? throw new EntityNotFoundException<Ability>(request.Id);
+				?? throw new EntityNotFoundException<Ability>(request.Id);
 
 			if (game.Abilities.Any(x => x.Name == request.Name && x.Id != ability.Id))
 				throw new RequestNameNotUniqException<ChangeAbilityCommand>(nameof(request.Name));

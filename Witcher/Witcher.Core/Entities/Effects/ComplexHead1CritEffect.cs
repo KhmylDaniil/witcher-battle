@@ -54,9 +54,8 @@ namespace Witcher.Core.Entities.Effects
 		{
 			int teeth = new Random().Next(1, 10);
 
-			return CheckExistingEffectAndRemoveStabilizedEffect<ComplexHead1CritEffect>(creature, aimedPart)
-				? new ComplexHead1CritEffect(creature, aimedPart, name + $" {teeth} штук")
-				: null;
+			CheckExistingEffectAndRemoveStabilizedEffect<ComplexHead1CritEffect>(creature, aimedPart);
+			return new ComplexHead1CritEffect(creature, aimedPart, name + $" {teeth} штук");
 		}
 
 		/// <summary>

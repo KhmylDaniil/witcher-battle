@@ -48,9 +48,8 @@ namespace Witcher.Core.Entities.Effects
 		/// <returns>Эффект</returns>
 		public static SimpleArmCritEffect Create(Creature creature, CreaturePart aimedPart, string name)
 		{
-			var effect = CheckExistingEffectAndRemoveStabilizedEffect<SimpleArmCritEffect>(creature, aimedPart)
-				? new SimpleArmCritEffect(creature, aimedPart, name)
-				: null;
+			CheckExistingEffectAndRemoveStabilizedEffect<SimpleArmCritEffect>(creature, aimedPart);
+			var effect =  new SimpleArmCritEffect(creature, aimedPart, name);
 
 			ApplySharedPenalty(creature, effect);
 

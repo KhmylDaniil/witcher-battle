@@ -34,9 +34,8 @@ namespace Witcher.Core.Entities.Effects
 		{
 			creature.Effects.Add(DeadEffect.Create(null, null, creature, "Dead due decapitation"));
 
-			return CheckExistingEffectAndRemoveStabilizedEffect<DeadlyHead2CritEffect>(creature, aimedPart)
-				? new DeadlyHead2CritEffect(creature, aimedPart, name)
-				: null;
+			CheckExistingEffectAndRemoveStabilizedEffect<DeadlyHead2CritEffect>(creature, aimedPart);
+			return new DeadlyHead2CritEffect(creature, aimedPart, name);
 		}
 
 		/// <summary>

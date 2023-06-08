@@ -7,17 +7,18 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Exceptions.RequestExceptions;
+using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Requests.CreatureTemplateRequests
 {
-	public class ChangeDamageTypeModifierHandler : BaseHandler<ChangeDamageTypeModifierCommand, Unit>
+	public class ChangeDamageTypeModifierHandler : BaseHandler<ChangeDamageTypeModifierForCreatureTemplateCommand, Unit>
 	{
 		public ChangeDamageTypeModifierHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 			: base(appDbContext, authorizationService)
 		{
 		}
 
-		public async override Task<Unit> Handle(ChangeDamageTypeModifierCommand request, CancellationToken cancellationToken)
+		public async override Task<Unit> Handle(ChangeDamageTypeModifierForCreatureTemplateCommand request, CancellationToken cancellationToken)
 		{
 			var creatureTemplate = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.SelectMany(g => g.CreatureTemplates.Where(g => g.Id == request.CreatureTemplateId))
@@ -28,13 +29,7 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 			var creatureTemplateDamageTypeModifier = creatureTemplate.DamageTypeModifiers
 				.FirstOrDefault(x => x.DamageType == request.DamageType);
 
-			if (creatureTemplateDamageTypeModifier == null && request.DamageTypeModifier != BaseData.Enums.DamageTypeModifier.Normal)
-				creatureTemplate.DamageTypeModifiers.Add(new CreatureTemplateDamageTypeModifier(
-					request.CreatureTemplateId, request.DamageType, request.DamageTypeModifier));
-			else if (creatureTemplateDamageTypeModifier != null && request.DamageTypeModifier != BaseData.Enums.DamageTypeModifier.Normal)
-				creatureTemplateDamageTypeModifier.DamageTypeModifier = request.DamageTypeModifier;
-			else if (creatureTemplateDamageTypeModifier != null && request.DamageTypeModifier == BaseData.Enums.DamageTypeModifier.Normal)
-				creatureTemplate.DamageTypeModifiers.Remove(creatureTemplateDamageTypeModifier);
+			EntityDamageTypeModifier.ChangeDamageTypeModifer(request.DamageTypeModifier, request.DamageType, creatureTemplate, creatureTemplateDamageTypeModifier);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;

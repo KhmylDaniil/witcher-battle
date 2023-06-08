@@ -1,4 +1,5 @@
 ﻿using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Contracts.UserRequests.GetUsers
 {

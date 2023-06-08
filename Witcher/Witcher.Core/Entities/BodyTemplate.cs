@@ -80,6 +80,11 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		public List<CreatureTemplate> CreatureTemplates { get; set; }
 
+		/// <summary>
+		/// Шаблоны брони
+		/// </summary>
+		public List<ArmorTemplate> ArmorsTemplates { get; set; }
+
 		#endregion navigation properties
 
 		/// <summary>
@@ -109,7 +114,8 @@ namespace Witcher.Core.Entities
 				ModifiedOn = modifiedOn,
 				CreatedByUserId = createdByUserId,
 				CreatureTemplates = new List<CreatureTemplate>(),
-				BodyTemplateParts = new List<BodyTemplatePart>()
+				BodyTemplateParts = new List<BodyTemplatePart>(),
+				ArmorsTemplates = new List<ArmorTemplate>(),
 			};
 
 		/// <summary>

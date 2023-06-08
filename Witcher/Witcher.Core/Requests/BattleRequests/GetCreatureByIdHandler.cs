@@ -31,7 +31,6 @@ namespace Witcher.Core.Requests.BattleRequests
 				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
 					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
 						.ThenInclude(c => c.Abilities)
-							.ThenInclude(a => a.AppliedConditions)
 				.Include(g => g.Battles.Where(b => b.Id == request.BattleId))
 					.ThenInclude(b => b.Creatures.Where(c => c.Id == request.Id))
 						.ThenInclude(c => c.DamageTypeModifiers)

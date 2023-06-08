@@ -114,6 +114,11 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		public List<Character> Characters { get; set; }
 
+		/// <summary>
+		/// Предметы
+		/// </summary>
+		public List<ItemTemplate> ItemTemplates { get; set; }
+
 		#endregion navigation properties
 
 		/// <summary>
@@ -141,6 +146,8 @@ namespace Witcher.Core.Entities
 			ImgFiles = new List<ImgFile>(),
 			TextFiles = new List<TextFile>(),
 			Battles = new List<Battle>(),
+			ItemTemplates = new List<ItemTemplate>(),
+			Characters = new List<Character>(),
 		};
 
 		/// <summary>

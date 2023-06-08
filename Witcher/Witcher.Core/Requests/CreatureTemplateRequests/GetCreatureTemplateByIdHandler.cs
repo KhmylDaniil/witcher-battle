@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.BaseRequests;
 using Witcher.Core.Contracts.CreatureTemplateRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
@@ -33,7 +34,6 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 					.ThenInclude(x => x.CreatureTemplateSkills)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.Abilities)
-					.ThenInclude(x => x.AppliedConditions)
 				.Include(x => x.CreatureTemplates.Where(x => x.Id == request.Id))
 					.ThenInclude(x => x.CreatureTemplateParts)
 				.SelectMany(x => x.CreatureTemplates);
@@ -103,7 +103,7 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 					}).ToList()
 				}).ToList(),
 				DamageTypeModifiers = creatureTemplate.DamageTypeModifiers
-				.Select(x => new GetCreatureTemplateByIdResponseDamageTypeModifier()
+				.Select(x => new GetResponsePartDamageTypeModifier()
 				{
 					Id = x.Id,
 					DamageType = x.DamageType,

@@ -71,7 +71,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			{
 				BattleId = _battle.Id,
 				CreatureId = _creature.Id,
-				TargetCreatureId = _creature.Id,
+				TargetId = _creature.Id,
 				EffectId = _freezeEffect.Id,
 			};
 

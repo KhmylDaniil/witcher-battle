@@ -21,7 +21,7 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		/// <summary>
 		/// Айди цели
 		/// </summary>
-		public Guid TargetCreatureId { get; set; }
+		public Guid TargetId { get; set; }
 
 		/// <summary>
 		/// Айди эффекта

@@ -40,7 +40,6 @@ namespace Witcher.Core.Requests.AbilityRequests
 
 			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities)
-					.ThenInclude(a => a.AppliedConditions)
 					.SelectMany(g => g.Abilities
 						.Where(x => x.AttackDiceQuantity <= request.MaxAttackDiceQuantity && x.AttackDiceQuantity >= request.MinAttackDiceQuantity)
 						.Where(x => request.UserName == null || x.Game.UserGames

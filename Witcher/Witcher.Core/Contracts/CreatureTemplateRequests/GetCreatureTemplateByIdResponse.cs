@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Witcher.Core.Contracts.BaseRequests;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Contracts.CreatureTemplateRequests
@@ -132,6 +133,6 @@ namespace Witcher.Core.Contracts.CreatureTemplateRequests
 		/// <summary>
 		/// Модификаторы урона
 		/// </summary>
-		public List<GetCreatureTemplateByIdResponseDamageTypeModifier> DamageTypeModifiers { get; set; }
+		public List<GetResponsePartDamageTypeModifier> DamageTypeModifiers { get; set; }
 	}
 }

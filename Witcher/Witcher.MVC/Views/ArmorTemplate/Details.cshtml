@@ -1,0 +1,106 @@
+﻿@model Witcher.Core.Contracts.ArmorTemplateRequests.GetArmorTemplateByIdResponse
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>GetArmorTemplateByIdResponse</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-5">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-7">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-5">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-7">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-5">
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+        <dd class = "col-sm-7">
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+        <dt class = "col-sm-5">
+            @Html.DisplayNameFor(model => model.Weight)
+        </dt>
+        <dd class = "col-sm-7">
+            @Html.DisplayFor(model => model.Weight)
+        </dd>
+        <dt class="col-sm-5">
+            @Html.DisplayNameFor(model => model.Armor)
+        </dt>
+        <dd class="col-sm-7">
+            @Html.DisplayFor(model => model.Armor)
+        </dd>
+        <dt class="col-sm-5">
+            @Html.DisplayNameFor(model => model.EncumbranceValue)
+        </dt>
+        <dd class="col-sm-7">
+            @Html.DisplayFor(model => model.EncumbranceValue)
+        </dd>
+        <dt class="col-sm-5">
+            @Html.DisplayNameFor(model => model.BodyTemplateName)
+        </dt>
+        <dd class="col-sm-7">
+            @Html.DisplayFor(model => model.BodyTemplateName)
+        </dd>
+        <dt class="col-sm-5">
+            @Html.DisplayNameFor(model => model.BodyTemplatePartsNames)
+        </dt>
+        <dd class="col-sm-7">
+            @string.Join(", ", Model.BodyTemplatePartsNames)
+        </dd>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", Model )
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DamageTypeModifiers.First().DamageType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DamageTypeModifiers.First().DamageTypeModifier)
+            </th>
+            <th>
+                @Html.ActionLink("Add new damage type modifier", "EditDamageTypeModifier",
+                new { ArmorTemplateId = Model.Id })
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.DamageTypeModifiers)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DamageType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DamageTypeModifier)
+                </td>
+                <td>
+                    @Html.ActionLink("Change value", "EditDamageTypeModifier",
+                new { ArmorTemplateId = Model.Id, Id = item.Id,
+                DamageType = item.DamageType, DamageTypeModifier = item.DamageTypeModifier })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>@TempData["ErrorMessage"]</p>
+
+<div class="container">
+    <a asp-action="Index">Back to Armor templates</a>
+</div>

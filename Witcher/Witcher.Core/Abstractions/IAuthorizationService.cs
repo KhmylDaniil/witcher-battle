@@ -40,8 +40,9 @@ namespace Witcher.Core.Abstractions
 		/// Проверить права создателя персонажа/главмастера
 		/// </summary>
 		/// <param name="query">Запрос</param>
+		/// <param name="characterId">Айди персонажа</param>
 		/// <returns></returns>
-		public IQueryable<Character> CharacterOwnerFilter(
-			IQueryable<Game> query);
+		public IQueryable<Game> CharacterOwnerFilter(
+			IQueryable<Game> query, Guid characterId);
 	}
 }

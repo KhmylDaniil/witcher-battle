@@ -1,18 +1,18 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.AbilityRequests;
-using Witcher.Core.Exceptions.EntityExceptions;
+﻿using Witcher.Core.Exceptions.EntityExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Exceptions.SystemExceptions;
+using Witcher.Core.Abstractions;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Способность
 	/// </summary>
-	public class Ability : EntityBase
+	public class Ability : EntityBase, IAttackFormula
 	{
 		/// <summary>
 		/// Поле для <see cref="_game"/>
@@ -42,7 +42,7 @@ namespace Witcher.Core.Entities
 		/// <param name="accuracy">Точность атаки</param>
 		/// <param name="attackSkill">Навык атаки</param>
 		/// <param name="damageType">Типы урона</param>
-		public Ability(
+		private Ability(
 			Game game,
 			string name,
 			string description,
@@ -193,7 +193,7 @@ namespace Witcher.Core.Entities
 			Skill attackSkill,
 			DamageType damageType,
 			List<Skill> defensiveSkills,
-			IEnumerable<UpdateAbilityCommandItemAppledCondition> appliedConditions)
+			IEnumerable<UpdateAttackFormulaCommandItemAppledCondition> appliedConditions)
 		{
 			var ability = new Ability(
 				game: game,
@@ -235,7 +235,7 @@ namespace Witcher.Core.Entities
 			int accuracy,
 			DamageType damageType,
 			List<Skill> defensiveSkills,
-			IEnumerable<UpdateAbilityCommandItemAppledCondition> appliedConditions)
+			IEnumerable<UpdateAttackFormulaCommandItemAppledCondition> appliedConditions)
 		{
 			Name = name;
 			Description = description;
@@ -256,7 +256,7 @@ namespace Witcher.Core.Entities
 		/// Обновление списка применяемых состояний
 		/// </summary>
 		/// <param name="data">Данные</param>
-		private void UpdateAplliedConditions(IEnumerable<UpdateAbilityCommandItemAppledCondition> data)
+		private void UpdateAplliedConditions(IEnumerable<UpdateAttackFormulaCommandItemAppledCondition> data)
 		{
 			if (data == null)
 				return;
@@ -278,11 +278,7 @@ namespace Witcher.Core.Entities
 			{
 				var appliedCondition = AppliedConditions.FirstOrDefault(x => x.Id == dataItem.Id);
 				if (appliedCondition == null)
-					AppliedConditions.Add(
-						AppliedCondition.CreateAppliedCondition(
-							ability: this,
-							condition: dataItem.Condition,
-							applyChance: dataItem.ApplyChance));
+					AppliedConditions.Add(new AppliedCondition(dataItem.Condition, dataItem.ApplyChance));
 				else
 					appliedCondition.ChangeAppliedCondition(
 						condition: dataItem.Condition,
@@ -356,20 +352,5 @@ namespace Witcher.Core.Entities
 			ability.UpdateDefensiveSkills(defensiveSkills ?? Drafts.AbilityDrafts.DefensiveSkillsDrafts.BaseDefensiveSkills);
 			return ability;
 		}
-	}
-
-	/// <summary>
-	/// Защитный навык
-	/// </summary>
-	public class DefensiveSkill : EntityBase
-	{
-		/// <summary>
-		/// Навык
-		/// </summary>
-		public Skill Skill { get; set; }
-
-		protected DefensiveSkill() { }
-
-		public DefensiveSkill(Skill skill) => Skill = skill;
 	}
 }

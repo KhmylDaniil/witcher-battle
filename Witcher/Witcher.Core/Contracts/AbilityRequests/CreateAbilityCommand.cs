@@ -5,13 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Contracts.AbilityRequests
 {
 	/// <summary>
 	/// Запрос создания способности
 	/// </summary>
-	public class CreateAbilityCommand : IValidatableCommand<Ability>
+	public class CreateAbilityCommand : IValidatableCommand<Guid>
 	{
 		/// <summary>
 		/// Наазвание способности
@@ -61,7 +62,7 @@ namespace Witcher.Core.Contracts.AbilityRequests
 		/// <summary>
 		/// Накладываемые состояния
 		/// </summary>
-		public List<UpdateAbilityCommandItemAppledCondition> AppliedConditions { get; set; }
+		public List<UpdateAttackFormulaCommandItemAppledCondition> AppliedConditions { get; set; }
 
 		/// <summary>
 		/// Валидация
