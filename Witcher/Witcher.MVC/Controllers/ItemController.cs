@@ -1,12 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.AbilityRequests;
-using Witcher.Core.Contracts.BodyTemplateRequests;
 using Witcher.Core.Contracts.CharacterRequests;
-using Witcher.Core.Contracts.CreatureTemplateRequests;
 using Witcher.Core.Contracts.ItemRequests;
-using Witcher.Core.Contracts.WeaponTemplateRequests;
+using Witcher.Core.Contracts.ItemTemplateRequests;
 using Witcher.Core.Exceptions;
 using Witcher.Core.ExtensionMethods;
 using Witcher.MVC.ViewModels.Item;
@@ -58,27 +55,6 @@ namespace Witcher.MVC.Controllers
 			catch (Exception ex) { return RedirectToErrorPage<ItemController>(ex); }
 		}
 
-		// GET: BagController/Edit/5
-		public ActionResult Edit(int id)
-		{
-			return View();
-		}
-
-		// POST: BagController/Edit/5
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult Edit(int id, IFormCollection collection)
-		{
-			try
-			{
-				return RedirectToAction(nameof(Index));
-			}
-			catch
-			{
-				return View();
-			}
-		}
-
 		[HttpGet]
 		[Route("[controller]/[action]/{characterId}")]
 		public ActionResult Delete(DeleteItemCommand command)
@@ -125,7 +101,7 @@ namespace Witcher.MVC.Controllers
 
 		private async Task<Dictionary<Guid, string>> GetItemTemplateListForViewModel(CancellationToken cancellationToken)
 		{
-			var itemTemplates = await _mediator.SendValidated(new GetWeaponTemplateQuery() { PageSize = int.MaxValue }, cancellationToken);
+			var itemTemplates = await _mediator.SendValidated(new GetItemTemplateQuery() { PageSize = int.MaxValue }, cancellationToken);
 
 			var result = itemTemplates.ToDictionary(x => x.Id, x => x.Name);
 

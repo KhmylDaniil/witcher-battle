@@ -31,7 +31,15 @@ namespace Witcher.Core.Requests.ItemRequests
 			var item = character.Items.FirstOrDefault(x => x.Id == request.ItemId && x.IsEquipped.HasValue)
 				?? throw new EntityNotFoundException<ItemTemplate>(request.ItemId);
 
-			character.ChangeItemIsEquipped(item);
+			if (item.ItemType == BaseData.Enums.ItemType.Armor)
+			{
+				await _appDbContext.Entry(character).Collection(c => c.CreatureParts).LoadAsync(cancellationToken);
+
+				Armor armor = item as Armor;
+				await _appDbContext.Entry(armor).Collection(a => a.ArmorParts).LoadAsync(cancellationToken);
+			}
+
+			character.ChangeItemEquippedStatus(item);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;

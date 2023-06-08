@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Entities
@@ -13,6 +8,7 @@ namespace Witcher.Core.Entities
 		private int _currentArmor;
 		private Armor _armor;
 		private CreaturePart _creaturePart;
+		private BodyTemplatePart _bodyTemplatePart;
 
 		/// <summary>
 		/// Поле для <see cref="_armor"/>
@@ -23,6 +19,11 @@ namespace Witcher.Core.Entities
 		/// Поле для <see cref="_creaturePart"/>
 		/// </summary>
 		public const string CreaturePartField = nameof(_creaturePart);
+
+		/// <summary>
+		/// Поле для <see cref="_bodyTemplatePart"/>
+		/// </summary>
+		public const string BodyTemplatePartField = nameof(_bodyTemplatePart);
 
 		/// <summary>
 		/// Пустой конструктор
@@ -36,14 +37,16 @@ namespace Witcher.Core.Entities
 		/// </summary>
 		public ArmorPart(
 			Armor armor,
-			CreaturePart creaturePart,
+			BodyTemplatePart bodyTemplatePart,
 			int currentArmor
 			)
 		{
 			Armor = armor;
-			CreaturePart = creaturePart;
+			BodyTemplatePart = bodyTemplatePart;
 			CurrentArmor = currentArmor;
 		}
+
+		public string Name { get; protected set; }
 
 		/// <summary>
 		/// Айди брони
@@ -53,7 +56,12 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Айди части существа
 		/// </summary>
-		public Guid CreaturePartId { get; protected set; }
+		public Guid? CreaturePartId { get; protected set; }
+
+		/// <summary>
+		/// Айди части шаблона тела
+		/// </summary>
+		public Guid BodyTemplatePartId { get; protected set; }
 
 		/// <summary>
 		/// Текущая броня
@@ -79,8 +87,22 @@ namespace Witcher.Core.Entities
 			get => _creaturePart;
 			set
 			{
-				_creaturePart = value ?? throw new EntityNotIncludedException<ArmorPart>(nameof(CreaturePart));
-				CreaturePartId = value.Id;
+				_creaturePart = value;
+				CreaturePartId = value?.Id;
+			}
+		}
+
+		/// <summary>
+		/// Часть шаблона тела
+		/// </summary>
+		public BodyTemplatePart BodyTemplatePart
+		{
+			get => _bodyTemplatePart;
+			set
+			{
+				_bodyTemplatePart = value ?? throw new EntityNotIncludedException<ArmorPart>(nameof(BodyTemplatePart));
+				BodyTemplatePartId = value.Id;
+				Name = value.Name;
 			}
 		}
 
@@ -104,6 +126,7 @@ namespace Witcher.Core.Entities
 		[Obsolete("Только для тестов")]
 		public static ArmorPart CreateForTest(
 			Guid? id = default,
+			BodyTemplatePart bodyTemplatePart = default,
 			CreaturePart creaturePart = default,
 			Armor armor = default,
 			int currentArmor = default,
@@ -113,6 +136,7 @@ namespace Witcher.Core.Entities
 		=> new()
 		{
 			Id = id ?? Guid.NewGuid(),
+			BodyTemplatePart = bodyTemplatePart,
 			CreaturePart = creaturePart,
 			Armor = armor,
 			CurrentArmor = currentArmor,

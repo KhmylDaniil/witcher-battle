@@ -1,6 +1,8 @@
 ﻿using System;
 using Witcher.Core.Abstractions;
+using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.RequestExceptions;
+using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Contracts.ItemRequests
 {

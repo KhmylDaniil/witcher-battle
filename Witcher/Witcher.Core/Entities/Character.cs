@@ -213,18 +213,11 @@ namespace Witcher.Core.Entities
 			return character;
 		}
 
-		internal void EquipWeapon(Weapon weapon)
+		internal void ChangeItemEquippedStatus(Item item)
 		{
-			weapon.IsEquipped = true;
-		}
+			if (item is Armor armor)
+				armor.ChangeArmorEquippedStatus(this);
 
-		internal void UnequipWeapon(Weapon weapon)
-		{
-			weapon.IsEquipped = false;
-		}
-
-		internal void ChangeItemIsEquipped(Item item)
-		{
 			item.IsEquipped = !item.IsEquipped;
 		}
 	}

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Exceptions.EntityExceptions;
 using static Witcher.Core.BaseData.Enums;
@@ -43,6 +42,9 @@ namespace Witcher.Core.Entities
 
 		public Guid BodyTemplateId { get; private set; }
 
+		/// <summary>
+		/// Значение брони
+		/// </summary>
 		public int Armor
 		{
 			get => _armor;
@@ -54,6 +56,9 @@ namespace Witcher.Core.Entities
 			}
 		}
 
+		/// <summary>
+		/// Скованность движений
+		/// </summary>
 		public int EncumbranceValue
 		{
 			get => _encumbranceValue;
@@ -65,6 +70,9 @@ namespace Witcher.Core.Entities
 			}
 		}	
 
+		/// <summary>
+		/// Модификаторы типа урона
+		/// </summary>
 		public List<EntityDamageTypeModifier> DamageTypeModifiers { get; set; }
 
 		#region navigation properties

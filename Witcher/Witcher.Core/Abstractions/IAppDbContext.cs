@@ -2,6 +2,7 @@
 using Witcher.Core.Entities;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Witcher.Core.Abstractions
 {
@@ -136,5 +137,7 @@ namespace Witcher.Core.Abstractions
 		/// <param name="cancellationToken">Токен отмены запроса</param>
 		/// <returns>Токен</returns>
 		Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+		public EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
 	}
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.ItemRequests;
+using Witcher.Core.Drafts.BodyTemplateDrafts;
 using Witcher.Core.Entities;
 using Witcher.Core.Requests.ItemRequests;
 
@@ -17,6 +18,9 @@ namespace Witcher.UnitTest.Core.Requests.BagRequests
 		private readonly WeaponTemplate _weaponTemplateStackable;
 		private readonly Character _character;
 
+		private readonly ArmorTemplate _armorTemplate;
+		private readonly BodyTemplate _bodyTemplate;
+
 		public CreateItemHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
@@ -25,7 +29,13 @@ namespace Witcher.UnitTest.Core.Requests.BagRequests
 			_weaponTemplateStackable.IsStackable = true;
 			_character = Character.CreateForTest(game: _game);
 
-			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _weaponTemplate, _weaponTemplateStackable, _character));
+			_bodyTemplate = BodyTemplate.CreateForTest(game: _game);
+			_bodyTemplate.CreateBodyTemplateParts(CreateBodyTemplatePartsDraft.CreateBodyPartsDraft());
+
+			_armorTemplate = ArmorTemplate.CreateForTest(game: _game, bodyTemplate: _bodyTemplate, armor: 5);
+			_armorTemplate.BodyTemplateParts.AddRange(_bodyTemplate.BodyTemplateParts);
+
+			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _weaponTemplate, _weaponTemplateStackable, _character, _bodyTemplate, _armorTemplate));
 		}
 
 		[TestMethod]
@@ -123,6 +133,42 @@ namespace Witcher.UnitTest.Core.Requests.BagRequests
 			Assert.IsNotNull(weapon);
 			Assert.AreEqual(_weaponTemplateStackable.Durability, weapon.CurrentDurability);
 			Assert.AreEqual(2, weapon.Quantity);
+		}
+
+		[TestMethod]
+		public async Task Handle_AddArmor_ShouldReturnUnit()
+		{
+			var request = new CreateItemCommand
+			{
+				CharacterId = _character.Id,
+				ItemTemplateId = _armorTemplate.Id,
+				Quantity = 1,
+			};
+
+			var newHandler = new CreateItemHandler(_dbContext, AuthorizationService.Object);
+
+			var result = await newHandler.Handle(request, default);
+
+			Assert.IsNotNull(result);
+
+			var character = _dbContext.Characters
+				.FirstOrDefault(x => x.Id == _character.Id);
+
+			Assert.IsNotNull(character);
+			Assert.IsTrue(character.Items.Any());
+			var item = character.Items.First();
+			Assert.AreEqual(item.ItemTemplateId, _armorTemplate.Id);
+
+			var armor = item as Armor;
+			Assert.IsNotNull(armor);
+			Assert.IsNotNull(armor.ArmorParts);
+
+			Assert.IsTrue(armor.ArmorParts.Count == 6);
+			
+			foreach(var part in armor.ArmorParts)
+			{
+				Assert.AreEqual(_armorTemplate.Armor, part.CurrentArmor);
+			}
 		}
 	}
 }

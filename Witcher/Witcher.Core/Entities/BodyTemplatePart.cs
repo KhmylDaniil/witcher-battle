@@ -75,6 +75,8 @@ namespace Witcher.Core.Entities
 
 		public List<ArmorTemplate> ArmorTemplates { get; protected set; } = new();
 
+		public List<ArmorPart> ArmorParts { get; protected set; } = new();
+
 		#endregion navigation properties
 
 		/// <summary>

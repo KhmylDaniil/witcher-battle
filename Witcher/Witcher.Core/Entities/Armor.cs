@@ -1,11 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Witcher.Core.Entities
 {
+	/// <summary>
+	/// Броня
+	/// </summary>
 	public class Armor : Item
 	{
+		/// <summary>
+		/// Части брони
+		/// </summary>
 		public List<ArmorPart> ArmorParts { get; set; }
 
 		protected Armor() { }
@@ -15,11 +20,17 @@ namespace Witcher.Core.Entities
 			IsEquipped = false;
 
 			ArmorParts = new();
-			foreach (CreaturePart creaturePart in character.CreatureParts
-				.Where(x => armorTemplate.BodyTemplateParts.Select(x => x.BodyPartType).Contains(x.BodyPartType)))
-			{
-				ArmorParts.Add(new ArmorPart(this, creaturePart, armorTemplate.Armor));
-			}
+			foreach (var part in armorTemplate.BodyTemplateParts)
+				ArmorParts.Add(new ArmorPart(this, part, armorTemplate.Armor));
+		}
+
+		internal void ChangeArmorEquippedStatus(Character character)
+		{
+			foreach (var armorPart in ArmorParts)
+				if (IsEquipped.Value)
+					armorPart.CreaturePart = null;
+				else
+					armorPart.CreaturePart = character.CreatureParts.FirstOrDefault(x => x.Name == armorPart.Name);
 		}
 	}
 }

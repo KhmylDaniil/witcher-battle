@@ -32,6 +32,14 @@ namespace Witcher.Core.Requests.ItemRequests
 			var itemTemplate = game.ItemTemplates.FirstOrDefault(x => x.Id == request.ItemTemplateId)
 				?? throw new EntityNotFoundException<ItemTemplate>(request.ItemTemplateId);
 
+			if (itemTemplate.ItemType == BaseData.Enums.ItemType.Armor)
+			{
+				await _appDbContext.Entry(character).Collection(c => c.CreatureParts).LoadAsync(cancellationToken);
+
+				ArmorTemplate armorTemplate = itemTemplate as ArmorTemplate;
+				await _appDbContext.Entry(armorTemplate).Collection(at => at.BodyTemplateParts).LoadAsync(cancellationToken);
+			}
+
 			character.AddItems(itemTemplate, request.Quantity);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
