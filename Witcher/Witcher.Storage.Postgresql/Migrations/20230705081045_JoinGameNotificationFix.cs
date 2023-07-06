@@ -4,25 +4,24 @@
 
 namespace Witcher.Storage.Postgresql.Migrations
 {
-    public partial class battleLogProperty : Migration
+    public partial class JoinGameNotificationFix : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "BattleLog",
-                schema: "Battles",
-                table: "Battles",
+                name: "GameName",
+                schema: "Notifications",
+                table: "JoinGameRequestNotifications",
                 type: "text",
-                nullable: true,
-                comment: "Журнал боя");
+                nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "BattleLog",
-                schema: "Battles",
-                table: "Battles");
+                name: "GameName",
+                schema: "Notifications",
+                table: "JoinGameRequestNotifications");
         }
     }
 }

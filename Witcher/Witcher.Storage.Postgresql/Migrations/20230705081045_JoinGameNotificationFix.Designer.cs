@@ -12,8 +12,8 @@ using Witcher.Storage.Postgresql;
 namespace Witcher.Storage.Postgresql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230206105228_conditionsReworking")]
-    partial class conditionsReworking
+    [Migration("20230705081045_JoinGameNotificationFix")]
+    partial class JoinGameNotificationFix
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -99,7 +99,22 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.ToTable("ImgFileUser", "System");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Ability", b =>
+            modelBuilder.Entity("TextFileUser", b =>
+                {
+                    b.Property<Guid>("TextFilesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TextFilesId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("TextFileUser", "System");
+                });
+
+            modelBuilder.Entity("Witcher.Core.Entities.Ability", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -183,7 +198,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Способности");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.AppliedCondition", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.AppliedCondition", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -235,17 +250,17 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Применяемые состояния");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Battle", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Battle", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
 
-                    b.Property<DateTime?>("ActivationTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ActivationTime")
-                        .HasComment("Время активации боя");
+                    b.Property<string>("BattleLog")
+                        .HasColumnType("text")
+                        .HasColumnName("BattleLog")
+                        .HasComment("Журнал боя");
 
                     b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
@@ -282,14 +297,16 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnName("Name")
                         .HasComment("Название боя");
 
+                    b.Property<int>("NextInitiative")
+                        .HasColumnType("integer")
+                        .HasColumnName("NextInitiative")
+                        .HasComment("Значение инициативы следующего существа");
+
                     b.Property<string>("RoleCreatedUser")
                         .HasColumnType("text");
 
                     b.Property<string>("RoleModifiedUser")
                         .HasColumnType("text");
-
-                    b.Property<int>("Round")
-                        .HasColumnType("integer");
 
                     b.Property<Guid?>("UserGameActivatedId")
                         .HasColumnType("uuid")
@@ -310,7 +327,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Экземпляры");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyPart", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.BodyPart", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -376,7 +393,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Части тела");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyTemplate", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.BodyTemplate", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -428,14 +445,14 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Шаблоны тел");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Creature", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Creature", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
 
-                    b.Property<Guid>("BattleId")
+                    b.Property<Guid?>("BattleId")
                         .HasColumnType("uuid")
                         .HasColumnName("BattleId")
                         .HasComment("Айди боя");
@@ -472,7 +489,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text")
                         .HasColumnName("Description")
-                        .HasComment("Описание шаблона");
+                        .HasComment("Описание");
 
                     b.Property<int>("Dex")
                         .HasColumnType("integer")
@@ -493,6 +510,11 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("ImgFileId")
                         .HasComment("Айди графического файла");
+
+                    b.Property<int>("InitiativeInBattle")
+                        .HasColumnType("integer")
+                        .HasColumnName("InitiativeInBattle")
+                        .HasComment("Значение инициативы в битве");
 
                     b.Property<int>("Int")
                         .HasColumnType("integer")
@@ -621,7 +643,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Существа");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureSkill", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.CreatureSkill", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -678,7 +700,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Навыки существа");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplate", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.CreatureTemplate", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -806,7 +828,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Шаблоны существ");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplateSkill", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.CreatureTemplateSkill", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -858,7 +880,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Навыки шаблона существа");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effect", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -905,7 +927,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Game", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Game", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -961,7 +983,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Игры");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.GameRole", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.GameRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1039,7 +1061,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ImgFile", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.ImgFile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1090,7 +1112,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Графические файлы");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Interface", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Interface", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1213,7 +1235,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.SystemRole", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.SystemRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1280,7 +1302,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.TextFile", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.TextFile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1331,7 +1353,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Текстовые файлы");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.User", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1415,7 +1437,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.UserAccount", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.UserAccount", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1472,7 +1494,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Аккаунты пользователей");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.UserGame", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.UserGame", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1534,7 +1556,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Игры пользователя");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.UserGameCharacter", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.UserGameCharacter", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1553,11 +1575,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now() at time zone 'utc'");
-
-                    b.Property<Guid>("InterfaceId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("InterfaceId")
-                        .HasComment("Айди интерфейса");
 
                     b.Property<Guid>("ModifiedByUserId")
                         .HasColumnType("uuid");
@@ -1580,8 +1597,6 @@ namespace Witcher.Storage.Postgresql.Migrations
 
                     b.HasIndex("CharacterId");
 
-                    b.HasIndex("InterfaceId");
-
                     b.HasIndex("UserGameId");
 
                     b.ToTable("UserGameCharacters", "Characters");
@@ -1589,7 +1604,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Персонажи пользователя игры");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.UserRole", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.UserRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1633,24 +1648,54 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Роли пользователей");
                 });
 
-            modelBuilder.Entity("TextFileUser", b =>
+            modelBuilder.Entity("Witcher.Core.Notifications.Notification", b =>
                 {
-                    b.Property<Guid>("TextFilesId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
+
+                    b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("UsersId")
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
+
+                    b.Property<bool>("IsReaded")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text")
+                        .HasColumnName("Message");
+
+                    b.Property<Guid>("ModifiedByUserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("TextFilesId", "UsersId");
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.HasIndex("UsersId");
+                    b.Property<string>("RoleCreatedUser")
+                        .HasColumnType("text");
 
-                    b.ToTable("TextFileUser", "System");
+                    b.Property<string>("RoleModifiedUser")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications", "Notifications");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyTemplatePart", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.BodyTemplatePart", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.BodyPart");
+                    b.HasBaseType("Witcher.Core.Entities.BodyPart");
 
                     b.Property<Guid>("BodyTemplateId")
                         .HasColumnType("uuid")
@@ -1664,19 +1709,26 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Части шаблона тела");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Character", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Character", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Creature");
+                    b.HasBaseType("Witcher.Core.Entities.Creature");
 
                     b.Property<DateTime?>("ActivationTime")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("ActivationTime")
                         .HasComment("Время активации персонажа");
 
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("GameId")
+                        .HasComment("Айди игры");
+
                     b.Property<Guid?>("UserGameActivatedId")
                         .HasColumnType("uuid")
                         .HasColumnName("UserGameActivatedId")
                         .HasComment("Айди активировашего персонажа пользователя");
+
+                    b.HasIndex("GameId");
 
                     b.HasIndex("UserGameActivatedId")
                         .IsUnique();
@@ -1686,9 +1738,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Персонажи");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreaturePart", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.CreaturePart", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.BodyPart");
+                    b.HasBaseType("Witcher.Core.Entities.BodyPart");
 
                     b.Property<Guid>("CreatureId")
                         .HasColumnType("uuid")
@@ -1712,9 +1764,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Части существа");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplatePart", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.CreatureTemplatePart", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.BodyPart");
+                    b.HasBaseType("Witcher.Core.Entities.BodyPart");
 
                     b.Property<int>("Armor")
                         .HasColumnType("integer")
@@ -1733,9 +1785,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Части шаблона существа");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+                    b.HasBaseType("Witcher.Core.Entities.Effect");
 
                     b.Property<string>("BodyPartLocation")
                         .IsRequired()
@@ -1743,8 +1795,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnName("BodyPartLocation")
                         .HasComment("Тип части тела");
 
-                    b.Property<Guid?>("CreaturePartId")
-                        .IsRequired()
+                    b.Property<Guid>("CreaturePartId")
                         .HasColumnType("uuid")
                         .HasColumnName("CreaturePartId")
                         .HasComment("Айди части тела");
@@ -1762,18 +1813,18 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Критические эффекты");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.BleedEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.BleedEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+                    b.HasBaseType("Witcher.Core.Entities.Effect");
 
                     b.ToTable("BleedEffects", "Effects");
 
                     b.HasComment("Эффекты кровотечения");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.BleedingWoundEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.BleedingWoundEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+                    b.HasBaseType("Witcher.Core.Entities.Effect");
 
                     b.Property<int>("Damage")
                         .HasColumnType("integer")
@@ -1790,18 +1841,18 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты кровавой раны");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+                    b.HasBaseType("Witcher.Core.Entities.Effect");
 
                     b.ToTable("DeadEffects", "Effects");
 
                     b.HasComment("Эффекты смерти");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DyingEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DyingEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+                    b.HasBaseType("Witcher.Core.Entities.Effect");
 
                     b.Property<int>("Counter")
                         .HasColumnType("integer")
@@ -1813,63 +1864,83 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты при смерти");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.FireEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.FireEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+                    b.HasBaseType("Witcher.Core.Entities.Effect");
 
                     b.ToTable("FireEffects", "Effects");
 
                     b.HasComment("Эффекты горения");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.FreezeEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.FreezeEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+                    b.HasBaseType("Witcher.Core.Entities.Effect");
 
                     b.ToTable("FreezeEffects", "Effects");
 
                     b.HasComment("Эффекты заморозки");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.PoisonEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.PoisonEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+                    b.HasBaseType("Witcher.Core.Entities.Effect");
 
                     b.ToTable("PoisonEffects", "Effects");
 
                     b.HasComment("Эффекты отравления");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.StaggeredEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.StaggeredEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+                    b.HasBaseType("Witcher.Core.Entities.Effect");
 
                     b.ToTable("StaggeredEffects", "Effects");
 
                     b.HasComment("Эффекты ошеломления");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.StunEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.StunEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+                    b.HasBaseType("Witcher.Core.Entities.Effect");
 
                     b.ToTable("StunEffects", "Effects");
 
                     b.HasComment("Эффекты дезориентации");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SufflocationEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SufflocationEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.Effect");
+                    b.HasBaseType("Witcher.Core.Entities.Effect");
 
                     b.ToTable("SufflocationEffects", "Effects");
 
                     b.HasComment("Эффекты удушья");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexArmCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Notifications.JoinGameRequestNotification", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Notifications.Notification");
+
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("GameId");
+
+                    b.Property<string>("GameName")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("SenderId");
+
+                    b.ToTable("JoinGameRequestNotifications", "Notifications");
+
+                    b.HasComment("Уведомления о запросах присоединения к игре");
+                });
+
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexArmCritEffect", b =>
+                {
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<bool>("PenaltyApplied")
                         .HasColumnType("boolean")
@@ -1881,27 +1952,27 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты перелома руки");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexHead1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexHead1CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.ToTable("ComplexHead1CritEffects", "Effects");
 
                     b.HasComment("Эффекты выбитых зубов");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexHead2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexHead2CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.ToTable("ComplexHead2CritEffects", "Effects");
 
                     b.HasComment("Эффекты небольшой травмы головы");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexLegCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexLegCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<bool>("PenaltyApplied")
                         .HasColumnType("boolean")
@@ -1913,9 +1984,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты перелома ноги");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexTailCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexTailCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<bool>("PenaltyApplied")
                         .HasColumnType("boolean")
@@ -1927,18 +1998,18 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты перелома хвоста");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexTorso1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexTorso1CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.ToTable("ComplexTorso1CritEffects", "Effects");
 
                     b.HasComment("Эффекты сломанных ребер");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexTorso2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexTorso2CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<int>("RoundCounter")
                         .HasColumnType("integer")
@@ -1950,9 +2021,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты разрыва селезенки");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexWingCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexWingCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<bool>("PenaltyApplied")
                         .HasColumnType("boolean")
@@ -1964,9 +2035,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты перелома крыла");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyArmCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyArmCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<bool>("PenaltyApplied")
                         .HasColumnType("boolean")
@@ -1978,27 +2049,27 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты потери руки");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyHead1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyHead1CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.ToTable("DeadlyHead1CritEffects", "Effects");
 
                     b.HasComment("Эффекты повреждения глаза");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyHead2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyHead2CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.ToTable("DeadlyHead2CritEffects", "Effects");
 
                     b.HasComment("Эффекты отсечения головы");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyLegCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyLegCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<int>("AthleticsModifier")
                         .HasColumnType("integer")
@@ -2025,9 +2096,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты потери ноги");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyTailCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyTailCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<int>("AthleticsModifier")
                         .HasColumnType("integer")
@@ -2049,9 +2120,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты потери хвоста");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyTorso1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyTorso1CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<int>("AfterTreatStaModifier")
                         .HasColumnType("integer")
@@ -2068,9 +2139,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты септического шока");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyTorso2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyTorso2CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<int>("AfterTreatBodyModifier")
                         .HasColumnType("integer")
@@ -2107,9 +2178,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты травмы сердца");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyWingCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyWingCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<int>("AthleticsModifier")
                         .HasColumnType("integer")
@@ -2136,9 +2207,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты потери крыла");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultArmCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultArmCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<bool>("PenaltyApplied")
                         .HasColumnType("boolean")
@@ -2150,9 +2221,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты открытого перелома руки");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultHead1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultHead1CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<int>("NextCheck")
                         .HasColumnType("integer")
@@ -2169,18 +2240,18 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты контузии");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultHead2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultHead2CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.ToTable("DifficultHead2CritEffects", "Effects");
 
                     b.HasComment("Эффекты проломленного черепа");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultLegCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultLegCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<int>("AfterTreatAthleticsModifier")
                         .HasColumnType("integer")
@@ -2222,9 +2293,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты открытого перелома ноги");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultTailCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultTailCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<int>("AfterTreatAthleticsModifier")
                         .HasColumnType("integer")
@@ -2256,27 +2327,27 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты открытого перелома хвоста");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultTorso1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultTorso1CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.ToTable("DifficultTorso1CritEffects", "Effects");
 
                     b.HasComment("Эффекты сосущей раны грудной клетки");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultTorso2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultTorso2CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.ToTable("DifficultTorso2CritEffects", "Effects");
 
                     b.HasComment("Эффекты раны в живот");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultWingCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultWingCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<int>("AfterTreatAthleticsModifier")
                         .HasColumnType("integer")
@@ -2318,9 +2389,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты открытого перелома крыла");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleArmCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleArmCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<bool>("PenaltyApplied")
                         .HasColumnType("boolean")
@@ -2332,27 +2403,27 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты вывиха руки");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleHead1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleHead1CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.ToTable("SimpleHead1CritEffects", "Effects");
 
                     b.HasComment("Эффекты уродующего шрама");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleHead2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleHead2CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.ToTable("SimpleHead2CritEffects", "Effects");
 
                     b.HasComment("Эффекты треснувшей челюсти");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleLegCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleLegCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<bool>("PenaltyApplied")
                         .HasColumnType("boolean")
@@ -2364,9 +2435,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты вывиха ноги");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleTailCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleTailCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<bool>("PenaltyApplied")
                         .HasColumnType("boolean")
@@ -2378,27 +2449,27 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты вывиха крыла");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleTorso1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleTorso1CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.ToTable("SimpleTorso1CritEffects", "Effects");
 
                     b.HasComment("Эффекты инородного объекта");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleTorso2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleTorso2CritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.ToTable("SimpleTorso2CritEffects", "Effects");
 
                     b.HasComment("Эффекты треснувших ребер");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleWingCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleWingCritEffect", b =>
                 {
-                    b.HasBaseType("Sindie.ApiService.Core.Entities.CritEffect");
+                    b.HasBaseType("Witcher.Core.Entities.CritEffect");
 
                     b.Property<bool>("PenaltyApplied")
                         .HasColumnType("boolean")
@@ -2412,13 +2483,13 @@ namespace Witcher.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("AbilityCreature", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Ability", null)
+                    b.HasOne("Witcher.Core.Entities.Ability", null)
                         .WithMany()
                         .HasForeignKey("AbilitiesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.Creature", null)
+                    b.HasOne("Witcher.Core.Entities.Creature", null)
                         .WithMany()
                         .HasForeignKey("CreaturesId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2427,13 +2498,13 @@ namespace Witcher.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("AbilityCreatureTemplate", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Ability", null)
+                    b.HasOne("Witcher.Core.Entities.Ability", null)
                         .WithMany()
                         .HasForeignKey("AbilitiesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.CreatureTemplate", null)
+                    b.HasOne("Witcher.Core.Entities.CreatureTemplate", null)
                         .WithMany()
                         .HasForeignKey("CreatureTemplatesId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2442,13 +2513,13 @@ namespace Witcher.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("GameImgFile", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", null)
+                    b.HasOne("Witcher.Core.Entities.Game", null)
                         .WithMany()
                         .HasForeignKey("GamesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", null)
+                    b.HasOne("Witcher.Core.Entities.ImgFile", null)
                         .WithMany()
                         .HasForeignKey("ImgFilesId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2457,13 +2528,13 @@ namespace Witcher.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("GameTextFile", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", null)
+                    b.HasOne("Witcher.Core.Entities.Game", null)
                         .WithMany()
                         .HasForeignKey("GamesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.TextFile", null)
+                    b.HasOne("Witcher.Core.Entities.TextFile", null)
                         .WithMany()
                         .HasForeignKey("TextFilesId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2472,34 +2543,49 @@ namespace Witcher.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("ImgFileUser", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", null)
+                    b.HasOne("Witcher.Core.Entities.ImgFile", null)
                         .WithMany()
                         .HasForeignKey("ImgFilesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.User", null)
+                    b.HasOne("Witcher.Core.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Ability", b =>
+            modelBuilder.Entity("TextFileUser", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
+                    b.HasOne("Witcher.Core.Entities.TextFile", null)
+                        .WithMany()
+                        .HasForeignKey("TextFilesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Witcher.Core.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Witcher.Core.Entities.Ability", b =>
+                {
+                    b.HasOne("Witcher.Core.Entities.Game", "Game")
                         .WithMany("Abilities")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Sindie.ApiService.Core.Entities.DefensiveSkill", "DefensiveSkills", b1 =>
+                    b.OwnsMany("Witcher.Core.Entities.DefensiveSkill", "DefensiveSkills", b1 =>
                         {
-                            b1.Property<Guid>("Id")
-                                .ValueGeneratedOnAdd()
+                            b1.Property<Guid>("AbilityId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<Guid>("AbilityId")
+                            b1.Property<Guid>("Id")
+                                .ValueGeneratedOnAdd()
                                 .HasColumnType("uuid");
 
                             b1.Property<Guid>("CreatedByUserId")
@@ -2523,9 +2609,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                             b1.Property<int>("Skill")
                                 .HasColumnType("integer");
 
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("AbilityId");
+                            b1.HasKey("AbilityId", "Id");
 
                             b1.ToTable("DefensiveSkill", "GameRules");
 
@@ -2538,9 +2622,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("Game");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.AppliedCondition", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.AppliedCondition", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Ability", "Ability")
+                    b.HasOne("Witcher.Core.Entities.Ability", "Ability")
                         .WithMany("AppliedConditions")
                         .HasForeignKey("AbilityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2549,20 +2633,20 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("Ability");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Battle", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Battle", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
+                    b.HasOne("Witcher.Core.Entities.Game", "Game")
                         .WithMany("Battles")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
+                    b.HasOne("Witcher.Core.Entities.ImgFile", "ImgFile")
                         .WithOne("Battle")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Battle", "ImgFileId")
+                        .HasForeignKey("Witcher.Core.Entities.Battle", "ImgFileId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.UserGame", "UserGameActivated")
+                    b.HasOne("Witcher.Core.Entities.UserGame", "UserGameActivated")
                         .WithMany("Instances")
                         .HasForeignKey("UserGameActivatedId")
                         .OnDelete(DeleteBehavior.SetNull);
@@ -2574,9 +2658,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("UserGameActivated");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyTemplate", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.BodyTemplate", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
+                    b.HasOne("Witcher.Core.Entities.Game", "Game")
                         .WithMany("BodyTemplates")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2585,26 +2669,25 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("Game");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Creature", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Creature", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Battle", "Battle")
+                    b.HasOne("Witcher.Core.Entities.Battle", "Battle")
                         .WithMany("Creatures")
                         .HasForeignKey("BattleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.CreatureTemplate", "CreatureTemplate")
+                    b.HasOne("Witcher.Core.Entities.CreatureTemplate", "CreatureTemplate")
                         .WithMany("Creatures")
                         .HasForeignKey("CreatureTemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
+                    b.HasOne("Witcher.Core.Entities.ImgFile", "ImgFile")
                         .WithOne("Creature")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Creature", "ImgFileId")
+                        .HasForeignKey("Witcher.Core.Entities.Creature", "ImgFileId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.OwnsMany("Sindie.ApiService.Core.Entities.CreatureDamageTypeModifier", "DamageTypeModifiers", b1 =>
+                    b.OwnsMany("Witcher.Core.Entities.CreatureDamageTypeModifier", "DamageTypeModifiers", b1 =>
                         {
                             b1.Property<Guid>("Id")
                                 .ValueGeneratedOnAdd()
@@ -2650,6 +2733,35 @@ namespace Witcher.Storage.Postgresql.Migrations
                                 .HasForeignKey("CreatureId");
                         });
 
+                    b.OwnsOne("Witcher.Core.Entities.Turn", "Turn", b1 =>
+                        {
+                            b1.Property<Guid>("CreatureId")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("EnergySpendInThisTurn")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("IsDefenseInThisTurnPerformed")
+                                .HasColumnType("integer");
+
+                            b1.Property<Guid?>("MuitiattackAbilityId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("MultiattackRemainsQuantity")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("TurnState")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("CreatureId");
+
+                            b1.ToTable("Creatures", "Battles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CreatureId");
+                        });
+
                     b.Navigation("Battle");
 
                     b.Navigation("CreatureTemplate");
@@ -2657,11 +2769,13 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("DamageTypeModifiers");
 
                     b.Navigation("ImgFile");
+
+                    b.Navigation("Turn");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureSkill", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.CreatureSkill", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Creature", "Creature")
+                    b.HasOne("Witcher.Core.Entities.Creature", "Creature")
                         .WithMany("CreatureSkills")
                         .HasForeignKey("CreatureId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2670,26 +2784,26 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("Creature");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplate", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.CreatureTemplate", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.BodyTemplate", "BodyTemplate")
+                    b.HasOne("Witcher.Core.Entities.BodyTemplate", "BodyTemplate")
                         .WithMany("CreatureTemplates")
                         .HasForeignKey("BodyTemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
+                    b.HasOne("Witcher.Core.Entities.Game", "Game")
                         .WithMany("CreatureTemplates")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "ImgFile")
+                    b.HasOne("Witcher.Core.Entities.ImgFile", "ImgFile")
                         .WithOne("CreatureTemplate")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.CreatureTemplate", "ImgFileId")
+                        .HasForeignKey("Witcher.Core.Entities.CreatureTemplate", "ImgFileId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.OwnsMany("Sindie.ApiService.Core.Entities.CreatureTemplateDamageTypeModifier", "DamageTypeModifiers", b1 =>
+                    b.OwnsMany("Witcher.Core.Entities.CreatureTemplateDamageTypeModifier", "DamageTypeModifiers", b1 =>
                         {
                             b1.Property<Guid>("Id")
                                 .ValueGeneratedOnAdd()
@@ -2744,9 +2858,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("ImgFile");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplateSkill", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.CreatureTemplateSkill", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CreatureTemplate", "CreatureTemplate")
+                    b.HasOne("Witcher.Core.Entities.CreatureTemplate", "CreatureTemplate")
                         .WithMany("CreatureTemplateSkills")
                         .HasForeignKey("CreatureTemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2755,9 +2869,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("CreatureTemplate");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Creature", "Creature")
+                    b.HasOne("Witcher.Core.Entities.Creature", "Creature")
                         .WithMany("Effects")
                         .HasForeignKey("CreatureId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2766,24 +2880,24 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("Creature");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Game", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Game", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "Avatar")
+                    b.HasOne("Witcher.Core.Entities.ImgFile", "Avatar")
                         .WithOne("Game")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Game", "AvatarId")
+                        .HasForeignKey("Witcher.Core.Entities.Game", "AvatarId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Avatar");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.User", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.User", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.ImgFile", "Avatar")
+                    b.HasOne("Witcher.Core.Entities.ImgFile", "Avatar")
                         .WithOne("UserAvatar")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.User", "AvatarId")
+                        .HasForeignKey("Witcher.Core.Entities.User", "AvatarId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.Interface", "Interface")
+                    b.HasOne("Witcher.Core.Entities.Interface", "Interface")
                         .WithMany("Users")
                         .HasForeignKey("InterfaceId")
                         .OnDelete(DeleteBehavior.SetNull)
@@ -2794,9 +2908,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("Interface");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.UserAccount", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.UserAccount", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.User", "User")
+                    b.HasOne("Witcher.Core.Entities.User", "User")
                         .WithMany("UserAccounts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2805,27 +2919,27 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.UserGame", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.UserGame", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Game", "Game")
+                    b.HasOne("Witcher.Core.Entities.Game", "Game")
                         .WithMany("UserGames")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.GameRole", "GameRole")
+                    b.HasOne("Witcher.Core.Entities.GameRole", "GameRole")
                         .WithMany("UserGames")
                         .HasForeignKey("GameRoleId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.Interface", "Interface")
+                    b.HasOne("Witcher.Core.Entities.Interface", "Interface")
                         .WithMany("UserGames")
                         .HasForeignKey("InterfaceId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.User", "User")
+                    b.HasOne("Witcher.Core.Entities.User", "User")
                         .WithMany("UserGames")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2840,21 +2954,15 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.UserGameCharacter", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.UserGameCharacter", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Character", "Character")
+                    b.HasOne("Witcher.Core.Entities.Character", "Character")
                         .WithMany("UserGameCharacters")
                         .HasForeignKey("CharacterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.Interface", "Interface")
-                        .WithMany("UserGameCharacters")
-                        .HasForeignKey("InterfaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sindie.ApiService.Core.Entities.UserGame", "UserGame")
+                    b.HasOne("Witcher.Core.Entities.UserGame", "UserGame")
                         .WithMany("UserGameCharacters")
                         .HasForeignKey("UserGameId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2862,20 +2970,18 @@ namespace Witcher.Storage.Postgresql.Migrations
 
                     b.Navigation("Character");
 
-                    b.Navigation("Interface");
-
                     b.Navigation("UserGame");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.UserRole", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.UserRole", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.SystemRole", "SystemRole")
+                    b.HasOne("Witcher.Core.Entities.SystemRole", "SystemRole")
                         .WithMany("UserRoles")
                         .HasForeignKey("SystemRoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.User", "User")
+                    b.HasOne("Witcher.Core.Entities.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2886,501 +2992,514 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TextFileUser", b =>
+            modelBuilder.Entity("Witcher.Core.Notifications.Notification", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.TextFile", null)
-                        .WithMany()
-                        .HasForeignKey("TextFilesId")
+                    b.HasOne("Witcher.Core.Entities.User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyTemplatePart", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.BodyTemplatePart", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.BodyTemplate", "BodyTemplate")
+                    b.HasOne("Witcher.Core.Entities.BodyTemplate", "BodyTemplate")
                         .WithMany("BodyTemplateParts")
                         .HasForeignKey("BodyTemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.BodyPart", null)
+                    b.HasOne("Witcher.Core.Entities.BodyPart", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.BodyTemplatePart", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.BodyTemplatePart", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("BodyTemplate");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Character", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Character", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Creature", null)
-                        .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Character", "Id")
+                    b.HasOne("Witcher.Core.Entities.Game", "Game")
+                        .WithMany("Characters")
+                        .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.UserGameCharacter", "UserGameActivated")
+                    b.HasOne("Witcher.Core.Entities.Creature", null)
+                        .WithOne()
+                        .HasForeignKey("Witcher.Core.Entities.Character", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Witcher.Core.Entities.UserGameCharacter", "UserGameActivated")
                         .WithOne("ActivateCharacter")
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Character", "UserGameActivatedId")
+                        .HasForeignKey("Witcher.Core.Entities.Character", "UserGameActivatedId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Game");
 
                     b.Navigation("UserGameActivated");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreaturePart", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.CreaturePart", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Creature", "Creature")
+                    b.HasOne("Witcher.Core.Entities.Creature", "Creature")
                         .WithMany("CreatureParts")
                         .HasForeignKey("CreatureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.BodyPart", null)
+                    b.HasOne("Witcher.Core.Entities.BodyPart", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.CreaturePart", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.CreaturePart", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Creature");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplatePart", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.CreatureTemplatePart", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CreatureTemplate", "CreatureTemplate")
+                    b.HasOne("Witcher.Core.Entities.CreatureTemplate", "CreatureTemplate")
                         .WithMany("CreatureTemplateParts")
                         .HasForeignKey("CreatureTemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.BodyPart", null)
+                    b.HasOne("Witcher.Core.Entities.BodyPart", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.CreatureTemplatePart", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.CreatureTemplatePart", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CreatureTemplate");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CreaturePart", "CreaturePart")
+                    b.HasOne("Witcher.Core.Entities.CreaturePart", "CreaturePart")
                         .WithMany()
                         .HasForeignKey("CreaturePartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                    b.HasOne("Witcher.Core.Entities.Effect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CreaturePart");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.BleedEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.BleedEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                    b.HasOne("Witcher.Core.Entities.Effect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.BleedEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.BleedEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.BleedingWoundEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.BleedingWoundEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                    b.HasOne("Witcher.Core.Entities.Effect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.BleedingWoundEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.BleedingWoundEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                    b.HasOne("Witcher.Core.Entities.Effect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DeadEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DyingEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DyingEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                    b.HasOne("Witcher.Core.Entities.Effect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DyingEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DyingEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.FireEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.FireEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                    b.HasOne("Witcher.Core.Entities.Effect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.FireEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.FireEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.FreezeEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.FreezeEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                    b.HasOne("Witcher.Core.Entities.Effect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.FreezeEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.FreezeEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.PoisonEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.PoisonEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                    b.HasOne("Witcher.Core.Entities.Effect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.PoisonEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.PoisonEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.StaggeredEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.StaggeredEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                    b.HasOne("Witcher.Core.Entities.Effect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.StaggeredEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.StaggeredEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.StunEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.StunEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                    b.HasOne("Witcher.Core.Entities.Effect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.StunEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.StunEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SufflocationEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SufflocationEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.Effect", null)
+                    b.HasOne("Witcher.Core.Entities.Effect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SufflocationEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.SufflocationEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexArmCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Notifications.JoinGameRequestNotification", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Notifications.Notification", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexArmCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Notifications.JoinGameRequestNotification", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexHead1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexArmCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexHead1CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.ComplexArmCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexHead2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexHead1CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexHead2CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.ComplexHead1CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexLegCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexHead2CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexLegCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.ComplexHead2CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexTailCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexLegCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexTailCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.ComplexLegCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexTorso1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexTailCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexTorso1CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.ComplexTailCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexTorso2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexTorso1CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexTorso2CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.ComplexTorso1CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.ComplexWingCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexTorso2CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.ComplexWingCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.ComplexTorso2CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyArmCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexWingCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyArmCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.ComplexWingCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyHead1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyArmCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyHead1CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DeadlyArmCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyHead2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyHead1CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyHead2CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DeadlyHead1CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyLegCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyHead2CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyLegCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DeadlyHead2CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyTailCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyLegCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyTailCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DeadlyLegCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyTorso1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyTailCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyTorso1CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DeadlyTailCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyTorso2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyTorso1CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyTorso2CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DeadlyTorso1CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DeadlyWingCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyTorso2CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DeadlyWingCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DeadlyTorso2CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultArmCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DeadlyWingCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultArmCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DeadlyWingCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultHead1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultArmCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultHead1CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DifficultArmCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultHead2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultHead1CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultHead2CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DifficultHead1CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultLegCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultHead2CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultLegCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DifficultHead2CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultTailCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultLegCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultTailCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DifficultLegCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultTorso1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultTailCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultTorso1CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DifficultTailCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultTorso2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultTorso1CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultTorso2CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DifficultTorso1CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.DifficultWingCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultTorso2CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.DifficultWingCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DifficultTorso2CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleArmCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.DifficultWingCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleArmCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.DifficultWingCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleHead1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleArmCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleHead1CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.SimpleArmCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleHead2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleHead1CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleHead2CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.SimpleHead1CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleLegCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleHead2CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleLegCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.SimpleHead2CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleTailCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleLegCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleTailCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.SimpleLegCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleTorso1CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleTailCritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleTorso1CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.SimpleTailCritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleTorso2CritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleTorso1CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleTorso2CritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.SimpleTorso1CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Effects.SimpleWingCritEffect", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleTorso2CritEffect", b =>
                 {
-                    b.HasOne("Sindie.ApiService.Core.Entities.CritEffect", null)
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
                         .WithOne()
-                        .HasForeignKey("Sindie.ApiService.Core.Entities.Effects.SimpleWingCritEffect", "Id")
+                        .HasForeignKey("Witcher.Core.Entities.Effects.SimpleTorso2CritEffect", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Ability", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Effects.SimpleWingCritEffect", b =>
+                {
+                    b.HasOne("Witcher.Core.Entities.CritEffect", null)
+                        .WithOne()
+                        .HasForeignKey("Witcher.Core.Entities.Effects.SimpleWingCritEffect", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Witcher.Core.Entities.Ability", b =>
                 {
                     b.Navigation("AppliedConditions");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Battle", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Battle", b =>
                 {
                     b.Navigation("Creatures");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.BodyTemplate", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.BodyTemplate", b =>
                 {
                     b.Navigation("BodyTemplateParts");
 
                     b.Navigation("CreatureTemplates");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Creature", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Creature", b =>
                 {
                     b.Navigation("CreatureParts");
 
@@ -3389,7 +3508,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("Effects");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.CreatureTemplate", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.CreatureTemplate", b =>
                 {
                     b.Navigation("CreatureTemplateParts");
 
@@ -3398,7 +3517,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("Creatures");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Game", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Game", b =>
                 {
                     b.Navigation("Abilities");
 
@@ -3406,17 +3525,19 @@ namespace Witcher.Storage.Postgresql.Migrations
 
                     b.Navigation("BodyTemplates");
 
+                    b.Navigation("Characters");
+
                     b.Navigation("CreatureTemplates");
 
                     b.Navigation("UserGames");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.GameRole", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.GameRole", b =>
                 {
                     b.Navigation("UserGames");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.ImgFile", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.ImgFile", b =>
                 {
                     b.Navigation("Battle");
 
@@ -3429,22 +3550,22 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("UserAvatar");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Interface", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Interface", b =>
                 {
-                    b.Navigation("UserGameCharacters");
-
                     b.Navigation("UserGames");
 
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.SystemRole", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.SystemRole", b =>
                 {
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.User", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.User", b =>
                 {
+                    b.Navigation("Notifications");
+
                     b.Navigation("UserAccounts");
 
                     b.Navigation("UserGames");
@@ -3452,19 +3573,19 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.UserGame", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.UserGame", b =>
                 {
                     b.Navigation("Instances");
 
                     b.Navigation("UserGameCharacters");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.UserGameCharacter", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.UserGameCharacter", b =>
                 {
                     b.Navigation("ActivateCharacter");
                 });
 
-            modelBuilder.Entity("Sindie.ApiService.Core.Entities.Character", b =>
+            modelBuilder.Entity("Witcher.Core.Entities.Character", b =>
                 {
                     b.Navigation("UserGameCharacters");
                 });

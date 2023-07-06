@@ -6,7 +6,6 @@ using Witcher.Core.Contracts.UserGameRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Exceptions;
 using Witcher.Core.Exceptions.EntityExceptions;
-using Witcher.Core.Exceptions.RequestExceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,7 +42,7 @@ namespace Witcher.Core.Requests.UserGameRequests
 			var game = await _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.UserGames)
 				.FirstOrDefaultAsync(cancellationToken)
-					?? throw new NoAccessToEntityException<Game>();
+					?? throw new RequestValidationException("Необходимо зайти в игру.");
 
 			var user = await _appDbContext.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken)
 				?? throw new EntityNotFoundException<User>(request.UserId);

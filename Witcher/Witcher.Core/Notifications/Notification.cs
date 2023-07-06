@@ -7,7 +7,8 @@ namespace Witcher.Core.Notifications
 	public class Notification : EntityBase
 	{
 		protected User _user;
-		public const string UserField = nameof(_user); 
+		public const string UserField = nameof(_user);
+
 		public Guid UserId { get; protected set; }
 
 		public string Message { get; set; }

@@ -1924,6 +1924,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("GameId");
 
+                    b.Property<string>("GameName")
+                        .HasColumnType("text");
+
                     b.Property<Guid>("SenderId")
                         .HasColumnType("uuid")
                         .HasColumnName("SenderId");

@@ -17,6 +17,23 @@
             @Html.DisplayFor(model => model.Message)
     </dl>
 </div>
+
+@if(Model is Witcher.Core.Notifications.YesOrNoDecisionNotification)
+{
+    <form asp-action="Decide" asp-route-Id=@Model.Id asp-route-accept=true>
+        <div class="form-group">
+            <input type="submit" value="Accept" class="btn btn-primary" />
+        </div>
+    </form>
+    <form asp-action="Decide" asp-route-Id=@Model.Id asp-route-accept=false>
+        <div class="form-group">
+            <input type="submit" value="Decline" class="btn btn-primary" />
+        </div>
+    </form>
+}
+
+<p>@TempData["ErrorMessage"]</p>
+
 <div>
     <a asp-action="Index">Back to Notifications</a>
 </div>

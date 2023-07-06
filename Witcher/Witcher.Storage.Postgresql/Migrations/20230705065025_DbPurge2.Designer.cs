@@ -12,8 +12,8 @@ using Witcher.Storage.Postgresql;
 namespace Witcher.Storage.Postgresql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230428080520_notifications")]
-    partial class notifications
+    [Migration("20230705065025_DbPurge2")]
+    partial class DbPurge2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1663,6 +1663,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now() at time zone 'utc'");
 
+                    b.Property<bool>("IsReaded")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Message")
                         .HasColumnType("text")
                         .HasColumnName("Message");
@@ -1682,9 +1685,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("UserId");
-
-                    b.Property<bool>("isReaded")
-                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 

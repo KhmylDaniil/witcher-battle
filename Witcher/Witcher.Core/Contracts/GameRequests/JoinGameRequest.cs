@@ -14,8 +14,8 @@ namespace Witcher.Core.Contracts.GameRequests
 
 		public void Validate()
 		{
-			if (Message.Length > 100)
-				throw new RequestFieldIncorrectDataException<JoinGameRequest>(Message, "Длина сообщения превышает 100 символов.");
+			if (Message?.Length > 100)
+				throw new RequestFieldIncorrectDataException<JoinGameRequest>(nameof(Message), "Длина сообщения превышает 100 символов.");
 		}
 	}
 }
