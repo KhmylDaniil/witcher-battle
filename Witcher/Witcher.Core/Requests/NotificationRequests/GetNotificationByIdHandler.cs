@@ -32,8 +32,11 @@ namespace Witcher.Core.Requests.NotificationRequests
 			var notification =  await filter.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
 				?? throw new EntityNotFoundException<Notification>(request.Id);
 
-			notification.IsReaded = true;
-			await _appDbContext.SaveChangesAsync(cancellationToken);
+			if (!notification.IsReaded)
+			{
+				notification.IsReaded = true;
+				await _appDbContext.SaveChangesAsync(cancellationToken);
+			}
 
 			return notification;
 		}
