@@ -3,8 +3,10 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Caching.Memory;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BattleRequests;
+using Witcher.Core.Contracts.BodyTemplateRequests;
 using Witcher.Core.Contracts.RunBattleRequests;
 using Witcher.Core.Exceptions;
 using Witcher.Core.ExtensionMethods;
@@ -17,13 +19,15 @@ namespace Witcher.MVC.Controllers
 	public class RunBattleController : BaseController
 	{
 		private readonly IMapper _mapper;
+		private readonly IMemoryCache _memoryCache;
 		private readonly IHubContext<MessageHub> _messageHubContext;
 		
 		public RunBattleController(IMediator mediator, IGameIdService gameIdService, IMapper mapper,
-			IHubContext<MessageHub> messageHub)
+			IHubContext<MessageHub> messageHub, IMemoryCache memoryCache)
 			: base(mediator, gameIdService)
 		{
 			_mapper = mapper;
+			_memoryCache = memoryCache;
 			_messageHubContext = messageHub;
 		}
 
@@ -82,7 +86,7 @@ namespace Witcher.MVC.Controllers
 			{
 				await _mediator.SendValidated(command, cancellationToken);
 
-				await _messageHubContext.SendUpdateBattleMessage();
+				await _messageHubContext.SendUpdateBattleMessage(await GetUserIdListAsync(command.BattleId, cancellationToken));
 			}
 			catch (RequestValidationException ex)
 			{
@@ -110,7 +114,7 @@ namespace Witcher.MVC.Controllers
 			{
 				await _mediator.SendValidated(command, cancellationToken);
 
-				await _messageHubContext.SendUpdateBattleMessage();
+				await _messageHubContext.SendUpdateBattleMessage(await GetUserIdListAsync(command.BattleId, cancellationToken));
 			}
 			catch (RequestValidationException ex)
 			{
@@ -130,7 +134,7 @@ namespace Witcher.MVC.Controllers
 			{
 				await _mediator.SendValidated(command, cancellationToken);
 
-				await _messageHubContext.SendUpdateBattleMessage();
+				await _messageHubContext.SendUpdateBattleMessage(await GetUserIdListAsync(command.BattleId, cancellationToken));
 			}
 			catch (RequestValidationException ex)
 			{
@@ -150,7 +154,7 @@ namespace Witcher.MVC.Controllers
 			{
 				await _mediator.SendValidated(command, cancellationToken);
 
-				await _messageHubContext.SendUpdateBattleMessage();
+				await _messageHubContext.SendUpdateBattleMessage(await GetUserIdListAsync(command.BattleId, cancellationToken));
 			}
 			catch (RequestValidationException ex)
 			{
@@ -192,6 +196,27 @@ namespace Witcher.MVC.Controllers
 			vm.EffectsOnTarget = formHealResponse.EffectsOnTarget;
 
 			return vm;
+		}
+
+		/// <summary>
+		/// Service method getting battle participants userId list for SignalR update battle log command
+		/// </summary>
+		/// <returns></returns>
+		private async Task<IReadOnlyList<string>> GetUserIdListAsync(Guid battleId, CancellationToken cancellationToken)
+		{
+			if (_memoryCache.TryGetValue(battleId, out IReadOnlyList<string> userIdListFromCache))
+				return userIdListFromCache;
+			else
+			{
+				var userIdList = await _mediator.SendValidated(new GetUserIdListForBattleQuery
+				{
+					GameId = _gameIdService.GameId,
+					BattleId = battleId
+				}, cancellationToken);
+
+				_memoryCache.Set(battleId, userIdList);
+				return userIdList;
+			}
 		}
 	}
 }
