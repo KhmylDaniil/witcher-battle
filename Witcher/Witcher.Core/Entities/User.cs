@@ -1,6 +1,7 @@
 ﻿using Witcher.Core.Abstractions;
 using System;
 using System.Collections.Generic;
+using Witcher.Core.Notifications;
 
 namespace Witcher.Core.Entities
 {
@@ -54,6 +55,7 @@ namespace Witcher.Core.Entities
 			UserGames = new List<UserGame>();
 			TextFiles = new List<TextFile>();
 			ImgFiles = new List<ImgFile>();
+			Notifications = new();
 			InterfaceId = interfaceId;
 		}
 
@@ -75,6 +77,7 @@ namespace Witcher.Core.Entities
 			UserAccounts = new List<UserAccount>();
 			UserRoles = new List<UserRole>();
 			UserGames = new List<UserGame>();
+			Notifications = new();
 			Interface = @interface;
 			InterfaceId = @interface.Id;
 			Avatar = default;
@@ -141,6 +144,11 @@ namespace Witcher.Core.Entities
 		/// Графический файл (аватар)
 		/// </summary>
 		public ImgFile Avatar { get; set; }
+
+		/// <summary>
+		/// Уведомления
+		/// </summary>
+		public List<Notification> Notifications { get; set; }
 
 		#endregion navigation properties
 

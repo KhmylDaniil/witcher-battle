@@ -38,9 +38,18 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
-            <td>
-                <a asp-action="Enter" asp-route-id="@item.Id">Enter</a>
-            </td>
+                @if (item.Users.ContainsKey((Guid)@ViewData["currentUser"]))
+                {
+                    <td>
+                        <a asp-action="Enter" asp-route-id="@item.Id">Enter</a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a asp-action="AskForJoin" asp-route-gameId="@item.Id" asp-route-userId="@ViewData["currentUser"]">Ask for join</a>
+                    </td>
+                }
         </tr>
 }
     </tbody>

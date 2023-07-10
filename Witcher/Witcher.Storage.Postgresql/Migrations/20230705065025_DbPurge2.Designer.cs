@@ -12,8 +12,13 @@ using Witcher.Storage.Postgresql;
 namespace Witcher.Storage.Postgresql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230531085244_ArmorTemplates")]
-    partial class ArmorTemplates
+<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.Designer.cs
+    [Migration("20230511062940_NewDataBasePurge")]
+    partial class NewDataBasePurge
+========
+    [Migration("20230705065025_DbPurge2")]
+    partial class DbPurge2
+>>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.Designer.cs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -52,21 +57,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasIndex("CreatureTemplatesId");
 
                     b.ToTable("CreatureTemplateAbilities", "GameRules");
-                });
-
-            modelBuilder.Entity("ArmorTemplateBodyTemplatePart", b =>
-                {
-                    b.Property<Guid>("ArmorTemplatesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("BodyTemplatePartsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ArmorTemplatesId", "BodyTemplatePartsId");
-
-                    b.HasIndex("BodyTemplatePartsId");
-
-                    b.ToTable("ArmorTemplateBodyTemplatePart");
                 });
 
             modelBuilder.Entity("GameImgFile", b =>
@@ -1218,11 +1208,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now() at time zone 'utc'");
 
-                    b.Property<bool?>("IsEquipped")
-                        .HasColumnType("boolean")
-                        .HasColumnName("IsEquipped")
-                        .HasComment("Экипировано");
-
                     b.Property<Guid>("ItemTemplateId")
                         .HasColumnType("uuid")
                         .HasColumnName("ItemTemplateId")
@@ -1747,28 +1732,49 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Роли пользователей");
                 });
 
-            modelBuilder.Entity("Witcher.Core.Entities.ArmorTemplate", b =>
+            modelBuilder.Entity("Witcher.Core.Notifications.Notification", b =>
                 {
-                    b.HasBaseType("Witcher.Core.Entities.ItemTemplate");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
 
-                    b.Property<int>("Armor")
-                        .HasColumnType("integer")
-                        .HasColumnName("Armor")
-                        .HasComment("Броня");
-
-                    b.Property<Guid>("BodyTemplateId")
+                    b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("EncumbranceValue")
-                        .HasColumnType("integer")
-                        .HasColumnName("EncumbranceValue")
-                        .HasComment("Скованность движений");
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now() at time zone 'utc'");
 
-                    b.HasIndex("BodyTemplateId");
+                    b.Property<bool>("IsReaded")
+                        .HasColumnType("boolean");
 
-                    b.ToTable("ArmorTemplates", "Items");
+                    b.Property<string>("Message")
+                        .HasColumnType("text")
+                        .HasColumnName("Message");
 
-                    b.HasComment("Шаблоны брони");
+                    b.Property<Guid>("ModifiedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RoleCreatedUser")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleModifiedUser")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications", "Notifications");
                 });
 
             modelBuilder.Entity("Witcher.Core.Entities.BodyTemplatePart", b =>
@@ -1996,6 +2002,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.HasComment("Эффекты удушья");
                 });
 
+<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.Designer.cs
             modelBuilder.Entity("Witcher.Core.Entities.Weapon", b =>
                 {
                     b.HasBaseType("Witcher.Core.Entities.Item");
@@ -2004,6 +2011,11 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("CurrentDurability")
                         .HasComment("Текущая прочность");
+
+                    b.Property<bool>("IsEquipped")
+                        .HasColumnType("boolean")
+                        .HasColumnName("IsEquipped")
+                        .HasComment("Экипировано");
 
                     b.ToTable("Weapons", "Items");
 
@@ -2051,9 +2063,26 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnName("Range")
                         .HasComment("Дальность");
 
-                    b.ToTable("WeaponTemplates", "Items");
+                    b.ToTable("WeaponTeemplates", "Items");
 
                     b.HasComment("Шаблоны оружия");
+========
+            modelBuilder.Entity("Witcher.Core.Notifications.JoinGameRequestNotification", b =>
+                {
+                    b.HasBaseType("Witcher.Core.Notifications.Notification");
+
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("GameId");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("SenderId");
+
+                    b.ToTable("JoinGameRequestNotifications", "Notifications");
+
+                    b.HasComment("Уведомления о запросах присоединения к игре");
+>>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.Designer.cs
                 });
 
             modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexArmCritEffect", b =>
@@ -2629,21 +2658,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ArmorTemplateBodyTemplatePart", b =>
-                {
-                    b.HasOne("Witcher.Core.Entities.ArmorTemplate", null)
-                        .WithMany()
-                        .HasForeignKey("ArmorTemplatesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Witcher.Core.Entities.BodyTemplatePart", null)
-                        .WithMany()
-                        .HasForeignKey("BodyTemplatePartsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("GameImgFile", b =>
                 {
                     b.HasOne("Witcher.Core.Entities.Game", null)
@@ -2860,7 +2874,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasForeignKey("Witcher.Core.Entities.Creature", "ImgFileId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.OwnsMany("Witcher.Core.Entities.EntityDamageTypeModifier", "DamageTypeModifiers", b1 =>
+                    b.OwnsMany("Witcher.Core.Entities.CreatureDamageTypeModifier", "DamageTypeModifiers", b1 =>
                         {
                             b1.Property<Guid>("Id")
                                 .ValueGeneratedOnAdd()
@@ -2900,7 +2914,7 @@ namespace Witcher.Storage.Postgresql.Migrations
 
                             b1.HasIndex("CreatureId");
 
-                            b1.ToTable("Creatures_DamageTypeModifiers", "Battles");
+                            b1.ToTable("CreatureDamageTypeModifier", "Battles");
 
                             b1.WithOwner()
                                 .HasForeignKey("CreatureId");
@@ -2918,7 +2932,11 @@ namespace Witcher.Storage.Postgresql.Migrations
                             b1.Property<int>("IsDefenseInThisTurnPerformed")
                                 .HasColumnType("integer");
 
+<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.Designer.cs
                             b1.Property<Guid?>("MuitiattackAttackFormulaId")
+========
+                            b1.Property<Guid?>("MuitiattackAbilityId")
+>>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.Designer.cs
                                 .HasColumnType("uuid");
 
                             b1.Property<int>("MultiattackRemainsQuantity")
@@ -2976,7 +2994,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasForeignKey("Witcher.Core.Entities.CreatureTemplate", "ImgFileId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.OwnsMany("Witcher.Core.Entities.EntityDamageTypeModifier", "DamageTypeModifiers", b1 =>
+                    b.OwnsMany("Witcher.Core.Entities.CreatureTemplateDamageTypeModifier", "DamageTypeModifiers", b1 =>
                         {
                             b1.Property<Guid>("Id")
                                 .ValueGeneratedOnAdd()
@@ -3016,7 +3034,7 @@ namespace Witcher.Storage.Postgresql.Migrations
 
                             b1.HasIndex("CreatureTemplateId");
 
-                            b1.ToTable("CreatureTemplates_DamageTypeModifiers", "GameRules");
+                            b1.ToTable("CreatureTemplateDamageTypeModifier", "GameRules");
 
                             b1.WithOwner()
                                 .HasForeignKey("CreatureTemplateId");
@@ -3195,69 +3213,15 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Witcher.Core.Entities.ArmorTemplate", b =>
+            modelBuilder.Entity("Witcher.Core.Notifications.Notification", b =>
                 {
-                    b.HasOne("Witcher.Core.Entities.BodyTemplate", "BodyTemplate")
-                        .WithMany("ArmorsTemplates")
-                        .HasForeignKey("BodyTemplateId")
+                    b.HasOne("Witcher.Core.Entities.User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Witcher.Core.Entities.ItemTemplate", null)
-                        .WithOne()
-                        .HasForeignKey("Witcher.Core.Entities.ArmorTemplate", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsMany("Witcher.Core.Entities.EntityDamageTypeModifier", "DamageTypeModifiers", b1 =>
-                        {
-                            b1.Property<Guid>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid>("ArmorTemplateId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid>("CreatedByUserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("CreatedOn")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<int>("DamageType")
-                                .HasColumnType("integer");
-
-                            b1.Property<int>("DamageTypeModifier")
-                                .HasColumnType("integer");
-
-                            b1.Property<Guid>("ModifiedByUserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("ModifiedOn")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<Guid>("PrimaryEntityid")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("RoleCreatedUser")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("RoleModifiedUser")
-                                .HasColumnType("text");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("ArmorTemplateId");
-
-                            b1.ToTable("ArmorTemplates_DamageTypeModifiers", "Items");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ArmorTemplateId");
-                        });
-
-                    b.Navigation("BodyTemplate");
-
-                    b.Navigation("DamageTypeModifiers");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Witcher.Core.Entities.BodyTemplatePart", b =>
@@ -3442,15 +3406,24 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .IsRequired();
                 });
 
+<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.Designer.cs
             modelBuilder.Entity("Witcher.Core.Entities.Weapon", b =>
                 {
                     b.HasOne("Witcher.Core.Entities.Item", null)
                         .WithOne()
                         .HasForeignKey("Witcher.Core.Entities.Weapon", "Id")
+========
+            modelBuilder.Entity("Witcher.Core.Notifications.JoinGameRequestNotification", b =>
+                {
+                    b.HasOne("Witcher.Core.Notifications.Notification", null)
+                        .WithOne()
+                        .HasForeignKey("Witcher.Core.Notifications.JoinGameRequestNotification", "Id")
+>>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.Designer.cs
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
+<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.Designer.cs
             modelBuilder.Entity("Witcher.Core.Entities.WeaponTemplate", b =>
                 {
                     b.HasOne("Witcher.Core.Entities.ItemTemplate", null)
@@ -3499,7 +3472,7 @@ namespace Witcher.Storage.Postgresql.Migrations
 
                             b1.HasKey("WeaponTemplateId", "Id");
 
-                            b1.ToTable("WeaponTemplates_AppliedConditions", "Items");
+                            b1.ToTable("WeaponTeemplates_AppliedConditions", "Items");
 
                             b1.WithOwner()
                                 .HasForeignKey("WeaponTemplateId");
@@ -3540,7 +3513,7 @@ namespace Witcher.Storage.Postgresql.Migrations
 
                             b1.HasKey("WeaponTemplateId", "Id");
 
-                            b1.ToTable("WeaponTemplates_DefensiveSkills", "Items");
+                            b1.ToTable("WeaponTeemplates_DefensiveSkills", "Items");
 
                             b1.WithOwner()
                                 .HasForeignKey("WeaponTemplateId");
@@ -3551,6 +3524,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Navigation("DefensiveSkills");
                 });
 
+========
+>>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.Designer.cs
             modelBuilder.Entity("Witcher.Core.Entities.Effects.ComplexArmCritEffect", b =>
                 {
                     b.HasOne("Witcher.Core.Entities.CritEffect", null)
@@ -3846,8 +3821,6 @@ namespace Witcher.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("Witcher.Core.Entities.BodyTemplate", b =>
                 {
-                    b.Navigation("ArmorsTemplates");
-
                     b.Navigation("BodyTemplateParts");
 
                     b.Navigation("CreatureTemplates");
@@ -3925,6 +3898,8 @@ namespace Witcher.Storage.Postgresql.Migrations
 
             modelBuilder.Entity("Witcher.Core.Entities.User", b =>
                 {
+                    b.Navigation("Notifications");
+
                     b.Navigation("UserAccounts");
 
                     b.Navigation("UserGames");

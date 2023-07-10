@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Memory;
 using Serilog.Extensions.Logging;
 using Witcher.Core;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Services.Hasher;
+using Witcher.MVC.Services;
 using Witcher.Storage.Postgresql;
 
 namespace Witcher.MVC
@@ -35,6 +37,7 @@ namespace Witcher.MVC
 			services.AddCors(o => o.AddPolicy("AllowAll", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
 			services.AddSignalR();
+			services.AddSingleton<IUserIdProvider, SignalRUserProvider>();
 
 			services.AddAutoMapper(typeof(Program));
 		}

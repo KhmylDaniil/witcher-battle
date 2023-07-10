@@ -42,6 +42,9 @@ namespace Witcher.Core.Contracts.GameRequests
 		{
 			if (string.IsNullOrEmpty(Name))
 				throw new RequestFieldNullException<CreateGameCommand>(nameof(Name));
+
+			if (Name.Length > 20)
+				throw new RequestFieldIncorrectDataException<JoinGameRequest>(nameof(Name), "Длина названия превышает 20 символов.");
 		}
 	}
 }

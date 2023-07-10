@@ -32,9 +32,7 @@ namespace Witcher.MVC.Controllers
 		/// <summary>
 		/// Получение списка игр с возможностью поиска
 		/// </summary>
-		/// <param name="name">Поле поиска по имени</param>
-		/// <param name="description">Поле поиска по описанию</param>
-		/// <param name="authorName">Поле поиска по имени автора</param>
+		/// <param name="query">Запрос</param>
 		/// <param name="cancellationToken"></param>
 		/// <returns>Список игр</returns>
 		public async Task<IActionResult> Index(GetGameQuery query, CancellationToken cancellationToken)
@@ -42,6 +40,8 @@ namespace Witcher.MVC.Controllers
 			var response = await _mediator.SendValidated(query, cancellationToken);
 
 			_gameIdService.Reset();
+
+			ViewData["currentUser"] = _userContext.CurrentUserId;
 
 			return View(response);
 		}
@@ -73,6 +73,31 @@ namespace Witcher.MVC.Controllers
 			}
 			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
 		}
+
+		[Route("[controller]/[action]")]
+		public ActionResult AskForJoin(JoinGameRequest request)
+		{
+			return View(request);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Route("[controller]/[action]")]
+		public async Task<IActionResult> AskForJoin(JoinGameRequest request, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await _mediator.SendValidated(request, cancellationToken);
+				return RedirectToAction(nameof(Index));
+			}
+			catch (RequestValidationException ex)
+			{
+				TempData["ErrorMessage"] = ex.UserMessage;
+				return View(request);
+			}
+			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
+		}
+
 
 		/// <summary>
 		/// Создание игры

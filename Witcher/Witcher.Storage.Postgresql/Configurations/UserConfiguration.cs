@@ -63,6 +63,12 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
 
+			builder.HasMany(x => x.Notifications)
+				.WithOne(x => x.User)
+				.HasForeignKey(x => x.UserId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
 			builder.HasOne(x => x.Interface)
 				.WithMany(x => x.Users)
 				.HasForeignKey(x => x.InterfaceId)

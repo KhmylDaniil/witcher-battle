@@ -15,11 +15,6 @@ namespace Witcher.Core.Contracts.UserGameRequests
 		public Guid UserId { get; set; }
 
 		/// <summary>
-		/// Имя пользователя
-		/// </summary>
-		public string Name { get; set; }
-
-		/// <summary>
 		/// Айди роли в игре
 		/// </summary>
 		public Guid RoleId { get; set; }
