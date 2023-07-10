@@ -5,16 +5,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Witcher.Storage.Postgresql.Migrations
 {
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
-    public partial class NewDataBasePurge : Migration
-========
-    public partial class DbPurge2 : Migration
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
+    public partial class DBPurge : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
                 name: "GameRules");
+
+            migrationBuilder.EnsureSchema(
+                name: "Items");
 
             migrationBuilder.EnsureSchema(
                 name: "Battles");
@@ -32,11 +31,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                 name: "BaseGame");
 
             migrationBuilder.EnsureSchema(
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
-                name: "Items");
-========
                 name: "Notifications");
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
 
             migrationBuilder.CreateTable(
                 name: "BodyParts",
@@ -352,7 +347,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                 });
 
             migrationBuilder.CreateTable(
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
                 name: "ItemTemplates",
                 schema: "Items",
                 columns: table => new
@@ -386,8 +380,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                 comment: "Шаблоны предметов");
 
             migrationBuilder.CreateTable(
-========
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
                 name: "ImgFileUser",
                 schema: "System",
                 columns: table => new
@@ -586,7 +578,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                 comment: "Роли пользователей");
 
             migrationBuilder.CreateTable(
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
                 name: "Abilities_AppliedConditions",
                 schema: "GameRules",
                 columns: table => new
@@ -596,17 +587,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                     ApplyChance = table.Column<int>(type: "integer", nullable: false, comment: "Шанс применения"),
                     Condition = table.Column<string>(type: "text", nullable: false, comment: "Тип состояния"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-========
-                name: "AppliedConditions",
-                schema: "GameRules",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
-                    AbilityId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди способности"),
-                    ApplyChance = table.Column<int>(type: "integer", nullable: false, comment: "Шанс применения"),
-                    Condition = table.Column<string>(type: "text", nullable: false, comment: "Тип состояния"),
-                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
@@ -615,42 +595,24 @@ namespace Witcher.Storage.Postgresql.Migrations
                 },
                 constraints: table =>
                 {
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
                     table.PrimaryKey("PK_Abilities_AppliedConditions", x => new { x.AbilityId, x.Id });
                     table.ForeignKey(
                         name: "FK_Abilities_AppliedConditions_Abilities_AbilityId",
-========
-                    table.PrimaryKey("PK_AppliedConditions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppliedConditions_Abilities_AbilityId",
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
                         column: x => x.AbilityId,
                         principalSchema: "GameRules",
                         principalTable: "Abilities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
                 });
 
             migrationBuilder.CreateTable(
                 name: "Abilities_DefensiveSkills",
-========
-                },
-                comment: "Применяемые состояния");
-
-            migrationBuilder.CreateTable(
-                name: "DefensiveSkill",
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
                 schema: "GameRules",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     AbilityId = table.Column<Guid>(type: "uuid", nullable: false),
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
                     DefensiveSkill = table.Column<string>(type: "text", nullable: false, comment: "Защитный навык"),
-========
-                    Skill = table.Column<int>(type: "integer", nullable: false),
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -660,15 +622,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                 },
                 constraints: table =>
                 {
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
                     table.PrimaryKey("PK_Abilities_DefensiveSkills", x => new { x.AbilityId, x.Id });
                     table.ForeignKey(
                         name: "FK_Abilities_DefensiveSkills_Abilities_AbilityId",
-========
-                    table.PrimaryKey("PK_DefensiveSkill", x => new { x.AbilityId, x.Id });
-                    table.ForeignKey(
-                        name: "FK_DefensiveSkill_Abilities_AbilityId",
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
                         column: x => x.AbilityId,
                         principalSchema: "GameRules",
                         principalTable: "Abilities",
@@ -681,19 +637,24 @@ namespace Witcher.Storage.Postgresql.Migrations
                 schema: "GameRules",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
-                    BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона тела")
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона тела"),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
+                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true),
+                    BodyPartType = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    HitPenalty = table.Column<int>(type: "integer", nullable: false),
+                    DamageModifier = table.Column<double>(type: "double precision", nullable: false),
+                    MinToHit = table.Column<int>(type: "integer", nullable: false),
+                    MaxToHit = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BodyTemplateParts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_BodyTemplateParts_BodyParts_Id",
-                        column: x => x.Id,
-                        principalSchema: "GameRules",
-                        principalTable: "BodyParts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BodyTemplateParts_BodyTemplates_BodyTemplateId",
                         column: x => x.BodyTemplateId,
@@ -762,8 +723,37 @@ namespace Witcher.Storage.Postgresql.Migrations
                 comment: "Шаблоны существ");
 
             migrationBuilder.CreateTable(
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
-                name: "WeaponTeemplates",
+                name: "ArmorTemplates",
+                schema: "Items",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
+                    BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Armor = table.Column<int>(type: "integer", nullable: false, comment: "Броня"),
+                    EncumbranceValue = table.Column<int>(type: "integer", nullable: false, comment: "Скованность движений")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArmorTemplates", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ArmorTemplates_BodyTemplates_BodyTemplateId",
+                        column: x => x.BodyTemplateId,
+                        principalSchema: "GameRules",
+                        principalTable: "BodyTemplates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ArmorTemplates_ItemTemplates_Id",
+                        column: x => x.Id,
+                        principalSchema: "Items",
+                        principalTable: "ItemTemplates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Шаблоны брони");
+
+            migrationBuilder.CreateTable(
+                name: "WeaponTemplates",
                 schema: "Items",
                 columns: table => new
                 {
@@ -778,9 +768,9 @@ namespace Witcher.Storage.Postgresql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WeaponTeemplates", x => x.Id);
+                    table.PrimaryKey("PK_WeaponTemplates", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WeaponTeemplates_ItemTemplates_Id",
+                        name: "FK_WeaponTemplates_ItemTemplates_Id",
                         column: x => x.Id,
                         principalSchema: "Items",
                         principalTable: "ItemTemplates",
@@ -788,14 +778,16 @@ namespace Witcher.Storage.Postgresql.Migrations
                         onDelete: ReferentialAction.Cascade);
                 },
                 comment: "Шаблоны оружия");
-========
+
+            migrationBuilder.CreateTable(
                 name: "JoinGameRequestNotifications",
                 schema: "Notifications",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
                     SenderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    GameId = table.Column<Guid>(type: "uuid", nullable: false)
+                    GameId = table.Column<Guid>(type: "uuid", nullable: false),
+                    GameName = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -809,7 +801,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                         onDelete: ReferentialAction.Cascade);
                 },
                 comment: "Уведомления о запросах присоединения к игре");
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
 
             migrationBuilder.CreateTable(
                 name: "Battles",
@@ -886,35 +877,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CreatureTemplateDamageTypeModifier",
-                schema: "GameRules",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    DamageType = table.Column<int>(type: "integer", nullable: false),
-                    DamageTypeModifier = table.Column<int>(type: "integer", nullable: false),
-                    PrimaryEntityid = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatureTemplateId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
-                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CreatureTemplateDamageTypeModifier", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CreatureTemplateDamageTypeModifier_CreatureTemplates_Creatu~",
-                        column: x => x.CreatureTemplateId,
-                        principalSchema: "GameRules",
-                        principalTable: "CreatureTemplates",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CreatureTemplateParts",
                 schema: "GameRules",
                 columns: table => new
@@ -944,6 +906,35 @@ namespace Witcher.Storage.Postgresql.Migrations
                 comment: "Части шаблона существа");
 
             migrationBuilder.CreateTable(
+                name: "CreatureTemplates_DamageTypeModifiers",
+                schema: "GameRules",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    DamageType = table.Column<int>(type: "integer", nullable: false),
+                    DamageTypeModifier = table.Column<int>(type: "integer", nullable: false),
+                    PrimaryEntityid = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatureTemplateId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
+                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CreatureTemplates_DamageTypeModifiers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CreatureTemplates_DamageTypeModifiers_CreatureTemplates_Cre~",
+                        column: x => x.CreatureTemplateId,
+                        principalSchema: "GameRules",
+                        principalTable: "CreatureTemplates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CreatureTemplateSkills",
                 schema: "GameRules",
                 columns: table => new
@@ -967,14 +958,68 @@ namespace Witcher.Storage.Postgresql.Migrations
                         column: x => x.CreatureId,
                         principalSchema: "GameRules",
                         principalTable: "CreatureTemplates",
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 },
                 comment: "Навыки шаблона существа");
 
             migrationBuilder.CreateTable(
-                name: "WeaponTeemplates_AppliedConditions",
+                name: "ArmorTemplateBodyTemplatePart",
+                columns: table => new
+                {
+                    ArmorTemplatesId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BodyTemplatePartsId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArmorTemplateBodyTemplatePart", x => new { x.ArmorTemplatesId, x.BodyTemplatePartsId });
+                    table.ForeignKey(
+                        name: "FK_ArmorTemplateBodyTemplatePart_ArmorTemplates_ArmorTemplates~",
+                        column: x => x.ArmorTemplatesId,
+                        principalSchema: "Items",
+                        principalTable: "ArmorTemplates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ArmorTemplateBodyTemplatePart_BodyTemplateParts_BodyTemplat~",
+                        column: x => x.BodyTemplatePartsId,
+                        principalSchema: "GameRules",
+                        principalTable: "BodyTemplateParts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ArmorTemplates_DamageTypeModifiers",
+                schema: "Items",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    DamageType = table.Column<int>(type: "integer", nullable: false),
+                    DamageTypeModifier = table.Column<int>(type: "integer", nullable: false),
+                    PrimaryEntityid = table.Column<Guid>(type: "uuid", nullable: false),
+                    ArmorTemplateId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
+                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArmorTemplates_DamageTypeModifiers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ArmorTemplates_DamageTypeModifiers_ArmorTemplates_ArmorTemp~",
+                        column: x => x.ArmorTemplateId,
+                        principalSchema: "Items",
+                        principalTable: "ArmorTemplates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WeaponTemplates_AppliedConditions",
                 schema: "Items",
                 columns: table => new
                 {
@@ -991,18 +1036,18 @@ namespace Witcher.Storage.Postgresql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WeaponTeemplates_AppliedConditions", x => new { x.WeaponTemplateId, x.Id });
+                    table.PrimaryKey("PK_WeaponTemplates_AppliedConditions", x => new { x.WeaponTemplateId, x.Id });
                     table.ForeignKey(
-                        name: "FK_WeaponTeemplates_AppliedConditions_WeaponTeemplates_WeaponT~",
+                        name: "FK_WeaponTemplates_AppliedConditions_WeaponTemplates_WeaponTem~",
                         column: x => x.WeaponTemplateId,
                         principalSchema: "Items",
-                        principalTable: "WeaponTeemplates",
+                        principalTable: "WeaponTemplates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "WeaponTeemplates_DefensiveSkills",
+                name: "WeaponTemplates_DefensiveSkills",
                 schema: "Items",
                 columns: table => new
                 {
@@ -1018,21 +1063,15 @@ namespace Witcher.Storage.Postgresql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WeaponTeemplates_DefensiveSkills", x => new { x.WeaponTemplateId, x.Id });
+                    table.PrimaryKey("PK_WeaponTemplates_DefensiveSkills", x => new { x.WeaponTemplateId, x.Id });
                     table.ForeignKey(
-                        name: "FK_WeaponTeemplates_DefensiveSkills_WeaponTeemplates_WeaponTem~",
+                        name: "FK_WeaponTemplates_DefensiveSkills_WeaponTemplates_WeaponTempl~",
                         column: x => x.WeaponTemplateId,
                         principalSchema: "Items",
-                        principalTable: "WeaponTeemplates",
+                        principalTable: "WeaponTemplates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-========
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                },
-                comment: "Навыки шаблона существа");
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
 
             migrationBuilder.CreateTable(
                 name: "Creatures",
@@ -1074,11 +1113,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     Turn_TurnState = table.Column<int>(type: "integer", nullable: true),
                     Turn_IsDefenseInThisTurnPerformed = table.Column<int>(type: "integer", nullable: true),
                     Turn_MultiattackRemainsQuantity = table.Column<int>(type: "integer", nullable: true),
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
                     Turn_MuitiattackAttackFormulaId = table.Column<Guid>(type: "uuid", nullable: true),
-========
-                    Turn_MuitiattackAbilityId = table.Column<Guid>(type: "uuid", nullable: true),
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
                     Turn_EnergySpendInThisTurn = table.Column<int>(type: "integer", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -1142,54 +1177,30 @@ namespace Witcher.Storage.Postgresql.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CreatureDamageTypeModifier",
+                name: "CreatureParts",
                 schema: "Battles",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatureId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatureId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди существа"),
+                    StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Стартовая броня"),
+                    CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня"),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
                     ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     RoleModifiedUser = table.Column<string>(type: "text", nullable: true),
-                    DamageType = table.Column<int>(type: "integer", nullable: false),
-                    DamageTypeModifier = table.Column<int>(type: "integer", nullable: false),
-                    PrimaryEntityid = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CreatureDamageTypeModifier", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CreatureDamageTypeModifier_Creatures_CreatureId",
-                        column: x => x.CreatureId,
-                        principalSchema: "Battles",
-                        principalTable: "Creatures",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CreatureParts",
-                schema: "Battles",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
-                    CreatureId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди существа"),
-                    StartingArmor = table.Column<int>(type: "integer", nullable: false, comment: "Стартовая броня"),
-                    CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня")
+                    BodyPartType = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    HitPenalty = table.Column<int>(type: "integer", nullable: false),
+                    DamageModifier = table.Column<double>(type: "double precision", nullable: false),
+                    MinToHit = table.Column<int>(type: "integer", nullable: false),
+                    MaxToHit = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CreatureParts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CreatureParts_BodyParts_Id",
-                        column: x => x.Id,
-                        principalSchema: "GameRules",
-                        principalTable: "BodyParts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CreatureParts_Creatures_CreatureId",
                         column: x => x.CreatureId,
@@ -1199,6 +1210,35 @@ namespace Witcher.Storage.Postgresql.Migrations
                         onDelete: ReferentialAction.Cascade);
                 },
                 comment: "Части существа");
+
+            migrationBuilder.CreateTable(
+                name: "Creatures_DamageTypeModifiers",
+                schema: "Battles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    DamageType = table.Column<int>(type: "integer", nullable: false),
+                    DamageTypeModifier = table.Column<int>(type: "integer", nullable: false),
+                    PrimaryEntityid = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatureId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
+                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Creatures_DamageTypeModifiers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Creatures_DamageTypeModifiers_Creatures_CreatureId",
+                        column: x => x.CreatureId,
+                        principalSchema: "Battles",
+                        principalTable: "Creatures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateTable(
                 name: "CreatureSkills",
@@ -2183,6 +2223,57 @@ namespace Witcher.Storage.Postgresql.Migrations
                 comment: "Эффекты вывиха крыла");
 
             migrationBuilder.CreateTable(
+                name: "ArmorParts",
+                schema: "Items",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
+                    Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
+                    ArmorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreaturePartId = table.Column<Guid>(type: "uuid", nullable: true),
+                    BodyTemplatePartId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CurrentArmor = table.Column<int>(type: "integer", nullable: false, comment: "Текущая броня"),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleCreatedUser = table.Column<string>(type: "text", nullable: true),
+                    ModifiedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleModifiedUser = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArmorParts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ArmorParts_BodyTemplateParts_BodyTemplatePartId",
+                        column: x => x.BodyTemplatePartId,
+                        principalSchema: "GameRules",
+                        principalTable: "BodyTemplateParts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ArmorParts_CreatureParts_CreaturePartId",
+                        column: x => x.CreaturePartId,
+                        principalSchema: "Battles",
+                        principalTable: "CreatureParts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Части брони");
+
+            migrationBuilder.CreateTable(
+                name: "Armors",
+                schema: "Items",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Armors", x => x.Id);
+                },
+                comment: "Броня");
+
+            migrationBuilder.CreateTable(
                 name: "Characters",
                 schema: "Characters",
                 columns: table => new
@@ -2222,6 +2313,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     ItemTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона предмета"),
                     Quantity = table.Column<int>(type: "integer", nullable: false, comment: "Количество"),
                     ItemType = table.Column<string>(type: "text", nullable: false, comment: "Тип предмета"),
+                    IsEquipped = table.Column<bool>(type: "boolean", nullable: true, comment: "Экипировано"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -2284,14 +2376,12 @@ namespace Witcher.Storage.Postgresql.Migrations
                 },
                 comment: "Персонажи пользователя игры");
 
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
             migrationBuilder.CreateTable(
                 name: "Weapons",
                 schema: "Items",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
-                    IsEquipped = table.Column<bool>(type: "boolean", nullable: false, comment: "Экипировано"),
                     CurrentDurability = table.Column<int>(type: "integer", nullable: false, comment: "Текущая прочность")
                 },
                 constraints: table =>
@@ -2307,8 +2397,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                 },
                 comment: "Оружие");
 
-========
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
             migrationBuilder.InsertData(
                 schema: "System",
                 table: "GameRoles",
@@ -2357,15 +2445,41 @@ namespace Witcher.Storage.Postgresql.Migrations
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
-========
-                name: "IX_AppliedConditions_AbilityId",
-                schema: "GameRules",
-                table: "AppliedConditions",
-                column: "AbilityId");
+                name: "IX_ArmorParts_ArmorId",
+                schema: "Items",
+                table: "ArmorParts",
+                column: "ArmorId");
 
             migrationBuilder.CreateIndex(
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
+                name: "IX_ArmorParts_BodyTemplatePartId",
+                schema: "Items",
+                table: "ArmorParts",
+                column: "BodyTemplatePartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArmorParts_CreaturePartId",
+                schema: "Items",
+                table: "ArmorParts",
+                column: "CreaturePartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArmorTemplateBodyTemplatePart_BodyTemplatePartsId",
+                table: "ArmorTemplateBodyTemplatePart",
+                column: "BodyTemplatePartsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArmorTemplates_BodyTemplateId",
+                schema: "Items",
+                table: "ArmorTemplates",
+                column: "BodyTemplateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArmorTemplates_DamageTypeModifiers_ArmorTemplateId",
+                schema: "Items",
+                table: "ArmorTemplates_DamageTypeModifiers",
+                column: "ArmorTemplateId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Battles_GameId",
                 schema: "Battles",
                 table: "Battles",
@@ -2416,12 +2530,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                 column: "CreaturesId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatureDamageTypeModifier_CreatureId",
-                schema: "Battles",
-                table: "CreatureDamageTypeModifier",
-                column: "CreatureId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CreatureParts_CreatureId",
                 schema: "Battles",
                 table: "CreatureParts",
@@ -2447,6 +2555,12 @@ namespace Witcher.Storage.Postgresql.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Creatures_DamageTypeModifiers_CreatureId",
+                schema: "Battles",
+                table: "Creatures_DamageTypeModifiers",
+                column: "CreatureId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CreatureSkills_CreatureId",
                 schema: "Battles",
                 table: "CreatureSkills",
@@ -2457,12 +2571,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                 schema: "GameRules",
                 table: "CreatureTemplateAbilities",
                 column: "CreatureTemplatesId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CreatureTemplateDamageTypeModifier_CreatureTemplateId",
-                schema: "GameRules",
-                table: "CreatureTemplateDamageTypeModifier",
-                column: "CreatureTemplateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CreatureTemplateParts_CreatureTemplateId",
@@ -2488,6 +2596,12 @@ namespace Witcher.Storage.Postgresql.Migrations
                 table: "CreatureTemplates",
                 column: "ImgFileId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CreatureTemplates_DamageTypeModifiers_CreatureTemplateId",
+                schema: "GameRules",
+                table: "CreatureTemplates_DamageTypeModifiers",
+                column: "CreatureTemplateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CreatureTemplateSkills_CreatureId",
@@ -2552,7 +2666,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
                 name: "IX_Items_CharacterId",
                 schema: "Items",
                 table: "Items",
@@ -2569,12 +2682,12 @@ namespace Witcher.Storage.Postgresql.Migrations
                 schema: "Items",
                 table: "ItemTemplates",
                 column: "GameId");
-========
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Notifications_UserId",
                 schema: "Notifications",
                 table: "Notifications",
                 column: "UserId");
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
 
             migrationBuilder.CreateIndex(
                 name: "IX_SystemRoles_Name",
@@ -2671,6 +2784,26 @@ namespace Witcher.Storage.Postgresql.Migrations
                 unique: true);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_ArmorParts_Armors_ArmorId",
+                schema: "Items",
+                table: "ArmorParts",
+                column: "ArmorId",
+                principalSchema: "Items",
+                principalTable: "Armors",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Armors_Items_Id",
+                schema: "Items",
+                table: "Armors",
+                column: "Id",
+                principalSchema: "Items",
+                principalTable: "Items",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Characters_UserGameCharacters_UserGameActivatedId",
                 schema: "Characters",
                 table: "Characters",
@@ -2709,6 +2842,11 @@ namespace Witcher.Storage.Postgresql.Migrations
                 table: "UserGames");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_CreatureTemplates_BodyTemplates_BodyTemplateId",
+                schema: "GameRules",
+                table: "CreatureTemplates");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_Battles_ImgFiles_ImgFileId",
                 schema: "Battles",
                 table: "Battles");
@@ -2739,11 +2877,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                 table: "UserGameCharacters");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_CreatureTemplates_BodyTemplates_BodyTemplateId",
-                schema: "GameRules",
-                table: "CreatureTemplates");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_Characters_Creatures_Id",
                 schema: "Characters",
                 table: "Characters");
@@ -2754,16 +2887,23 @@ namespace Witcher.Storage.Postgresql.Migrations
                 table: "Characters");
 
             migrationBuilder.DropTable(
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
                 name: "Abilities_AppliedConditions",
                 schema: "GameRules");
 
             migrationBuilder.DropTable(
                 name: "Abilities_DefensiveSkills",
                 schema: "GameRules");
-========
-                name: "AppliedConditions",
-                schema: "GameRules");
+
+            migrationBuilder.DropTable(
+                name: "ArmorParts",
+                schema: "Items");
+
+            migrationBuilder.DropTable(
+                name: "ArmorTemplateBodyTemplatePart");
+
+            migrationBuilder.DropTable(
+                name: "ArmorTemplates_DamageTypeModifiers",
+                schema: "Items");
 
             migrationBuilder.DropTable(
                 name: "BleedEffects",
@@ -2772,19 +2912,6 @@ namespace Witcher.Storage.Postgresql.Migrations
             migrationBuilder.DropTable(
                 name: "BleedingWoundEffects",
                 schema: "Effects");
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
-
-            migrationBuilder.DropTable(
-                name: "BleedEffects",
-                schema: "Effects");
-
-            migrationBuilder.DropTable(
-                name: "BleedingWoundEffects",
-                schema: "Effects");
-
-            migrationBuilder.DropTable(
-                name: "BodyTemplateParts",
-                schema: "GameRules");
 
             migrationBuilder.DropTable(
                 name: "ComplexArmCritEffects",
@@ -2823,7 +2950,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                 schema: "Battles");
 
             migrationBuilder.DropTable(
-                name: "CreatureDamageTypeModifier",
+                name: "Creatures_DamageTypeModifiers",
                 schema: "Battles");
 
             migrationBuilder.DropTable(
@@ -2835,11 +2962,11 @@ namespace Witcher.Storage.Postgresql.Migrations
                 schema: "GameRules");
 
             migrationBuilder.DropTable(
-                name: "CreatureTemplateDamageTypeModifier",
+                name: "CreatureTemplateParts",
                 schema: "GameRules");
 
             migrationBuilder.DropTable(
-                name: "CreatureTemplateParts",
+                name: "CreatureTemplates_DamageTypeModifiers",
                 schema: "GameRules");
 
             migrationBuilder.DropTable(
@@ -2849,7 +2976,6 @@ namespace Witcher.Storage.Postgresql.Migrations
             migrationBuilder.DropTable(
                 name: "DeadEffects",
                 schema: "Effects");
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
 
             migrationBuilder.DropTable(
                 name: "DeadlyArmCritEffects",
@@ -2892,54 +3018,6 @@ namespace Witcher.Storage.Postgresql.Migrations
                 schema: "Effects");
 
             migrationBuilder.DropTable(
-========
-
-            migrationBuilder.DropTable(
-                name: "DeadlyArmCritEffects",
-                schema: "Effects");
-
-            migrationBuilder.DropTable(
-                name: "DeadlyHead1CritEffects",
-                schema: "Effects");
-
-            migrationBuilder.DropTable(
-                name: "DeadlyHead2CritEffects",
-                schema: "Effects");
-
-            migrationBuilder.DropTable(
-                name: "DeadlyLegCritEffects",
-                schema: "Effects");
-
-            migrationBuilder.DropTable(
-                name: "DeadlyTailCritEffects",
-                schema: "Effects");
-
-            migrationBuilder.DropTable(
-                name: "DeadlyTorso1CritEffects",
-                schema: "Effects");
-
-            migrationBuilder.DropTable(
-                name: "DeadlyTorso2CritEffects",
-                schema: "Effects");
-
-            migrationBuilder.DropTable(
-                name: "DeadlyWingCritEffects",
-                schema: "Effects");
-
-            migrationBuilder.DropTable(
-                name: "DefensiveSkill",
-                schema: "GameRules");
-
-            migrationBuilder.DropTable(
-                name: "DifficultArmCritEffects",
-                schema: "Effects");
-
-            migrationBuilder.DropTable(
-                name: "DifficultHead1CritEffects",
-                schema: "Effects");
-
-            migrationBuilder.DropTable(
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
                 name: "DifficultHead2CritEffects",
                 schema: "Effects");
 
@@ -2986,13 +3064,10 @@ namespace Witcher.Storage.Postgresql.Migrations
                 schema: "System");
 
             migrationBuilder.DropTable(
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
-========
                 name: "JoinGameRequestNotifications",
                 schema: "Notifications");
 
             migrationBuilder.DropTable(
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
                 name: "PoisonEffects",
                 schema: "Effects");
 
@@ -3053,32 +3128,42 @@ namespace Witcher.Storage.Postgresql.Migrations
                 schema: "System");
 
             migrationBuilder.DropTable(
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
                 name: "Weapons",
                 schema: "Items");
 
             migrationBuilder.DropTable(
-                name: "WeaponTeemplates_AppliedConditions",
+                name: "WeaponTemplates_AppliedConditions",
                 schema: "Items");
 
             migrationBuilder.DropTable(
-                name: "WeaponTeemplates_DefensiveSkills",
+                name: "WeaponTemplates_DefensiveSkills",
                 schema: "Items");
 
             migrationBuilder.DropTable(
-========
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
+                name: "Armors",
+                schema: "Items");
+
+            migrationBuilder.DropTable(
+                name: "BodyTemplateParts",
+                schema: "GameRules");
+
+            migrationBuilder.DropTable(
+                name: "ArmorTemplates",
+                schema: "Items");
+
+            migrationBuilder.DropTable(
                 name: "Abilities",
                 schema: "GameRules");
 
             migrationBuilder.DropTable(
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
-========
+                name: "BodyParts",
+                schema: "GameRules");
+
+            migrationBuilder.DropTable(
                 name: "Notifications",
                 schema: "Notifications");
 
             migrationBuilder.DropTable(
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
                 name: "CritEffects",
                 schema: "Battles");
 
@@ -3091,42 +3176,32 @@ namespace Witcher.Storage.Postgresql.Migrations
                 schema: "System");
 
             migrationBuilder.DropTable(
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
+                name: "WeaponTemplates",
+                schema: "Items");
+
+            migrationBuilder.DropTable(
                 name: "Items",
                 schema: "Items");
 
             migrationBuilder.DropTable(
-                name: "WeaponTeemplates",
-                schema: "Items");
-
-            migrationBuilder.DropTable(
                 name: "CreatureParts",
                 schema: "Battles");
 
             migrationBuilder.DropTable(
-========
-                name: "CreatureParts",
-                schema: "Battles");
-
-            migrationBuilder.DropTable(
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
                 name: "Effects",
                 schema: "Battles");
 
             migrationBuilder.DropTable(
-<<<<<<<< HEAD:Witcher/Witcher.Storage.Postgresql/Migrations/20230511062940_NewDataBasePurge.cs
                 name: "ItemTemplates",
                 schema: "Items");
 
             migrationBuilder.DropTable(
-========
->>>>>>>> origin/feature/23-joinGameTestingEvents:Witcher/Witcher.Storage.Postgresql/Migrations/20230705065025_DbPurge2.cs
-                name: "BodyParts",
-                schema: "GameRules");
-
-            migrationBuilder.DropTable(
                 name: "Games",
                 schema: "BaseGame");
+
+            migrationBuilder.DropTable(
+                name: "BodyTemplates",
+                schema: "GameRules");
 
             migrationBuilder.DropTable(
                 name: "ImgFiles",
@@ -3147,10 +3222,6 @@ namespace Witcher.Storage.Postgresql.Migrations
             migrationBuilder.DropTable(
                 name: "Interfaces",
                 schema: "System");
-
-            migrationBuilder.DropTable(
-                name: "BodyTemplates",
-                schema: "GameRules");
 
             migrationBuilder.DropTable(
                 name: "Creatures",
