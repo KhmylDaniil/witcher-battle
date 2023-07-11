@@ -1,18 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
-using Witcher.Core.Contracts.UserRequests.RegisterUser;
+using Witcher.Core.Contracts.UserRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 using System.Threading;
 using System.Threading.Tasks;
+using System;
 
-namespace Witcher.Core.Requests.UserRequests.RegisterUser
+namespace Witcher.Core.Requests.UserRequests
 {
 	/// <summary>
 	/// Обработчик команды регистрации пользователя
 	/// </summary>
-	public class RegisterUserHandler : BaseHandler<RegisterUserCommand, RegisterUserCommandResponse>
+	public class RegisterUserHandler : BaseHandler<RegisterUserCommand, Guid>
 	{
 		/// <summary>
 		/// Хеширование пароля
@@ -32,7 +33,7 @@ namespace Witcher.Core.Requests.UserRequests.RegisterUser
 		public RegisterUserHandler(
 			IAppDbContext appDbContext,
 			IAuthorizationService authorizationService,
-			IPasswordHasher passwordHasher, 
+			IPasswordHasher passwordHasher,
 			UserAccount.HasUsersWithLogin hasUsersWithLogin)
 			: base(appDbContext, authorizationService)
 		{
@@ -46,7 +47,7 @@ namespace Witcher.Core.Requests.UserRequests.RegisterUser
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены запроса</param>
 		/// <returns>Ответ</returns>
-		public override async Task<RegisterUserCommandResponse> Handle (RegisterUserCommand request, CancellationToken cancellationToken)
+		public override async Task<Guid> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
 		{
 			var systemInterface = await _appDbContext.Interfaces
 				.FirstOrDefaultAsync(x => x.Id == SystemInterfaces.SystemLightId, cancellationToken)
@@ -74,7 +75,7 @@ namespace Witcher.Core.Requests.UserRequests.RegisterUser
 			await _appDbContext.Users.AddAsync(user, cancellationToken);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 
-			return new RegisterUserCommandResponse { UserId = user.Id };
+			return user.Id;
 		}
 	}
 }

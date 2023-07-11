@@ -1,24 +1,23 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.UserRequests.LoginUser;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Authentication;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Exceptions.SystemExceptions;
+using System;
+using Witcher.Core.Contracts.UserRequests;
 
-namespace Witcher.Core.Requests.UserRequests.LoginUser
+namespace Witcher.Core.Requests.UserRequests
 {
 	/// <summary>
 	/// Обработчик команды аутентификации пользователя
 	/// </summary>
-	public class LoginUserHandler : BaseHandler<LoginUserCommand, LoginUserCommandResponse>
+	public class LoginUserHandler : BaseHandler<LoginUserCommand, Guid>
 	{
 
 		/// <summary>
@@ -50,7 +49,7 @@ namespace Witcher.Core.Requests.UserRequests.LoginUser
 		/// <param name="request">Запрос</param>
 		/// <param name="cancellationToken">Токен отмены запроса</param>
 		/// <returns>ответ</returns>
-		public override async Task<LoginUserCommandResponse> Handle
+		public override async Task<Guid> Handle
 			(LoginUserCommand request, CancellationToken cancellationToken)
 		{
 			var existingUserAccount = await _appDbContext.UserAccounts
@@ -78,7 +77,7 @@ namespace Witcher.Core.Requests.UserRequests.LoginUser
 
 			await SignCookiesAsync(_httpContextAccessor.HttpContext, new ClaimsPrincipal(claimsIdentity));
 
-			return new LoginUserCommandResponse { UserId = existingUserAccount.UserId };
+			return existingUserAccount.UserId;
 		}
 
 		/// <summary>

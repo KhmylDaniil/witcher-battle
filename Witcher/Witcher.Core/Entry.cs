@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Entities;
@@ -27,7 +29,12 @@ namespace Witcher.Core
 			if (string.IsNullOrWhiteSpace(hasherOptions?.Salt))
 				throw new ApplicationSystemBaseException($"При работе класса {nameof(Entry)} отсутствует необходимый параметр {hasherOptions.Salt}.");
 
+			//Mediatr + fluent validation
 			services.AddMediatR(typeof(Entry).Assembly);
+			services.AddFluentValidationAutoValidation();
+			services.AddValidatorsFromAssembly(typeof(Core.Validators.UserRequestsValidators.LoginUserCommandValidator).Assembly);
+			services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
 			services.AddTransient<IPasswordHasher>
 				(o => new PasswordHasher(hasherOptions));
 

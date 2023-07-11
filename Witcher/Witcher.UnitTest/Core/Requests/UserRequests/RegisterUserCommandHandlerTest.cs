@@ -3,12 +3,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
-using Witcher.Core.Contracts.UserRequests.RegisterUser;
 using Witcher.Core.Entities;
-using Witcher.Core.Requests.UserRequests.RegisterUser;
 using Witcher.Storage.Postgresql;
 using System;
 using System.Threading.Tasks;
+using Witcher.Core.Requests.UserRequests;
+using Witcher.Core.Contracts.UserRequests;
 
 namespace Witcher.UnitTest.Core.Requests.UserRequests
 {
@@ -70,7 +70,7 @@ namespace Witcher.UnitTest.Core.Requests.UserRequests
 				?.Include(x => x.User)
 				.FirstOrDefaultAsync(x => x.Login == login);
 			Assert.IsNotNull(userId?.User?.Id);
-			Assert.AreEqual(userId.User.Id, result.UserId);
+			Assert.AreEqual(userId.User.Id, result);
 
 			var userName = await context.UserAccounts
 				?.Include(x => x.User)

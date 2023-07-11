@@ -1,4 +1,4 @@
-﻿@model Witcher.Core.Contracts.UserRequests.LoginUser.LoginUserCommand
+﻿@model Witcher.Core.Contracts.UserRequests.LoginUserCommand
 
 @{
     ViewData["Title"] = "Login";
@@ -32,8 +32,6 @@
 <div>
     <a asp-action="Index">Back</a>
 </div>
-
-<p>@TempData["ErrorMessage"]</p>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

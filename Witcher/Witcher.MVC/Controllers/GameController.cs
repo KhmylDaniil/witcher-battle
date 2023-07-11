@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.GameRequests;
 using Witcher.Core.Contracts.UserGameRequests;
-using Witcher.Core.Contracts.UserRequests.GetUsers;
+using Witcher.Core.Contracts.UserRequests;
 using Witcher.Core.Exceptions;
 using Witcher.Core.ExtensionMethods;
 using Witcher.MVC.ViewModels.Game;
@@ -315,9 +315,9 @@ namespace Witcher.MVC.Controllers
 				return usersFromCache;
 			else
 			{
-				var users = await _mediator.SendValidated(new GetUsersQuery(), cancellationToken);
+				var users = await _mediator.Send(new GetUsersQuery(), cancellationToken);
 
-				var result = users.UsersList.Where(x => x.Id != _userContext.CurrentUserId).ToDictionary(x => x.Id, x => x.Name);
+				var result = users.Where(x => x.Id != _userContext.CurrentUserId).ToDictionary(x => x.Id, x => x.Name);
 
 				_memoryCache.Set("users", result);
 				return result;

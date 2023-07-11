@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Witcher.Core.Contracts.UserRequests.GetUsers
+namespace Witcher.Core.Contracts.UserRequests
 {
 	/// <summary>
 	/// Шаблон пользователя для отправки списка пользователей
 	/// </summary>
-	public sealed class GetUsersQueryResponseItem
+	public sealed class GetUsersQueryResponse
 	{
 		/// <summary>
 		/// Имя пользователя

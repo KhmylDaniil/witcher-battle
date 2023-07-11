@@ -1,12 +1,10 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.UserRequests.LoginUser;
-using Witcher.Core.Contracts.UserRequests.RegisterUser;
+using Witcher.Core.Contracts.UserRequests;
 using Witcher.Core.Exceptions;
-using Witcher.Core.ExtensionMethods;
-using Witcher.MVC.ViewModels.Login;
 
 namespace Witcher.MVC.Controllers
 {
@@ -20,15 +18,9 @@ namespace Witcher.MVC.Controllers
 			_memoryCache = memoryCache;
 		}
 
-		public IActionResult Index()
-		{
-			return View();
-		}
+		public IActionResult Index() => View();
 
-		public IActionResult RegisterUser()
-		{
-			return View();
-		}
+		public IActionResult RegisterUser() => View();
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -36,31 +28,19 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
+				await _mediator.Send(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
 
 				_memoryCache.Remove("users");
 
-				await _mediator.SendValidated(new LoginUserCommand() { Login = request.Login, Password = request.Password }, cancellationToken);
+				await _mediator.Send(new LoginUserCommand() { Login = request.Login, Password = request.Password }, cancellationToken);
 
-				return RedirectToAction(nameof(SuccessfulRegistration), new SuccessfulRegistration() { Name = request.Name });
+				return RedirectToAction("Index", "Game");
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View();
-			}
-            catch (Exception ex) { return RedirectToErrorPage<LoginController>(ex); }
+			catch (ValidationException) { return View(); }
+			catch (Exception ex) { return RedirectToErrorPage<LoginController>(ex); }
 		}
 
-		public IActionResult SuccessfulRegistration(SuccessfulRegistration registration)
-		{
-			return View(registration);
-		}
-
-		public IActionResult Login()
-		{
-			return View();
-		}
+		public IActionResult Login() => View();
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -68,15 +48,11 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
+				await _mediator.Send(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
 
 				return RedirectToAction("Index", "Game");
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View();
-			}
+			catch (RequestValidationException) { return View(); }
 			catch (Exception ex) { return RedirectToErrorPage<LoginController>(ex); }
 		}
 	}
