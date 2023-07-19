@@ -55,7 +55,7 @@ namespace Witcher.Core.Requests.GameRequests
 
 			if (!string.Equals(request.Name, game.Name, System.StringComparison.Ordinal) && await _appDbContext.Games
 				.AnyAsync(x => x.Name == request.Name, cancellationToken))
-				throw new RequestNameNotUniqException<ChangeGameCommand>(nameof(request.Name));
+				throw new RequestNameNotUniqException<Game>(request.Name);
 
 			var avatar = request.AvatarId == null
 				? null
@@ -66,28 +66,26 @@ namespace Witcher.Core.Requests.GameRequests
 			var textFiles = new List<TextFile>();
 
 			if (request.TextFiles != null)
-			{
 				foreach (var x in request.TextFiles)
 				{
 					var textFile = await _appDbContext.TextFiles
-					.FirstOrDefaultAsync(y => y.Id == x, cancellationToken)
-					?? throw new EntityNotFoundException<TextFile>(x);
+						.FirstOrDefaultAsync(y => y.Id == x, cancellationToken)
+						?? throw new EntityNotFoundException<TextFile>(x);
+					
 					textFiles.Add(textFile);
 				}
-			}
 
 			var imgFiles = new List<ImgFile>();
 
 			if (request.ImgFiles != null)
-			{
 				foreach (var x in request.ImgFiles)
 				{
 					var imgFile = await _appDbContext.ImgFiles
-					.FirstOrDefaultAsync(y => y.Id == x, cancellationToken)
-					?? throw new EntityNotFoundException<ImgFile>(x);
+						.FirstOrDefaultAsync(y => y.Id == x, cancellationToken)
+						?? throw new EntityNotFoundException<ImgFile>(x);
+					
 					imgFiles.Add(imgFile);
 				}
-			}
 
 			game.ChangeGame(
 				name: request.Name,

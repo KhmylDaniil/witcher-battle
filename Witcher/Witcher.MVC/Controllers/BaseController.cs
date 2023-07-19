@@ -1,7 +1,9 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Witcher.Core.Abstractions;
+using Witcher.Core.Exceptions;
 using Witcher.MVC.ViewModels;
 
 namespace Witcher.MVC.Controllers
@@ -37,6 +39,37 @@ namespace Witcher.MVC.Controllers
 			myLog.Error(ex.Message);
 			return View("Error", new ErrorViewModel(ex));
 		}
-			
+
+		protected ActionResult HandleException<TController>(Exception ex, Func<ActionResult> func) where TController : BaseController
+		{
+			switch (ex)
+			{
+				case ValidationException:
+					return func.Invoke();
+				case RequestValidationException valEx:
+					TempData["ErrorMessage"] = valEx.UserMessage;
+					return func.Invoke();
+				default:
+					var myLog = Log.ForContext<TController>();
+					myLog.Error(ex.Message);
+					return View("Error", new ErrorViewModel(ex));
+			}
+		}
+
+		protected async Task<IActionResult> HandleExceptionAsync<TController>(Exception ex, Func<Task<IActionResult>> func) where TController : BaseController
+		{
+			switch (ex)
+			{
+				case ValidationException:
+					return await func.Invoke();
+				case RequestValidationException valEx:
+					TempData["ErrorMessage"] = valEx.UserMessage;
+					return await func.Invoke();
+				default:
+					var myLog = Log.ForContext<TController>();
+					myLog.Error(ex.Message);
+					return View("Error", new ErrorViewModel(ex));
+			}
+		}
 	}
 }

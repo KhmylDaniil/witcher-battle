@@ -3,13 +3,13 @@ using Witcher.Core.Contracts.UserRequests;
 
 namespace Witcher.Core.Validators.UserRequestsValidators
 {
-	public class LoginUserCommandValidator : CustomAbstractValidator<LoginUserCommand>
+	public sealed class LoginUserCommandValidator : AbstractValidator<LoginUserCommand>
 	{
 		public LoginUserCommandValidator()
 		{
-			RuleFor(x => x.Login).NotEmpty().WithMessage(FieldCantBeEmpty);
+			RuleFor(x => x.Login).NotEmpty().WithMessage(BaseData.ExceptionMessages.FieldCantBeEmpty);
 
-			RuleFor(x => x.Password).NotEmpty().WithMessage(FieldCantBeEmpty);
+			RuleFor(x => x.Password).NotEmpty().WithMessage(BaseData.ExceptionMessages.FieldCantBeEmpty);
 		}
 	}
 }

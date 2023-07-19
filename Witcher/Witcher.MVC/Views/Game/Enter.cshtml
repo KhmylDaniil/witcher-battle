@@ -54,7 +54,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Users.Where(x => x.Key != (Guid)ViewData["currentUser"]))
+        @foreach (var item in Model.Users.Where(x => x.Key != (ViewData["currentUser"] as Guid?)))
         {
             <tr>
                 <td>

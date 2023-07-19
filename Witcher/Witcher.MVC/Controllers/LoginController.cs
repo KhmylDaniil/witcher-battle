@@ -1,10 +1,8 @@
-﻿using FluentValidation;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.UserRequests;
-using Witcher.Core.Exceptions;
 
 namespace Witcher.MVC.Controllers
 {
@@ -28,7 +26,7 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
+				await _mediator.Send(request, cancellationToken);
 
 				_memoryCache.Remove("users");
 
@@ -36,8 +34,10 @@ namespace Witcher.MVC.Controllers
 
 				return RedirectToAction("Index", "Game");
 			}
-			catch (ValidationException) { return View(); }
-			catch (Exception ex) { return RedirectToErrorPage<LoginController>(ex); }
+			catch (Exception ex)
+			{
+				return HandleException<LoginController>(ex, () => View());
+			}
 		}
 
 		public IActionResult Login() => View();
@@ -48,12 +48,14 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.Send(request ?? throw new ArgumentNullException(nameof(request)), cancellationToken);
+				await _mediator.Send(request, cancellationToken);
 
 				return RedirectToAction("Index", "Game");
 			}
-			catch (RequestValidationException) { return View(); }
-			catch (Exception ex) { return RedirectToErrorPage<LoginController>(ex); }
+			catch (Exception ex)
+			{
+				return HandleException<LoginController>(ex, () => View());
+			}
 		}
 	}
 }

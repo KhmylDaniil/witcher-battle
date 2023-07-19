@@ -1,11 +1,11 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions.RequestExceptions;
+﻿using Witcher.Core.Exceptions.RequestExceptions;
 using System;
 using System.Collections.Generic;
+using MediatR;
 
 namespace Witcher.Core.Contracts.GameRequests
 {
-	public sealed class ChangeGameCommand : IValidatableCommand
+	public sealed class ChangeGameCommand : IRequest
 	{
 		/// <summary>
 		/// Айди игры
@@ -36,14 +36,5 @@ namespace Witcher.Core.Contracts.GameRequests
 		/// Графические файлы игры
 		/// </summary>
 		public List<Guid> ImgFiles { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			if (string.IsNullOrEmpty(Name))
-				throw new RequestFieldNullException<ChangeGameCommand>(nameof(Name));
-		}
 	}
 }

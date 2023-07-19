@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.GameRequests
 {
-	public class GetGameResponseItem
+	public sealed class GetGameResponseItem
 	{
 		/// <summary>
 		/// Айди

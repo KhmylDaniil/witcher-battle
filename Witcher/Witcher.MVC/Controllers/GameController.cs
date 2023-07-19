@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +8,6 @@ using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.GameRequests;
 using Witcher.Core.Contracts.UserGameRequests;
 using Witcher.Core.Contracts.UserRequests;
-using Witcher.Core.Exceptions;
-using Witcher.Core.ExtensionMethods;
 using Witcher.MVC.ViewModels.Game;
 
 namespace Witcher.MVC.Controllers
@@ -30,14 +29,14 @@ namespace Witcher.MVC.Controllers
 		}
 
 		/// <summary>
-		/// Получение списка игр с возможностью поиска
+		/// Get games query with search filters
 		/// </summary>
-		/// <param name="query">Запрос</param>
+		/// <param name="query"></param>
 		/// <param name="cancellationToken"></param>
-		/// <returns>Список игр</returns>
+		/// <returns>games</returns>
 		public async Task<IActionResult> Index(GetGameQuery query, CancellationToken cancellationToken)
 		{
-			var response = await _mediator.SendValidated(query, cancellationToken);
+			var response = await _mediator.Send(query, cancellationToken);
 
 			_gameIdService.Reset();
 
@@ -47,7 +46,7 @@ namespace Witcher.MVC.Controllers
 		}
 
 		/// <summary>
-		/// Вход в игру
+		/// enter the game menu
 		/// </summary>
 		/// <param name="command"></param>
 		/// <param name="cancellationToken"></param>
@@ -59,27 +58,36 @@ namespace Witcher.MVC.Controllers
 			{
 				_gameIdService.Set(command.Id);
 
-				var response = await _mediator.SendValidated(command, cancellationToken);
+				var response = await _mediator.Send(command, cancellationToken);
 
 				ViewData["currentUser"] = _userContext.CurrentUserId;
 
 				return View(response);
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				_gameIdService.Reset();
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return RedirectToAction(nameof(Index));
+				return HandleException<GameController>(ex, () =>
+				{
+					_gameIdService.Reset();
+					return RedirectToAction(nameof(Index));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
 		}
 
+		/// <summary>
+		/// Request to GM for joining game
+		/// </summary>
+		/// <param name="request">request</param>
+		/// <returns></returns>
 		[Route("[controller]/[action]")]
-		public ActionResult AskForJoin(JoinGameRequest request)
-		{
-			return View(request);
-		}
+		public ActionResult AskForJoin(JoinGameRequest request) => View(request);
 
+		/// <summary>
+		/// Request to GM for joining game
+		/// </summary>
+		/// <param name="request"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]")]
@@ -87,27 +95,18 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(request, cancellationToken);
+				await _mediator.Send(request, cancellationToken);
 				return RedirectToAction(nameof(Index));
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(request);
-			}
-			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
+			catch (Exception ex) { return HandleException<GameController>(ex, () => View(request)); }
 		}
-
 
 		/// <summary>
 		/// Создание игры
 		/// </summary>
 		/// <returns></returns>
 		[Route("[controller]/[action]")]
-		public ActionResult Create()
-		{
-			return View();
-		}
+		public ActionResult Create() => View();
 
 		/// <summary>
 		/// Создание игры
@@ -122,15 +121,10 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 				return RedirectToAction(nameof(Index));
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
-			}
-			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
+			catch (Exception ex) { return HandleException<GameController>(ex, () => View(command)); }
 		}
 
 		/// <summary>
@@ -139,10 +133,7 @@ namespace Witcher.MVC.Controllers
 		/// <param name="command"></param>
 		/// <returns></returns>
 		[Route("[controller]/[action]/{id}")]
-		public ActionResult Edit(ChangeGameCommand command)
-		{
-			return View(command);
-		}
+		public ActionResult Edit(ChangeGameCommand command) => View(command);
 
 		/// <summary>
 		/// Изменение игры
@@ -157,16 +148,11 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				return RedirectToAction(nameof(Enter), new GetGameByIdCommand { Id = command.Id } );
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
-			}
-			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
+			catch(Exception ex) { return HandleException<GameController>(ex, () => View(command)); }
 		}
 
 		/// <summary>
@@ -190,16 +176,11 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				return RedirectToAction(nameof(Index));
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
-			}
-			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
+			catch (Exception ex) { return HandleException<GameController>(ex, () => View(command)); }
 		}
 
 		/// <summary>
@@ -228,18 +209,14 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
+				return InnerRedirect();
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-			}
-			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
+			catch (Exception ex) { return HandleException<GameController>(ex, InnerRedirect); }
 
-			if (command.UserId == _userContext.CurrentUserId)
-				return RedirectToAction(nameof(Index));
-			else
-				return RedirectToAction(nameof(Enter), new GetGameByIdCommand() { Id = _gameIdService.GameId });
+			ActionResult InnerRedirect() => command.UserId == _userContext.CurrentUserId
+					? RedirectToAction(nameof(Index))
+					: RedirectToAction(nameof(Enter), new GetGameByIdCommand() { Id = _gameIdService.GameId });
 		}
 
 		/// <summary>
@@ -268,18 +245,18 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				return RedirectToAction(nameof(Enter), new GetGameByIdCommand { Id = _gameIdService.GameId });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				ViewData["GameId"] = _gameIdService.GameId;
+				return await HandleExceptionAsync<GameController>(ex, async () =>
+				{
+					ViewData["GameId"] = _gameIdService.GameId;
+					return View(await CreateVM(command, cancellationToken));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
-
-			return View(await CreateVM(command, cancellationToken));
 		}
 
 		/// <summary>
@@ -293,15 +270,11 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
+				return RedirectToAction(nameof(Enter), new GetGameByIdCommand { Id = _gameIdService.GameId });
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-			}
-			catch (Exception ex) { return RedirectToErrorPage<GameController>(ex); }
-
-			return RedirectToAction(nameof(Enter), new GetGameByIdCommand { Id = _gameIdService.GameId });
+			catch (Exception ex) { return HandleException<GameController>(ex, () =>
+				RedirectToAction(nameof(Enter), new GetGameByIdCommand { Id = _gameIdService.GameId })); }
 		}
 
 		/// <summary>
