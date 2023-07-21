@@ -102,9 +102,9 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 			Assert.IsTrue(ability.CreatedOn >= creationMinTime && resultItem.CreatedOn <= creationMaxTime);
 			Assert.IsTrue(ability.ModifiedOn >= modificationMinTime && resultItem.ModifiedOn <= modificationMaxTime);
 
-			Assert.AreEqual(ability.AttackSkill, Skill.Melee);
-			Assert.AreEqual(ability.DamageType, DamageType.Slashing);
-			Assert.IsTrue(ability.AppliedConditions.Any(x => x.Condition == Condition.Bleed));
+			Assert.AreEqual(Skill.Melee, ability.AttackSkill);
+			Assert.AreEqual(DamageType.Slashing, ability.DamageType);
+			Assert.IsTrue(ability.AppliedConditions.Exists(x => x.Condition == Condition.Bleed));
 
 			var user = _dbContext.Users.FirstOrDefault(x => x.Id == ability.CreatedByUserId);
 			Assert.IsNotNull(user);

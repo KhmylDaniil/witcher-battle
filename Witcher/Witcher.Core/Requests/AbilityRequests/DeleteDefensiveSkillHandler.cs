@@ -12,7 +12,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
-	public class DeleteDefensiveSkillHandler : BaseHandler<DeleteDefensiveSkillCommand, Unit>
+	public sealed class DeleteDefensiveSkillHandler : BaseHandler<DeleteDefensiveSkillCommand, Unit>
 	{
 		public DeleteDefensiveSkillHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
 
@@ -23,13 +23,13 @@ namespace Witcher.Core.Requests.AbilityRequests
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 
-			var ability = game.Abilities.FirstOrDefault(a => a.Id == request.AbilityId)
+			var ability = game.Abilities.Find(a => a.Id == request.AbilityId)
 				?? throw new EntityNotFoundException<Ability>(request.AbilityId);
 
 			if (ability.DefensiveSkills.Count == 1)
 				throw new RequestValidationException("Can`t delete last defensive skill.");
 
-			var defensiveSkill = ability.DefensiveSkills.FirstOrDefault(ds => ds.Id == request.Id)
+			var defensiveSkill = ability.DefensiveSkills.Find(ds => ds.Id == request.Id)
 				?? throw new EntityNotFoundException<DefensiveSkill>(request.Id);
 
 			ability.DefensiveSkills.Remove(defensiveSkill);

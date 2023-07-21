@@ -1,15 +1,14 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions.RequestExceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Witcher.Core.Contracts.BaseRequests;
+using MediatR;
 
 namespace Witcher.Core.Contracts.AbilityRequests
 {
 	/// <summary>
 	/// Запрос на получение списка способностей
 	/// </summary>
-	public class GetAbilityQuery : GetBaseQuery, IValidatableCommand<IEnumerable<GetAbilityResponseItem>>
+	public sealed class GetAbilityQuery : GetBaseQuery, IRequest<IEnumerable<GetAbilityResponseItem>>
 	{
 		/// <summary>
 		/// Фильтр по названию
@@ -65,19 +64,5 @@ namespace Witcher.Core.Contracts.AbilityRequests
 		/// Конечное значение фильтра модификации
 		/// </summary>
 		public DateTime ModificationMaxTime { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			if (MinAttackDiceQuantity < 0)
-				throw new RequestFieldIncorrectDataException<GetAbilityQuery>(nameof(MinAttackDiceQuantity),
-					"Значение должно быть больше нуля.");
-
-			if (MaxAttackDiceQuantity < MinAttackDiceQuantity)
-				throw new RequestFieldIncorrectDataException<GetAbilityQuery>(nameof(MaxAttackDiceQuantity),
-					"Значение должно быть больше минимального значения фильтра по количеству кубов атаки.");
-		}
 	}
 }

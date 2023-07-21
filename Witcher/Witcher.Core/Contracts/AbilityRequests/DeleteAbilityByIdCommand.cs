@@ -1,12 +1,12 @@
-﻿using Witcher.Core.Abstractions;
-using System;
+﻿using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.AbilityRequests
 {
 	/// <summary>
 	/// Команда на удаление способности по айди
 	/// </summary>
-	public sealed class DeleteAbilityByIdCommand : IValidatableCommand
+	public sealed class DeleteAbilityByIdCommand : IRequest
 	{
 		/// <summary>
 		/// Айди
@@ -17,13 +17,5 @@ namespace Witcher.Core.Contracts.AbilityRequests
 		/// Название
 		/// </summary>
 		public string Name { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

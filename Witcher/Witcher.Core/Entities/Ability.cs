@@ -5,14 +5,13 @@ using System.Linq;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Exceptions.SystemExceptions;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Entities
 {
 	/// <summary>
 	/// Способность
 	/// </summary>
-	public class Ability : EntityBase, IAttackFormula
+	public sealed class Ability : EntityBase, IAttackFormula
 	{
 		/// <summary>
 		/// Поле для <see cref="_game"/>
@@ -178,9 +177,7 @@ namespace Witcher.Core.Entities
 		/// <param name="attackSpeed">Скорость атаки</param>
 		/// <param name="accuracy">Точность атаки</param>
 		/// <param name="attackSkill">Навык атаки</param>
-		/// <param name="defensiveSkills">Навыки для защиты</param>
 		/// <param name="damageType">Типы урона</param>
-		/// <param name="appliedConditions">Накладываемые состояния</param>
 		/// <returns>Способность</returns>
 		public static Ability CreateAbility(
 			Game game,
@@ -191,9 +188,7 @@ namespace Witcher.Core.Entities
 			int attackSpeed,
 			int accuracy,
 			Skill attackSkill,
-			DamageType damageType,
-			List<Skill> defensiveSkills,
-			IEnumerable<UpdateAttackFormulaCommandItemAppledCondition> appliedConditions)
+			DamageType damageType)
 		{
 			var ability = new Ability(
 				game: game,
@@ -206,8 +201,8 @@ namespace Witcher.Core.Entities
 				accuracy: accuracy,
 				damageType: damageType);
 
-			ability.UpdateDefensiveSkills(defensiveSkills ?? Drafts.AbilityDrafts.DefensiveSkillsDrafts.BaseDefensiveSkills);
-			ability.UpdateAplliedConditions(appliedConditions);
+			ability.UpdateDefensiveSkills(Drafts.AbilityDrafts.DefensiveSkillsDrafts.BaseDefensiveSkills);
+			ability.AppliedConditions = new();
 
 			return ability;
 		}
@@ -222,9 +217,7 @@ namespace Witcher.Core.Entities
 		/// <param name="damageModifier">Модификатор урона</param>
 		/// <param name="attackSpeed">Скорость атаки</param>
 		/// <param name="accuracy">Точность атаки</param>
-		/// <param name="appliedConditions">Накладываемые состояния</param>
 		/// <param name="damageType">Типы урона</param>
-		/// <param name="defensiveSkills">Защитные навыки</param>
 		public void ChangeAbility(
 			string name,
 			string description,
@@ -233,9 +226,7 @@ namespace Witcher.Core.Entities
 			int damageModifier,
 			int attackSpeed,
 			int accuracy,
-			DamageType damageType,
-			List<Skill> defensiveSkills,
-			IEnumerable<UpdateAttackFormulaCommandItemAppledCondition> appliedConditions)
+			DamageType damageType)
 		{
 			Name = name;
 			Description = description;
@@ -245,45 +236,6 @@ namespace Witcher.Core.Entities
 			AttackSpeed = attackSpeed;
 			Accuracy = accuracy;
 			DamageType = damageType;
-
-			if (defensiveSkills != null)
-				UpdateDefensiveSkills(defensiveSkills);
-
-			UpdateAplliedConditions(appliedConditions);
-		}
-
-		/// <summary>
-		/// Обновление списка применяемых состояний
-		/// </summary>
-		/// <param name="data">Данные</param>
-		private void UpdateAplliedConditions(IEnumerable<UpdateAttackFormulaCommandItemAppledCondition> data)
-		{
-			if (data == null)
-				return;
-
-			if (AppliedConditions == null)
-				throw new ApplicationSystemNullException<Ability>(nameof(AppliedConditions));
-
-			var entitiesToDelete = AppliedConditions.Where(x => !data
-				.Any(y => y.Id == x.Id)).ToList();
-
-			if (entitiesToDelete.Any())
-				foreach (var entity in entitiesToDelete)
-					AppliedConditions.Remove(entity);
-
-			if (!data.Any())
-				return;
-
-			foreach (var dataItem in data)
-			{
-				var appliedCondition = AppliedConditions.FirstOrDefault(x => x.Id == dataItem.Id);
-				if (appliedCondition == null)
-					AppliedConditions.Add(new AppliedCondition(dataItem.Condition, dataItem.ApplyChance));
-				else
-					appliedCondition.ChangeAppliedCondition(
-						condition: dataItem.Condition,
-						applyChance: dataItem.ApplyChance);
-			}
 		}
 
 		/// <summary>

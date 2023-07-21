@@ -1,14 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Witcher.Core.Abstractions;
-using Witcher.Core.BaseData;
 using Witcher.Core.Contracts.AbilityRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Requests.AbilityRequests;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
-using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 {
@@ -28,7 +25,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 		public ChangeAbilityHandlerTest() : base()
 		{
 			_game = Game.CreateForTest();
-			_ability = Ability.CreateForTest(game: _game, attackSkill: Skill.Melee);
+			_ability = Ability.CreateForTest(game: _game);
 
 			_dbContext = CreateInMemoryContext(x => x.AddRange(_game, _ability));
 		}
@@ -50,16 +47,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 				AttackSpeed = 1,
 				Accuracy = 1,
 				AttackSkill = Skill.Staff,
-				DefensiveSkills = new List<Skill> { Skill.Dodge },
-				DamageType = DamageType.Piercing,
-				AppliedConditions = new List<UpdateAttackFormulaCommandItemAppledCondition>
-				{
-					new UpdateAttackFormulaCommandItemAppledCondition()
-					{
-						Condition = Condition.Bleed,
-						ApplyChance = 50
-					}
-				}
+				DamageType = DamageType.Piercing
 			};
 
 			var newHandler = new ChangeAbilityHandler(_dbContext, AuthorizationService.Object);
@@ -73,23 +61,14 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 			Assert.IsNotNull(ability.Name);
 			Assert.AreEqual(request.Name, ability.Name);
 			Assert.AreEqual(request.Description, ability.Description);
-			Assert.AreEqual(ability.AttackDiceQuantity, 2);
-			Assert.AreEqual(ability.DamageModifier, 4);
-			Assert.AreEqual(ability.AttackSpeed, 1);
-			Assert.AreEqual(ability.Accuracy, 1);
-			Assert.AreEqual(ability.AttackSkill, Skill.Staff);
-
+			Assert.AreEqual(2, ability.AttackDiceQuantity);
+			Assert.AreEqual(4, ability.DamageModifier);
+			Assert.AreEqual(1, ability.AttackSpeed);
+			Assert.AreEqual(1, ability.Accuracy);
+			Assert.AreEqual(Skill.Staff, ability.AttackSkill);
 			Assert.IsNotNull(ability.DefensiveSkills);
-			Assert.AreEqual(ability.DefensiveSkills.Count, 1);
-			var defensiveSkill = ability.DefensiveSkills.First();
-			Assert.AreEqual(defensiveSkill.Skill, Skill.Dodge);
-			Assert.AreEqual(ability.DamageType, DamageType.Piercing);
-
+			Assert.AreEqual(DamageType.Piercing, ability.DamageType);
 			Assert.IsNotNull(ability.AppliedConditions);
-			Assert.AreEqual(ability.AppliedConditions.Count, 1);
-			var appliedCondition = ability.AppliedConditions.First();
-			Assert.AreEqual(Condition.Bleed, appliedCondition.Condition);
-			Assert.AreEqual(appliedCondition.ApplyChance, 50);
 		}
 	}
 }

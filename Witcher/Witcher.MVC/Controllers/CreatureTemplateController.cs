@@ -268,7 +268,7 @@ namespace Witcher.MVC.Controllers
 				return abilitiesFromCache;
 			else
 			{
-				var abilities = await _mediator.SendValidated(new GetAbilityQuery() { PageSize = int.MaxValue }, cancellationToken);
+				var abilities = await _mediator.Send(new GetAbilityQuery() { PageSize = int.MaxValue }, cancellationToken);
 
 				var result =  abilities.ToDictionary(x => x.Id, x => x.Name);
 

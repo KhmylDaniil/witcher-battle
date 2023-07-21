@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
-	public class UpdateAppliedConditionForAbilityHandler : BaseHandler<UpdateAppliedConditionForAbilityCommand, Unit>
+	public sealed class UpdateAppliedConditionForAbilityHandler : BaseHandler<UpdateAppliedConditionForAbilityCommand, Unit>
 	{
 		public UpdateAppliedConditionForAbilityHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 			: base(appDbContext, authorizationService) { }
@@ -23,12 +23,12 @@ namespace Witcher.Core.Requests.AbilityRequests
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 
-			var ability = game.Abilities.FirstOrDefault(a => a.Id == request.AbilityId)
+			var ability = game.Abilities.Find(a => a.Id == request.AbilityId)
 				?? throw new EntityNotFoundException<Ability>(request.AbilityId);
 
-			var currentAppliedCondition = ability.AppliedConditions.FirstOrDefault(x => x.Id == request.Id);
+			var currentAppliedCondition = ability.AppliedConditions.Find(x => x.Id == request.Id);
 
-			if (ability.AppliedConditions.Any(x => x.Condition == request.Condition && x.Id != request.Id))
+			if (ability.AppliedConditions.Exists(x => x.Condition == request.Condition && x.Id != request.Id))
 				throw new RequestNotUniqException<UpdateAppliedConditionForAbilityCommand>(nameof(request.Condition));
 
 			if (currentAppliedCondition is null)

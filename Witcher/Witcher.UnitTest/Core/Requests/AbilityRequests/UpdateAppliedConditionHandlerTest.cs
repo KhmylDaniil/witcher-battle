@@ -54,7 +54,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 
 			Assert.IsNotNull(ability.AppliedConditions);
 			Assert.AreEqual(1, ability.AppliedConditions.Count);
-			var appliedCondition = ability.AppliedConditions.First();
+			var appliedCondition = ability.AppliedConditions[0];
 			Assert.AreEqual(Condition.Bleed, appliedCondition.Condition);
 			Assert.AreEqual(50, appliedCondition.ApplyChance);
 
@@ -72,7 +72,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 			
 			Assert.IsNotNull(ability.AppliedConditions);
 			Assert.AreEqual(1, ability.AppliedConditions.Count);
-			appliedCondition = ability.AppliedConditions.First();
+			appliedCondition = ability.AppliedConditions[0];
 			Assert.AreEqual(Condition.Poison, appliedCondition.Condition);
 			Assert.AreEqual(30, appliedCondition.ApplyChance);
 		}

@@ -1,8 +1,6 @@
 ﻿using MediatR;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
@@ -10,7 +8,6 @@ using Witcher.Core.Contracts.RunBattleRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 using Witcher.Core.Exceptions.RequestExceptions;
-using Witcher.Core.Exceptions;
 using Witcher.Core.Logic;
 using Microsoft.EntityFrameworkCore;
 using Witcher.Core.ExtensionMethods;

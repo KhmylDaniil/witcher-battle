@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.AbilityRequests
 	/// <summary>
 	/// Элемент ответа на запрос на получение списка способностей - защитный навык
 	/// </summary>
-	public class GetAbilityByIdResponseItemDefensiveSkill
+	public sealed class GetAbilityByIdResponseItemDefensiveSkill
 	{
 		/// <summary>
 		/// Айди

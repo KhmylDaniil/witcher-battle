@@ -13,7 +13,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
-	public class GetAbilityHandler : BaseHandler<GetAbilityQuery, IEnumerable<GetAbilityResponseItem>>
+	public sealed class GetAbilityHandler : BaseHandler<GetAbilityQuery, IEnumerable<GetAbilityResponseItem>>
 	{
 		/// <summary>
 		/// Провайдер времени
@@ -37,6 +37,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 				throw new RequestFieldIncorrectDataException<GetAbilityHandler>(nameof(GetAbilityQuery.CreationMaxTime));
 			if (request.ModificationMaxTime != default && request.ModificationMinTime >= request.ModificationMaxTime)
 				throw new RequestFieldIncorrectDataException<GetAbilityHandler>(nameof(GetAbilityQuery.ModificationMaxTime));
+
 
 			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities)

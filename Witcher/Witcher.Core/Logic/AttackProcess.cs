@@ -80,7 +80,7 @@ namespace Witcher.Core.Logic
 
 				var result = defenseBase + staggeredModifier + blindedModifier;
 
-				if (defender.Effects.Any(x => x is StunEffect))
+				if (defender.Effects.Exists(x => x is StunEffect))
 					result = 10;
 
 				return result < 0 ? 0 : result;

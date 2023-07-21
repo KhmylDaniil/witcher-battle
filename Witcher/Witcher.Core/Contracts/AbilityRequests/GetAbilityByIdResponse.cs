@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.AbilityRequests
 	/// <summary>
 	/// Ответ на запрос способности
 	/// </summary>
-	public class GetAbilityByIdResponse : GetAbilityResponseItem
+	public sealed class GetAbilityByIdResponse : GetAbilityResponseItem
 	{
 		/// <summary>
 		/// Накладываемые состояния

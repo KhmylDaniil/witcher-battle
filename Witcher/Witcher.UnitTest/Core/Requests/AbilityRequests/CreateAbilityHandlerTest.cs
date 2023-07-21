@@ -1,14 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Witcher.Core.Abstractions;
-using Witcher.Core.BaseData;
 using Witcher.Core.Contracts.AbilityRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Requests.AbilityRequests;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
-using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 {
@@ -43,16 +40,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 				AttackSpeed = 1,
 				Accuracy = 1,
 				AttackSkill = Skill.Melee,
-				DefensiveSkills = new List<Skill> { Skill.Melee },
-				DamageType = DamageType.Slashing,
-				AppliedConditions = new List<UpdateAttackFormulaCommandItemAppledCondition>
-				{
-					new UpdateAttackFormulaCommandItemAppledCondition()
-					{
-						Condition = Condition.Bleed,
-						ApplyChance = 50
-					}
-				}
+				DamageType = DamageType.Slashing
 			};
 
 			var newHandler = new CreateAbilityHandler(_dbContext, AuthorizationService.Object);
@@ -67,23 +55,14 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 			Assert.IsNotNull(ability.Name);
 			Assert.AreEqual(request.Name, ability.Name);
 			Assert.AreEqual(request.Description, ability.Description);
-			Assert.AreEqual(ability.AttackDiceQuantity, 2);
-			Assert.AreEqual(ability.DamageModifier, 4);
-			Assert.AreEqual(ability.AttackSpeed, 1);
-			Assert.AreEqual(ability.Accuracy, 1);
-			Assert.AreEqual(ability.AttackSkill, Skill.Melee);
-
+			Assert.AreEqual(2, ability.AttackDiceQuantity);
+			Assert.AreEqual(4, ability.DamageModifier);
+			Assert.AreEqual(1, ability.AttackSpeed);
+			Assert.AreEqual(1, ability.Accuracy);
+			Assert.AreEqual(Skill.Melee, ability.AttackSkill);
 			Assert.IsNotNull(ability.DefensiveSkills);
-			Assert.AreEqual(ability.DefensiveSkills.Count, 1);
-			var defensiveSkill = ability.DefensiveSkills.First();
-			Assert.AreEqual(Skill.Melee, defensiveSkill.Skill);
 			Assert.AreEqual(DamageType.Slashing, ability.DamageType);
-
 			Assert.IsNotNull(ability.AppliedConditions);
-			Assert.AreEqual(ability.AppliedConditions.Count, 1);
-			var appliedCondition = ability.AppliedConditions.First();
-			Assert.AreEqual(Condition.Bleed, appliedCondition.Condition);
-			Assert.AreEqual(appliedCondition.ApplyChance, 50);
 		}
 	}
 }

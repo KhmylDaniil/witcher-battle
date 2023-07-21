@@ -40,15 +40,16 @@ namespace Witcher.MVC.Controllers
 			return View("Error", new ErrorViewModel(ex));
 		}
 
-		protected ActionResult HandleException<TController>(Exception ex, Func<ActionResult> func) where TController : BaseController
+		protected ActionResult HandleException<TController>(Exception ex, Func<ActionResult> validationErrorBehavior)
+			where TController : BaseController
 		{
 			switch (ex)
 			{
 				case ValidationException:
-					return func.Invoke();
+					return validationErrorBehavior.Invoke();
 				case RequestValidationException valEx:
 					TempData["ErrorMessage"] = valEx.UserMessage;
-					return func.Invoke();
+					return validationErrorBehavior.Invoke();
 				default:
 					var myLog = Log.ForContext<TController>();
 					myLog.Error(ex.Message);
@@ -56,15 +57,16 @@ namespace Witcher.MVC.Controllers
 			}
 		}
 
-		protected async Task<IActionResult> HandleExceptionAsync<TController>(Exception ex, Func<Task<IActionResult>> func) where TController : BaseController
+		protected async Task<IActionResult> HandleExceptionAsync<TController>(Exception ex, Func<Task<IActionResult>> validationErrorBehavior)
+			where TController : BaseController
 		{
 			switch (ex)
 			{
 				case ValidationException:
-					return await func.Invoke();
+					return await validationErrorBehavior.Invoke();
 				case RequestValidationException valEx:
 					TempData["ErrorMessage"] = valEx.UserMessage;
-					return await func.Invoke();
+					return await validationErrorBehavior.Invoke();
 				default:
 					var myLog = Log.ForContext<TController>();
 					myLog.Error(ex.Message);

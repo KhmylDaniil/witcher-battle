@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Exceptions.RequestExceptions;
 using System;
-using System.Linq;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
@@ -31,7 +30,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			if (game.Abilities.Any(x => x.Name == request.Name))
+			if (game.Abilities.Exists(x => x.Name == request.Name))
 				throw new RequestNameNotUniqException<CreateAbilityCommand>(nameof(request.Name));
 
 			var newAbility = Ability.CreateAbility(
@@ -43,9 +42,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 				attackSpeed: request.AttackSpeed,
 				accuracy: request.Accuracy,
 				attackSkill: request.AttackSkill,
-				defensiveSkills: request.DefensiveSkills,
-				damageType: request.DamageType,
-				appliedConditions: request.AppliedConditions);
+				damageType: request.DamageType);
 
 			_appDbContext.Abilities.Add(newAbility);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
