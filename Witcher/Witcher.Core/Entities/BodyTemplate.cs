@@ -1,5 +1,4 @@
 ﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Requests.BodyTemplateRequests;
 using System;
 using System.Collections.Generic;
 using Witcher.Core.Exceptions.EntityExceptions;
@@ -31,13 +30,12 @@ namespace Witcher.Core.Entities
 		public BodyTemplate(
 			Game game,
 			string name,
-			string description,
-			IEnumerable<IBodyTemplatePartData> bodyTemplateParts)
+			string description)
 		{
 			Game = game;
 			Name = name;
 			Description = description;
-			CreateBodyTemplateParts(bodyTemplateParts);
+			CreateBodyTemplateParts(Drafts.BodyTemplateDrafts.CreateBodyTemplatePartsDraft.CreateBodyPartsDraft());
 		}
 
 		/// <summary>
@@ -141,23 +139,14 @@ namespace Witcher.Core.Entities
 		/// <summary>
 		/// Изменение шаблона тела
 		/// </summary>
-		/// <param name="game">Игра</param>
 		/// <param name="name">Название</param>
 		/// <param name="description">Описание</param>
-		/// <param name="bodyTemplateParts">Данные для списка шаблонов частей тела</param>
 		public void ChangeBodyTemplate(
-			Game game,
 			string name,
-			string description,
-			IEnumerable<IBodyTemplatePartData> bodyTemplateParts)
+			string description)
 		{
-			Game = game;
 			Name = name;
 			Description = description;
-
-			if (bodyTemplateParts == null) return;
-			
-			CreateBodyTemplateParts(bodyTemplateParts);
 		}
 	}
 }

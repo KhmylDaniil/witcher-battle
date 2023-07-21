@@ -34,7 +34,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 				?? throw new EntityNotFoundException<Ability>(request.Id);
 
 			if (game.Abilities.Exists(x => x.Name == request.Name && x.Id != ability.Id))
-				throw new RequestNameNotUniqException<ChangeAbilityCommand>(nameof(request.Name));
+				throw new RequestNameNotUniqException<Ability>(request.Name);
 
 			ability.ChangeAbility(
 				name: request.Name,

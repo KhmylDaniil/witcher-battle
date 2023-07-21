@@ -3,10 +3,8 @@ using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BodyTemplateRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Requests.BodyTemplateRequests;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.UnitTest.Core.Requests.BodyTemplateRequests
 {
@@ -41,28 +39,7 @@ namespace Witcher.UnitTest.Core.Requests.BodyTemplateRequests
 			{
 				Id = _bodyTemplate.Id,
 				Name = "name",
-				Description = "description",
-				BodyTemplateParts = new List<UpdateBodyTemplateRequestItem>
-				{
-					new UpdateBodyTemplateRequestItem()
-					{
-						Name = "head",
-						BodyPartType = BodyPartType.Head,
-						HitPenalty = 3,
-						DamageModifier = 2,
-						MinToHit = 1,
-						MaxToHit = 5
-					},
-					new UpdateBodyTemplateRequestItem()
-					{
-						Name = "body",
-						BodyPartType= BodyPartType.Torso,
-						HitPenalty = 2,
-						DamageModifier = 2,
-						MinToHit = 6,
-						MaxToHit = 10
-					}
-				}
+				Description = "description"
 			};
 
 			var newHandler = new ChangeBodyTemplateHandler(_dbContext, AuthorizationService.Object);
@@ -78,22 +55,6 @@ namespace Witcher.UnitTest.Core.Requests.BodyTemplateRequests
 			Assert.AreEqual(request.Name, bodyTemplate.Name);
 			Assert.AreEqual(request.Description, bodyTemplate.Description);
 			Assert.IsNotNull(bodyTemplate.BodyTemplateParts);
-
-			var head = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Name == "head");
-			Assert.IsNotNull(head);
-			Assert.AreEqual(head.BodyPartType, BodyPartType.Head);
-			Assert.AreEqual(2, head.DamageModifier);
-			Assert.AreEqual(3, head.HitPenalty);
-			Assert.AreEqual(1, head.MinToHit);
-			Assert.AreEqual(5, head.MaxToHit);
-
-			var body = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Name == "body");
-			Assert.IsNotNull(body);
-			Assert.AreEqual(body.BodyPartType, BodyPartType.Torso);
-			Assert.AreEqual(2, body.DamageModifier);
-			Assert.AreEqual(2, body.HitPenalty);
-			Assert.AreEqual(6, body.MinToHit);
-			Assert.AreEqual(10, body.MaxToHit);
 		}
 	}
 }

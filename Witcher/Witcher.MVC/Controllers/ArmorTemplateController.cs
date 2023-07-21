@@ -177,7 +177,7 @@ namespace Witcher.MVC.Controllers
 				return bodyTemplatesFromCache;
 			else
 			{
-				var bodyTemplates = await _mediator.SendValidated(new GetBodyTemplateQuery() { PageSize = int.MaxValue }, cancellationToken);
+				var bodyTemplates = await _mediator.Send(new GetBodyTemplateQuery() { PageSize = int.MaxValue }, cancellationToken);
 
 				var result = bodyTemplates.ToDictionary(x => x.Id, x => x.Name);
 

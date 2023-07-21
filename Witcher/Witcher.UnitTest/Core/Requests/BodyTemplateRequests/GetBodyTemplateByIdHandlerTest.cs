@@ -76,21 +76,21 @@ namespace Witcher.UnitTest.Core.Requests.BodyTemplateRequests
 			Assert.AreEqual(result.Description, _bodyTemplate.Description);
 			Assert.IsNotNull(result.GetBodyTemplateByIdResponseItems);
 
-			var head = result.GetBodyTemplateByIdResponseItems.FirstOrDefault(x => x.Id == _head.Id);
+			var head = result.GetBodyTemplateByIdResponseItems.Find(x => x.Id == _head.Id);
 			Assert.IsNotNull(head);
-			Assert.AreEqual(head.Name, "Head");
-			Assert.AreEqual(head.DamageModifier, 3);
-			Assert.AreEqual(head.HitPenalty, 3);
-			Assert.AreEqual(head.MinToHit, 1);
-			Assert.AreEqual(head.MaxToHit, 3);
+			Assert.AreEqual("Head", head.Name);
+			Assert.AreEqual(3, head.DamageModifier);
+			Assert.AreEqual(3, head.HitPenalty);
+			Assert.AreEqual(1, head.MinToHit);
+			Assert.AreEqual(3, head.MaxToHit);
 
-			var torso = result.GetBodyTemplateByIdResponseItems.FirstOrDefault(x => x.Id == _torso.Id);
+			var torso = result.GetBodyTemplateByIdResponseItems.Find(x => x.Id == _torso.Id);
 			Assert.IsNotNull(torso);
-			Assert.AreEqual(torso.Name, "Torso");
-			Assert.AreEqual(torso.DamageModifier, 1);
-			Assert.AreEqual(torso.HitPenalty, 1);
-			Assert.AreEqual(torso.MinToHit, 4);
-			Assert.AreEqual(torso.MaxToHit, 10);
+			Assert.AreEqual("Torso", torso.Name);
+			Assert.AreEqual(1, torso.DamageModifier);
+			Assert.AreEqual(1, torso.HitPenalty);
+			Assert.AreEqual(4, torso.MinToHit);
+			Assert.AreEqual(10, torso.MaxToHit);
 		}
 	}
 }

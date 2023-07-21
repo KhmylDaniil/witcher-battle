@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BodyTemplateRequests;
-using Witcher.Core.Exceptions;
-using Witcher.Core.ExtensionMethods;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Witcher.MVC.Controllers
 {
@@ -27,19 +26,17 @@ namespace Witcher.MVC.Controllers
 
 			try
 			{
-				var response = await _mediator.SendValidated(query, cancellationToken);
+				var response = await _mediator.Send(query, cancellationToken);
 
 				return View(response);
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				var response = await _mediator.SendValidated(new GetBodyTemplateQuery(), cancellationToken);
-
-				return View(response);
+				return await HandleExceptionAsync<BodyTemplateController>(ex, async () =>
+				{
+					return View(await _mediator.Send(new GetBodyTemplateQuery(), cancellationToken));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<BodyTemplateController>(ex); }
 		}
 
 		[Route("[controller]/{id}")]
@@ -47,23 +44,21 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var response = await _mediator.SendValidated(query, cancellationToken);
+				var response = await _mediator.Send(query, cancellationToken);
 
 				return View(response);
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				var response = await _mediator.SendValidated(new GetBodyTemplateQuery(), cancellationToken);
-
-				return View(response);
+				return await HandleExceptionAsync<BodyTemplateController>(ex, async () =>
+				{
+					return View(await _mediator.Send(new GetBodyTemplateQuery(), cancellationToken));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<BodyTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]")]
-		public ActionResult Create(CreateBodyTemplateCommand command) => View(command);
+		public ActionResult Create() => View();
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -72,18 +67,16 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var draft = await _mediator.SendValidated(command, cancellationToken);
+				var draft = await _mediator.Send(command, cancellationToken);
 
 				_memoryCache.Remove("bodyTemplates");
 
 				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { Id = draft.Id });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<BodyTemplateController>(ex,() => View(command));
 			}
-			catch (Exception ex) { return RedirectToErrorPage<BodyTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -96,20 +89,19 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				_memoryCache.Remove("bodyTemplates");
 
 				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { Id = command.Id });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<BodyTemplateController>(ex, () => View(command));
 			}
-			catch (Exception ex) { return RedirectToErrorPage<BodyTemplateController>(ex); }
 		}
 
+		//TODO made full CRUD
 		[Route("[controller]/[action]/{id}")]
 		public ActionResult EditParts(ChangeBodyTemplatePartCommand command) => View(command);
 
@@ -120,15 +112,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetBodyTemplateByIdQuery() { Id = command.Id });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<BodyTemplateController>(ex, () => View(command));
 			}
-			catch (Exception ex) { return RedirectToErrorPage<BodyTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -141,18 +131,16 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				_memoryCache.Remove("bodyTemplates");
 
 				return RedirectToAction(nameof(Index), new GetBodyTemplateQuery());
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<BodyTemplateController>(ex, () => View(command));
 			}
-			catch (Exception ex) { return RedirectToErrorPage<BodyTemplateController>(ex); }
 		}
 	}
 }

@@ -1,15 +1,15 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions.RequestExceptions;
+﻿using Witcher.Core.Exceptions.RequestExceptions;
 using System;
 using System.Collections.Generic;
 using Witcher.Core.Contracts.BaseRequests;
+using MediatR;
 
 namespace Witcher.Core.Contracts.BodyTemplateRequests
 {
 	/// <summary>
 	/// Запрос на получение списка шаблонов тела
 	/// </summary>
-	public class GetBodyTemplateQuery : GetBaseQuery, IValidatableCommand<IEnumerable<GetBodyTemplateResponseItem>>
+	public class GetBodyTemplateQuery : GetBaseQuery, IRequest<IEnumerable<GetBodyTemplateResponseItem>>
 	{
 		/// <summary>
 		/// Фильтр по названию
@@ -45,17 +45,5 @@ namespace Witcher.Core.Contracts.BodyTemplateRequests
 		/// Название части тела
 		/// </summary>
 		public string BodyPartName { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			if (CreationMaxTime != default && CreationMinTime >= CreationMaxTime)
-				throw new RequestFieldIncorrectDataException<GetBodyTemplateQuery>(nameof(CreationMaxTime));
-
-			if (ModificationMaxTime != default && ModificationMinTime >= ModificationMaxTime)
-				throw new RequestFieldIncorrectDataException<GetBodyTemplateQuery>(nameof(ModificationMaxTime));
-		}
 	}
 }

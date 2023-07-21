@@ -11,6 +11,8 @@ namespace Witcher.Core.Validators.AbilityRequestsValidators
 
 			RuleFor(x => x.Name).MaximumLength(20).WithMessage(BaseData.ExceptionMessages.MaxFieldLength);
 
+			RuleFor(x => x.Description).MaximumLength(100).WithMessage(BaseData.ExceptionMessages.MaxFieldLength);
+
 			RuleFor(x => x.AttackSkill).IsInEnum();
 
 			RuleFor(x => x.AttackDiceQuantity).GreaterThan(0).WithMessage(BaseData.ExceptionMessages.ValueMustBePositive);

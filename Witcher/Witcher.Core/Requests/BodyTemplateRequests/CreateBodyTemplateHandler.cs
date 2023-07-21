@@ -3,7 +3,6 @@ using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BodyTemplateRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.RequestExceptions;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,18 +30,13 @@ namespace Witcher.Core.Requests.BodyTemplateRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			if (game.BodyTemplates.Any(x => x.Name == request.Name))
-				throw new RequestNameNotUniqException<CreateBodyTemplateCommand>(nameof(request.Name));
-
-			var bodyTemplateParts = request.BodyTemplateParts == null
-				? Drafts.BodyTemplateDrafts.CreateBodyTemplatePartsDraft.CreateBodyPartsDraft()
-				: request.BodyTemplateParts.Select(x => (IBodyTemplatePartData)x);
+			if (game.BodyTemplates.Exists(x => x.Name == request.Name))
+				throw new RequestNameNotUniqException<BodyTemplate>(request.Name);
 
 			var newBodyTemplate = new BodyTemplate(
 				game: game,
 				name: request.Name,
-				description: request.Description,
-				bodyTemplateParts: bodyTemplateParts);
+				description: request.Description);
 
 			_appDbContext.BodyTemplates.Add(newBodyTemplate);
 			await _appDbContext.SaveChangesAsync(cancellationToken);

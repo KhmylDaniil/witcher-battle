@@ -28,17 +28,6 @@ namespace Witcher.Core.Requests.AbilityRequests
 
 		public override async Task<IEnumerable<GetAbilityResponseItem>> Handle(GetAbilityQuery request, CancellationToken cancellationToken)
 		{
-			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
-				throw new RequestFieldIncorrectDataException<GetAbilityHandler>(nameof(GetAbilityQuery.CreationMinTime));
-			if (request.ModificationMinTime > _dateTimeProvider.TimeProvider)
-				throw new RequestFieldIncorrectDataException<GetAbilityHandler>(nameof(GetAbilityQuery.ModificationMinTime));
-
-			if (request.CreationMaxTime != default && request.CreationMinTime >= request.CreationMaxTime)
-				throw new RequestFieldIncorrectDataException<GetAbilityHandler>(nameof(GetAbilityQuery.CreationMaxTime));
-			if (request.ModificationMaxTime != default && request.ModificationMinTime >= request.ModificationMaxTime)
-				throw new RequestFieldIncorrectDataException<GetAbilityHandler>(nameof(GetAbilityQuery.ModificationMaxTime));
-
-
 			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities)
 					.SelectMany(g => g.Abilities

@@ -31,7 +31,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 					?? throw new NoAccessToEntityException<Game>();
 
 			if (game.Abilities.Exists(x => x.Name == request.Name))
-				throw new RequestNameNotUniqException<CreateAbilityCommand>(nameof(request.Name));
+				throw new RequestNameNotUniqException<Ability>(request.Name);
 
 			var newAbility = Ability.CreateAbility(
 				game: game,

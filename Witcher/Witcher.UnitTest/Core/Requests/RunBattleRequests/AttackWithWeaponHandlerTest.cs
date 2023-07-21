@@ -64,7 +64,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 				maxSpeed: 4,
 				hp: 50);
 
-			_character = Character.CreateForTest(game: _game, battle: _battle);
+			_character = Character.CreateForTest(game: _game, battle: _battle, body: 6);
 
 			_weapon = (Weapon)Item.CreateItem(_character, _weaponTemplate, 1);
 			_character.Items.Add(_weapon);
@@ -172,7 +172,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
 			Assert.IsTrue(monster.HP < 50);
-			var torsoPart = monster.CreatureParts.FirstOrDefault(x => x.BodyPartType == BodyPartType.Torso);
+			var torsoPart = monster.CreatureParts.Find(x => x.BodyPartType == BodyPartType.Torso);
 			Assert.IsNotNull(torsoPart);
 			Assert.AreEqual(2, torsoPart.CurrentArmor);
 		}
@@ -228,7 +228,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 
 			monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
-			var newCrit = monster.Effects.FirstOrDefault(x => x is SimpleArmCritEffect);
+			var newCrit = monster.Effects.Find(x => x is SimpleArmCritEffect);
 			Assert.IsTrue(monster.Effects.Count(x => x is SimpleArmCritEffect) == 1);
 			Assert.AreNotEqual(newCrit.Id, crit.Id);
 		}
