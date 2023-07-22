@@ -1,8 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BattleRequests;
@@ -12,7 +9,7 @@ using Witcher.Core.Requests.BattleRequests;
 namespace Witcher.UnitTest.Core.Requests.BattleRequests
 {
 	[TestClass]
-	public class AddCreatureToBattleHandlerTest : UnitTestBase
+	public sealed class AddCreatureToBattleHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -58,7 +55,7 @@ namespace Witcher.UnitTest.Core.Requests.BattleRequests
 			var battle = _dbContext.Battles.FirstOrDefault();
 			Assert.IsNotNull(battle);
 
-			var creature = battle.Creatures.FirstOrDefault(x => x.CreatureTemplateId == _creatureTemplate.Id);
+			var creature = battle.Creatures.Find(x => x.CreatureTemplateId == _creatureTemplate.Id);
 			Assert.IsNotNull(creature);
 
 			Assert.IsTrue(creature.InitiativeInBattle > 0);

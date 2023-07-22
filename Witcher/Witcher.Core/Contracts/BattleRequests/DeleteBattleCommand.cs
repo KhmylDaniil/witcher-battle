@@ -1,13 +1,12 @@
-﻿using Witcher.Core.Abstractions;
-using System;
-
+﻿using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.BattleRequests
 {
 	/// <summary>
 	/// Команда удаления битвы
 	/// </summary>
-	public class DeleteBattleCommand : IValidatableCommand
+	public sealed class DeleteBattleCommand : IRequest
 	{
 		/// <summary>
 		/// Айди
@@ -18,13 +17,5 @@ namespace Witcher.Core.Contracts.BattleRequests
 		/// Название
 		/// </summary>
 		public string Name { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

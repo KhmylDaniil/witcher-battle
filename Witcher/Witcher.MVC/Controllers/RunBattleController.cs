@@ -43,7 +43,7 @@ namespace Witcher.MVC.Controllers
 			{
 				TempData["ErrorMessage"] = ex.UserMessage;
 
-				var response = await _mediator.SendValidated(new GetBattleByIdQuery() { Id = command.BattleId}, cancellationToken);
+				var response = await _mediator.Send(new GetBattleByIdQuery() { Id = command.BattleId}, cancellationToken);
 				return View(response);
 			}
 			catch (Exception ex) { return RedirectToErrorPage<RunBattleController>(ex); }

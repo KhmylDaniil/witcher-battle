@@ -12,7 +12,7 @@ using Witcher.Core.Logic;
 
 namespace Witcher.Core.Requests.BattleRequests
 {
-	public class DeleteBattleHandler : BaseHandler<DeleteBattleCommand, Unit>
+	public sealed class DeleteBattleHandler : BaseHandler<DeleteBattleCommand, Unit>
 	{
 		public DeleteBattleHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -26,7 +26,7 @@ namespace Witcher.Core.Requests.BattleRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			var battle = game.Battles.FirstOrDefault(x => x.Id == request.Id)
+			var battle = game.Battles.Find(x => x.Id == request.Id)
 				?? throw new EntityNotFoundException<Battle>(request.Id);
 
 			battle.RemoveNonCharacterCreaturesAndUntieCharactersFromBattle();

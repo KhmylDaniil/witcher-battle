@@ -1,9 +1,9 @@
-﻿using System;
-using Witcher.Core.Abstractions;
+﻿using MediatR;
+using System;
 
 namespace Witcher.Core.Contracts.BattleRequests
 {
-	public class AddCharacterToBattleCommand : IValidatableCommand
+	public class AddCharacterToBattleCommand : IRequest
 	{
 		/// <summary>
 		/// Айди боя
@@ -14,10 +14,5 @@ namespace Witcher.Core.Contracts.BattleRequests
 		/// Айди персонажа
 		/// </summary>
 		public Guid CharacterId { get; set; }
-
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

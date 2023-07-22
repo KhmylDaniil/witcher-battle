@@ -12,7 +12,7 @@ using Witcher.Core.Logic;
 
 namespace Witcher.Core.Requests.BattleRequests
 {
-	public class AddCharacterToBattleHandler : BaseHandler<AddCharacterToBattleCommand, Unit>
+	public sealed class AddCharacterToBattleHandler : BaseHandler<AddCharacterToBattleCommand, Unit>
 	{
 		public AddCharacterToBattleHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 			: base(appDbContext, authorizationService)
@@ -28,10 +28,10 @@ namespace Witcher.Core.Requests.BattleRequests
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 
-			var battle = game.Battles.FirstOrDefault(a => a.Id == request.BattleId)
+			var battle = game.Battles.Find(a => a.Id == request.BattleId)
 				?? throw new EntityNotFoundException<Battle>(request.BattleId);
 
-			var character = game.Characters.FirstOrDefault(a => a.Id == request.CharacterId)
+			var character = game.Characters.Find(a => a.Id == request.CharacterId)
 				?? throw new EntityNotFoundException<Character>(request.CharacterId);
 
 			character.Turn = new();

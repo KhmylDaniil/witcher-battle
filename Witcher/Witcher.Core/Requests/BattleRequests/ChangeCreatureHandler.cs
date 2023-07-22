@@ -12,7 +12,7 @@ using Witcher.Core.Exceptions;
 
 namespace Witcher.Core.Requests.BattleRequests
 {
-	public class ChangeCreatureHandler : BaseHandler<ChangeCreatureCommand, Unit>
+	public sealed class ChangeCreatureHandler : BaseHandler<ChangeCreatureCommand, Unit>
 	{
 		public ChangeCreatureHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -26,13 +26,13 @@ namespace Witcher.Core.Requests.BattleRequests
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 
-			var battle = game.Battles.FirstOrDefault(a => a.Id == request.BattleId)
+			var battle = game.Battles.Find(a => a.Id == request.BattleId)
 				?? throw new EntityNotFoundException<Battle>(request.BattleId);
 
-			if (battle.Creatures.Any(c => c.Name == request.Name && c.Id != request.Id))
+			if (battle.Creatures.Exists(c => c.Name == request.Name && c.Id != request.Id))
 				throw new RequestNameNotUniqException<Creature>(request.Name);
 
-			var creature = battle.Creatures.FirstOrDefault(a => a.Id == request.Id)
+			var creature = battle.Creatures.Find(a => a.Id == request.Id)
 				?? throw new EntityNotFoundException<Creature>(request.Id);
 
 			if (creature is Character)

@@ -1,13 +1,12 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions.RequestExceptions;
-using System;
+﻿using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.BattleRequests
 {
 	/// <summary>
 	/// Команда изменения существа в битве
 	/// </summary>
-	public sealed class ChangeCreatureCommand : IValidatableCommand
+	public sealed class ChangeCreatureCommand : IRequest
 	{
 		/// <summary>
 		/// Айди боя
@@ -28,14 +27,5 @@ namespace Witcher.Core.Contracts.BattleRequests
 		/// Описание существа
 		/// </summary>
 		public string Description { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			if (string.IsNullOrEmpty(Name))
-				throw new RequestFieldNullException<CreateCreatureCommand>(nameof(Name));
-		}
 	}
 }

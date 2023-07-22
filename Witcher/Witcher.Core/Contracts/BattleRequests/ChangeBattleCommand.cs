@@ -1,13 +1,12 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions.RequestExceptions;
-using System;
+﻿using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.BattleRequests
 {
 	/// <summary>
 	/// Запрос изменения боя
 	/// </summary>
-	public sealed class ChangeBattleCommand : IValidatableCommand
+	public sealed class ChangeBattleCommand : IRequest
 	{
 		/// <summary>
 		/// Айди боя
@@ -28,14 +27,5 @@ namespace Witcher.Core.Contracts.BattleRequests
 		/// Описание боя
 		/// </summary>
 		public string Description { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			if (string.IsNullOrEmpty(Name))
-				throw new RequestFieldNullException<ChangeBattleCommand>(nameof(Name));
-		}
 	}
 }
