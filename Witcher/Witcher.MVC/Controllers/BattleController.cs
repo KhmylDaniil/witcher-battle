@@ -286,7 +286,7 @@ namespace Witcher.MVC.Controllers
 				return charactersFromCache;
 			else
 			{
-				var characters = await _mediator.SendValidated(new GetCharactersCommand() { PageSize = int.MaxValue }, cancellationToken);
+				var characters = await _mediator.Send(new GetCharactersCommand() { PageSize = int.MaxValue }, cancellationToken);
 
 				var result = characters.ToDictionary(x => x.Id, x => (x.Name, x.OwnerName));
 

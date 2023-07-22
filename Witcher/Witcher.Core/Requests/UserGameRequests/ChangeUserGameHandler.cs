@@ -13,7 +13,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.UserGameRequests
 {
-	public class ChangeUserGameHandler : BaseHandler<ChangeUserGameCommand, Unit>
+	public sealed class ChangeUserGameHandler : BaseHandler<ChangeUserGameCommand, Unit>
 	{
 		/// <summary>
 		/// Конструктор обработчика команды изменения пользователя игры

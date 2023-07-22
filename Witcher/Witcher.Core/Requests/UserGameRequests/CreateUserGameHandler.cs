@@ -6,7 +6,6 @@ using Witcher.Core.Contracts.UserGameRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Exceptions;
 using Witcher.Core.Exceptions.EntityExceptions;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,7 +14,7 @@ namespace Witcher.Core.Requests.UserGameRequests
 	/// <summary>
 	/// Обработчик команды создания пользователя игры
 	/// </summary>
-	public class CreateUserGameHandler : BaseHandler<CreateUserGameCommand, Unit>
+	public sealed class CreateUserGameHandler : BaseHandler<CreateUserGameCommand, Unit>
 	{
 		/// <summary>
 		/// Контекст пользователя
@@ -56,11 +55,11 @@ namespace Witcher.Core.Requests.UserGameRequests
 				?? throw new EntityNotFoundException<Interface>(SystemInterfaces.GameDarkId);
 
 			if (request.RoleId == GameRoles.MasterRoleId
-				&& !game.UserGames.Any(x => x.UserId == _userContext.CurrentUserId
+				&& !game.UserGames.Exists(x => x.UserId == _userContext.CurrentUserId
 					&& x.GameRoleId == GameRoles.MainMasterRoleId))
 				throw new RequestValidationException("Нет прав для присвоения роли");
 
-			if (game.UserGames.Any(x => x.UserId == request.UserId))
+			if (game.UserGames.Exists(x => x.UserId == request.UserId))
 				throw new RequestValidationException("Данный пользователь уже есть в игре");
 
 			game.UserGames.Add(new UserGame(user, game, @interface, role));

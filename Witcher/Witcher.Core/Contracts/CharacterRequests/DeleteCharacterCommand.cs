@@ -1,9 +1,9 @@
-﻿using System;
-using Witcher.Core.Abstractions;
+﻿using MediatR;
+using System;
 
 namespace Witcher.Core.Contracts.CharacterRequests
 {
-	public class DeleteCharacterCommand : IValidatableCommand
+	public sealed class DeleteCharacterCommand : IRequest
 	{
 		/// <summary>
 		/// Айди
@@ -14,13 +14,5 @@ namespace Witcher.Core.Contracts.CharacterRequests
 		/// Название
 		/// </summary>
 		public string Name { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

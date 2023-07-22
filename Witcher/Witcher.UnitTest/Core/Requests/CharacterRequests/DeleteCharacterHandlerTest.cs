@@ -12,7 +12,7 @@ namespace Witcher.UnitTest.Core.Requests.CharacterRequests
 	/// Тест для <see cref="DeleteCharacterHandler"/>
 	/// </summary>
 	[TestClass]
-	public class DeleteCharacterHandlerTest : UnitTestBase
+	public sealed class DeleteCharacterHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;

@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
@@ -13,7 +11,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.CharacterRequests
 {
-	public class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, Character>
+	public sealed class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, Character>
 	{
 		private readonly IUserContext _userContext;
 
@@ -39,10 +37,10 @@ namespace Witcher.Core.Requests.CharacterRequests
 			.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 
-			if (game.Characters.Any(ct => ct.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase)))
+			if (game.Characters.Exists(ct => ct.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase)))
 				throw new RequestNameNotUniqException<CreateCharacterHandler>(request.Name);
 
-			var creatureTemplate = game.CreatureTemplates.FirstOrDefault(x => x.Id == request.CreatureTemplateId)
+			var creatureTemplate = game.CreatureTemplates.Find(x => x.Id == request.CreatureTemplateId)
 				?? throw new EntityNotFoundException<CreatureTemplate>(request.CreatureTemplateId);
 
 			var newCharacter = new Character(game, creatureTemplate, null, request.Name, request.Description);

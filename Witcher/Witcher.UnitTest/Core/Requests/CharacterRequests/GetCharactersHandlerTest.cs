@@ -6,7 +6,6 @@ using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
 using Witcher.Core.Entities;
-using Witcher.Core.Requests.CreatureTemplateRequests;
 using Witcher.Core.Contracts.CharacterRequests;
 using Witcher.Core.Requests.CharacterRequests;
 
@@ -16,7 +15,7 @@ namespace Witcher.UnitTest.Core.Requests.CharacterRequests
 	/// Тест для <see cref="GetCharactersHandler"/>
 	/// </summary>
 	[TestClass]
-	public class GetCharactersHandlerTest : UnitTestBase
+	public sealed class GetCharactersHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly BodyTemplate _bodyTemplate;

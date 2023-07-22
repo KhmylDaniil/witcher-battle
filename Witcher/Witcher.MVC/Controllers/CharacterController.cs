@@ -1,18 +1,14 @@
-﻿using AutoMapper;
-using MediatR;
-using Microsoft.AspNetCore.Http;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.CharacterRequests;
-using Witcher.Core.Contracts.CreatureTemplateRequests;
 using Witcher.Core.Exceptions;
 using Witcher.Core.ExtensionMethods;
-using Witcher.MVC.ViewModels.CreatureTemplate;
 
 namespace Witcher.MVC.Controllers
 {
-	public class CharacterController : BaseController
+	public sealed class CharacterController : BaseController
 	{
 		private readonly IMemoryCache _memoryCache;
 
@@ -28,17 +24,16 @@ namespace Witcher.MVC.Controllers
 			IEnumerable<GetCharactersResponseItem> response;
 			try
 			{
-				response = await _mediator.SendValidated(query, cancellationToken);
+				response = await _mediator.Send(query, cancellationToken);
+				return View(response);
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				response = await _mediator.SendValidated(new GetCharactersCommand(), cancellationToken);
+				return await HandleExceptionAsync<CharacterController>(ex, async () =>
+				{
+					return View(await _mediator.Send(new GetCharactersCommand(), cancellationToken));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<CharacterController>(ex); }
-
-			return View(response);
 		}
 
 		[Route("[controller]/{id}")]
@@ -46,19 +41,17 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var response = await _mediator.SendValidated(request, cancellationToken);
+				var response = await _mediator.Send(request, cancellationToken);
 
 				return View(response);
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				var response = await _mediator.SendValidated(new GetCharactersCommand(), cancellationToken);
-
-				return View(response);
+				return await HandleExceptionAsync<CharacterController>(ex, async () =>
+				{
+					return View(await _mediator.Send(new GetCharactersCommand(), cancellationToken));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<CharacterController>(ex); }
 		}
 
 		[HttpGet]
@@ -75,18 +68,16 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var result = await _mediator.SendValidated(command, cancellationToken);
+				var result = await _mediator.Send(command, cancellationToken);
 
 				_memoryCache.Remove("characters");
 
 				return RedirectToAction(nameof(Details), new GetCharacterByIdCommand() { Id = result.Id });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<CharacterController>(ex, () => View(command));
 			}
-			catch (Exception ex) { return RedirectToErrorPage<CharacterController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -99,18 +90,16 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				_memoryCache.Remove("characters");
 
 				return RedirectToAction(nameof(Index), new GetCharactersCommand());
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<CharacterController>(ex, () => View(command));
 			}
-			catch (Exception ex) { return RedirectToErrorPage<CharacterController>(ex); }
 		}
 	}
 }

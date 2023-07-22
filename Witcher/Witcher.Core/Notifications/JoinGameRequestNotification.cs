@@ -1,5 +1,5 @@
-﻿using System;
-using Witcher.Core.Abstractions;
+﻿using MediatR;
+using System;
 using Witcher.Core.Contracts.NotificationRequests;
 using Witcher.Core.Contracts.UserGameRequests;
 using Witcher.Core.Entities;
@@ -27,10 +27,10 @@ namespace Witcher.Core.Notifications
 			Message = string.Format("Пользователь {0} желает присоединиться к игре {1}. {2}{3}", sender.Name, GameName, isMessageEmpty, message);
 		}
 
-		public override IValidatableCommand Accept()
+		public override IRequest Accept()
 			=> new CreateUserGameCommand { UserId = SenderId, RoleId = BaseData.GameRoles.PlayerRoleId };
 
-		public override IValidatableCommand Decline()
+		public override IRequest Decline()
 			=> new CreateNotificationCommand { ReceiverId = SenderId, Message = $"Мастер игры не разрешил вам присоединиться к игре {GameName}." };
 
 	}

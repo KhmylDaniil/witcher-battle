@@ -1,21 +1,13 @@
-﻿using System;
-using Witcher.Core.Abstractions;
+﻿using MediatR;
+using System;
 
 namespace Witcher.Core.Contracts.CharacterRequests
 {
-	public class GetCharacterByIdCommand : IValidatableCommand<GetCharacterByIdResponse>
+	public sealed class GetCharacterByIdCommand : IRequest<GetCharacterByIdResponse>
 	{
 		/// <summary>
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

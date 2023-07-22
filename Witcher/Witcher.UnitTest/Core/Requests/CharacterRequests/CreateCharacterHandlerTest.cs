@@ -13,7 +13,7 @@ using Witcher.Core.Requests.CharacterRequests;
 namespace Witcher.UnitTest.Core.Requests.CharacterRequests
 {
 	[TestClass]
-	public class CreateCharacterHandlerTest : UnitTestBase
+	public sealed class CreateCharacterHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly User _mainMaster;

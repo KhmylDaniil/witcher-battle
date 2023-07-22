@@ -13,7 +13,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.UserGameRequests
 {
-	public class DeleteUserGameHandler : BaseHandler<DeleteUserGameCommand, Unit>
+	public sealed class DeleteUserGameHandler : BaseHandler<DeleteUserGameCommand, Unit>
 	{
 		/// <summary>
 		/// Контекст пользователя
@@ -49,13 +49,13 @@ namespace Witcher.Core.Requests.UserGameRequests
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 			
-			var userGame = game.UserGames.FirstOrDefault(x => x.UserId == request.UserId)
+			var userGame = game.UserGames.Find(x => x.UserId == request.UserId)
 				?? throw new EntityNotFoundException<UserGame>(request.UserId);
 
 			if (userGame.GameRoleId == GameRoles.MainMasterRoleId)
 				throw new RequestValidationException("Роль главмастера не может быть удалена без удаления игры");
 
-			bool IsMainMaster = game.UserGames.Any(x => x.GameRoleId == GameRoles.MainMasterRoleId
+			bool IsMainMaster = game.UserGames.Exists(x => x.GameRoleId == GameRoles.MainMasterRoleId
 				&& x.UserId == _userContext.CurrentUserId);
 
 			if (userGame.UserId == _userContext.CurrentUserId)

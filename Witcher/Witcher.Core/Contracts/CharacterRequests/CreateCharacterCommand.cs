@@ -1,12 +1,10 @@
-﻿using System;
-using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.BattleRequests;
+﻿using MediatR;
+using System;
 using Witcher.Core.Entities;
-using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Contracts.CharacterRequests
 {
-	public class CreateCharacterCommand : IValidatableCommand<Character>
+	public sealed class CreateCharacterCommand : IRequest<Character>
 	{
 		/// <summary>
 		/// Айди шаблона существа
@@ -22,14 +20,5 @@ namespace Witcher.Core.Contracts.CharacterRequests
 		/// Описание существа
 		/// </summary>
 		public string Description { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			if (string.IsNullOrEmpty(Name))
-				throw new RequestFieldNullException<CreateCreatureCommand>(nameof(Name));
-		}
 	}
 }

@@ -86,7 +86,7 @@ namespace Witcher.MVC.Controllers
 
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				return RedirectToAction(nameof(Index));
 			}
@@ -98,7 +98,7 @@ namespace Witcher.MVC.Controllers
 			catch (Exception ex) { return RedirectToErrorPage<NotificationController>(ex); }
 		}
 
-		private async Task<IValidatableCommand> FormValidatableCommand(Guid id, bool accept)
+		private async Task<IRequest> FormValidatableCommand(Guid id, bool accept)
 		{
 			var notification = await _mediator.SendValidated(new GetNotificationByIdQuery { Id = id }) as YesOrNoDecisionNotification
 				?? throw new EntityBaseException("Уведомление не найдено.");
