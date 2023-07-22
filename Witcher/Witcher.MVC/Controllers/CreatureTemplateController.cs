@@ -33,17 +33,16 @@ namespace Witcher.MVC.Controllers
 			IEnumerable<GetCreatureTemplateResponseItem> response;
 			try
 			{
-				response = await _mediator.SendValidated(query, cancellationToken);
+				response = await _mediator.Send(query, cancellationToken);
+				return View(response);
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				response = await _mediator.SendValidated(new GetCreatureTemplateQuery() , cancellationToken);
+				return await HandleExceptionAsync<CreatureTemplateController>(ex, async () =>
+				{
+					return View(await _mediator.Send(new GetCreatureTemplateQuery(), cancellationToken));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
-
-			return View(response);
 		}
 
 		[Route("[controller]/{id}")]
@@ -51,19 +50,17 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var response = await _mediator.SendValidated(query, cancellationToken);
+				var response = await _mediator.Send(query, cancellationToken);
 
 				return View(response);
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				var response = await _mediator.SendValidated(new GetCreatureTemplateQuery(), cancellationToken);
-
-				return View(response);
+				return await HandleExceptionAsync<CreatureTemplateController>(ex, async () =>
+				{
+					return View(await _mediator.Send(new GetCreatureTemplateQuery(), cancellationToken));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
 		}
 
 		[HttpGet]
@@ -80,19 +77,19 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var result = await _mediator.SendValidated(command, cancellationToken);
+				var result = await _mediator.Send(command, cancellationToken);
 
 				_memoryCache.Remove("creatureTemplates");
 
 				return RedirectToAction(nameof(Details), new GetCreatureTemplateByIdQuery() { Id = result.Id });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
+				return await HandleExceptionAsync<CreatureTemplateController>(ex, async () =>
+				{
+					return View(await CreateVM(command, cancellationToken));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
-
-			return View(await CreateVM(command, cancellationToken));
 		}
 
 		[HttpGet]
@@ -107,19 +104,19 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				_memoryCache.Remove("creatureTemplates");
 
 				return RedirectToAction(nameof(Details), new GetCreatureTemplateByIdQuery() { Id = command.Id });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
+				return await HandleExceptionAsync<CreatureTemplateController>(ex, async () =>
+				{
+					return View(await CreateVM(command, cancellationToken));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
-
-			return View(await CreateVM(command, cancellationToken));
 		}
 
 		[Route("[controller]/[action]/{creatureTemplateId}/{id?}")]
@@ -132,15 +129,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetCreatureTemplateByIdQuery() { Id = command.CreatureTemplateId });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<CreatureTemplateController>(ex, () => View(command));
 			}
-            catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -153,18 +148,16 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				_memoryCache.Remove("creatureTemplates");
 
 				return RedirectToAction(nameof(Index), new GetCreatureTemplateQuery());
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<CreatureTemplateController>(ex, () => View(command));
 			}
-            catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{creatureTemplateId}")]
@@ -177,15 +170,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetCreatureTemplateByIdQuery() { Id = command.CreatureTemplateId });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<CreatureTemplateController>(ex, () => View(command));
 			}
-            catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
 		}
 
 		[HttpPost]
@@ -195,15 +186,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { Id = command.CreatureTemplateId });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<CreatureTemplateController>(ex, () => View(command));
 			}
-            catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{creatureTemplateId}")]
@@ -216,15 +205,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetCreatureTemplateByIdQuery() { Id = command.CreatureTemplateId });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<CreatureTemplateController>(ex, () => View(command));
 			}
-            catch (Exception ex) { return RedirectToErrorPage<CreatureTemplateController>(ex); }
 		}
 
 		/// <summary>

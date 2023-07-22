@@ -1,17 +1,14 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions.RequestExceptions;
-using Witcher.Core.Exceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using static Witcher.Core.BaseData.Enums;
-using System.Linq;
+using MediatR;
 
 namespace Witcher.Core.Contracts.CreatureTemplateRequests
 {
 	/// <summary>
 	/// Запрос изменения шаблона существа
 	/// </summary>
-	public class ChangeCreatureTemplateCommand : IValidatableCommand
+	public class ChangeCreatureTemplateCommand : IRequest
 	{
 		/// <summary>
 		/// Айди
@@ -99,61 +96,8 @@ namespace Witcher.Core.Contracts.CreatureTemplateRequests
 		public int Luck { get; set; }
 
 		/// <summary>
-		/// Броня
-		/// </summary>
-		public List<UpdateCreatureTemplateRequestArmorList> ArmorList { get; set; }
-
-		/// <summary>
 		/// Способности
 		/// </summary>
 		public List<Guid> Abilities { get; set; }
-
-		/// <summary>
-		/// Навыки шаблона существа
-		/// </summary>
-		public List<UpdateCreatureTemplateRequestSkill> CreatureTemplateSkills { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			if (!Enum.IsDefined(CreatureType))
-				throw new RequestFieldIncorrectDataException<ChangeCreatureTemplateCommand>(nameof(CreatureType));
-
-			if (string.IsNullOrWhiteSpace(Name))
-				throw new RequestFieldNullException<ChangeCreatureTemplateCommand>(nameof(Name));
-
-			if (HP < 1 || Sta < 1 || Int < 1 || Ref < 1 || Dex < 1 || Body < 1 || Emp < 1 || Cra < 1 || Will < 1)
-				throw new RequestValidationException("Значение характеристики должно быть больше нуля");
-
-			if (Speed < 0)
-				throw new RequestFieldIncorrectDataException<ChangeCreatureTemplateCommand>(nameof(Speed),
-					"Значение характеристики не может быть отрицательным");
-
-			if (Luck < 0)
-				throw new RequestFieldIncorrectDataException<ChangeCreatureTemplateCommand>(nameof(Luck),
-					"Значение характеристики не может быть отрицательным");
-
-			if (ArmorList is not null)
-				foreach (var item in ArmorList)
-					if (item.Armor < 1)
-						throw new RequestFieldIncorrectDataException<ChangeCreatureTemplateCommand>(nameof(ArmorList),
-							"Значение брони должно быть больше нуля");
-
-			if (CreatureTemplateSkills is not null)
-				foreach (var item in CreatureTemplateSkills)
-				{
-					if (item.Value < 1)
-						throw new RequestFieldIncorrectDataException<ChangeCreatureTemplateCommand>(nameof(CreatureTemplateSkills),
-							"Значение навыка должно быть больше нуля");
-
-					if (!Enum.IsDefined(item.Skill))
-						throw new RequestFieldIncorrectDataException<ChangeCreatureTemplateCommand>(nameof(CreatureType));
-
-					if (CreatureTemplateSkills.Count(x => x.Skill == item.Skill) != 1)
-						throw new RequestNotUniqException<ChangeCreatureTemplateCommand>(nameof(CreatureTemplateSkills));
-				}
-		}
 	}
 }

@@ -37,11 +37,6 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 		public override async Task<IEnumerable<GetCreatureTemplateResponseItem>> Handle(
 			GetCreatureTemplateQuery request, CancellationToken cancellationToken)
 		{
-			if (request.CreationMinTime > _dateTimeProvider.TimeProvider)
-				throw new RequestFieldIncorrectDataException<GetCreatureTemplateQuery>(nameof(request.CreationMinTime));
-			if (request.ModificationMinTime > _dateTimeProvider.TimeProvider)
-				throw new RequestFieldIncorrectDataException<GetCreatureTemplateQuery>(nameof(request.CreationMinTime));
-
 			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.CreatureTemplates)
 					.ThenInclude(ct => ct.BodyTemplate)

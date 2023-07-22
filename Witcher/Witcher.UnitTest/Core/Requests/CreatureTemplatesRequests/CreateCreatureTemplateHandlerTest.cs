@@ -71,23 +71,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 				Will = 5,
 				Speed = 7,
 				Luck = 1,
-				ArmorList = new List<UpdateCreatureTemplateRequestArmorList>
-				{
-					new UpdateCreatureTemplateRequestArmorList()
-					{
-						BodyTemplatePartId = _bodyTemplatePart.Id,
-						Armor = 4
-					}
-				},
-				Abilities = new List<Guid> { _ability.Id },
-				CreatureTemplateSkills = new List<UpdateCreatureTemplateRequestSkill>
-				{
-					new UpdateCreatureTemplateRequestSkill()
-					{
-						Skill = Skill.Melee,
-						Value = 5
-					}
-				}
+				Abilities = new List<Guid> { _ability.Id }
 			};
 
 			var newHandler = new CreateCreatureTemplateHandler(_dbContext, AuthorizationService.Object);
@@ -119,15 +103,6 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(request.Luck, creatureTemplate.Luck);
 
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateParts);
-			var creatureTemplatePart = creatureTemplate.CreatureTemplateParts.FirstOrDefault();
-			Assert.IsNotNull(creatureTemplatePart);
-			Assert.AreEqual(1, creatureTemplate.CreatureTemplateParts.Count);
-			Assert.AreEqual("Void", creatureTemplatePart.Name);
-			Assert.AreEqual(1, creatureTemplatePart.HitPenalty);
-			Assert.AreEqual(1, creatureTemplatePart.DamageModifier);
-			Assert.AreEqual(10, creatureTemplatePart.MaxToHit);
-			Assert.AreEqual(1, creatureTemplatePart.MinToHit);
-			Assert.AreEqual(4, creatureTemplatePart.Armor);
 
 			Assert.IsNotNull(creatureTemplate.Abilities);
 			Assert.AreEqual(1, creatureTemplate.Abilities.Count);
@@ -135,12 +110,6 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(ability.Id, _ability.Id);
 
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateSkills);
-			Assert.AreEqual(1, creatureTemplate.CreatureTemplateSkills.Count);
-			var creatureTemplateSkill = _dbContext.CreatureTemplateSkills
-				.FirstOrDefault(x => x.CreatureTemplateId == creatureTemplate.Id);
-
-			Assert.IsTrue(creatureTemplateSkill.Skill == Skill.Melee);
-			Assert.IsTrue(creatureTemplateSkill.SkillValue == 5);
 		}
 	}
 }

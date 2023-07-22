@@ -134,9 +134,9 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsTrue(user.Name.Contains(request.UserName));
 
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateParts
-				.Any(x => Enum.GetName(x.BodyPartType).Contains(request.BodyPartType)));
+				.Exists(x => Enum.GetName(x.BodyPartType).Contains(request.BodyPartType)));
 			Assert.IsNotNull(creatureTemplate.Abilities
-				.Any(a => a.AppliedConditions.Any(ac => Enum.GetName(ac.Condition).Contains(request.ConditionName))));
+				.Exists(a => a.AppliedConditions.Exists(ac => Enum.GetName(ac.Condition).Contains(request.ConditionName))));
 		}
 	}
 }

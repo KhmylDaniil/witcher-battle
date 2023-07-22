@@ -58,7 +58,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault();
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateSkills);
 
-			var skill = creatureTemplate.CreatureTemplateSkills.FirstOrDefault(x => x.Id == _skill.Id);
+			var skill = creatureTemplate.CreatureTemplateSkills.Find(x => x.Id == _skill.Id);
 			Assert.IsNull(skill);
 		}
 	}

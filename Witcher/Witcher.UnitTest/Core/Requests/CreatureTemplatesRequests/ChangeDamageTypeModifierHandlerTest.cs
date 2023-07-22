@@ -51,7 +51,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault();
 			Assert.IsNotNull(creatureTemplate.DamageTypeModifiers);
 
-			var modifier = creatureTemplate.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == DamageType.Slashing);
+			var modifier = creatureTemplate.DamageTypeModifiers.Find(x => x.DamageType == DamageType.Slashing);
 			Assert.IsNotNull(modifier);
 			Assert.AreEqual(DamageTypeModifier.Vulnerability, modifier.DamageTypeModifier);
 
@@ -70,7 +70,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault();
 			Assert.IsNotNull(creatureTemplate.DamageTypeModifiers);
 
-			modifier = creatureTemplate.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == DamageType.Slashing);
+			modifier = creatureTemplate.DamageTypeModifiers.Find(x => x.DamageType == DamageType.Slashing);
 			Assert.IsNotNull(modifier);
 			Assert.AreEqual(DamageTypeModifier.Resistance, modifier.DamageTypeModifier);
 
@@ -89,7 +89,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault();
 			Assert.IsNotNull(creatureTemplate.DamageTypeModifiers);
 
-			modifier = creatureTemplate.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == DamageType.Slashing);
+			modifier = creatureTemplate.DamageTypeModifiers.Find(x => x.DamageType == DamageType.Slashing);
 			Assert.IsNull(modifier);
 		}
 	}

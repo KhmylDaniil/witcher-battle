@@ -84,7 +84,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault();
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateParts);
 
-			var head = creatureTemplate.CreatureTemplateParts.FirstOrDefault(x => x.Id == _head.Id);
+			var head = creatureTemplate.CreatureTemplateParts.Find(x => x.Id == _head.Id);
 			Assert.IsNotNull(head);
 			Assert.AreEqual(5, head.Armor);
 		}
@@ -112,11 +112,11 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault();
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateParts);
 
-			var head = creatureTemplate.CreatureTemplateParts.FirstOrDefault(x => x.Id == _head.Id);
+			var head = creatureTemplate.CreatureTemplateParts.Find(x => x.Id == _head.Id);
 			Assert.IsNotNull(head);
 			Assert.AreEqual(3, head.Armor);
 
-			var torso = creatureTemplate.CreatureTemplateParts.FirstOrDefault(x => x.Id == _torso.Id);
+			var torso = creatureTemplate.CreatureTemplateParts.Find(x => x.Id == _torso.Id);
 			Assert.IsNotNull(torso);
 			Assert.AreEqual(3, torso.Armor);
 		}

@@ -1,15 +1,13 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions.RequestExceptions;
-using System;
-using static Witcher.Core.BaseData.Enums;
+﻿using System;
 using Witcher.Core.Contracts.BaseRequests;
+using MediatR;
 
 namespace Witcher.Core.Contracts.CreatureTemplateRequests
 {
 	/// <summary>
 	/// Команда изменения модификатора урона по типу 
 	/// </summary>
-	public class ChangeDamageTypeModifierForCreatureTemplateCommand : ChangeDamageTypeModifierCommandBase, IValidatableCommand
+	public class ChangeDamageTypeModifierForCreatureTemplateCommand : ChangeDamageTypeModifierCommandBase, IRequest
 	{
 		/// <summary>
 		/// Айди шаблона существа

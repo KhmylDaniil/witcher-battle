@@ -1,12 +1,12 @@
-﻿using Witcher.Core.Abstractions;
-using System;
+﻿using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.CreatureTemplateRequests
 {
 	/// <summary>
 	/// Команда удаления навыка шаблона существа
 	/// </summary>
-	public class DeleteCreatureTemplateSkillCommand : IValidatableCommand
+	public sealed class DeleteCreatureTemplateSkillCommand : IRequest
 	{
 		/// <summary>
 		/// Айди шаблона существ
@@ -17,13 +17,5 @@ namespace Witcher.Core.Contracts.CreatureTemplateRequests
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }
