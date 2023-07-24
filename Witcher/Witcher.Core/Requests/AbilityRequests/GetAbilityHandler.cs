@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Witcher.Core.Exceptions;
-using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
@@ -28,6 +26,12 @@ namespace Witcher.Core.Requests.AbilityRequests
 
 		public override async Task<IEnumerable<GetAbilityResponseItem>> Handle(GetAbilityQuery request, CancellationToken cancellationToken)
 		{
+			var attackSkillMatches = request.AttackSkillName.GetPossibleEnumNumbersFromSearchString<Enums.Skill>();
+
+			var damageTypeMatches = request.DamageType.GetPossibleEnumNumbersFromSearchString<Enums.DamageType>();
+
+			var conditionMatches = request.ConditionName.GetPossibleEnumNumbersFromSearchString<Condition>();
+
 			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.Abilities)
 					.SelectMany(g => g.Abilities
@@ -41,10 +45,10 @@ namespace Witcher.Core.Requests.AbilityRequests
 						.Where(x => x.ModifiedOn >= request.ModificationMinTime)
 						.Where(x => request.ModificationMaxTime == default && x.ModifiedOn <= _dateTimeProvider.TimeProvider
 						|| x.ModifiedOn <= request.ModificationMaxTime))
-						.Where(x => request.AttackSkillName == null || Enum.GetName(x.AttackSkill).Contains(request.AttackSkillName))
-						.Where(x => request.DamageType == null || Enum.GetName(x.DamageType).Contains(request.DamageType))
+						.Where(x => request.AttackSkillName == null || attackSkillMatches.Any(s => (int)x.AttackSkill == s))
+						.Where(x => request.DamageType == null || damageTypeMatches.Any(dt => (int)x.DamageType == dt))
 						.Where(x => request.ConditionName == null
-						|| x.AppliedConditions.Select(ac => CritNames.GetConditionFullName(ac.Condition)).Contains(request.ConditionName));
+						|| x.AppliedConditions.Any(ac => conditionMatches.Any(cm => cm == (int)ac.Condition)));
 
 			var list = await filter
 				.OrderBy(request.OrderBy, request.IsAscending)

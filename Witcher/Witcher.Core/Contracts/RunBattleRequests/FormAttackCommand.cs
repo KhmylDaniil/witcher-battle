@@ -1,10 +1,10 @@
-﻿using Witcher.Core.Abstractions;
-using System;
+﻿using System;
 using static Witcher.Core.BaseData.Enums;
+using MediatR;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
-	public class FormAttackCommand : IValidatableCommand<FormAttackResponse>
+	public sealed class FormAttackCommand : IRequest<FormAttackResponse>
 	{
 		public Guid AttackerId { get; set; }
 
@@ -13,10 +13,5 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		public Guid TargetId { get; set; }
 
 		public AttackType AttackType { get; set; }
-
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

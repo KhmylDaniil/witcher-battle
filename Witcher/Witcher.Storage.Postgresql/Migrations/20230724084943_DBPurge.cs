@@ -39,7 +39,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
-                    BodyPartType = table.Column<string>(type: "text", nullable: false, comment: "Тип части тела"),
+                    BodyPartType = table.Column<int>(type: "integer", nullable: false, comment: "Тип части тела"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название"),
                     HitPenalty = table.Column<int>(type: "integer", nullable: false, comment: "Пенальти за прицеливание"),
                     DamageModifer = table.Column<double>(type: "double precision", nullable: false, comment: "Модификатор урона"),
@@ -239,8 +239,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                     GameId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди игры"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название способности"),
                     Description = table.Column<string>(type: "text", nullable: true, comment: "Описание способности"),
-                    AttackSkill = table.Column<string>(type: "text", nullable: false, comment: "Навык атаки"),
-                    DamageType = table.Column<string>(type: "text", nullable: false, comment: "Тип урона"),
+                    AttackSkill = table.Column<int>(type: "integer", nullable: false, comment: "Навык атаки"),
+                    DamageType = table.Column<int>(type: "integer", nullable: false, comment: "Тип урона"),
                     AttackDiceQuantity = table.Column<int>(type: "integer", nullable: false, comment: "Количество кубов атаки"),
                     DamageModifier = table.Column<int>(type: "integer", nullable: false, comment: "Модификатор атаки"),
                     AttackSpeed = table.Column<int>(type: "integer", nullable: false, comment: "Скорость атаки"),
@@ -358,7 +358,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     Weight = table.Column<int>(type: "integer", nullable: false, comment: "Вес"),
                     Price = table.Column<int>(type: "integer", nullable: false, comment: "Цена"),
                     IsStackable = table.Column<bool>(type: "boolean", nullable: false),
-                    ItemType = table.Column<string>(type: "text", nullable: false, comment: "Тип предмета"),
+                    ItemType = table.Column<int>(type: "integer", nullable: false, comment: "Тип предмета"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -585,7 +585,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     AbilityId = table.Column<Guid>(type: "uuid", nullable: false),
                     ApplyChance = table.Column<int>(type: "integer", nullable: false, comment: "Шанс применения"),
-                    Condition = table.Column<string>(type: "text", nullable: false, comment: "Тип состояния"),
+                    Condition = table.Column<int>(type: "integer", nullable: false, comment: "Тип состояния"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -612,7 +612,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     AbilityId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DefensiveSkill = table.Column<string>(type: "text", nullable: false, comment: "Защитный навык"),
+                    DefensiveSkill = table.Column<int>(type: "integer", nullable: false, comment: "Защитный навык"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -674,7 +674,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     GameId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди игры"),
                     ImgFileId = table.Column<Guid>(type: "uuid", nullable: true, comment: "Айди графического файла"),
                     BodyTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона тела"),
-                    CreatureType = table.Column<string>(type: "text", nullable: false, comment: "Тип существа"),
+                    CreatureType = table.Column<int>(type: "integer", nullable: false, comment: "Тип существа"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название шаблона"),
                     Description = table.Column<string>(type: "text", nullable: true, comment: "Описание шаблона"),
                     HP = table.Column<int>(type: "integer", nullable: false, comment: "Хиты"),
@@ -758,8 +758,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
-                    AttackSkill = table.Column<string>(type: "text", nullable: false, comment: "Навык атаки"),
-                    DamageType = table.Column<string>(type: "text", nullable: false, comment: "Тип урона"),
+                    AttackSkill = table.Column<int>(type: "integer", nullable: false, comment: "Навык атаки"),
+                    DamageType = table.Column<int>(type: "integer", nullable: false, comment: "Тип урона"),
                     AttackDiceQuantity = table.Column<int>(type: "integer", nullable: false, comment: "Количество кубов атаки"),
                     DamageModifier = table.Column<int>(type: "integer", nullable: false, comment: "Модификатор атаки"),
                     Accuracy = table.Column<int>(type: "integer", nullable: false, comment: "Точность атаки"),
@@ -941,7 +941,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
                     CreatureId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона существа"),
-                    Skill = table.Column<string>(type: "text", nullable: false, comment: "Навык"),
+                    Skill = table.Column<int>(type: "integer", nullable: false, comment: "Навык"),
                     SkillValue = table.Column<int>(type: "integer", nullable: false, comment: "Значение навыка"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -1026,7 +1026,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     WeaponTemplateId = table.Column<Guid>(type: "uuid", nullable: false),
                     ApplyChance = table.Column<int>(type: "integer", nullable: false, comment: "Шанс применения"),
-                    Condition = table.Column<string>(type: "text", nullable: false, comment: "Тип состояния"),
+                    Condition = table.Column<int>(type: "integer", nullable: false, comment: "Тип состояния"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1053,7 +1053,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     WeaponTemplateId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DefensiveSkill = table.Column<string>(type: "text", nullable: false, comment: "Защитный навык"),
+                    DefensiveSkill = table.Column<int>(type: "integer", nullable: false, comment: "Защитный навык"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1084,7 +1084,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     CreatureTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона существа"),
                     Name = table.Column<string>(type: "text", nullable: false, comment: "Название существа"),
                     Description = table.Column<string>(type: "text", nullable: true, comment: "Описание"),
-                    CreatureType = table.Column<string>(type: "text", nullable: false, comment: "Тип существа"),
+                    CreatureType = table.Column<int>(type: "integer", nullable: false, comment: "Тип существа"),
                     MaxHP = table.Column<int>(type: "integer", nullable: false, comment: "Максимальные хиты"),
                     MaxSta = table.Column<int>(type: "integer", nullable: false, comment: "Максимальная стамина"),
                     MaxInt = table.Column<int>(type: "integer", nullable: false, comment: "Максимальный интеллект"),
@@ -1247,7 +1247,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
                     CreatureId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди существа"),
-                    Skill = table.Column<string>(type: "text", nullable: false, comment: "Навык"),
+                    Skill = table.Column<int>(type: "integer", nullable: false, comment: "Навык"),
                     MaxValue = table.Column<int>(type: "integer", nullable: false, comment: "Макксимальное значение навыка"),
                     SkillValue = table.Column<int>(type: "integer", nullable: false, comment: "Значение навыка"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
@@ -1346,8 +1346,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)"),
-                    Severity = table.Column<string>(type: "text", nullable: false, comment: "Тяжесть критического эффекта"),
-                    BodyPartLocation = table.Column<string>(type: "text", nullable: false, comment: "Тип части тела"),
+                    Severity = table.Column<int>(type: "integer", nullable: false, comment: "Тяжесть критического эффекта"),
+                    BodyPartLocation = table.Column<int>(type: "integer", nullable: false, comment: "Тип части тела"),
                     CreaturePartId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди части тела")
                 },
                 constraints: table =>
@@ -2312,7 +2312,7 @@ namespace Witcher.Storage.Postgresql.Migrations
                     CharacterId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди персонажа"),
                     ItemTemplateId = table.Column<Guid>(type: "uuid", nullable: false, comment: "Айди шаблона предмета"),
                     Quantity = table.Column<int>(type: "integer", nullable: false, comment: "Количество"),
-                    ItemType = table.Column<string>(type: "text", nullable: false, comment: "Тип предмета"),
+                    ItemType = table.Column<int>(type: "integer", nullable: false, comment: "Тип предмета"),
                     IsEquipped = table.Column<bool>(type: "boolean", nullable: true, comment: "Экипировано"),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),

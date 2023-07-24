@@ -4,7 +4,7 @@ using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
-	public class FormAttackResponse
+	public sealed class FormAttackResponse
 	{
 		public Dictionary<string, Guid?> CreatureParts { get; set; }
 

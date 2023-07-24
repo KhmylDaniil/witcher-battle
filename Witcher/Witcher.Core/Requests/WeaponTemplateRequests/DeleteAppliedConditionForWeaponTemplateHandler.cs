@@ -1,9 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
@@ -14,9 +11,10 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.WeaponTemplateRequests
 {
-	public class DeleteAppliedConditionForWeaponTemplateHandler : BaseHandler<DeleteAppliedConditionForWeaponTemplateCommand, Unit>
+	public sealed class DeleteAppliedConditionForWeaponTemplateHandler : BaseHandler<DeleteAppliedConditionForWeaponTemplateCommand, Unit>
 	{
-		public DeleteAppliedConditionForWeaponTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
+		public DeleteAppliedConditionForWeaponTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
+			: base(appDbContext, authorizationService)
 		{
 		}
 
@@ -27,10 +25,10 @@ namespace Witcher.Core.Requests.WeaponTemplateRequests
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 
-			var weaponTemplate = game.ItemTemplates.FirstOrDefault(a => a.Id == request.WeaponTemplateId) as WeaponTemplate
+			var weaponTemplate = game.ItemTemplates.Find(a => a.Id == request.WeaponTemplateId) as WeaponTemplate
 				?? throw new EntityNotFoundException<WeaponTemplate>(request.WeaponTemplateId);
 
-			var appliedCondition = weaponTemplate.AppliedConditions.FirstOrDefault(x => x.Id == request.Id)
+			var appliedCondition = weaponTemplate.AppliedConditions.Find(x => x.Id == request.Id)
 				?? throw new EntityNotFoundException<AppliedCondition>(request.Id);
 
 			weaponTemplate.AppliedConditions.Remove(appliedCondition);

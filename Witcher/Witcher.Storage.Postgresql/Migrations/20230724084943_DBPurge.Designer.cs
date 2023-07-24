@@ -12,7 +12,7 @@ using Witcher.Storage.Postgresql;
 namespace Witcher.Storage.Postgresql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230710065757_DBPurge")]
+    [Migration("20230724084943_DBPurge")]
     partial class DBPurge
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -146,9 +146,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnName("AttackDiceQuantity")
                         .HasComment("Количество кубов атаки");
 
-                    b.Property<string>("AttackSkill")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("AttackSkill")
+                        .HasColumnType("integer")
                         .HasColumnName("AttackSkill")
                         .HasComment("Навык атаки");
 
@@ -170,9 +169,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnName("DamageModifier")
                         .HasComment("Модификатор атаки");
 
-                    b.Property<string>("DamageType")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("DamageType")
+                        .HasColumnType("integer")
                         .HasColumnName("DamageType")
                         .HasComment("Тип урона");
 
@@ -357,9 +355,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_in(md5(random()::text || clock_timestamp()::text)::cstring)");
 
-                    b.Property<string>("BodyPartType")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("BodyPartType")
+                        .HasColumnType("integer")
                         .HasColumnName("BodyPartType")
                         .HasComment("Тип части тела");
 
@@ -561,9 +558,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnName("CreatureTemplateId")
                         .HasComment("Айди шаблона существа");
 
-                    b.Property<string>("CreatureType")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("CreatureType")
+                        .HasColumnType("integer")
                         .HasColumnName("CreatureType")
                         .HasComment("Тип существа");
 
@@ -829,9 +825,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Property<string>("RoleModifiedUser")
                         .HasColumnType("text");
 
-                    b.Property<string>("Skill")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("Skill")
+                        .HasColumnType("integer")
                         .HasColumnName("Skill")
                         .HasComment("Навык");
 
@@ -879,9 +874,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now() at time zone 'utc'");
 
-                    b.Property<string>("CreatureType")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("CreatureType")
+                        .HasColumnType("integer")
                         .HasColumnName("CreatureType")
                         .HasComment("Тип существа");
 
@@ -1009,9 +1003,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                     b.Property<string>("RoleModifiedUser")
                         .HasColumnType("text");
 
-                    b.Property<string>("Skill")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("Skill")
+                        .HasColumnType("integer")
                         .HasColumnName("Skill")
                         .HasComment("Навык");
 
@@ -1414,9 +1407,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnName("ItemTemplateId")
                         .HasComment("Айди шаблона предмета");
 
-                    b.Property<string>("ItemType")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("ItemType")
+                        .HasColumnType("integer")
                         .HasColumnName("ItemType")
                         .HasComment("Тип предмета");
 
@@ -1477,9 +1469,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("IsStackable");
 
-                    b.Property<string>("ItemType")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("ItemType")
+                        .HasColumnType("integer")
                         .HasColumnName("ItemType")
                         .HasComment("Тип предмета");
 
@@ -2065,9 +2056,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                 {
                     b.HasBaseType("Witcher.Core.Entities.Effect");
 
-                    b.Property<string>("BodyPartLocation")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("BodyPartLocation")
+                        .HasColumnType("integer")
                         .HasColumnName("BodyPartLocation")
                         .HasComment("Тип части тела");
 
@@ -2076,9 +2066,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnName("CreaturePartId")
                         .HasComment("Айди части тела");
 
-                    b.Property<string>("Severity")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("Severity")
+                        .HasColumnType("integer")
                         .HasColumnName("Severity")
                         .HasComment("Тяжесть критического эффекта");
 
@@ -2222,9 +2211,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnName("AttackDiceQuantity")
                         .HasComment("Количество кубов атаки");
 
-                    b.Property<string>("AttackSkill")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("AttackSkill")
+                        .HasColumnType("integer")
                         .HasColumnName("AttackSkill")
                         .HasComment("Навык атаки");
 
@@ -2233,9 +2221,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                         .HasColumnName("DamageModifier")
                         .HasComment("Модификатор атаки");
 
-                    b.Property<string>("DamageType")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("DamageType")
+                        .HasColumnType("integer")
                         .HasColumnName("DamageType")
                         .HasComment("Тип урона");
 
@@ -2944,9 +2931,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                                 .HasColumnName("ApplyChance")
                                 .HasComment("Шанс применения");
 
-                            b1.Property<string>("Condition")
-                                .IsRequired()
-                                .HasColumnType("text")
+                            b1.Property<int>("Condition")
+                                .HasColumnType("integer")
                                 .HasColumnName("Condition")
                                 .HasComment("Тип состояния");
 
@@ -3003,9 +2989,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                             b1.Property<string>("RoleModifiedUser")
                                 .HasColumnType("text");
 
-                            b1.Property<string>("Skill")
-                                .IsRequired()
-                                .HasColumnType("text")
+                            b1.Property<int>("Skill")
+                                .HasColumnType("integer")
                                 .HasColumnName("DefensiveSkill")
                                 .HasComment("Защитный навык");
 
@@ -3725,9 +3710,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                                 .HasColumnName("ApplyChance")
                                 .HasComment("Шанс применения");
 
-                            b1.Property<string>("Condition")
-                                .IsRequired()
-                                .HasColumnType("text")
+                            b1.Property<int>("Condition")
+                                .HasColumnType("integer")
                                 .HasColumnName("Condition")
                                 .HasComment("Тип состояния");
 
@@ -3784,9 +3768,8 @@ namespace Witcher.Storage.Postgresql.Migrations
                             b1.Property<string>("RoleModifiedUser")
                                 .HasColumnType("text");
 
-                            b1.Property<string>("Skill")
-                                .IsRequired()
-                                .HasColumnType("text")
+                            b1.Property<int>("Skill")
+                                .HasColumnType("integer")
                                 .HasColumnName("DefensiveSkill")
                                 .HasComment("Защитный навык");
 

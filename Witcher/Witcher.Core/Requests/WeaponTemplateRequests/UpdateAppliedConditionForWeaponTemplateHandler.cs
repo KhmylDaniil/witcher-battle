@@ -11,7 +11,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.WeaponTemplateRequests
 {
-	public class UpdateAppliedConditionForWeaponTemplateHandler : BaseHandler<UpdateAppliedConditionForWeaponTemplateCommand, Unit>
+	public sealed class UpdateAppliedConditionForWeaponTemplateHandler : BaseHandler<UpdateAppliedConditionForWeaponTemplateCommand, Unit>
 	{
 		public UpdateAppliedConditionForWeaponTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 			: base(appDbContext, authorizationService)
@@ -25,12 +25,12 @@ namespace Witcher.Core.Requests.WeaponTemplateRequests
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 
-			var weaponTemplate = game.ItemTemplates.FirstOrDefault(a => a.Id == request.WeaponTemplateId) as WeaponTemplate
+			var weaponTemplate = game.ItemTemplates.Find(a => a.Id == request.WeaponTemplateId) as WeaponTemplate
 				?? throw new EntityNotFoundException<ItemTemplate>(request.WeaponTemplateId);
 
-			var currentAppliedCondition = weaponTemplate.AppliedConditions.FirstOrDefault(x => x.Id == request.Id);
+			var currentAppliedCondition = weaponTemplate.AppliedConditions.Find(x => x.Id == request.Id);
 
-			if (weaponTemplate.AppliedConditions.Any(x => x.Condition == request.Condition && x.Id != request.Id))
+			if (weaponTemplate.AppliedConditions.Exists(x => x.Condition == request.Condition && x.Id != request.Id))
 				throw new RequestNotUniqException<UpdateAppliedConditionForWeaponTemplateCommand>(nameof(request.Condition));
 
 			if (currentAppliedCondition is null)

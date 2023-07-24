@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.WeaponTemplateRequests
 {
-	public class GetWeaponTemplateResponse
+	public sealed class GetWeaponTemplateResponse
 	{
 		/// <summary>
 		/// Айди

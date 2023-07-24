@@ -1,18 +1,10 @@
-﻿using System;
-using Witcher.Core.Abstractions;
+﻿using MediatR;
+using System;
 
 namespace Witcher.Core.Contracts.WeaponTemplateRequests
 {
-	public class GetWeaponTemplateByIdQuery : IValidatableCommand<GetWeaponTemplateByIdResponse>
+	public sealed class GetWeaponTemplateByIdQuery : IRequest<GetWeaponTemplateByIdResponse>
 	{
 		public Guid Id { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

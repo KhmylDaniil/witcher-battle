@@ -13,7 +13,7 @@ using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {
-	public class PassInMultiAttackHandler : BaseHandler<PassInMultiattackCommand, Unit>
+	public sealed class PassInMultiAttackHandler : BaseHandler<PassInMultiattackCommand, Unit>
 	{
 		public PassInMultiAttackHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -26,7 +26,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Battle>();
 
-			var currentCreature = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
+			var currentCreature = battle.Creatures.Find(x => x.Id == request.CreatureId)
 				?? throw new EntityNotFoundException<Creature>(request.CreatureId);
 
 			currentCreature.Turn.TurnState = currentCreature.Turn.TurnState switch
@@ -39,7 +39,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 			currentCreature.Turn.MultiattackRemainsQuantity = 0;
 			currentCreature.Turn.MuitiattackAttackFormulaId = null;
 
-			battle.BattleLog += $"{currentCreature.Name} пасует в процессе мультиатаки.";
+			battle.BattleLog += string.Format("{0} пасует в процессе мультиатаки.", currentCreature.Name);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;

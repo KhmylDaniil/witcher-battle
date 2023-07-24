@@ -11,7 +11,7 @@ using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {
-	public class FormAttackHandler : BaseHandler<FormAttackCommand, FormAttackResponse>
+	public sealed class FormAttackHandler : BaseHandler<FormAttackCommand, FormAttackResponse>
 	{
 		public FormAttackHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -34,7 +34,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 
 			if (request.AttackType == AttackType.Ability)
 			{
-				var ability = attacker.Abilities.FirstOrDefault(a => a.Id == request.AttackFormulaId)
+				var ability = attacker.Abilities.Find(a => a.Id == request.AttackFormulaId)
 					?? throw new EntityNotFoundException<Ability>(request.AttackFormulaId);
 
 				baseDefensiveSkills = ability.DefensiveSkills.Select(x => x.Skill).ToList();

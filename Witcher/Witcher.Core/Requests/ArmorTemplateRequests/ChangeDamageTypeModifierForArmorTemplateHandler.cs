@@ -10,7 +10,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.ArmorTemplateRequests
 {
-	public class ChangeDamageTypeModifierForArmorTemplateHandler : BaseHandler<ChangeDamageTypeModifierForArmorTemplateCommand, Unit>
+	public sealed class ChangeDamageTypeModifierForArmorTemplateHandler : BaseHandler<ChangeDamageTypeModifierForArmorTemplateCommand, Unit>
 	{
 		public ChangeDamageTypeModifierForArmorTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 			: base(appDbContext, authorizationService)
@@ -25,7 +25,7 @@ namespace Witcher.Core.Requests.ArmorTemplateRequests
 					?? throw new NoAccessToEntityException<Game>();
 
 			var damageTypeModifier = armorTemplate.DamageTypeModifiers
-				.FirstOrDefault(x => x.DamageType == request.DamageType);
+				.Find(x => x.DamageType == request.DamageType);
 
 			EntityDamageTypeModifier.ChangeDamageTypeModifer(request.DamageTypeModifier, request.DamageType, armorTemplate, damageTypeModifier);
 

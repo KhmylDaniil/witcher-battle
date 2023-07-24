@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Witcher.Core.Entities;
-using static Witcher.Core.BaseData.Enums;
-using System;
-using Witcher.Core.BaseData;
 
 namespace Witcher.Storage.Postgresql.Configurations
 {
@@ -37,17 +34,11 @@ namespace Witcher.Storage.Postgresql.Configurations
 			builder.Property(r => r.AttackSkill)
 				.HasColumnName("AttackSkill")
 				.HasComment("Навык атаки")
-				.HasConversion(
-					v => v.ToString(),
-					v => Enum.Parse<Skill>(v))
 				.IsRequired();
 
 			builder.Property(r => r.DamageType)
 				.HasColumnName("DamageType")
 				.HasComment("Тип урона")
-				.HasConversion(
-					v => v.ToString(),
-					v => Enum.Parse<DamageType>(v))
 				.IsRequired();
 
 			builder.Property(r => r.AttackDiceQuantity)
@@ -74,18 +65,12 @@ namespace Witcher.Storage.Postgresql.Configurations
 				Property(ds => ds.Skill)
 				.HasColumnName("DefensiveSkill")
 				.HasComment("Защитный навык")
-				.HasConversion(
-					v => v.ToString(),
-					v => Enum.Parse<Skill>(v))
 				.IsRequired();
 
 			builder.OwnsMany(x => x.AppliedConditions)
 				.Property(ac => ac.Condition)
 				.HasColumnName("Condition")
 				.HasComment("Тип состояния")
-					.HasConversion(
-					v => v.ToString(),
-					v => Enum.Parse<Condition>(v))
 				.IsRequired();
 
 			builder.OwnsMany(x => x.AppliedConditions)

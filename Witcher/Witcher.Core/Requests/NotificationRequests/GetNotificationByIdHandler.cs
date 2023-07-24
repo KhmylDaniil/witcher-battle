@@ -1,20 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.AbilityRequests;
 using Witcher.Core.Contracts.NotificationRequests;
-using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 using Witcher.Core.Notifications;
 
 namespace Witcher.Core.Requests.NotificationRequests
 {
-	public class GetNotificationByIdHandler : BaseHandler<GetNotificationByIdQuery, Notification>
+	public sealed class GetNotificationByIdHandler : BaseHandler<GetNotificationByIdQuery, Notification>
 	{
 		private readonly IUserContext _userContext;
 		public GetNotificationByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService, IUserContext userContext)

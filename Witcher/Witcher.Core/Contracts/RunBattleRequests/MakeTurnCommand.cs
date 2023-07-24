@@ -1,12 +1,12 @@
-﻿using Witcher.Core.Abstractions;
-using System;
+﻿using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
 	/// <summary>
 	/// Команда запуска битвы
 	/// </summary>
-	public class MakeTurnCommand : IValidatableCommand<MakeTurnResponse>
+	public sealed class MakeTurnCommand : IRequest<MakeTurnResponse>
 	{
 		/// <summary>
 		/// Айди битвы
@@ -17,13 +17,5 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		/// Айди существа
 		/// </summary>
 		public Guid CreatureId { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

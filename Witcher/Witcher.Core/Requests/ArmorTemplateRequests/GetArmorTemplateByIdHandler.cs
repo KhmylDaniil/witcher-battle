@@ -11,7 +11,7 @@ using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Requests.ArmorTemplateRequests
 {
-	public class GetArmorTemplateByIdHandler : BaseHandler<GetArmorTemplateByIdQuery, GetArmorTemplateByIdResponse>
+	public sealed class GetArmorTemplateByIdHandler : BaseHandler<GetArmorTemplateByIdQuery, GetArmorTemplateByIdResponse>
 	{
 		public GetArmorTemplateByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -28,7 +28,7 @@ namespace Witcher.Core.Requests.ArmorTemplateRequests
 			var bodyTemplate = await filter.FirstOrDefaultAsync(x => x.ArmorsTemplates.Any(at => at.Id == request.Id), cancellationToken)
 				?? throw new EntityNotFoundException<BodyTemplate>(request.Id);
 
-			var armorTemplate = bodyTemplate.ArmorsTemplates.First();
+			var armorTemplate = bodyTemplate.ArmorsTemplates[0];
 
 			return new GetArmorTemplateByIdResponse()
 			{

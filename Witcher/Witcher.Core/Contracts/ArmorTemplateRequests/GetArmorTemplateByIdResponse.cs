@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Witcher.Core.Contracts.BaseRequests;
 using Witcher.Core.Contracts.ItemTemplateBase;
 
 namespace Witcher.Core.Contracts.ArmorTemplateRequests
 {
-	public class GetArmorTemplateByIdResponse : GetItemByIdResponseBase
+	public sealed class GetArmorTemplateByIdResponse : GetItemByIdResponseBase
 	{
 		/// <summary>
 		/// Броня

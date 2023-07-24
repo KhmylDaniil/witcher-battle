@@ -1,9 +1,9 @@
-﻿using System;
-using Witcher.Core.Abstractions;
+﻿using MediatR;
+using System;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
-	public class PassInMultiattackCommand : IValidatableCommand
+	public sealed class PassInMultiattackCommand : IRequest
 	{
 		/// <summary>
 		/// Айди битвы
@@ -14,13 +14,5 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		/// Айди существа
 		/// </summary>
 		public Guid CreatureId { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

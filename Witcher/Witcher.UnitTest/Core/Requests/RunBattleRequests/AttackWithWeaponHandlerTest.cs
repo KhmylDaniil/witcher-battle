@@ -13,7 +13,7 @@ using static Witcher.Core.BaseData.Enums;
 namespace Witcher.UnitTest.Core.RunBattleRequests
 {
 	[TestClass]
-	public class AttackWithWeaponHandlerTest : UnitTestBase
+	public sealed class AttackWithWeaponHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;

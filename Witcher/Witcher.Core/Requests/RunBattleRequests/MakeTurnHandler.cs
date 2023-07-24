@@ -13,7 +13,7 @@ using Witcher.Core.ExtensionMethods;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {
-	public class MakeTurnHandler : BaseHandler<MakeTurnCommand, MakeTurnResponse>
+	public sealed class MakeTurnHandler : BaseHandler<MakeTurnCommand, MakeTurnResponse>
 	{
 		public MakeTurnHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -29,7 +29,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 			var battle = game.Battles.FirstOrDefault()
 				?? throw new EntityNotFoundException<Battle>(request.BattleId);
 
-			var currentCreature = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
+			var currentCreature = battle.Creatures.Find(x => x.Id == request.CreatureId)
 				?? throw new EntityNotFoundException<Creature>(request.CreatureId);
 
 			var equippedWeapons = new Dictionary<Guid, string>();

@@ -1,15 +1,10 @@
-﻿using System;
-using Witcher.Core.Abstractions;
+﻿using MediatR;
+using System;
 
 namespace Witcher.Core.Contracts.NotificationRequests
 {
-	public class DeleteNotificationCommand : IValidatableCommand
+	public sealed class DeleteNotificationCommand : IRequest
 	{
 		public Guid Id { get; set; }
-
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

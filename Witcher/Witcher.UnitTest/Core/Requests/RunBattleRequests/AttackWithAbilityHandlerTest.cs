@@ -16,7 +16,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 	/// Тест для <see cref="CreatureAttackHandler"/>
 	/// </summary>
 	[TestClass]
-	public class AttackWithAbilityHandlerTest : UnitTestBase
+	public sealed class AttackWithAbilityHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -174,7 +174,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
 			Assert.IsTrue(monster.HP < 50);
-			var torsoPart = monster.CreatureParts.FirstOrDefault(x => x.BodyPartType == BodyPartType.Torso);
+			var torsoPart = monster.CreatureParts.Find(x => x.BodyPartType == BodyPartType.Torso);
 			Assert.IsNotNull(torsoPart);
 			Assert.AreEqual(2, torsoPart.CurrentArmor);
 		}
@@ -283,21 +283,21 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
-			var stun = monster.Effects.FirstOrDefault(x => x is StunEffect);
+			var stun = monster.Effects.Find(x => x is StunEffect);
 			Assert.IsNotNull(stun);
 
-			var leftLegSimpleCrit = monster.Effects.FirstOrDefault(x => x is SimpleLegCritEffect) as ICrit;
+			var leftLegSimpleCrit = monster.Effects.Find(x => x is SimpleLegCritEffect) as ICrit;
 			Assert.IsNotNull(leftLegSimpleCrit);
 			Assert.AreEqual(13, (int)leftLegSimpleCrit.Severity);
-			Assert.AreEqual(leftLegSimpleCrit.Severity, Severity.Unstabilizied | Severity.Simple);
+			Assert.AreEqual(Severity.Unstabilizied | Severity.Simple, leftLegSimpleCrit.Severity);
 
 			Assert.AreEqual(2, monster.Speed);
 
-			var dodge = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
+			var dodge = monster.CreatureSkills.Find(x => x.Skill == Skill.Dodge);
 			Assert.IsNotNull(dodge);
 			Assert.AreEqual(4, dodge.SkillValue);
 
-			var athletics = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
+			var athletics = monster.CreatureSkills.Find(x => x.Skill == Skill.Athletics);
 			Assert.IsNotNull(athletics);
 			Assert.AreEqual(3, athletics.SkillValue);
 
@@ -319,19 +319,19 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 
 			monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
-			stun = monster.Effects.FirstOrDefault(x => x is StunEffect);
+			stun = monster.Effects.Find(x => x is StunEffect);
 			Assert.IsNotNull(stun);
 
-			var rightLegSimpleCrit = monster.Effects.FirstOrDefault(x => x is SimpleLegCritEffect crit && crit.CreaturePartId == _rightLegPart.Id);
+			var rightLegSimpleCrit = monster.Effects.Find(x => x is SimpleLegCritEffect crit && crit.CreaturePartId == _rightLegPart.Id);
 			Assert.IsNotNull(rightLegSimpleCrit);
 
 			Assert.AreEqual(2, monster.Speed);
 
-			dodge = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
+			dodge = monster.CreatureSkills.Find(x => x.Skill == Skill.Dodge);
 			Assert.IsNotNull(dodge);
 			Assert.AreEqual(4, dodge.SkillValue);
 
-			athletics = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
+			athletics = monster.CreatureSkills.Find(x => x.Skill == Skill.Athletics);
 			Assert.IsNotNull(athletics);
 			Assert.AreEqual(3, athletics.SkillValue);
 
@@ -342,11 +342,11 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			Assert.IsNotNull(monster);
 			Assert.AreEqual(2, monster.Speed);
 
-			dodge = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
+			dodge = monster.CreatureSkills.Find(x => x.Skill == Skill.Dodge);
 			Assert.IsNotNull(dodge);
 			Assert.AreEqual(4, dodge.SkillValue);
 
-			athletics = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
+			athletics = monster.CreatureSkills.Find(x => x.Skill == Skill.Athletics);
 			Assert.IsNotNull(athletics);
 			Assert.AreEqual(3, athletics.SkillValue);
 
@@ -369,16 +369,16 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
 
-			var rightLegDifficultCrit = monster.Effects.FirstOrDefault(x => x is DifficultLegCritEffect crit && crit.CreaturePartId == _rightLegPart.Id);
+			var rightLegDifficultCrit = monster.Effects.Find(x => x is DifficultLegCritEffect crit && crit.CreaturePartId == _rightLegPart.Id);
 			Assert.IsNotNull(rightLegDifficultCrit);
 
 			Assert.AreEqual(1, monster.Speed);
 
-			dodge = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
+			dodge = monster.CreatureSkills.Find(x => x.Skill == Skill.Dodge);
 			Assert.IsNotNull(dodge);
 			Assert.AreEqual(1, dodge.SkillValue);
 
-			athletics = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
+			athletics = monster.CreatureSkills.Find(x => x.Skill == Skill.Athletics);
 			Assert.IsNotNull(athletics);
 			Assert.AreEqual(1, athletics.SkillValue);
 
@@ -399,16 +399,16 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 			monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
 
-			var rightLegDeadlyCrit = monster.Effects.FirstOrDefault(x => x is DeadlyLegCritEffect crit && crit.CreaturePartId == _rightLegPart.Id);
+			var rightLegDeadlyCrit = monster.Effects.Find(x => x is DeadlyLegCritEffect crit && crit.CreaturePartId == _rightLegPart.Id);
 			Assert.IsNotNull(rightLegDeadlyCrit);
 
 			Assert.AreEqual(1, monster.Speed);
 
-			dodge = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
+			dodge = monster.CreatureSkills.Find(x => x.Skill == Skill.Dodge);
 			Assert.IsNotNull(dodge);
 			Assert.AreEqual(1, dodge.SkillValue);
 
-			athletics = monster.CreatureSkills.FirstOrDefault(x => x.Skill == Skill.Athletics);
+			athletics = monster.CreatureSkills.Find(x => x.Skill == Skill.Athletics);
 			Assert.IsNotNull(athletics);
 			Assert.AreEqual(1, athletics.SkillValue);
 		}

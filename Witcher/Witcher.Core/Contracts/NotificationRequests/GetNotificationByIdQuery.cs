@@ -1,17 +1,11 @@
-﻿using System;
-
-using Witcher.Core.Abstractions;
+﻿using MediatR;
+using System;
 using Witcher.Core.Notifications;
 
 namespace Witcher.Core.Contracts.NotificationRequests
 {
-	public class GetNotificationByIdQuery : IValidatableCommand<Notification>
+	public sealed class GetNotificationByIdQuery : IRequest<Notification>
 	{
 		public Guid Id { get; set; }
-
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

@@ -1,17 +1,12 @@
-﻿using System;
-using Witcher.Core.Abstractions;
+﻿using MediatR;
+using System;
 
 namespace Witcher.Core.Contracts.ItemRequests
 {
-	public class ChangeItemIsEquippedCommand : IValidatableCommand
+	public sealed class ChangeItemIsEquippedCommand : IRequest
 	{
 		public Guid CharacterId { get; set; }
 
 		public Guid ItemId { get; set; }
-
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

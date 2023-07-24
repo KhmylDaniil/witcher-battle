@@ -2,10 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.AbilityRequests;
 using Witcher.Core.Contracts.WeaponTemplateRequests;
-using Witcher.Core.Exceptions;
-using Witcher.Core.ExtensionMethods;
 
 namespace Witcher.MVC.Controllers
 {
@@ -23,17 +20,17 @@ namespace Witcher.MVC.Controllers
 
 			try
 			{
-				var response = await _mediator.SendValidated(request, cancellationToken);
+				var response = await _mediator.Send(request, cancellationToken);
 
 				return View(response);
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				return View(await _mediator.SendValidated(new GetWeaponTemplateQuery(), cancellationToken));
+				return await HandleExceptionAsync<WeaponTemplateController>(ex, async () =>
+				{
+					return View(await _mediator.Send(new GetWeaponTemplateQuery(), cancellationToken));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<WeaponTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -41,19 +38,19 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				return View(await _mediator.SendValidated(query, cancellationToken));
+				return View(await _mediator.Send(query, cancellationToken));
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				return View(await _mediator.SendValidated(new GetWeaponTemplateQuery(), cancellationToken));
+				return await HandleExceptionAsync<WeaponTemplateController>(ex, async () =>
+				{
+					return View(await _mediator.Send(new GetWeaponTemplateQuery(), cancellationToken));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<WeaponTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]")]
-		public ActionResult Create(CreateWeaponTemplateCommand command) => View(command);
+		public ActionResult Create() => View();
 
 		[Route("[controller]/[action]")]
 		[HttpPost]
@@ -62,16 +59,11 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var id = await _mediator.SendValidated(command, cancellationToken);
+				var id = await _mediator.Send(command, cancellationToken);
 
 				return RedirectToAction(nameof(Details), new GetWeaponTemplateByIdQuery() { Id = id });
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
-			}
-			catch (Exception ex) { return RedirectToErrorPage<WeaponTemplateController>(ex); }
+			catch (Exception ex) { return HandleException<WeaponTemplateController>(ex, () => View(command)); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -84,16 +76,11 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				return RedirectToAction(nameof(Details), new GetWeaponTemplateByIdQuery() { Id = command.Id });
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
-			}
-			catch (Exception ex) { return RedirectToErrorPage<WeaponTemplateController>(ex); }
+			catch (Exception ex) { return HandleException<WeaponTemplateController>(ex, () => View(command)); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -106,16 +93,11 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				return RedirectToAction(nameof(Index), new GetWeaponTemplateQuery());
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
-			}
-			catch (Exception ex) { return RedirectToErrorPage<WeaponTemplateController>(ex); }
+			catch (Exception ex) { return HandleException<WeaponTemplateController>(ex, () => View(command)); }
 		}
 
 		[Route("[controller]/[action]/{weaponTemplateId}")]
@@ -128,15 +110,10 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetWeaponTemplateByIdQuery() { Id = command.WeaponTemplateId });
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
-			}
-			catch (Exception ex) { return RedirectToErrorPage<WeaponTemplateController>(ex); }
+			catch (Exception ex) { return HandleException<WeaponTemplateController>(ex, () => View(command)); }
 		}
 
 		[Route("[controller]/[action]/{weaponTemplateId}")]
@@ -144,15 +121,10 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
-				return RedirectToAction(nameof(Details), new GetAbilityByIdQuery() { Id = command.WeaponTemplateId });
+				await _mediator.Send(command, cancellationToken);
+				return RedirectToAction(nameof(Details), new GetWeaponTemplateByIdQuery() { Id = command.WeaponTemplateId });
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
-			}
-			catch (Exception ex) { return RedirectToErrorPage<WeaponTemplateController>(ex); }
+			catch (Exception ex) { return HandleException<WeaponTemplateController>(ex, () => View(command)); }
 		}
 	}
 }

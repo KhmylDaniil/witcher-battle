@@ -2,16 +2,14 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.AbilityRequests;
 using Witcher.Core.Contracts.WeaponTemplateRequests;
 using Witcher.Core.Entities;
-using Witcher.Core.Requests.AbilityRequests;
 using Witcher.Core.Requests.WeaponTemplateRequests;
 
 namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 {
 	[TestClass]
-	public class DeleteWeaponTemplateHandlerTest : UnitTestBase
+	public sealed class DeleteWeaponTemplateHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;

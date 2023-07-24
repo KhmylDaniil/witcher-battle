@@ -1,7 +1,4 @@
-﻿using System;
-using static Witcher.Core.BaseData.Enums;
-using Witcher.Core.Contracts.CreatureTemplateRequests;
-using Witcher.Core.Exceptions.RequestExceptions;
+﻿using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Contracts.BaseRequests
 {
@@ -16,17 +13,5 @@ namespace Witcher.Core.Contracts.BaseRequests
 		/// Модификатор урона
 		/// </summary>
 		public DamageTypeModifier DamageTypeModifier { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			if (!Enum.IsDefined(DamageType))
-				throw new RequestFieldIncorrectDataException<ChangeDamageTypeModifierForCreatureTemplateCommand>(nameof(DamageType));
-
-			if (!Enum.IsDefined(DamageTypeModifier))
-				throw new RequestFieldIncorrectDataException<ChangeDamageTypeModifierForCreatureTemplateCommand>(nameof(DamageTypeModifier));
-		}
 	}
 }

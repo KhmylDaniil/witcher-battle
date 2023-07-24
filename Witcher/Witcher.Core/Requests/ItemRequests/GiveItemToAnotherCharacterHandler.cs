@@ -11,7 +11,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.ItemRequests
 {
-	public class GiveItemToAnotherCharacterHandler : BaseHandler<GiveItemToAnotherCharacterCommand, GiveItemNotification>
+	public sealed class GiveItemToAnotherCharacterHandler : BaseHandler<GiveItemToAnotherCharacterCommand, GiveItemNotification>
 	{
 		public GiveItemToAnotherCharacterHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 			: base(appDbContext, authorizationService)
@@ -26,13 +26,13 @@ namespace Witcher.Core.Requests.ItemRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			var character = game.Characters.FirstOrDefault(c => c.Id == request.CharacterId)
+			var character = game.Characters.Find(c => c.Id == request.CharacterId)
 				?? throw new EntityNotFoundException<Character>(request.CharacterId);
 
-			var targetCharacter = game.Characters.FirstOrDefault(c => c.Id == request.TargetCharacterId)
+			var targetCharacter = game.Characters.Find(c => c.Id == request.TargetCharacterId)
 				?? throw new EntityNotFoundException<Character>(request.TargetCharacterId);
 
-			var item = character.Items.FirstOrDefault(x => x.Id == request.ItemId)
+			var item = character.Items.Find(x => x.Id == request.ItemId)
 				?? throw new EntityNotFoundException<ItemTemplate>(request.ItemId);
 
 			return new GiveItemNotification(item, character, targetCharacter);

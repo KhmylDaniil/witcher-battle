@@ -11,7 +11,7 @@ using static Witcher.Core.BaseData.Enums;
 namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 {
 	[TestClass]
-	public class CreateArmorTemplateHandlerTest : UnitTestBase
+	public sealed class CreateArmorTemplateHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -129,7 +129,7 @@ namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 			var bodyTemplateParts = armorTemplate.BodyTemplateParts;
 			Assert.IsNotNull(bodyTemplateParts);
 			Assert.AreEqual(4, bodyTemplateParts.Count);
-			Assert.IsTrue(bodyTemplateParts.All(x => request.BodyPartTypes.Contains(x.BodyPartType)));
+			Assert.IsTrue(bodyTemplateParts.TrueForAll(x => request.BodyPartTypes.Contains(x.BodyPartType)));
 		}
 	}
 }

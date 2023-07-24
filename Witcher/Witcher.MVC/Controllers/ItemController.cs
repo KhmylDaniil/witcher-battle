@@ -4,8 +4,6 @@ using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.CharacterRequests;
 using Witcher.Core.Contracts.ItemRequests;
 using Witcher.Core.Contracts.ItemTemplateRequests;
-using Witcher.Core.Exceptions;
-using Witcher.Core.ExtensionMethods;
 using Witcher.MVC.ViewModels.Item;
 
 namespace Witcher.MVC.Controllers
@@ -14,18 +12,6 @@ namespace Witcher.MVC.Controllers
 	{
 		public ItemController(IMediator mediator, IGameIdService gameIdService) : base(mediator, gameIdService)
 		{
-		}
-
-		// GET: BagController
-		public ActionResult Index()
-		{
-			return View();
-		}
-
-		// GET: BagController/Details/5
-		public ActionResult Details(int id)
-		{
-			return View();
 		}
 
 		[HttpGet]
@@ -43,16 +29,11 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
-				return RedirectToAction(nameof(Details), "Character", new GetCharacterByIdCommand() { Id = command.CharacterId });
+				return InnerRedirectToCharacterDetails(command.CharacterId);
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
-			}
-			catch (Exception ex) { return RedirectToErrorPage<ItemController>(ex); }
+			catch (Exception ex) { return HandleException<ItemController>(ex, () => View(command)); }
 		}
 
 		[HttpGet]
@@ -69,16 +50,11 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
-				return RedirectToAction(nameof(Details), "Character", new GetCharacterByIdCommand() { Id = command.CharacterId });
+				return InnerRedirectToCharacterDetails(command.CharacterId);
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
-			}
-			catch (Exception ex) { return RedirectToErrorPage<ItemController>(ex); }
+			catch (Exception ex) { return HandleException<ItemController>(ex, () => View(command)); }
 		}
 
 		[HttpPost]
@@ -88,24 +64,21 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
+				return InnerRedirectToCharacterDetails(command.CharacterId);
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-			}
-			catch (Exception ex) { return RedirectToErrorPage<ItemController>(ex); }
-
-			return RedirectToAction(nameof(Details), "Character", new GetCharacterByIdCommand() { Id = command.CharacterId });
+			catch (Exception ex) { return HandleException<ItemController>(ex, () => InnerRedirectToCharacterDetails(command.CharacterId)); }
 		}
 
 		private async Task<Dictionary<Guid, string>> GetItemTemplateListForViewModel(CancellationToken cancellationToken)
 		{
-			var itemTemplates = await _mediator.SendValidated(new GetItemTemplateQuery() { PageSize = int.MaxValue }, cancellationToken);
+			var itemTemplates = await _mediator.Send(new GetItemTemplateQuery() { PageSize = int.MaxValue }, cancellationToken);
 
 			var result = itemTemplates.ToDictionary(x => x.Id, x => x.Name);
-
 			return result;
 		}
+
+		private ActionResult InnerRedirectToCharacterDetails(Guid characterId)
+				=> RedirectToAction(nameof(CharacterController.Details), "Character", new GetCharacterByIdCommand() { Id = characterId });
 	}
 }

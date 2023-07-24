@@ -1,15 +1,10 @@
-﻿using Witcher.Core.Abstractions;
-using System;
+﻿using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
-	public class FormHealCommand : IValidatableCommand<FormHealResponse>
+	public sealed class FormHealCommand : IRequest<FormHealResponse>
 	{
 		public Guid TargetCreatureId { get; set; }
-
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

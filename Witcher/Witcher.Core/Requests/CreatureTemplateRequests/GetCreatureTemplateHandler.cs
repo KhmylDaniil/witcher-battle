@@ -37,6 +37,10 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 		public override async Task<IEnumerable<GetCreatureTemplateResponseItem>> Handle(
 			GetCreatureTemplateQuery request, CancellationToken cancellationToken)
 		{
+			var conditionMatches = request.ConditionName.GetPossibleEnumNumbersFromSearchString<Condition>();
+			var creatureTypeMatches = request.CreatureType.GetPossibleEnumNumbersFromSearchString<Enums.CreatureType>();
+			var bodyPartTypeMatches = request.BodyPartType.GetPossibleEnumNumbersFromSearchString<Enums.BodyPartType>();
+
 			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.CreatureTemplates)
 					.ThenInclude(ct => ct.BodyTemplate)
@@ -48,9 +52,9 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 					.Where(x => request.UserName == null || x.Game.UserGames
 						.Any(u => u.User.Name.Contains(request.UserName) && u.UserId == x.CreatedByUserId))
 					.Where(x => request.Name == null || x.Name.Contains(request.Name))
-					.Where(x => request.CreatureType == null || Enum.GetName(x.CreatureType).Contains(request.CreatureType))
+					.Where(x => request.CreatureType == null || creatureTypeMatches.Any(ctm => ctm == (int)x.CreatureType))
 					.Where(x => request.BodyTemplateName == null || x.BodyTemplate.Name.Contains(request.BodyTemplateName))
-					.Where(x => request.BodyPartType == null || x.CreatureTemplateParts.Any(x => Enum.GetName(x.BodyPartType).Contains(request.BodyPartType)))
+					.Where(x => request.BodyPartType == null || x.CreatureTemplateParts.Any(ctp => bodyPartTypeMatches.Any(bptm => bptm == (int)ctp.BodyPartType)))
 					.Where(x => x.CreatedOn >= request.CreationMinTime)
 					.Where(x => request.CreationMaxTime == default && x.CreatedOn <= _dateTimeProvider.TimeProvider
 					|| x.CreatedOn <= request.CreationMaxTime)
@@ -58,7 +62,7 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 					.Where(x => request.ModificationMaxTime == default && x.ModifiedOn <= _dateTimeProvider.TimeProvider
 					|| x.ModifiedOn <= request.ModificationMaxTime)
 					.Where(ct => request.ConditionName == null || ct.Abilities
-						.Any(a => a.AppliedConditions.Any(ac => CritNames.GetConditionFullName(ac.Condition).Contains(request.ConditionName)))));
+						.Any(a => a.AppliedConditions.Any(ac => conditionMatches.Any(ctm => ctm == (int)ac.Condition)))));
 
 			var list = await filter
 				.OrderBy(request.OrderBy, request.IsAscending)

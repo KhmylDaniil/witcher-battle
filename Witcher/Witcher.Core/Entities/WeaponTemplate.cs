@@ -106,7 +106,6 @@ namespace Witcher.Core.Entities
 			}
 		}
 
-
 		#region navigation properties
 
 		/// <summary>
@@ -133,8 +132,7 @@ namespace Witcher.Core.Entities
 			int damageModifier,
 			int accuracy,
 			int durability,
-			int? range,
-			IEnumerable<UpdateAttackFormulaCommandItemAppledCondition> appliedConditions)
+			int? range)
 		{
 			var newWeaponTemplate = new WeaponTemplate(
 				game: game,
@@ -151,7 +149,6 @@ namespace Witcher.Core.Entities
 				range: range);
 
 			newWeaponTemplate.UpdateDefensiveSkills(Drafts.AbilityDrafts.DefensiveSkillsDrafts.BaseDefensiveSkills);
-			newWeaponTemplate.UpdateAplliedConditions(appliedConditions);
 
 			return newWeaponTemplate;
 		}
@@ -167,8 +164,7 @@ namespace Witcher.Core.Entities
 			int damageModifier,
 			int accuracy,
 			int durability,
-			int? range,
-			IEnumerable<UpdateAttackFormulaCommandItemAppledCondition> appliedConditions)
+			int? range)
 		{
 			ChangeItemTemplate(name, description, isStackable: false, price, weight);
 			AttackSkill = attackSkill;
@@ -178,37 +174,6 @@ namespace Witcher.Core.Entities
 			Accuracy = accuracy;
 			Durability = durability;
 			Range = range;
-			UpdateAplliedConditions(appliedConditions);
-		}
-
-		private void UpdateAplliedConditions(IEnumerable<UpdateAttackFormulaCommandItemAppledCondition> data)
-		{
-			if (data == null)
-				return;
-
-			if (AppliedConditions == null)
-				throw new ApplicationSystemNullException<WeaponTemplate>(nameof(AppliedConditions));
-
-			var entitiesToDelete = AppliedConditions.Where(x => !data
-				.Any(y => y.Id == x.Id)).ToList();
-
-			if (entitiesToDelete.Any())
-				foreach (var entity in entitiesToDelete)
-					AppliedConditions.Remove(entity);
-
-			if (!data.Any())
-				return;
-
-			foreach (var dataItem in data)
-			{
-				var appliedCondition = AppliedConditions.FirstOrDefault(x => x.Id == dataItem.Id);
-				if (appliedCondition == null)
-					AppliedConditions.Add(new AppliedCondition(dataItem.Condition, dataItem.ApplyChance));
-				else
-					appliedCondition.ChangeAppliedCondition(
-						condition: dataItem.Condition,
-						applyChance: dataItem.ApplyChance);
-			}
 		}
 
 		private void UpdateDefensiveSkills(List<Skill> data)

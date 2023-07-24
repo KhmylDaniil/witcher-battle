@@ -72,7 +72,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 				Name = "test",
 				AttackSkillName = "Melee",
 				DamageType = "Slashing",
-				ConditionName = "Кровотечение",
+				ConditionName = "bleed",
 				MinAttackDiceQuantity = 2,
 				MaxAttackDiceQuantity = 3,
 				UserName = "Author",

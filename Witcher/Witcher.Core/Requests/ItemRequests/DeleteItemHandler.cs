@@ -11,7 +11,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.ItemRequests
 {
-	public class DeleteItemHandler : BaseHandler<DeleteItemCommand, Unit>
+	public sealed class DeleteItemHandler : BaseHandler<DeleteItemCommand, Unit>
 	{
 		public DeleteItemHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -25,10 +25,10 @@ namespace Witcher.Core.Requests.ItemRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			var character = game.Characters.FirstOrDefault(c => c.Id == request.CharacterId)
+			var character = game.Characters.Find(c => c.Id == request.CharacterId)
 				?? throw new EntityNotFoundException<Character>(request.CharacterId);
 
-			var item = character.Items.FirstOrDefault(x => x.Id == request.ItemId)
+			var item = character.Items.Find(x => x.Id == request.ItemId)
 				?? throw new EntityNotFoundException<ItemTemplate>(request.ItemId);
 			
 			character.RemoveItems(item, request.Quantity);

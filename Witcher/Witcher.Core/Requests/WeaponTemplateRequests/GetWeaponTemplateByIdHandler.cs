@@ -10,7 +10,7 @@ using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Requests.WeaponTemplateRequests
 {
-	public class GetWeaponTemplateByIdHandler : BaseHandler<GetWeaponTemplateByIdQuery, GetWeaponTemplateByIdResponse>
+	public sealed class GetWeaponTemplateByIdHandler : BaseHandler<GetWeaponTemplateByIdQuery, GetWeaponTemplateByIdResponse>
 	{
 		public GetWeaponTemplateByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{

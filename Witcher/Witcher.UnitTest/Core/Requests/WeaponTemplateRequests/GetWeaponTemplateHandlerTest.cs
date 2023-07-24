@@ -11,7 +11,7 @@ using Witcher.Core.Requests.WeaponTemplateRequests;
 namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 {
 	[TestClass]
-	public class GetWeaponTemplateHandlerTest : UnitTestBase
+	public sealed class GetWeaponTemplateHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly User _user;
@@ -53,7 +53,7 @@ namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 				Name = "test",
 				AttackSkillName = "Melee",
 				DamageType = "Slashing",
-				ConditionName = "Кровотечение",
+				ConditionName = "bleed",
 				MinAttackDiceQuantity = 2,
 				MaxAttackDiceQuantity = 3,
 				UserName = "Author",
@@ -76,9 +76,9 @@ namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 				&& weaponTemplate.AttackDiceQuantity <= request.MaxAttackDiceQuantity);
 
 
-			Assert.AreEqual(weaponTemplate.AttackSkill, Skill.Melee);
-			Assert.AreEqual(weaponTemplate.DamageType, DamageType.Slashing);
-			Assert.IsTrue(weaponTemplate.AppliedConditions.Any(x => x.Condition == Condition.Bleed));
+			Assert.AreEqual(Skill.Melee, weaponTemplate.AttackSkill);
+			Assert.AreEqual(DamageType.Slashing, weaponTemplate.DamageType);
+			Assert.IsTrue(weaponTemplate.AppliedConditions.Exists(x => x.Condition == Condition.Bleed));
 
 			var user = _dbContext.Users.FirstOrDefault(x => x.Id == weaponTemplate.CreatedByUserId);
 			Assert.IsNotNull(user);

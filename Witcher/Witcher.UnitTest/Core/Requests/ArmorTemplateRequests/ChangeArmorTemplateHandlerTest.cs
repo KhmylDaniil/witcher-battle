@@ -11,7 +11,7 @@ using Witcher.Core.Requests.ArmorTemplateRequests;
 namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 {
 	[TestClass]
-	public class ChangeArmorTemplateHandlerTest : UnitTestBase
+	public sealed class ChangeArmorTemplateHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -146,7 +146,7 @@ namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 			var bodyTemplateParts = armorTemplate.BodyTemplateParts;
 			Assert.IsNotNull(bodyTemplateParts);
 			Assert.AreEqual(3, bodyTemplateParts.Count);
-			Assert.IsTrue(bodyTemplateParts.All(x => request.BodyPartTypes.Contains(x.BodyPartType)));
+			Assert.IsTrue(bodyTemplateParts.TrueForAll(x => request.BodyPartTypes.Contains(x.BodyPartType)));
 		}
 	}
 }

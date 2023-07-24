@@ -103,7 +103,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 				ModificationMaxTime = modificationMaxTime,
 				BodyTemplateName = "human",
 				BodyPartType = "Void",
-				ConditionName = CritNames.GetConditionFullName(Condition.Bleed),
+				ConditionName = "bleed",
 				PageSize = 2,
 				PageNumber = 1,
 			};

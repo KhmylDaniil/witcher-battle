@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Witcher.Core.Entities;
-using System;
-using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Storage.Postgresql.Configurations
 {
@@ -24,12 +22,7 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasComment("Айди существа")
 				.IsRequired();
 
-			builder.Property(r => r.Skill)
-				.HasColumnName("Skill")
-				.HasComment("Навык")
-				.HasConversion(
-					v => v.ToString(),
-					v => Enum.Parse<Skill>(v))
+			builder.Property(r => r.Skill).HasColumnName("Skill").HasComment("Навык")
 				.IsRequired();
 
 			builder.Property(r => r.SkillValue)

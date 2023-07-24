@@ -15,7 +15,7 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 	/// Тест для <see cref="HealEffectHandler"/>
 	/// </summary>
 	[TestClass]
-	public class HealEffectHandlerTest : UnitTestBase
+	public sealed class HealEffectHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -79,8 +79,8 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 
 			var monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
-			Assert.AreEqual(monster.Speed, 0);
-			Assert.AreEqual(monster.Ref, 1);
+			Assert.AreEqual(0, monster.Speed);
+			Assert.AreEqual(1, monster.Ref);
 
 			var result = await newHandler.Handle(request, default);
 
@@ -93,8 +93,8 @@ namespace Witcher.UnitTest.Core.RunBattleRequests
 
 			monster = _dbContext.Creatures.FirstOrDefault(x => x.Id == _creature.Id);
 			Assert.IsNotNull(monster);
-			Assert.AreEqual(monster.Speed, 2);
-			Assert.AreEqual(monster.Ref, 2);
+			Assert.AreEqual(2, monster.Speed);
+			Assert.AreEqual(2, monster.Ref);
 		}
 	}
 }
