@@ -27,7 +27,7 @@ namespace Witcher.Core
 		public static void AddCore(this IServiceCollection services, HasherOptions hasherOptions)
 		{
 			if (string.IsNullOrWhiteSpace(hasherOptions?.Salt))
-				throw new ApplicationSystemBaseException($"При работе класса {nameof(Entry)} отсутствует необходимый параметр {hasherOptions.Salt}.");
+				throw new ApplicationSystemBaseException(string.Format("При работе класса {0} отсутствует необходимый параметр {1}.", nameof(Entry), hasherOptions.Salt));
 
 			//Mediatr + fluent validation
 			services.AddMediatR(typeof(Entry).Assembly);

@@ -7,6 +7,7 @@ using Witcher.Core.Exceptions.EntityExceptions;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
+using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.UserRequests
 {
@@ -55,6 +56,9 @@ namespace Witcher.Core.Requests.UserRequests
 			var role = await _appDbContext.SystemRoles
 				.FirstOrDefaultAsync(x => x.Id == SystemRoles.UserRoleId, cancellationToken)
 					?? throw new EntityNotFoundException<SystemRole>(SystemRoles.UserRoleId);
+
+			if (await _appDbContext.Users.AnyAsync(x => x.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken: cancellationToken))
+				throw new RequestNameNotUniqException<User>(request.Name);
 
 			var user = new User(
 				name: request.Name,
