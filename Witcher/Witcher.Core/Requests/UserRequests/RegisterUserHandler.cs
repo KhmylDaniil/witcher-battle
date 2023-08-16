@@ -57,7 +57,7 @@ namespace Witcher.Core.Requests.UserRequests
 				.FirstOrDefaultAsync(x => x.Id == SystemRoles.UserRoleId, cancellationToken)
 					?? throw new EntityNotFoundException<SystemRole>(SystemRoles.UserRoleId);
 
-			if (await _appDbContext.Users.AnyAsync(x => x.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase), cancellationToken: cancellationToken))
+			if (await _appDbContext.Users.AnyAsync(x => x.Name == request.Name, cancellationToken: cancellationToken))
 				throw new RequestNameNotUniqException<User>(request.Name);
 
 			var user = new User(

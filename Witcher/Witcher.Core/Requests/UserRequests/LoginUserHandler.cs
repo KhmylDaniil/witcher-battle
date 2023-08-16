@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Witcher.Core.Exceptions.SystemExceptions;
 using System;
 using Witcher.Core.Contracts.UserRequests;
+using Witcher.Core.Exceptions;
 
 namespace Witcher.Core.Requests.UserRequests
 {
@@ -56,16 +57,14 @@ namespace Witcher.Core.Requests.UserRequests
 				.Include(x => x.User)
 					.ThenInclude(x => x.UserRoles)
 						.ThenInclude(x => x.SystemRole)
-				.FirstOrDefaultAsync(x => x.Login == request.Login, cancellationToken);
-
-			if (existingUserAccount == null)
-				throw new ApplicationSystemNullException<LoginUserHandler>(nameof(existingUserAccount));
-
+				.FirstOrDefaultAsync(x => x.Login == request.Login, cancellationToken)
+					?? throw new RequestValidationException(BaseData.ExceptionMessages.LoginNotFound);
+			
 			bool isPasswordCorrect = _passwordHasher.VerifyHash
 				(request.Password, existingUserAccount.PasswordHash);
 
 			if (!isPasswordCorrect)
-				throw new ApplicationSystemNullException<LoginUserHandler>(nameof(isPasswordCorrect));
+				throw new RequestValidationException(BaseData.ExceptionMessages.PasswordIsIncorrect);
 
 			var claims = new List<Claim>
 				{

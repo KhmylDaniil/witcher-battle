@@ -16,5 +16,9 @@ namespace Witcher.Core.BaseData
 		public const string ValueMustBeBetween = "Значение должно быть в заданных пределах.";
 
 		public const string ValueMustBeUnique = "Значение должно быть уникальным.";
+
+		public const string LoginNotFound = "Пользователь с таким логином не найден.";
+
+		public const string PasswordIsIncorrect = "Пароль неверен.";
 	}
 }
