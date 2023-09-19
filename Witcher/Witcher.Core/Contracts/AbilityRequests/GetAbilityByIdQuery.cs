@@ -1,18 +1,10 @@
-﻿using Witcher.Core.Abstractions;
-using System;
+﻿using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.AbilityRequests
 {
-	public class GetAbilityByIdQuery : IValidatableCommand<GetAbilityByIdResponse>
+	public sealed class GetAbilityByIdQuery : IRequest<GetAbilityByIdResponse>
 	{
 		public Guid Id { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

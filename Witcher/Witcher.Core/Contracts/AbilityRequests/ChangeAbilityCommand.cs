@@ -1,17 +1,13 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions.RequestExceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using static Witcher.Core.BaseData.Enums;
-using Witcher.Core.Contracts.BaseRequests;
+using MediatR;
 
 namespace Witcher.Core.Contracts.AbilityRequests
 {
 	/// <summary>
 	/// Запрос изменения способности
 	/// </summary>
-	public class ChangeAbilityCommand : IValidatableCommand
+	public sealed class ChangeAbilityCommand : IRequest
 	{
 		/// <summary>
 		/// Айди
@@ -57,54 +53,5 @@ namespace Witcher.Core.Contracts.AbilityRequests
 		/// Тип урона
 		/// </summary>
 		public DamageType DamageType { get; set; }
-
-		/// <summary>
-		/// Навыки для защиты
-		/// </summary>
-		public List<Skill> DefensiveSkills { get; set; }
-
-		/// <summary>
-		/// Накладываемые состояния
-		/// </summary>
-		public List<UpdateAttackFormulaCommandItemAppledCondition> AppliedConditions { get; set; }
-
-		/// <summary>
-		/// Валидация запроса
-		/// </summary>
-		public void Validate()
-		{
-			if (string.IsNullOrEmpty(Name))
-				throw new RequestFieldNullException<ChangeAbilityCommand>(nameof(Name));
-
-			if (!Enum.IsDefined(AttackSkill))
-				throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AttackSkill));
-
-			if (AttackDiceQuantity < 1)
-				throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AttackDiceQuantity), "Значение должно быть больше нуля");
-
-			if (AttackSpeed < 1)
-				throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AttackSpeed), "Значение должно быть больше нуля");
-
-			if (!Enum.IsDefined(DamageType))
-				throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(DamageType));
-
-			if (DefensiveSkills is not null)
-				foreach (var skill in DefensiveSkills)
-					if (!Enum.IsDefined(skill))
-						throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(DefensiveSkills));
-
-			if (AppliedConditions is not null)
-				foreach (var condition in AppliedConditions)
-				{
-					if (!Enum.IsDefined(condition.Condition))
-						throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AppliedConditions), "Неизвестное накладываемое состояние");
-
-					if (AppliedConditions.Count(x => x.Condition == condition.Condition) != 1)
-						throw new RequestNotUniqException<ChangeAbilityCommand>(nameof(AppliedConditions));
-
-					if (condition.ApplyChance < 1 || condition.ApplyChance > 100)
-						throw new RequestFieldIncorrectDataException<ChangeAbilityCommand>(nameof(AppliedConditions), "Шанс наложения состояния должен быть в диапазоне от 1 до 100");
-				}
-		}
 	}
 }

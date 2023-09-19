@@ -1,21 +1,17 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.ArmorTemplateRequests;
-using Witcher.Core.Contracts.WeaponTemplateRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.ArmorTemplateRequests
 {
-	public class ChangeArmorTemplateHandler : BaseHandler<ChangeArmorTemplateCommand, Unit>
+	public sealed class ChangeArmorTemplateHandler : BaseHandler<ChangeArmorTemplateCommand, Unit>
 	{
 		public ChangeArmorTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -32,13 +28,13 @@ namespace Witcher.Core.Requests.ArmorTemplateRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			if (game.ItemTemplates.Any(x => x.Name == request.Name && x.Id != request.Id))
-				throw new RequestNameNotUniqException<ChangeArmorTemplateCommand>(nameof(request.Name));
+			if (game.ItemTemplates.Exists(x => x.Name == request.Name && x.Id != request.Id))
+				throw new RequestNameNotUniqException<ItemTemplate>(request.Name);
 
-			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.ArmorsTemplates.Any(x => x.Id == request.Id))
+			var bodyTemplate = game.BodyTemplates.Find(x => x.ArmorsTemplates.Exists(x => x.Id == request.Id))
 				?? throw new EntityNotFoundException<ArmorTemplate>(request.Id);
 
-			var armorTemplate = bodyTemplate.ArmorsTemplates.First();
+			var armorTemplate = bodyTemplate.ArmorsTemplates[0];
 
 			armorTemplate.ChangeArmorTemplate(
 				name: request.Name,

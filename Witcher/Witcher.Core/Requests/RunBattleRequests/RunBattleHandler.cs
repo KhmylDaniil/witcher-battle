@@ -11,7 +11,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {
-	public class RunBattleHandler : BaseHandler<RunBattleCommand, RunBattleResponse>
+	public sealed class RunBattleHandler : BaseHandler<RunBattleCommand, RunBattleResponse>
 	{
 		public RunBattleHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{

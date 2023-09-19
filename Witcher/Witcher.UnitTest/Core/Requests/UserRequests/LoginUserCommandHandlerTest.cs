@@ -2,13 +2,13 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.UserRequests.LoginUser;
 using Witcher.Core.Entities;
-using Witcher.Core.Requests.UserRequests.LoginUser;
 using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Witcher.Core.Requests.UserRequests;
+using Witcher.Core.Contracts.UserRequests;
 
 namespace Witcher.UnitTest.Core.Requests.UserRequests
 {
@@ -57,7 +57,7 @@ namespace Witcher.UnitTest.Core.Requests.UserRequests
 
 			var result = await loginUserCommandHandler.Handle(request, default);
 
-			Assert.AreEqual(_user.Id, result?.UserId);
+			Assert.AreEqual(_user.Id, result);
 			var userAcc = _user.UserAccounts.First();
 			Assert.IsNotNull(userAcc);
 			Assert.AreEqual(userAcc.Login, request.Login);

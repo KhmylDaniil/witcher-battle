@@ -13,6 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witcher.MVC", "Witcher.MVC\Witcher.MVC.csproj", "{27F04267-1D55-4EDD-AA0F-B80ECDEAA9C1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D24E1D0F-92E0-4294-AB76-B65C63B9A56A} = {D24E1D0F-92E0-4294-AB76-B65C63B9A56A}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Witcher.Core", "Witcher.Core\Witcher.Core.csproj", "{D24E1D0F-92E0-4294-AB76-B65C63B9A56A}"
 EndProject

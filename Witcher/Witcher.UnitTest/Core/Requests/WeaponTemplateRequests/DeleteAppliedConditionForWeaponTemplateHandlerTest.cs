@@ -1,21 +1,16 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
-using Witcher.Core.Contracts.AbilityRequests;
 using Witcher.Core.Contracts.WeaponTemplateRequests;
 using Witcher.Core.Entities;
-using Witcher.Core.Requests.AbilityRequests;
 using Witcher.Core.Requests.WeaponTemplateRequests;
 
 namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 {
 	[TestClass]
-	public class DeleteAppliedConditionForWeaponTemplateHandlerTest : UnitTestBase
+	public sealed class DeleteAppliedConditionForWeaponTemplateHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -50,8 +45,7 @@ namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 			Assert.IsNotNull(weaponTemplate);
 
 			Assert.IsNull(weaponTemplate.AppliedConditions
-				.FirstOrDefault(x => x.Id == _appliedCondition.Id));
-
+				.Find(x => x.Id == _appliedCondition.Id));
 		}
 	}
 }

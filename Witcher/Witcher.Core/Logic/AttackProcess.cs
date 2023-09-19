@@ -70,17 +70,17 @@ namespace Witcher.Core.Logic
 
 			int DefenseValue(Creature defender, int defenseBase)
 			{
-				var staggeredModifier = defender.Effects.FirstOrDefault(x => x is StaggeredEffect) is null
+				var staggeredModifier = defender.Effects.Find(x => x is StaggeredEffect) is null
 					? 0
 					: StaggeredEffect.AttackAndDefenseModifier;
 
-				var blindedModifier = defender.Effects.FirstOrDefault(x => x is BlindedEffect) is null
+				var blindedModifier = defender.Effects.Find(x => x is BlindedEffect) is null
 					? 0
 					: BlindedEffect.AttackAndDefenseModifier;
 
 				var result = defenseBase + staggeredModifier + blindedModifier;
 
-				if (defender.Effects.Any(x => x is StunEffect))
+				if (defender.Effects.Exists(x => x is StunEffect))
 					result = 10;
 
 				return result < 0 ? 0 : result;
@@ -88,11 +88,11 @@ namespace Witcher.Core.Logic
 
 			int AttackValue(Creature attacker, IAttackFormula ability, int toHit)
 			{
-				var staggeredModifier = attacker.Effects.FirstOrDefault(x => x is StaggeredEffect) is null
+				var staggeredModifier = attacker.Effects.Find(x => x is StaggeredEffect) is null
 					? 0
 					: StaggeredEffect.AttackAndDefenseModifier;
 
-				var blindedModifier = attacker.Effects.FirstOrDefault(x => x is BlindedEffect) is null
+				var blindedModifier = attacker.Effects.Find(x => x is BlindedEffect) is null
 					? 0
 					: BlindedEffect.AttackAndDefenseModifier;
 
@@ -131,7 +131,7 @@ namespace Witcher.Core.Logic
 
 		void RemoveStunEffect(AttackData data)
 		{
-			var stun = data.Target.Effects.FirstOrDefault(x => x is StunEffect);
+			var stun = data.Target.Effects.Find(x => x is StunEffect);
 			if (stun != null)
 				data.Target.Effects.Remove(stun);
 		}
@@ -173,7 +173,7 @@ namespace Witcher.Core.Logic
 
 			damage -= currentArmor--;
 
-			var possibleArmorPart = data.AimedPart.ArmorParts?.FirstOrDefault(x => x.CurrentArmor > 0);
+			var possibleArmorPart = data.AimedPart.ArmorParts?.Find(x => x.CurrentArmor > 0);
 
 			if (possibleArmorPart != null)
 				possibleArmorPart.CurrentArmor--;				
@@ -192,7 +192,7 @@ namespace Witcher.Core.Logic
 
 			var damageTypeModifiers = new List<EntityDamageTypeModifier>
 			{ 
-				data.Target.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == data.AttackFormula.DamageType)
+				data.Target.DamageTypeModifiers.Find(x => x.DamageType == data.AttackFormula.DamageType)
 			};
 
 			if (data.AimedPart.ArmorParts is not null)
@@ -346,7 +346,7 @@ namespace Witcher.Core.Logic
 		/// <param name="message">Сообщение</param>
 		void CheckDying(Creature creature, ref StringBuilder message)
 		{
-			var dying = creature.Effects.FirstOrDefault(x => x is DyingEffect) as DyingEffect;
+			var dying = creature.Effects.Find(x => x is DyingEffect) as DyingEffect;
 
 			dying?.Run(creature, ref message);
 		}

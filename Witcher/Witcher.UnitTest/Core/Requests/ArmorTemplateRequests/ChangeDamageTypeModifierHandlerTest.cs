@@ -1,21 +1,16 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.CreatureTemplateRequests;
 using Witcher.Core.Entities;
-using Witcher.Core.Requests.CreatureTemplateRequests;
 using Witcher.Core.Contracts.ArmorTemplateRequests;
 using Witcher.Core.Requests.ArmorTemplateRequests;
 
 namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 {
 	[TestClass]
-	public class ChangeDamageTypeModifierHandlerTest : UnitTestBase
+	public sealed class ChangeDamageTypeModifierHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -56,7 +51,7 @@ namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 			var armorTemplate = _dbContext.ItemTemplates.FirstOrDefault() as ArmorTemplate;
 			Assert.IsNotNull(armorTemplate.DamageTypeModifiers);
 
-			var modifier = armorTemplate.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == DamageType.Slashing);
+			var modifier = armorTemplate.DamageTypeModifiers.Find(x => x.DamageType == DamageType.Slashing);
 			Assert.IsNotNull(modifier);
 			Assert.AreEqual(DamageTypeModifier.Vulnerability, modifier.DamageTypeModifier);
 
@@ -74,7 +69,7 @@ namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 			armorTemplate = _dbContext.ItemTemplates.FirstOrDefault() as ArmorTemplate;
 			Assert.IsNotNull(armorTemplate.DamageTypeModifiers);
 
-			modifier = armorTemplate.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == DamageType.Slashing);
+			modifier = armorTemplate.DamageTypeModifiers.Find(x => x.DamageType == DamageType.Slashing);
 			Assert.IsNotNull(modifier);
 			Assert.AreEqual(DamageTypeModifier.Resistance, modifier.DamageTypeModifier);
 
@@ -92,7 +87,7 @@ namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 			armorTemplate = _dbContext.ItemTemplates.FirstOrDefault() as ArmorTemplate;
 			Assert.IsNotNull(armorTemplate.DamageTypeModifiers);
 
-			modifier = armorTemplate.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == DamageType.Slashing);
+			modifier = armorTemplate.DamageTypeModifiers.Find(x => x.DamageType == DamageType.Slashing);
 			Assert.IsNull(modifier);
 		}
 	}

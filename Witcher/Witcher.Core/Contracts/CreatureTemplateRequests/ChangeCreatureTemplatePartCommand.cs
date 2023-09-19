@@ -1,13 +1,12 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions.RequestExceptions;
-using System;
+﻿using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.CreatureTemplateRequests
 {
 	/// <summary>
 	/// Команда изменения брони для шаблона существа или его части
 	/// </summary>
-	public class ChangeCreatureTemplatePartCommand : IValidatableCommand
+	public sealed class ChangeCreatureTemplatePartCommand : IRequest
 	{
 		/// <summary>
 		/// Айди шаблона существа
@@ -28,12 +27,5 @@ namespace Witcher.Core.Contracts.CreatureTemplateRequests
 		/// Значение брони
 		/// </summary>
 		public int ArmorValue { get; set; }
-		
-		public void Validate()
-		{
-			if (ArmorValue < 0)
-				throw new RequestFieldIncorrectDataException<ChangeCreatureTemplatePartCommand>(nameof(ArmorValue),
-					"Значение брони не может быть отрицательным.");
-		}
 	}
 }

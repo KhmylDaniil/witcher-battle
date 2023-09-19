@@ -4,10 +4,7 @@ using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BattleRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Exceptions.RequestExceptions;
@@ -15,7 +12,7 @@ using Witcher.Core.Logic;
 
 namespace Witcher.Core.Requests.BattleRequests
 {
-	public class CreateCreatureHandler : BaseHandler<CreateCreatureCommand, Unit>
+	public sealed class CreateCreatureHandler : BaseHandler<CreateCreatureCommand, Unit>
 	{
 		public CreateCreatureHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -37,13 +34,13 @@ namespace Witcher.Core.Requests.BattleRequests
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 
-			var battle = game.Battles.FirstOrDefault(a => a.Id == request.BattleId)
+			var battle = game.Battles.Find(a => a.Id == request.BattleId)
 				?? throw new EntityNotFoundException<Battle>(request.BattleId);
 
-			if (battle.Creatures.Any(c => c.Name == request.Name))
+			if (battle.Creatures.Exists(c => c.Name == request.Name))
 				throw new RequestNameNotUniqException<Creature>(request.Name);
 
-			var creatureTemplate = game.CreatureTemplates.FirstOrDefault(a => a.Id == request.CreatureTemplateId)
+			var creatureTemplate = game.CreatureTemplates.Find(a => a.Id == request.CreatureTemplateId)
 				?? throw new EntityNotFoundException<CreatureTemplate>(request.CreatureTemplateId);
 
 			battle.Creatures.Add(new Creature(creatureTemplate, battle, request.Name, request.Description));

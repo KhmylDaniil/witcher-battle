@@ -10,7 +10,7 @@ using Witcher.Core.Notifications;
 
 namespace Witcher.Core.Requests.NotificationRequests
 {
-	public class CreateNotificationHandler : BaseHandler<CreateNotificationCommand, Unit>
+	public sealed class CreateNotificationHandler : BaseHandler<CreateNotificationCommand, Unit>
 	{
 		public CreateNotificationHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{

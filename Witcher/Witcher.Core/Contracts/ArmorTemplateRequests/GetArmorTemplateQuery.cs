@@ -1,12 +1,10 @@
-﻿using System.Collections;
+﻿using MediatR;
 using System.Collections.Generic;
-using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BaseRequests;
-using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Contracts.ArmorTemplateRequests
 {
-	public class GetArmorTemplateQuery : GetBaseQuery, IValidatableCommand<IEnumerable<GetArmorTemplateResponse>>
+	public sealed class GetArmorTemplateQuery : GetBaseQuery, IRequest<IEnumerable<GetArmorTemplateResponse>>
 	{
 		/// <summary>
 		/// Фильтр по названию
@@ -37,19 +35,5 @@ namespace Witcher.Core.Contracts.ArmorTemplateRequests
 		/// Фильтр по автору
 		/// </summary>
 		public string UserName { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			if (MinArmor < 0)
-				throw new RequestFieldIncorrectDataException<GetArmorTemplateQuery>(nameof(MinArmor),
-					"Значение должно быть больше нуля.");
-
-			if (MaxArmor < MinArmor)
-				throw new RequestFieldIncorrectDataException<GetArmorTemplateQuery>(nameof(MaxArmor),
-					"Значение должно быть больше минимального значения фильтра по количеству брони.");
-		}
 	}
 }

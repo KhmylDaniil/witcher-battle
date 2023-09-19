@@ -15,7 +15,7 @@ namespace Witcher.UnitTest.Core.Requests.UserGameRequests
 	/// Тест для <see cref="CreateUserGameHandler"/>
 	/// </summary>
 	[TestClass]
-	public class CreateUserGameHandlerTest: UnitTestBase
+	public sealed class CreateUserGameHandlerTest: UnitTestBase
 	{
 		private readonly User _currentUser;
 		private readonly User _assignedUser;
@@ -83,13 +83,11 @@ namespace Witcher.UnitTest.Core.Requests.UserGameRequests
 			};
 
 			gameId = _gameAsMainMaster.Id;
-			//Arrange
+
 			var newHandler = new CreateUserGameHandler(_appDbContext, AuthorizationServiceWithGameId.Object, UserContext.Object);
 
-			//Act
 			var result = await newHandler.Handle(request, default);
 
-			//Assert
 			Assert.IsNotNull(result);
 			var userGame = _appDbContext.UserGames.FirstOrDefault(x => x.UserId == request.UserId);
 			Assert.IsNotNull(userGame);

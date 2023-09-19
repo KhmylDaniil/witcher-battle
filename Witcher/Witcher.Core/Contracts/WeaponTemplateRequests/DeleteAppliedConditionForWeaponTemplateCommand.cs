@@ -1,9 +1,9 @@
-﻿using System;
-using Witcher.Core.Abstractions;
+﻿using MediatR;
+using System;
 
 namespace Witcher.Core.Contracts.WeaponTemplateRequests
 {
-	public class DeleteAppliedConditionForWeaponTemplateCommand : IValidatableCommand
+	public sealed class DeleteAppliedConditionForWeaponTemplateCommand : IRequest
 	{
 		/// <summary>
 		/// Айди способности
@@ -14,13 +14,5 @@ namespace Witcher.Core.Contracts.WeaponTemplateRequests
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

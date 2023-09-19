@@ -31,17 +31,15 @@ namespace Witcher.Core.Requests.BodyTemplateRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			if (game.BodyTemplates.Any(x => x.Name == request.Name && x.Id != request.Id))
-				throw new RequestNameNotUniqException<ChangeBodyTemplateCommand>(nameof(request.Name));
+			if (game.BodyTemplates.Exists(x => x.Name == request.Name && x.Id != request.Id))
+				throw new RequestNameNotUniqException<BodyTemplate>(request.Name);
 
-			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.Id)
+			var bodyTemplate = game.BodyTemplates.Find(x => x.Id == request.Id)
 				?? throw new EntityNotFoundException<BodyTemplate>(request.Id);
 
 			bodyTemplate.ChangeBodyTemplate(
-				game: game,
 				name: request.Name,
-				description: request.Description,
-				bodyTemplateParts: request.BodyTemplateParts);
+				description: request.Description);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;

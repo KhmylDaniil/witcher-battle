@@ -6,7 +6,7 @@ using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Contracts.WeaponTemplateRequests
 {
-	public class GetWeaponTemplateByIdResponse : GetItemByIdResponseBase
+	public sealed class GetWeaponTemplateByIdResponse : GetItemByIdResponseBase
 	{
 		/// <summary>
 		/// Навык атаки

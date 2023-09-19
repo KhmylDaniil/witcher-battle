@@ -3,7 +3,7 @@ using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Contracts.CharacterRequests
 {
-	public class GetCharacterByIdResponseItem
+	public sealed class GetCharacterByIdResponseItem
 	{
 		public Guid Id { get; set; }
 

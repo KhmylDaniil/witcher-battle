@@ -1,22 +1,17 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
-using Witcher.Core.Contracts.WeaponTemplateRequests;
 using Witcher.Core.Entities;
-using Witcher.Core.Requests.WeaponTemplateRequests;
 using Witcher.Core.Contracts.ArmorTemplateRequests;
 using Witcher.Core.Requests.ArmorTemplateRequests;
 
 namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 {
 	[TestClass]
-	public class GetArmorTemplateHandlerTest : UnitTestBase
+	public sealed class GetArmorTemplateHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly User _user;
@@ -100,7 +95,7 @@ namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 			&& x.BodyPartType == BodyPartType.Torso);
 			Assert.IsNotNull(bodyTemplatePart);
 
-			var damageTypeModifier = armorTemplate.DamageTypeModifiers.FirstOrDefault(x => x.DamageType == DamageType.Slashing);
+			var damageTypeModifier = armorTemplate.DamageTypeModifiers.Find(x => x.DamageType == DamageType.Slashing);
 			Assert.IsNotNull(damageTypeModifier);
 
 			var user = _dbContext.Users.FirstOrDefault(x => x.Id == armorTemplate.CreatedByUserId);

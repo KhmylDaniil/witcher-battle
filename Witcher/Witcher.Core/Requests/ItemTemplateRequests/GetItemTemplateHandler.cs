@@ -9,7 +9,7 @@ using Witcher.Core.ExtensionMethods;
 
 namespace Witcher.Core.Requests.ItemTemplateRequests
 {
-	public class GetItemTemplateHandler : BaseHandler<GetItemTemplateQuery, IEnumerable<GetItemTemplateResponse>>
+	public sealed class GetItemTemplateHandler : BaseHandler<GetItemTemplateQuery, IEnumerable<GetItemTemplateResponse>>
 	{
 		public GetItemTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{

@@ -1,21 +1,16 @@
-﻿using Witcher.Core.Abstractions;
-using System;
+﻿using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.BodyTemplateRequests
 {
 	/// <summary>
 	/// Запрос шаблона тела по айди
 	/// </summary>
-	public class GetBodyTemplateByIdQuery : IValidatableCommand<GetBodyTemplateByIdResponse>
+	public class GetBodyTemplateByIdQuery : IRequest<GetBodyTemplateByIdResponse>
 	{
 		/// <summary>
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
-
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

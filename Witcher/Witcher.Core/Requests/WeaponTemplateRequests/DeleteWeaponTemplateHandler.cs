@@ -1,9 +1,5 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
@@ -14,7 +10,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.WeaponTemplateRequests
 {
-	public class DeleteWeaponTemplateHandler : BaseHandler<DeleteWeaponTemplateCommand, Unit>
+	public sealed class DeleteWeaponTemplateHandler : BaseHandler<DeleteWeaponTemplateCommand, Unit>
 	{
 		public DeleteWeaponTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -27,7 +23,7 @@ namespace Witcher.Core.Requests.WeaponTemplateRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			var weaponTemplate = game.ItemTemplates.FirstOrDefault(x => x.Id == request.Id)
+			var weaponTemplate = game.ItemTemplates.Find(x => x.Id == request.Id)
 				?? throw new EntityNotFoundException<ItemTemplate>(request.Id);
 
 			game.ItemTemplates.Remove(weaponTemplate);

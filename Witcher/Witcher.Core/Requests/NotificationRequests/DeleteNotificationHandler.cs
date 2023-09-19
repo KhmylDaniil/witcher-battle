@@ -9,7 +9,7 @@ using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Requests.NotificationRequests
 {
-	public class DeleteNotificationHandler : BaseHandler<DeleteNotificationCommand, Unit>
+	public sealed class DeleteNotificationHandler : BaseHandler<DeleteNotificationCommand, Unit>
 	{
 		private readonly IUserContext _userContext;
 

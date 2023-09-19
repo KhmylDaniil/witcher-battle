@@ -38,19 +38,7 @@ namespace Witcher.UnitTest.Core.Requests.BodyTemplateRequests
 			var request = new CreateBodyTemplateCommand()
 			{
 				Name = "name",
-				Description = "description",
-				BodyTemplateParts = new List<UpdateBodyTemplateRequestItem>
-				{
-					new UpdateBodyTemplateRequestItem()
-					{
-						Name = "head",
-						BodyPartType = BodyPartType.Head,
-						HitPenalty = 3,
-						DamageModifier = 2,
-						MinToHit = 1,
-						MaxToHit = 10
-					}
-				}
+				Description = "description"
 			};
 
 			var newHandler = new CreateBodyTemplateHandler(_dbContext, AuthorizationService.Object);
@@ -66,15 +54,6 @@ namespace Witcher.UnitTest.Core.Requests.BodyTemplateRequests
 			Assert.AreEqual(request.Name, bodyTemplate.Name);
 			Assert.AreEqual(request.Description, bodyTemplate.Description);
 			Assert.IsNotNull(bodyTemplate.BodyTemplateParts);
-
-			var bodyTemplatePart = bodyTemplate.BodyTemplateParts.FirstOrDefault();
-			Assert.IsNotNull(bodyTemplatePart);
-			Assert.AreEqual("head", bodyTemplatePart.Name);
-			Assert.AreEqual(bodyTemplatePart.BodyPartType, BodyPartType.Head);
-			Assert.AreEqual(2, bodyTemplatePart.DamageModifier);
-			Assert.AreEqual(3, bodyTemplatePart.HitPenalty, 3);
-			Assert.AreEqual(1, bodyTemplatePart.MinToHit);
-			Assert.AreEqual(10,bodyTemplatePart.MaxToHit);
 		}
 	}
 }

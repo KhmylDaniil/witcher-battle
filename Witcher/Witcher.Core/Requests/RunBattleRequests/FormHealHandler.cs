@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {
-	public class FormHealHandler : BaseHandler<FormHealCommand, FormHealResponse>
+	public sealed class FormHealHandler : BaseHandler<FormHealCommand, FormHealResponse>
 	{
 		public FormHealHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{

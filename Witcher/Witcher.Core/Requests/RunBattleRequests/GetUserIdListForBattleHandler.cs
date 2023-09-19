@@ -12,7 +12,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 	/// <summary>
 	/// Service handler for battle participants userId list for SignalR hub work only, dont call manually
 	/// </summary>
-	public class GetUserIdListForBattleHandler : BaseHandler<GetUserIdListForBattleQuery, IReadOnlyList<string>>
+	public sealed class GetUserIdListForBattleHandler : BaseHandler<GetUserIdListForBattleQuery, IReadOnlyList<string>>
 	{
 		public GetUserIdListForBattleHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{

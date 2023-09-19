@@ -51,7 +51,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 			var ability = _dbContext.Abilities.FirstOrDefault();
 
 			Assert.IsNotNull(ability.DefensiveSkills);
-			var defensiveSkill = ability.DefensiveSkills.FirstOrDefault(s => s.Skill == Enums.Skill.Sword);
+			var defensiveSkill = ability.DefensiveSkills.Find(s => s.Skill == Enums.Skill.Sword);
 			Assert.IsNotNull(defensiveSkill);
 		}
 	}

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
@@ -10,7 +9,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.WeaponTemplateRequests
 {
-	public class CreateWeaponTemplateHandler : BaseHandler<CreateWeaponTemplateCommand, Guid>
+	public sealed class CreateWeaponTemplateHandler : BaseHandler<CreateWeaponTemplateCommand, Guid>
 	{
 		public CreateWeaponTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -23,8 +22,8 @@ namespace Witcher.Core.Requests.WeaponTemplateRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			if (game.ItemTemplates.Any(x => x.Name == request.Name))
-				throw new RequestNameNotUniqException<CreateWeaponTemplateCommand>(nameof(request.Name));
+			if (game.ItemTemplates.Exists(x => x.Name == request.Name))
+				throw new RequestNameNotUniqException<ItemTemplate>(request.Name);
 
 			var newWeaponTemplate = WeaponTemplate.CreateWeaponTemplate(
 				game: game,
@@ -38,8 +37,7 @@ namespace Witcher.Core.Requests.WeaponTemplateRequests
 				damageModifier: request.DamageModifier,
 				accuracy: request.Accuracy,
 				durability: request.Durability,
-				range: request.Range,
-				appliedConditions: request.AppliedConditions);
+				range: request.Range);
 
 			_appDbContext.ItemTemplates.Add(newWeaponTemplate);
 			await _appDbContext.SaveChangesAsync(cancellationToken);

@@ -1,15 +1,14 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions.RequestExceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Witcher.Core.Contracts.BaseRequests;
+using MediatR;
 
 namespace Witcher.Core.Contracts.CreatureTemplateRequests
 {
 	/// <summary>
 	/// Запрос на получение списка шаблонов существа
 	/// </summary>
-	public class GetCreatureTemplateQuery : GetBaseQuery, IValidatableCommand<IEnumerable<GetCreatureTemplateResponseItem>>
+	public sealed class GetCreatureTemplateQuery : GetBaseQuery, IRequest<IEnumerable<GetCreatureTemplateResponseItem>>
 	{
 		/// <summary>
 		/// Фильтр по названию
@@ -60,14 +59,5 @@ namespace Witcher.Core.Contracts.CreatureTemplateRequests
 		/// фильтр по названию накладываемого состояния
 		/// </summary>
 		public string ConditionName { get; set; }
-
-		public void Validate()
-		{
-			if (CreationMaxTime != default && CreationMinTime >= CreationMaxTime)
-				throw new RequestFieldIncorrectDataException<GetCreatureTemplateQuery>(nameof(CreationMaxTime));
-
-			if (ModificationMaxTime != default && ModificationMinTime >= ModificationMaxTime)
-				throw new RequestFieldIncorrectDataException<GetCreatureTemplateQuery>(nameof(ModificationMaxTime));
-		}
 	}
 }

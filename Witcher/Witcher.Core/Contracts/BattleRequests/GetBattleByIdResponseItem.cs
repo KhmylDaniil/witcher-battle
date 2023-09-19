@@ -5,7 +5,7 @@ namespace Witcher.Core.Contracts.BattleRequests
 	/// <summary>
 	/// Элемент ответа на запрос получения битвы по айди - существо
 	/// </summary>
-	public class GetBattleByIdResponseItem
+	public sealed class GetBattleByIdResponseItem
 	{
 		/// <summary>
 		/// Айди существа

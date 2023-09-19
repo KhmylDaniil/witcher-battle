@@ -62,13 +62,9 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 				speed: request.Speed,
 				luck: request.Luck,
 				name: request.Name,
-				description: request.Description,
-				armorList: CreateArmorList(bodyTemplate, request.ArmorList));
+				description: request.Description);
 
 			newCreatureTemplate.UpdateAbililities(CreateAbilityList(request, game));
-
-			if (request.CreatureTemplateSkills is not null)
-				newCreatureTemplate.UpdateCreatureTemplateSkills(request.CreatureTemplateSkills);
 
 			_appDbContext.CreatureTemplates.Add(newCreatureTemplate);
 			await _appDbContext.SaveChangesAsync(cancellationToken);
@@ -80,44 +76,18 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 		/// </summary>
 		/// <param name="request">Запрос</param>
 		/// <param name="game">Игра</param>
-		void CheckRequest(CreateCreatureTemplateCommand request, Game game, out BodyTemplate bodyTemplate)
+		static void CheckRequest(CreateCreatureTemplateCommand request, Game game, out BodyTemplate bodyTemplate)
 		{
-			bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.BodyTemplateId)
+			bodyTemplate = game.BodyTemplates.Find(x => x.Id == request.BodyTemplateId)
 				?? throw new EntityNotFoundException<BodyTemplate>(request.BodyTemplateId);
 
-			if (game.CreatureTemplates.Any(x => string.Equals(x.Name, request.Name, StringComparison.Ordinal)))
+			if (game.CreatureTemplates.Exists(x => string.Equals(x.Name, request.Name, StringComparison.Ordinal)))
 				throw new RequestNameNotUniqException<CreateCreatureTemplateCommand>(nameof(request.Name));
-
-			if (request.ArmorList is not null)
-				foreach (var id in request.ArmorList.Select(x => x.BodyTemplatePartId))
-					_ = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Id == id)
-						?? throw new EntityNotFoundException<BodyTemplatePart>(id);
 
 			if (request.Abilities is not null)
 				foreach (var id in request.Abilities)
-					_ = game.Abilities.FirstOrDefault(x => x.Id == id)
+					_ = game.Abilities.Find(x => x.Id == id)
 						?? throw new EntityNotFoundException<Ability>(id);
-		}
-
-		/// <summary>
-		/// Создание списка частей шаблона тела
-		/// </summary>
-		/// <param name="bodyTemplate">Шаблон тела</param>
-		/// <param name="data">Данные</param>
-		/// <returns>Список частей шаблона тела</returns>
-		List<(BodyTemplatePart BodyTemplatePart, int Armor)> CreateArmorList(BodyTemplate bodyTemplate, List<UpdateCreatureTemplateRequestArmorList> data)
-		{
-			var result = new List<(BodyTemplatePart BodyTemplatePart, int Armor)>();
-
-			foreach (var item in bodyTemplate.BodyTemplateParts)
-			{
-				var correspondingPart = data?.FirstOrDefault(x => x.BodyTemplatePartId == item.Id);
-
-				var armor = correspondingPart == null ? 0 : correspondingPart.Armor;
-
-				result.Add((item, armor));
-			}
-			return result;
 		}
 
 		/// <summary>
@@ -126,7 +96,7 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 		/// <param name="request">Запрос</param>
 		/// <param name="game">Игра</param>
 		/// <returns>Список способностей</returns>
-		List<Ability> CreateAbilityList(CreateCreatureTemplateCommand request, Game game)
+		static List<Ability> CreateAbilityList(CreateCreatureTemplateCommand request, Game game)
 		{
 			var result = new List<Ability>();
 
@@ -134,7 +104,7 @@ namespace Witcher.Core.Requests.CreatureTemplateRequests
 				return result;
 
 			foreach (var id in request.Abilities)
-				result.Add(game.Abilities.FirstOrDefault(x => x.Id == id));
+				result.Add(game.Abilities.Find(x => x.Id == id));
 			return result;
 		}
 	}

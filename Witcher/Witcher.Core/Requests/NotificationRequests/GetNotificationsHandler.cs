@@ -10,7 +10,7 @@ using Witcher.Core.Notifications;
 
 namespace Witcher.Core.Requests.NotificationRequests
 {
-	public class GetNotificationsHandler : BaseHandler<GetNotificationsQuery, IEnumerable<Notification>>
+	public sealed class GetNotificationsHandler : BaseHandler<GetNotificationsQuery, IEnumerable<Notification>>
 	{
 		private readonly IUserContext _userContext;
 

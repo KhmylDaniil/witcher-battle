@@ -10,7 +10,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.CreatureTemplateRequests
 {
-	public class ChangeCreatureTemplatePartHandler : BaseHandler<ChangeCreatureTemplatePartCommand, Unit>
+	public sealed class ChangeCreatureTemplatePartHandler : BaseHandler<ChangeCreatureTemplatePartCommand, Unit>
 	{
 		public ChangeCreatureTemplatePartHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 			: base(appDbContext, authorizationService)

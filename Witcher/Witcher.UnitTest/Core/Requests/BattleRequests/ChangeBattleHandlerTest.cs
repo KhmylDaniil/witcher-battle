@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Witcher.UnitTest.Core.Requests.BattleRequests
 {
 	[TestClass]
-	public class ChangeBattleHandlerTest : UnitTestBase
+	public sealed class ChangeBattleHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;

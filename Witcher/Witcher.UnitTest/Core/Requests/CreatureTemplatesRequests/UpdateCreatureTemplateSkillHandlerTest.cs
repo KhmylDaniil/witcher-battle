@@ -59,7 +59,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault();
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateSkills);
 
-			var skill = creatureTemplate.CreatureTemplateSkills.FirstOrDefault(x => x.Skill == Skill.Dodge);
+			var skill = creatureTemplate.CreatureTemplateSkills.Find(x => x.Skill == Skill.Dodge);
 			Assert.IsNotNull(skill);
 			Assert.AreEqual(5, skill.SkillValue);
 		}
@@ -88,7 +88,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			var creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault();
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateSkills);
 
-			var skill = creatureTemplate.CreatureTemplateSkills.FirstOrDefault(x => x.Id == _skill.Id);
+			var skill = creatureTemplate.CreatureTemplateSkills.Find(x => x.Id == _skill.Id);
 			Assert.IsNotNull(skill);
 			Assert.AreEqual(Skill.Awareness, skill.Skill);
 			Assert.AreEqual(7, skill.SkillValue);
@@ -109,7 +109,7 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			creatureTemplate = _dbContext.CreatureTemplates.FirstOrDefault();
 			Assert.IsNotNull(creatureTemplate.CreatureTemplateSkills);
 
-			skill = creatureTemplate.CreatureTemplateSkills.FirstOrDefault(x => x.Id == _skill.Id);
+			skill = creatureTemplate.CreatureTemplateSkills.Find(x => x.Id == _skill.Id);
 			Assert.IsNotNull(skill);
 			Assert.AreEqual(Skill.Awareness, skill.Skill);
 			Assert.AreEqual(7, skill.SkillValue);

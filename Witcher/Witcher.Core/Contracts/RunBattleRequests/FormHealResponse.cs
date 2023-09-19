@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
-	public class FormHealResponse
+	public sealed class FormHealResponse
 	{
 		public Dictionary<Guid, string> EffectsOnTarget { get; set; }
 	}

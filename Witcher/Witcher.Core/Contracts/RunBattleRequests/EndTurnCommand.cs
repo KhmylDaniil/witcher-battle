@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Witcher.Core.Abstractions;
+﻿using MediatR;
+using System;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
-	public class EndTurnCommand : IValidatableCommand
+	public sealed class EndTurnCommand : IRequest
 	{
 		/// <summary>
 		/// Айди битвы
@@ -18,13 +14,5 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		/// Айди существа
 		/// </summary>
 		public Guid CreatureId { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

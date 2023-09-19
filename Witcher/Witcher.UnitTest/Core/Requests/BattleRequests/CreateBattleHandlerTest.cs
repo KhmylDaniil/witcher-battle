@@ -12,7 +12,7 @@ namespace Witcher.UnitTest.Core.Requests.BattleRequests
 	/// Тест для <see cref="CreateBattleHandler"/>
 	/// </summary>
 	[TestClass]
-	public class CreateBattleHandlerTest : UnitTestBase
+	public sealed class CreateBattleHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;

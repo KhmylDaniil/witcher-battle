@@ -1,12 +1,12 @@
-﻿using Witcher.Core.Abstractions;
-using System;
+﻿using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
 	/// <summary>
 	/// Команда попытки снятия эффекта
 	/// </summary>
-	public class HealEffectCommand : IValidatableCommand
+	public class HealEffectCommand : IRequest
 	{
 		/// <summary>
 		/// Айди боя
@@ -27,13 +27,5 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 		/// Айди эффекта
 		/// </summary>
 		public Guid EffectId { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

@@ -90,8 +90,7 @@ namespace Witcher.Core.Entities
 			int speed,
 			int luck,
 			string name, 
-			string description,
-			List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
+			string description)
 		{
 			Game = game;
 			ImgFile = imgFile;
@@ -113,7 +112,7 @@ namespace Witcher.Core.Entities
 			Abilities = new List<Ability>();
 			CreatureTemplateSkills = new List<CreatureTemplateSkill>();
 			Creatures = new List<Creature>();
-			CreatureTemplateParts = UpdateBody(armorList);
+			CreatureTemplateParts = CreateCreatureTemplatePartsList();
 			DamageTypeModifiers = new();
 		}
 
@@ -382,7 +381,7 @@ namespace Witcher.Core.Entities
 				throw new ApplicationSystemNullException<CreatureTemplate>(nameof(Abilities));
 
 			var entitiesToDelete = Abilities.Where(x => !request
-				.Any(y => y.Id == x.Id)).ToList();
+				.Exists(y => y.Id == x.Id)).ToList();
 
 			if (entitiesToDelete.Any())
 				foreach (var entity in entitiesToDelete)
@@ -392,67 +391,31 @@ namespace Witcher.Core.Entities
 				return;
 
 			var entitiesToAdd = request.Where(x => !Abilities
-				.Any(y => y.Id == x.Id)).ToList();
+				.Exists(y => y.Id == x.Id)).ToList();
 
 			foreach (var entity in entitiesToAdd)
 				Abilities.Add(entity);
 		}
 
 		/// <summary>
-		/// Метод изменения списка навыков шаблона существа
-		/// </summary>
-		/// <param name="data">Данные</param>
-		internal void UpdateCreatureTemplateSkills(IEnumerable<UpdateCreatureTemplateRequestSkill> data)
-		{
-			if (CreatureTemplateSkills == null)
-				throw new ApplicationSystemNullException<CreatureTemplate>(nameof(CreatureTemplateSkills));
-
-			if (data == null)
-				throw new ApplicationSystemNullException<CreatureTemplate>(nameof(data));
-
-			var entitiesToDelete = CreatureTemplateSkills
-					.Where(x => !data.Any(y => y.Skill == x.Skill)).ToList();
-
-			if (entitiesToDelete.Any())
-				foreach (var entity in entitiesToDelete)
-					CreatureTemplateSkills.Remove(entity);
-
-			if (!data.Any())
-				return;
-
-			foreach (var dataItem in data)
-			{
-				var creatureTemplateSkill = CreatureTemplateSkills.FirstOrDefault(x => x.Id == dataItem.Id);
-				if (creatureTemplateSkill == null)
-					CreatureTemplateSkills.Add(
-						new CreatureTemplateSkill(
-								skill: dataItem.Skill,
-								skillValue: dataItem.Value,
-								creatureTemplate: this));
-				else
-					creatureTemplateSkill.ChangeValue(dataItem.Value);
-			}
-		}
-
-		/// <summary>
-		/// изменение тела шаблона существа
+		/// Create CreatureTemplatePartsList
 		/// </summary>
 		/// <param name="armorList">Броня</param>
 		/// <returns>Список частей шаблона тела</returns>
-		private List<CreatureTemplatePart> UpdateBody(List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
+		private List<CreatureTemplatePart> CreateCreatureTemplatePartsList()
 		{
 			var bodyParts = new List<CreatureTemplatePart>();
 
-			foreach (var part in armorList)
+			foreach (var part in BodyTemplate.BodyTemplateParts)
 				bodyParts.Add(new CreatureTemplatePart(
 					creatureTemplate: this,
-					bodyPartType: part.BodyTemplatePart.BodyPartType,
-					name: part.BodyTemplatePart.Name,
-					hitPenalty: part.BodyTemplatePart.HitPenalty,
-					damageModifier: part.BodyTemplatePart.DamageModifier,
-					minToHit: part.BodyTemplatePart.MinToHit,
-					maxToHit: part.BodyTemplatePart.MaxToHit,
-					armor: part.Armor));
+					bodyPartType: part.BodyPartType,
+					name: part.Name,
+					hitPenalty: part.HitPenalty,
+					damageModifier: part.DamageModifier,
+					minToHit: part.MinToHit,
+					maxToHit: part.MaxToHit,
+					armor: 0));
 			return bodyParts;
 		}
 
@@ -494,8 +457,7 @@ namespace Witcher.Core.Entities
 			int speed,
 			int luck,
 			string name,
-			string description,
-			List<(BodyTemplatePart BodyTemplatePart, int Armor)> armorList)
+			string description)
 		{
 			Game = game;
 			ImgFile = imgFile;
@@ -514,9 +476,6 @@ namespace Witcher.Core.Entities
 			Name = name;
 			Description = description;
 			CreatureType = creatureType;
-
-			if (armorList is not null)
-				CreatureTemplateParts = UpdateBody(armorList);
 		}
 
 		/// <summary>

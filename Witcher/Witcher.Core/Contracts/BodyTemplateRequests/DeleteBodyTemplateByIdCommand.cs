@@ -1,12 +1,12 @@
-﻿using Witcher.Core.Abstractions;
-using System;
+﻿using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.BodyTemplateRequests
 {
 	/// <summary>
 	/// Команда на удаление шаблона тела по айди
 	/// </summary>
-	public sealed class DeleteBodyTemplateByIdCommand : IValidatableCommand
+	public sealed class DeleteBodyTemplateByIdCommand : IRequest
 	{
 		/// <summary>
 		/// Айди
@@ -17,13 +17,5 @@ namespace Witcher.Core.Contracts.BodyTemplateRequests
 		/// Название
 		/// </summary>
 		public string Name { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

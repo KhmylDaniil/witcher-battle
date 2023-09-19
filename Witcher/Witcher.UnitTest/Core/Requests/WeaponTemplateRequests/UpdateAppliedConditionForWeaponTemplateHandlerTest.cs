@@ -11,7 +11,7 @@ namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 {
 
 	[TestClass]
-	public class UpdateAppliedConditionForWeaponTemplateHandlerTest : UnitTestBase
+	public sealed class UpdateAppliedConditionForWeaponTemplateHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -46,7 +46,7 @@ namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 
 			Assert.IsNotNull(weaponTemplate.AppliedConditions);
 			Assert.AreEqual(1, weaponTemplate.AppliedConditions.Count);
-			var appliedCondition = weaponTemplate.AppliedConditions.First();
+			var appliedCondition = weaponTemplate.AppliedConditions[0];
 			Assert.AreEqual(Condition.Bleed, appliedCondition.Condition);
 			Assert.AreEqual(50, appliedCondition.ApplyChance);
 
@@ -64,7 +64,7 @@ namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 
 			Assert.IsNotNull(weaponTemplate.AppliedConditions);
 			Assert.AreEqual(1, weaponTemplate.AppliedConditions.Count);
-			appliedCondition = weaponTemplate.AppliedConditions.First();
+			appliedCondition = weaponTemplate.AppliedConditions[0];
 			Assert.AreEqual(Condition.Poison, appliedCondition.Condition);
 			Assert.AreEqual(30, appliedCondition.ApplyChance);
 		}

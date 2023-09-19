@@ -32,17 +32,17 @@ namespace Witcher.MVC.Controllers
 
 			try
 			{
-				var response = await _mediator.SendValidated(request, cancellationToken);
+				var response = await _mediator.Send(request, cancellationToken);
 
 				return View(response);
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				return View(await _mediator.SendValidated(new GetArmorTemplateQuery(), cancellationToken));
+				return await HandleExceptionAsync<ArmorTemplateController>(ex, async () =>
+				{
+					return View(await _mediator.Send(new GetArmorTemplateQuery(), cancellationToken));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<ArmorTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -50,15 +50,15 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				return View(await _mediator.SendValidated(query, cancellationToken));
+				return View(await _mediator.Send(query, cancellationToken));
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				return View(await _mediator.SendValidated(new GetArmorTemplateQuery(), cancellationToken));
+				return await HandleExceptionAsync<ArmorTemplateController>(ex, async () =>
+				{
+					return View(await _mediator.Send(new GetArmorTemplateQuery(), cancellationToken));
+				});
 			}
-			catch (Exception ex) { return RedirectToErrorPage<ArmorTemplateController>(ex); }
 		}
 
 		[HttpGet]
@@ -75,16 +75,14 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var id = await _mediator.SendValidated(command, cancellationToken);
+				var id = await _mediator.Send(command, cancellationToken);
 
 				return RedirectToAction(nameof(Details), new GetArmorTemplateByIdQuery() { Id = id });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return await HandleExceptionAsync<ArmorTemplateController>(ex, async () => View(await CreateVM(command, cancellationToken)));
 			}
-			catch (Exception ex) { return RedirectToErrorPage<ArmorTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -97,16 +95,14 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				return RedirectToAction(nameof(Details), new GetArmorTemplateByIdQuery() { Id = command.Id });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<ArmorTemplateController>(ex, () => View(command));
 			}
-			catch (Exception ex) { return RedirectToErrorPage<ArmorTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{armorTemplateId}")]
@@ -119,15 +115,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 				return RedirectToAction(nameof(Details), new GetArmorTemplateByIdQuery() { Id = command.ArmorTemplateId });
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<ArmorTemplateController>(ex, () => View(command));
 			}
-			catch (Exception ex) { return RedirectToErrorPage<ArmorTemplateController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -140,16 +134,14 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				return RedirectToAction(nameof(Index), new GetArmorTemplateQuery());
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
+				return HandleException<ArmorTemplateController>(ex, () => View(command));
 			}
-			catch (Exception ex) { return RedirectToErrorPage<ArmorTemplateController>(ex); }
 		}
 
 		/// <summary>
@@ -177,7 +169,7 @@ namespace Witcher.MVC.Controllers
 				return bodyTemplatesFromCache;
 			else
 			{
-				var bodyTemplates = await _mediator.SendValidated(new GetBodyTemplateQuery() { PageSize = int.MaxValue }, cancellationToken);
+				var bodyTemplates = await _mediator.Send(new GetBodyTemplateQuery() { PageSize = int.MaxValue }, cancellationToken);
 
 				var result = bodyTemplates.ToDictionary(x => x.Id, x => x.Name);
 

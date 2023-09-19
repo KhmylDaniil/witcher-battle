@@ -1,22 +1,15 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Contracts.BodyTemplateRequests;
 using Witcher.Core.Entities;
 using static Witcher.Core.BaseData.Enums;
-using Witcher.Core.Requests.BodyTemplateRequests;
 using Witcher.Core.Contracts.WeaponTemplateRequests;
 using Witcher.Core.Requests.WeaponTemplateRequests;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 {
 	[TestClass]
-	public class GetWeaponTemplateByIdHandlerTest : UnitTestBase
+	public sealed class GetWeaponTemplateByIdHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -73,7 +66,7 @@ namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 
 			Assert.IsNotNull(result.AppliedConditions);
 			Assert.IsTrue(result.AppliedConditions.Count == 1);
-			var appliedCondition = result.AppliedConditions.First();
+			var appliedCondition = result.AppliedConditions[0];
 			Assert.AreEqual(Witcher.Core.BaseData.Condition.Poison, appliedCondition.Condition);
 			Assert.AreEqual(33, appliedCondition.ApplyChance);
 		}

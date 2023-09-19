@@ -1,14 +1,13 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions.RequestExceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using MediatR;
 
 namespace Witcher.Core.Contracts.GameRequests
 {
 	/// <summary>
 	/// Команда создания игры
 	/// </summary>
-	public sealed class CreateGameCommand : IValidatableCommand
+	public sealed class CreateGameCommand : IRequest
 	{
 		/// <summary>
 		/// Айди аватара игры
@@ -34,17 +33,5 @@ namespace Witcher.Core.Contracts.GameRequests
 		/// Графические файлы игры
 		/// </summary>
 		public List<Guid> ImgFiles { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			if (string.IsNullOrEmpty(Name))
-				throw new RequestFieldNullException<CreateGameCommand>(nameof(Name));
-
-			if (Name.Length > 20)
-				throw new RequestFieldIncorrectDataException<JoinGameRequest>(nameof(Name), "Длина названия превышает 20 символов.");
-		}
 	}
 }

@@ -10,7 +10,7 @@ using Witcher.Core.Requests.ItemRequests;
 namespace Witcher.UnitTest.Core.Requests.BagRequests
 {
 	[TestClass]
-	public class CreateItemHandlerTest : UnitTestBase
+	public sealed class CreateItemHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -59,7 +59,7 @@ namespace Witcher.UnitTest.Core.Requests.BagRequests
 
 			Assert.IsNotNull(character);
 			Assert.IsTrue(character.Items.Any());
-			var item = character.Items.First();
+			var item = character.Items[0];
 			Assert.AreEqual(item.ItemTemplateId, _weaponTemplate.Id);
 
 			var weapon = item as Weapon;
@@ -156,7 +156,7 @@ namespace Witcher.UnitTest.Core.Requests.BagRequests
 
 			Assert.IsNotNull(character);
 			Assert.IsTrue(character.Items.Any());
-			var item = character.Items.First();
+			var item = character.Items[0];
 			Assert.AreEqual(item.ItemTemplateId, _armorTemplate.Id);
 
 			var armor = item as Armor;

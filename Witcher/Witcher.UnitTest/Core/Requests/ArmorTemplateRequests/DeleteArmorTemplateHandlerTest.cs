@@ -9,7 +9,7 @@ using Witcher.Core.Requests.ArmorTemplateRequests;
 namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 {
 	[TestClass]
-	public class DeleteArmorTemplateHandlerTest : UnitTestBase
+	public sealed class DeleteArmorTemplateHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;

@@ -1,14 +1,13 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Entities;
-using Witcher.Core.Exceptions.RequestExceptions;
+﻿using Witcher.Core.Entities;
 using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.BattleRequests
 {
 	/// <summary>
 	/// Команда создания боя
 	/// </summary>
-	public class CreateBattleCommand : IValidatableCommand<Battle>
+	public sealed class CreateBattleCommand : IRequest<Battle>
 	{
 		/// <summary>
 		/// Айди графического файла
@@ -24,14 +23,5 @@ namespace Witcher.Core.Contracts.BattleRequests
 		/// Описание боя
 		/// </summary>
 		public string Description { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			if (string.IsNullOrEmpty(Name))
-				throw new RequestFieldNullException<CreateBattleCommand>(nameof(Name));
-		}
 	}
 }

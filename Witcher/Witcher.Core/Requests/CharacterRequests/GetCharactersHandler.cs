@@ -10,7 +10,7 @@ using Witcher.Core.ExtensionMethods;
 
 namespace Witcher.Core.Requests.CharacterRequests
 {
-	public class GetCharactersHandler : BaseHandler<GetCharactersCommand, IEnumerable<GetCharactersResponseItem>>
+	public sealed class GetCharactersHandler : BaseHandler<GetCharactersCommand, IEnumerable<GetCharactersResponseItem>>
 	{
 		public GetCharactersHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{

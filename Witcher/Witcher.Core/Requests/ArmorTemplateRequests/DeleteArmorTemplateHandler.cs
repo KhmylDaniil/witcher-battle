@@ -11,7 +11,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.ArmorTemplateRequests
 {
-	public class DeleteArmorTemplateHandler : BaseHandler<DeleteArmorTemplateCommand, Unit>
+	public sealed class DeleteArmorTemplateHandler : BaseHandler<DeleteArmorTemplateCommand, Unit>
 	{
 		public DeleteArmorTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -24,7 +24,7 @@ namespace Witcher.Core.Requests.ArmorTemplateRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			var weaponTemplate = game.ItemTemplates.FirstOrDefault(x => x.Id == request.Id)
+			var weaponTemplate = game.ItemTemplates.Find(x => x.Id == request.Id)
 				?? throw new EntityNotFoundException<ItemTemplate>(request.Id);
 
 			game.ItemTemplates.Remove(weaponTemplate);

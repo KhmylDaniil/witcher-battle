@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Witcher.Core.Entities;
-using static Witcher.Core.BaseData.Enums;
-using System;
 
 namespace Witcher.Storage.Postgresql.Configurations
 {
@@ -19,12 +17,7 @@ namespace Witcher.Storage.Postgresql.Configurations
 			builder.ToTable("CritEffects", "Battles")
 				.HasComment("Критические эффекты");
 
-			builder.Property(x => x.Severity)
-				.HasColumnName("Severity")
-				.HasComment("Тяжесть критического эффекта")
-				.HasConversion(
-					v => v.ToString(),
-					v => Enum.Parse<Severity>(v))
+			builder.Property(x => x.Severity).HasColumnName("Severity").HasComment("Тяжесть критического эффекта")
 				.IsRequired();
 
 			builder.Property(x => x.CreaturePartId)
@@ -32,12 +25,7 @@ namespace Witcher.Storage.Postgresql.Configurations
 				.HasComment("Айди части тела")
 				.IsRequired();
 
-			builder.Property(x => x.BodyPartLocation)
-				.HasColumnName("BodyPartLocation")
-				.HasComment("Тип части тела")
-				.HasConversion(
-					v => v.ToString(),
-					v => Enum.Parse<BodyPartType>(v))
+			builder.Property(x => x.BodyPartLocation).HasColumnName("BodyPartLocation").HasComment("Тип части тела")
 				.IsRequired();
 
 			var creaturePartNavigation = builder.Metadata.FindNavigation(nameof(CritEffect.CreaturePart));

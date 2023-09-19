@@ -13,7 +13,7 @@ using Witcher.Core.Requests.NotificationRequests;
 namespace Witcher.UnitTest.Core.Requests.NotificationRequests
 {
 	[TestClass]
-	public class GetNotificationsHandlerTest : UnitTestBase
+	public sealed class GetNotificationsHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly User _user;

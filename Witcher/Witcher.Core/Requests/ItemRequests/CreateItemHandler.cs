@@ -11,7 +11,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.ItemRequests
 {
-	public class CreateItemHandler : BaseHandler<CreateItemCommand, Unit>
+	public sealed class CreateItemHandler : BaseHandler<CreateItemCommand, Unit>
 	{
 		public CreateItemHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -26,10 +26,10 @@ namespace Witcher.Core.Requests.ItemRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			var character = game.Characters.FirstOrDefault(c => c.Id == request.CharacterId)
+			var character = game.Characters.Find(c => c.Id == request.CharacterId)
 				?? throw new EntityNotFoundException<Character>(request.CharacterId);
 
-			var itemTemplate = game.ItemTemplates.FirstOrDefault(x => x.Id == request.ItemTemplateId)
+			var itemTemplate = game.ItemTemplates.Find(x => x.Id == request.ItemTemplateId)
 				?? throw new EntityNotFoundException<ItemTemplate>(request.ItemTemplateId);
 
 			if (itemTemplate.ItemType == BaseData.Enums.ItemType.Armor)

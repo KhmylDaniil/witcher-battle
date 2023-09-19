@@ -2,7 +2,7 @@
 
 namespace Witcher.Core.Contracts.CharacterRequests
 {
-	public class GetCharactersResponseItem
+	public sealed class GetCharactersResponseItem
 	{
 		/// <summary>
 		/// Айди

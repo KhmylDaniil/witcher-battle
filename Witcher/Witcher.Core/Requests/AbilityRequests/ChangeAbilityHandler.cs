@@ -5,7 +5,6 @@ using Witcher.Core.Contracts.AbilityRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 using Witcher.Core.Exceptions.RequestExceptions;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,7 +13,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 	/// <summary>
 	/// Обработчик изменения способности
 	/// </summary>
-	public class ChangeAbilityHandler : BaseHandler<ChangeAbilityCommand, Unit>
+	public sealed class ChangeAbilityHandler : BaseHandler<ChangeAbilityCommand, Unit>
 	{
 		public ChangeAbilityHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
 
@@ -31,11 +30,11 @@ namespace Witcher.Core.Requests.AbilityRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			var ability = game.Abilities.FirstOrDefault(x => x.Id == request.Id)
+			var ability = game.Abilities.Find(x => x.Id == request.Id)
 				?? throw new EntityNotFoundException<Ability>(request.Id);
 
-			if (game.Abilities.Any(x => x.Name == request.Name && x.Id != ability.Id))
-				throw new RequestNameNotUniqException<ChangeAbilityCommand>(nameof(request.Name));
+			if (game.Abilities.Exists(x => x.Name == request.Name && x.Id != ability.Id))
+				throw new RequestNameNotUniqException<Ability>(request.Name);
 
 			ability.ChangeAbility(
 				name: request.Name,
@@ -45,9 +44,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 				attackSpeed: request.AttackSpeed,
 				accuracy: request.Accuracy,
 				attackSkill: request.AttackSkill,
-				defensiveSkills: request.DefensiveSkills,
-				damageType: request.DamageType,
-				appliedConditions: request.AppliedConditions);
+				damageType: request.DamageType);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;

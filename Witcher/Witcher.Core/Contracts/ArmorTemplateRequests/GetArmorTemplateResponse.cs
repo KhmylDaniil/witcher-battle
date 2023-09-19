@@ -1,10 +1,8 @@
-﻿using static Witcher.Core.BaseData.Enums;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Witcher.Core.Contracts.ArmorTemplateRequests
 {
-	public class GetArmorTemplateResponse
+	public sealed class GetArmorTemplateResponse
 	{
 		/// <summary>
 		/// Айди

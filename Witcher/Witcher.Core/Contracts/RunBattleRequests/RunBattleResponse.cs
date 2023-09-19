@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
-	public class RunBattleResponse : GetBattleByIdResponse
+	public sealed class RunBattleResponse : GetBattleByIdResponse
 	{
 		public string BattleLog { get; set; }
 

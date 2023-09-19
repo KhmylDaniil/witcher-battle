@@ -14,7 +14,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.CharacterRequests
 {
-	public class DeleteCharacterHandler : BaseHandler<DeleteCharacterCommand, Unit>
+	public sealed class DeleteCharacterHandler : BaseHandler<DeleteCharacterCommand, Unit>
 	{
 		public DeleteCharacterHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -27,7 +27,7 @@ namespace Witcher.Core.Requests.CharacterRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			var character = game.Characters.FirstOrDefault(x => x.Id == request.Id)
+			var character = game.Characters.Find(x => x.Id == request.Id)
 				?? throw new EntityNotFoundException<Character>(request.Id);
 
 			game.Characters.Remove(character);

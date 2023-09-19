@@ -103,7 +103,7 @@ namespace Witcher.Core.Logic
 				if (aimedPart is null)
 					return true;
 
-				return target.Effects.Any(x => x is CritEffect crit && crit.CreaturePartId == aimedPart.Id
+				return target.Effects.Exists(x => x is CritEffect crit && crit.CreaturePartId == aimedPart.Id
 					&& crit is ISharedPenaltyCrit limbCrit && limbCrit.Severity >= BaseData.Enums.Severity.Deadly);
 			}
 

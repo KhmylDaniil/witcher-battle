@@ -13,7 +13,7 @@ using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Requests.CharacterRequests
 {
-	public class GetCharacterByIdHandler : BaseHandler<GetCharacterByIdCommand, GetCharacterByIdResponse>
+	public sealed class GetCharacterByIdHandler : BaseHandler<GetCharacterByIdCommand, GetCharacterByIdResponse>
 	{
 		public GetCharacterByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{

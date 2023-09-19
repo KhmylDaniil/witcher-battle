@@ -119,7 +119,7 @@ namespace Witcher.UnitTest.Core.Requests.BodyTemplateRequests
 			Assert.IsNotNull(user);
 			Assert.IsTrue(user.Name.Contains(request.UserName));
 
-			var bodyPart = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Name == Enum.GetName(BodyPartType.Head));
+			var bodyPart = bodyTemplate.BodyTemplateParts.Find(x => x.Name == Enum.GetName(BodyPartType.Head));
 			Assert.IsNotNull(bodyPart);
 		}
 	}

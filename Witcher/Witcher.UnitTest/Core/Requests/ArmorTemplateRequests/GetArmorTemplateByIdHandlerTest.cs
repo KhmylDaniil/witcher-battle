@@ -1,8 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Abstractions;
@@ -14,7 +10,7 @@ using Witcher.Core.Requests.ArmorTemplateRequests;
 namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 {
 	[TestClass]
-	public class GetArmorTemplateByIdHandlerTest : UnitTestBase
+	public sealed class GetArmorTemplateByIdHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly User _user;
@@ -86,10 +82,10 @@ namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 
 			Assert.IsNotNull(result.BodyTemplatePartsNames);
 			Assert.IsTrue(result.BodyTemplatePartsNames.Count == 1);
-			Assert.AreEqual("Torso", result.BodyTemplatePartsNames.First());
+			Assert.AreEqual("Torso", result.BodyTemplatePartsNames[0]);
 
 			Assert.IsNotNull(result.DamageTypeModifiers);
-			var damageTypeModifier = result.DamageTypeModifiers.First();
+			var damageTypeModifier = result.DamageTypeModifiers[0];
 			Assert.AreEqual(DamageType.Slashing, damageTypeModifier.DamageType);
 		}
 	}

@@ -33,7 +33,7 @@ namespace Witcher.Core.Requests.BodyTemplateRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			var bodyTemplate = game.BodyTemplates.FirstOrDefault(x => x.Id == request.Id)
+			var bodyTemplate = game.BodyTemplates.Find(x => x.Id == request.Id)
 				?? throw new EntityNotFoundException<BodyTemplate>(request.Id);
 
 			game.BodyTemplates.Remove(bodyTemplate);

@@ -12,7 +12,7 @@ using Witcher.Core.ExtensionMethods;
 
 namespace Witcher.Core.Requests.ArmorTemplateRequests
 {
-	public class GetArmorTemplateHandler : BaseHandler<GetArmorTemplateQuery, IEnumerable<GetArmorTemplateResponse>>
+	public sealed class GetArmorTemplateHandler : BaseHandler<GetArmorTemplateQuery, IEnumerable<GetArmorTemplateResponse>>
 	{
 		public GetArmorTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -20,6 +20,10 @@ namespace Witcher.Core.Requests.ArmorTemplateRequests
 
 		public async override Task<IEnumerable<GetArmorTemplateResponse>> Handle(GetArmorTemplateQuery request, CancellationToken cancellationToken)
 		{
+			var bodyPartTypeMatches = request.BodyPartType.GetPossibleEnumNumbersFromSearchString<Enums.BodyPartType>();
+
+			var damageTypeMatches = request.DamageTypeModifier.GetPossibleEnumNumbersFromSearchString<Enums.DamageType>();
+
 			var filter = _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.ItemTemplates.Where(it => it.ItemType == Enums.ItemType.Armor))
 				.Include(x => x.BodyTemplates)
@@ -30,8 +34,9 @@ namespace Witcher.Core.Requests.ArmorTemplateRequests
 				.Where(x => request.UserName == null || x.Game.UserGames
 					.Any(u => u.User.Name.Contains(request.UserName) && u.UserId == x.CreatedByUserId))
 				.Where(x => request.Name == null || x.Name.Contains(request.Name))
-				.Where(x => request.BodyPartType == null || x.BodyTemplateParts.Any(x => Enum.GetName(x.BodyPartType).Contains(request.BodyPartType)))
-				.Where(x => request.DamageTypeModifier == null || x.DamageTypeModifiers.Any(x => Enum.GetName(x.DamageType).Contains(request.DamageTypeModifier)));
+				.Where(x => request.BodyPartType == null || x.BodyTemplateParts.Any(btp => bodyPartTypeMatches.Any(btm => btm == (int)btp.BodyPartType)))
+				.Where(x => request.DamageTypeModifier == null 
+				|| x.DamageTypeModifiers.Any(dtm => damageTypeMatches.Any(dtmm => dtmm == (int)dtm.DamageType)));
 
 			return await filter
 				.OrderBy(request.OrderBy, request.IsAscending)

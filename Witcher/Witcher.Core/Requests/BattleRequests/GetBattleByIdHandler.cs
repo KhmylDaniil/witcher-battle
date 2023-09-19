@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Witcher.Core.Requests.BattleRequests
 {
-	public class GetBattleByIdHandler : BaseHandler<GetBattleByIdQuery, GetBattleByIdResponse>
+	public sealed class GetBattleByIdHandler : BaseHandler<GetBattleByIdQuery, GetBattleByIdResponse>
 	{
 		public GetBattleByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{

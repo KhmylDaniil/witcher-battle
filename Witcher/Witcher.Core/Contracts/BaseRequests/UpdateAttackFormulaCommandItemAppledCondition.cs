@@ -21,6 +21,6 @@ namespace Witcher.Core.Contracts.BaseRequests
 		/// <summary>
 		/// Шанс применения
 		/// </summary>
-		public int ApplyChance { get; set; }
+		public int ApplyChance { get; set; } = 25;
 	}
 }

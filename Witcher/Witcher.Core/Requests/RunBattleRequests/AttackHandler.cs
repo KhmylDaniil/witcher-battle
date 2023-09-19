@@ -1,8 +1,6 @@
 ﻿using MediatR;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
@@ -10,14 +8,13 @@ using Witcher.Core.Contracts.RunBattleRequests;
 using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 using Witcher.Core.Exceptions.RequestExceptions;
-using Witcher.Core.Exceptions;
 using Witcher.Core.Logic;
 using Microsoft.EntityFrameworkCore;
 using Witcher.Core.ExtensionMethods;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {
-	public class AttackHandler : BaseHandler<AttackCommand, Unit>
+	public sealed class AttackHandler : BaseHandler<AttackCommand, Unit>
 	{
 		private readonly IRollService _rollService;
 
@@ -55,20 +52,20 @@ namespace Witcher.Core.Requests.RunBattleRequests
 
 			AttackData CheckAndFormData()
 			{
-				var attacker = battle.Creatures.FirstOrDefault(x => x.Id == request.Id)
+				var attacker = battle.Creatures.Find(x => x.Id == request.Id)
 					?? throw new EntityNotFoundException<Character>(request.Id);
 
-				var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetId)
+				var target = battle.Creatures.Find(x => x.Id == request.TargetId)
 					?? throw new EntityNotFoundException<Creature>(request.TargetId);
 
 				var aimedPart = request.CreaturePartId == null
 					? null
-					: target.CreatureParts.FirstOrDefault(x => x.Id == request.CreaturePartId)
+					: target.CreatureParts.Find(x => x.Id == request.CreaturePartId)
 						?? throw new EntityNotFoundException<CreaturePart>(request.CreaturePartId.Value);
 
 				var defensiveSkill = request.DefensiveSkill == null
 					? null
-					: target.CreatureSkills.FirstOrDefault(x => x.Skill == request.DefensiveSkill)
+					: target.CreatureSkills.Find(x => x.Skill == request.DefensiveSkill)
 						?? throw new RequestFieldIncorrectDataException<AttackCommand>(nameof(request.DefensiveSkill));
 
 				return AttackData.CreateData(
@@ -88,7 +85,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 			if (request.AttackType == BaseData.Enums.AttackType.Weapon && attacker is Character character)
 			{
 				var weapon = character.Items
-					.FirstOrDefault(i => i.ItemType == BaseData.Enums.ItemType.Weapon && i.IsEquipped.Value && i.ItemTemplateId == request.AttackFormulaId)
+					.Find(i => i.ItemType == BaseData.Enums.ItemType.Weapon && i.IsEquipped.Value && i.ItemTemplateId == request.AttackFormulaId)
 						?? throw new EntityNotFoundException<Weapon>(request.AttackFormulaId);
 
 				return weapon.ItemTemplate as WeaponTemplate
@@ -96,7 +93,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 			}
 			else if (request.AttackType == BaseData.Enums.AttackType.Ability)
 			{
-				return attacker.Abilities.FirstOrDefault(x => x.Id == request.AttackFormulaId)
+				return attacker.Abilities.Find(x => x.Id == request.AttackFormulaId)
 					?? throw new EntityNotFoundException<Ability>(request.AttackFormulaId);
 			}
 			else

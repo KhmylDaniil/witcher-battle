@@ -55,7 +55,7 @@ namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 			Assert.IsNotNull(ability);
 
 			Assert.IsNull(ability.AppliedConditions
-				.FirstOrDefault(x => x.Id == _appliedCondition.Id));
+				.Find(x => x.Id == _appliedCondition.Id));
 
 		}
 	}

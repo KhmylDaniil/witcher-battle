@@ -10,7 +10,7 @@ using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
-	public class GetAbilityByIdHandler : BaseHandler<GetAbilityByIdQuery, GetAbilityByIdResponse>
+	public sealed class GetAbilityByIdHandler : BaseHandler<GetAbilityByIdQuery, GetAbilityByIdResponse>
 	{
 		public GetAbilityByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
 

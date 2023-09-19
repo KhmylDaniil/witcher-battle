@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
@@ -11,7 +10,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.WeaponTemplateRequests
 {
-	public class ChangeWeaponTemplateHandler : BaseHandler<ChangeWeaponTemplateCommand, Unit>
+	public sealed class ChangeWeaponTemplateHandler : BaseHandler<ChangeWeaponTemplateCommand, Unit>
 	{
 		public ChangeWeaponTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -24,10 +23,10 @@ namespace Witcher.Core.Requests.WeaponTemplateRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			if (game.ItemTemplates.Any(x => x.Name == request.Name && x.Id != request.Id))
-				throw new RequestNameNotUniqException<ChangeWeaponTemplateCommand>(nameof(request.Name));
+			if (game.ItemTemplates.Exists(x => x.Name == request.Name && x.Id != request.Id))
+				throw new RequestNameNotUniqException<ItemTemplate>(request.Name);
 
-			var weaponTemplate = game.ItemTemplates.FirstOrDefault(x => x.Id == request.Id) as WeaponTemplate
+			var weaponTemplate = game.ItemTemplates.Find(x => x.Id == request.Id) as WeaponTemplate
 				?? throw new EntityNotFoundException<WeaponTemplate>(request.Id);
 
 			weaponTemplate.ChangeWeaponTemplate(
@@ -41,8 +40,7 @@ namespace Witcher.Core.Requests.WeaponTemplateRequests
 				damageModifier: request.DamageModifier,
 				accuracy: request.Accuracy,
 				durability: request.Durability,
-				range: request.Range,
-				appliedConditions: request.AppliedConditions);
+				range: request.Range);
 
 			await _appDbContext.SaveChangesAsync(cancellationToken);
 			return Unit.Value;

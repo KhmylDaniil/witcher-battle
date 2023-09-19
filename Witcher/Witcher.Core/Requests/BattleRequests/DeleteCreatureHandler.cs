@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Witcher.Core.Requests.BattleRequests
 {
-	public class DeleteCreatureHandler : BaseHandler<DeleteCreatureCommand, Unit>
+	public sealed class DeleteCreatureHandler : BaseHandler<DeleteCreatureCommand, Unit>
 	{
 		public DeleteCreatureHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -25,10 +25,10 @@ namespace Witcher.Core.Requests.BattleRequests
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 
-			var battle = game.Battles.FirstOrDefault(a => a.Id == request.BattleId)
+			var battle = game.Battles.Find(a => a.Id == request.BattleId)
 				?? throw new EntityNotFoundException<Battle>(request.BattleId);
 
-			var creature = battle.Creatures.FirstOrDefault(a => a.Id == request.Id)
+			var creature = battle.Creatures.Find(a => a.Id == request.Id)
 				?? throw new EntityNotFoundException<Creature>(request.Id);
 
 			if (creature is Character character)

@@ -22,17 +22,15 @@ namespace Witcher.MVC.Controllers
 			IEnumerable<Notification> response;
 			try
 			{
-				response = await _mediator.SendValidated(query, cancellationToken);
+				response = await _mediator.Send(query, cancellationToken);
+				return View(response);
+
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				response = await _mediator.SendValidated(new GetNotificationsQuery(), cancellationToken);
+				return await HandleExceptionAsync<NotificationController>(ex, async ()
+					=> View(await _mediator.Send(new GetNotificationsQuery(), cancellationToken)));
 			}
-			catch (Exception ex) { return RedirectToErrorPage<NotificationController>(ex); }
-
-			return View(response);
 		}
 
 		[Route("[controller]/{id}")]
@@ -40,19 +38,15 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var response = await _mediator.SendValidated(query, cancellationToken);
+				var response = await _mediator.Send(query, cancellationToken);
 
 				return View(response);
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex)
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				var response = await _mediator.SendValidated(new GetNotificationsQuery(), cancellationToken);
-
-				return View(response);
+				return await HandleExceptionAsync<NotificationController>(ex, async ()
+					=> View(await _mediator.Send(new GetNotificationsQuery(), cancellationToken)));
 			}
-			catch (Exception ex) { return RedirectToErrorPage<NotificationController>(ex); }
 		}
 
 		[Route("[controller]/[action]/{id}")]
@@ -65,16 +59,11 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				return RedirectToAction(nameof(Index));
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return View(command);
-			}
-			catch (Exception ex) { return RedirectToErrorPage<NotificationController>(ex); }
+			catch (Exception ex) { return HandleException<NotificationController>(ex, () => View(command)); }
 		}
 
 		[HttpPost]
@@ -82,25 +71,20 @@ namespace Witcher.MVC.Controllers
 		[Route("[controller]/[action]/{id}")]
 		public async Task<IActionResult> Decide(Guid id, bool accept, CancellationToken cancellationToken)
 		{
-			var command = await FormValidatableCommand(id, accept);
+			var command = await FormDecisionFromNotification(id, accept);
 
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				return RedirectToAction(nameof(Index));
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-				return RedirectToAction(nameof(Details), new { Id = id });
-			}
-			catch (Exception ex) { return RedirectToErrorPage<NotificationController>(ex); }
+			catch (Exception ex) { return HandleException<NotificationController>(ex, () => RedirectToAction(nameof(Details), new { Id = id })); }
 		}
 
-		private async Task<IValidatableCommand> FormValidatableCommand(Guid id, bool accept)
+		private async Task<IRequest> FormDecisionFromNotification(Guid id, bool accept)
 		{
-			var notification = await _mediator.SendValidated(new GetNotificationByIdQuery { Id = id }) as YesOrNoDecisionNotification
+			var notification = await _mediator.Send(new GetNotificationByIdQuery { Id = id }) as YesOrNoDecisionNotification
 				?? throw new EntityBaseException("Уведомление не найдено.");
 
 			return accept ? notification.Accept() : notification.Decline();

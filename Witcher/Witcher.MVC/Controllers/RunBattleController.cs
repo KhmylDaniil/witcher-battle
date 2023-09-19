@@ -8,10 +8,12 @@ using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BattleRequests;
 using Witcher.Core.Contracts.BodyTemplateRequests;
 using Witcher.Core.Contracts.RunBattleRequests;
+using Witcher.Core.Entities;
 using Witcher.Core.Exceptions;
 using Witcher.Core.ExtensionMethods;
 using Witcher.MVC.Hubs;
 using Witcher.MVC.ViewModels.RunBattle;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Witcher.MVC.Controllers
 {
@@ -36,17 +38,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var response = await _mediator.SendValidated(command, cancellationToken);
+				var response = await _mediator.Send(command, cancellationToken);
 				return View(response);
 			}
-			catch (RequestValidationException ex)
+			catch (Exception ex) { return await HandleExceptionAsync<RunBattleController>(ex, async () =>
 			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				var response = await _mediator.SendValidated(new GetBattleByIdQuery() { Id = command.BattleId}, cancellationToken);
-				return View(response);
-			}
-			catch (Exception ex) { return RedirectToErrorPage<RunBattleController>(ex); }
+				return View(await _mediator.Send(new GetBattleByIdQuery() { Id = command.BattleId }, cancellationToken));
+			}); }
 		}
 
 		[Route("[controller]/[action]/{battleId}")]
@@ -54,19 +52,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				var response = await _mediator.SendValidated(command, cancellationToken);
+				var response = await _mediator.Send(command, cancellationToken);
 
 				var vm = _mapper.Map<MakeTurnViewModel>(response);
 
 				return View(vm);
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-
-				return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
-			}
-			catch (Exception ex) { return RedirectToErrorPage<RunBattleController>(ex); }
+			catch (Exception ex) { return HandleException<RunBattleController>(ex, () => InnerRedirectToRunBattle(command.BattleId)); }
 		}
 
 		[Route("[controller]/[action]/{battleId}")]
@@ -92,17 +84,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				await _messageHubContext.SendUpdateBattleMessage(await GetUserIdListAsync(command.BattleId, cancellationToken));
-			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-			}
-			catch (Exception ex) { return RedirectToErrorPage<RunBattleController>(ex); }
 
-			return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
+				return InnerRedirectToRunBattle(command.BattleId);
+			}
+			catch (Exception ex) { return HandleException<RunBattleController>(ex, () => InnerRedirectToRunBattle(command.BattleId)); }
 		}
 
 		[Route("[controller]/[action]/{battleId}")]
@@ -120,17 +108,13 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
+				await _mediator.Send(command, cancellationToken);
 
 				await _messageHubContext.SendUpdateBattleMessage(await GetUserIdListAsync(command.BattleId, cancellationToken));
-			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-			}
-			catch (Exception ex) { return RedirectToErrorPage<RunBattleController>(ex); }
 
-			return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
+				return InnerRedirectToRunBattle(command.BattleId);
+			}
+			catch (Exception ex) { return HandleException<RunBattleController>(ex, () => InnerRedirectToRunBattle(command.BattleId)); }
 		}
 
 		[HttpPost]
@@ -140,17 +124,11 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
-
+				await _mediator.Send(command, cancellationToken);
 				await _messageHubContext.SendUpdateBattleMessage(await GetUserIdListAsync(command.BattleId, cancellationToken));
+				return InnerRedirectToRunBattle(command.BattleId);
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-			}
-			catch (Exception ex) { return RedirectToErrorPage<RunBattleController>(ex); }
-
-			return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
+			catch (Exception ex) { return HandleException<RunBattleController>(ex, () => InnerRedirectToRunBattle(command.BattleId)); }
 		}
 
 		[HttpPost]
@@ -160,17 +138,11 @@ namespace Witcher.MVC.Controllers
 		{
 			try
 			{
-				await _mediator.SendValidated(command, cancellationToken);
-
+				await _mediator.Send(command, cancellationToken);
 				await _messageHubContext.SendUpdateBattleMessage(await GetUserIdListAsync(command.BattleId, cancellationToken));
+				return InnerRedirectToRunBattle(command.BattleId);
 			}
-			catch (RequestValidationException ex)
-			{
-				TempData["ErrorMessage"] = ex.UserMessage;
-			}
-			catch (Exception ex) { return RedirectToErrorPage<RunBattleController>(ex); }
-
-			return RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = command.BattleId });
+			catch (Exception ex) { return HandleException<RunBattleController>(ex, () => InnerRedirectToRunBattle(command.BattleId)); }
 		}
 
 		private async Task<MakeAttackViewModel> CreateVM(AttackCommand command, Core.BaseData.Enums.AttackType attackType, CancellationToken cancellationToken)
@@ -185,7 +157,7 @@ namespace Witcher.MVC.Controllers
 				AttackFormulaId = command.AttackFormulaId,
 				AttackType = attackType,
 			};
-			var formAttackResponse = await _mediator.SendValidated(formAttackCommand, cancellationToken);
+			var formAttackResponse = await _mediator.Send(formAttackCommand, cancellationToken);
 
 			vm.CreatureParts = formAttackResponse.CreatureParts;
 			vm.DefensiveSkills = formAttackResponse.DefensiveSkills;
@@ -201,7 +173,7 @@ namespace Witcher.MVC.Controllers
 			{
 				TargetCreatureId = command.TargetId,
 			};
-			var formHealResponse = await _mediator.SendValidated(formHealCommand, cancellationToken);
+			var formHealResponse = await _mediator.Send(formHealCommand, cancellationToken);
 
 			vm.EffectsOnTarget = formHealResponse.EffectsOnTarget;
 
@@ -218,15 +190,16 @@ namespace Witcher.MVC.Controllers
 				return userIdListFromCache;
 			else
 			{
-				var userIdList = await _mediator.SendValidated(new GetUserIdListForBattleQuery
+				var userIdList = await _mediator.Send(new GetUserIdListForBattleQuery
 				{
 					GameId = _gameIdService.GameId,
 					BattleId = battleId
 				}, cancellationToken);
-
 				_memoryCache.Set(battleId, userIdList);
 				return userIdList;
 			}
 		}
+
+		private ActionResult InnerRedirectToRunBattle(Guid battleId) => RedirectToAction(nameof(Run), new RunBattleCommand() { BattleId = battleId });
 	}
 }

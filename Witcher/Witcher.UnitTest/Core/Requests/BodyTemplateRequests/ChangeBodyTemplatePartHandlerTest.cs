@@ -60,9 +60,9 @@ namespace Witcher.UnitTest.Core.Requests.BodyTemplateRequests
 			var bodyTemplate = _dbContext.BodyTemplates.FirstOrDefault();
 			Assert.IsNotNull(bodyTemplate.BodyTemplateParts);
 
-			var bodyTemplatePart = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Name == "void");
+			var bodyTemplatePart = bodyTemplate.BodyTemplateParts.Find(x => x.Name == "void");
 			Assert.IsNotNull(bodyTemplatePart);
-			Assert.AreEqual(bodyTemplatePart.BodyPartType, BodyPartType.Void);
+			Assert.AreEqual(BodyPartType.Void, bodyTemplatePart.BodyPartType);
 			Assert.AreEqual(10, bodyTemplatePart.DamageModifier);
 			Assert.AreEqual(5, bodyTemplatePart.HitPenalty);
 			Assert.AreEqual(7, bodyTemplatePart.MinToHit);
@@ -96,17 +96,17 @@ namespace Witcher.UnitTest.Core.Requests.BodyTemplateRequests
 			var bodyTemplate = _dbContext.BodyTemplates.FirstOrDefault();
 			Assert.IsNotNull(bodyTemplate.BodyTemplateParts);
 
-			var bodyTemplatePart = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Name == "void");
+			var bodyTemplatePart = bodyTemplate.BodyTemplateParts.Find(x => x.Name == "void");
 			Assert.IsNotNull(bodyTemplatePart);
-			Assert.AreEqual(bodyTemplatePart.BodyPartType, BodyPartType.Void);
+			Assert.AreEqual(BodyPartType.Void, bodyTemplatePart.BodyPartType);
 			Assert.AreEqual(10, bodyTemplatePart.DamageModifier);
 			Assert.AreEqual(5, bodyTemplatePart.HitPenalty);
 			Assert.AreEqual(3, bodyTemplatePart.MinToHit);
 			Assert.AreEqual(4, bodyTemplatePart.MaxToHit);
 
-			var torso = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Name == Enum.GetName(BodyPartType.Torso));
+			var torso = bodyTemplate.BodyTemplateParts.Find(x => x.Name == Enum.GetName(BodyPartType.Torso));
 			Assert.IsNotNull(torso);
-			Assert.AreEqual(torso.BodyPartType, BodyPartType.Torso);
+			Assert.AreEqual(BodyPartType.Torso, torso.BodyPartType);
 			Assert.AreEqual(1, torso.DamageModifier);
 			Assert.AreEqual(1, torso.HitPenalty);
 			Assert.AreEqual(2, torso.MinToHit);
@@ -140,26 +140,26 @@ namespace Witcher.UnitTest.Core.Requests.BodyTemplateRequests
 			var bodyTemplate = _dbContext.BodyTemplates.FirstOrDefault();
 			Assert.IsNotNull(bodyTemplate.BodyTemplateParts);
 
-			var bodyTemplatePart = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.Name == "void");
+			var bodyTemplatePart = bodyTemplate.BodyTemplateParts.Find(x => x.Name == "void");
 			Assert.IsNotNull(bodyTemplatePart);
-			Assert.AreEqual(bodyTemplatePart.BodyPartType, BodyPartType.Void);
+			Assert.AreEqual(BodyPartType.Void, bodyTemplatePart.BodyPartType);
 			Assert.AreEqual(10, bodyTemplatePart.DamageModifier);
 			Assert.AreEqual(5, bodyTemplatePart.HitPenalty);
 			Assert.AreEqual(3, bodyTemplatePart.MinToHit);
 			Assert.AreEqual(3, bodyTemplatePart.MaxToHit);
 
-			var torso1 = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.MaxToHit == 4);
+			var torso1 = bodyTemplate.BodyTemplateParts.Find(x => x.MaxToHit == 4);
 			Assert.IsNotNull(torso1);
 			Assert.AreEqual(torso1.Name, Enum.GetName(BodyPartType.Torso));
-			Assert.AreEqual(torso1.BodyPartType, BodyPartType.Torso);
+			Assert.AreEqual(BodyPartType.Torso, torso1.BodyPartType);
 			Assert.AreEqual(1, torso1.DamageModifier);
 			Assert.AreEqual(1, torso1.HitPenalty);
 			Assert.AreEqual(4, torso1.MinToHit);
 
-			var torso2 = bodyTemplate.BodyTemplateParts.FirstOrDefault(x => x.MaxToHit == 2);
+			var torso2 = bodyTemplate.BodyTemplateParts.Find(x => x.MaxToHit == 2);
 			Assert.IsNotNull(torso2);
 			Assert.AreEqual(torso2.Name, Enum.GetName(BodyPartType.Torso));
-			Assert.AreEqual(torso2.BodyPartType, BodyPartType.Torso);
+			Assert.AreEqual(BodyPartType.Torso, torso2.BodyPartType);
 			Assert.AreEqual(1, torso2.DamageModifier);
 			Assert.AreEqual(1, torso2.HitPenalty);
 			Assert.AreEqual(2, torso2.MinToHit);

@@ -11,7 +11,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.ItemRequests
 {
-	public class ChangeItemIsEquippedHandler : BaseHandler<ChangeItemIsEquippedCommand, Unit>
+	public sealed class ChangeItemIsEquippedHandler : BaseHandler<ChangeItemIsEquippedCommand, Unit>
 	{
 		public ChangeItemIsEquippedHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -25,10 +25,10 @@ namespace Witcher.Core.Requests.ItemRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			var character = game.Characters.FirstOrDefault(c => c.Id == request.CharacterId)
+			var character = game.Characters.Find(c => c.Id == request.CharacterId)
 				?? throw new EntityNotFoundException<Character>(request.CharacterId);
 
-			var item = character.Items.FirstOrDefault(x => x.Id == request.ItemId && x.IsEquipped.HasValue)
+			var item = character.Items.Find(x => x.Id == request.ItemId && x.IsEquipped.HasValue)
 				?? throw new EntityNotFoundException<ItemTemplate>(request.ItemId);
 
 			if (item.ItemType == BaseData.Enums.ItemType.Armor)

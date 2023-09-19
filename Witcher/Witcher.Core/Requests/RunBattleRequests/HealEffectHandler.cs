@@ -16,7 +16,7 @@ namespace Witcher.Core.Requests.RunBattleRequests
 	/// <summary>
 	/// Обработчик попытки снятия эффекта
 	/// </summary>
-	public class HealEffectHandler : BaseHandler<HealEffectCommand, Unit>
+	public sealed class HealEffectHandler : BaseHandler<HealEffectCommand, Unit>
 	{
 		/// <summary>
 		/// Бросок параметра
@@ -50,13 +50,13 @@ namespace Witcher.Core.Requests.RunBattleRequests
 			var battle = game.Battles.FirstOrDefault()
 				?? throw new EntityNotFoundException<Battle>(request.BattleId);
 
-			var healer = battle.Creatures.FirstOrDefault(x => x.Id == request.CreatureId)
+			var healer = battle.Creatures.Find(x => x.Id == request.CreatureId)
 				?? throw new EntityNotFoundException<Creature>(request.CreatureId);
 
-			var target = battle.Creatures.FirstOrDefault(x => x.Id == request.TargetId)
+			var target = battle.Creatures.Find(x => x.Id == request.TargetId)
 				?? throw new EntityNotFoundException<Creature>(request.TargetId);
 
-			var effect = target.Effects.FirstOrDefault(x => x.Id == request.EffectId)
+			var effect = target.Effects.Find(x => x.Id == request.EffectId)
 				?? throw new EntityNotFoundException<Effect>(request.EffectId);
 
 			StringBuilder message = new();

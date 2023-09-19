@@ -12,7 +12,10 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
-	public class CreateDefensiveSkillHandler : BaseHandler<CreateDefensiveSkillCommand, Unit>
+	/// <summary>
+	/// Create defensive skill for ability handler
+	/// </summary>
+	public sealed class CreateDefensiveSkillHandler : BaseHandler<CreateDefensiveSkillCommand, Unit>
 	{
 		public CreateDefensiveSkillHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
 
@@ -26,10 +29,10 @@ namespace Witcher.Core.Requests.AbilityRequests
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 
-			var ability = game.Abilities.FirstOrDefault(a => a.Id == request.AbilityId)
+			var ability = game.Abilities.Find(a => a.Id == request.AbilityId)
 				?? throw new EntityNotFoundException<Ability>(request.AbilityId);
 
-			if (ability.DefensiveSkills.Any(x => x.Skill == request.Skill))
+			if (ability.DefensiveSkills.Exists(x => x.Skill == request.Skill))
 				throw new RequestFieldIncorrectDataException<CreateDefensiveSkillCommand>(nameof(request.Skill), "Указанный навык уже включен в список");
 
 			ability.DefensiveSkills.Add(new DefensiveSkill(request.Skill));

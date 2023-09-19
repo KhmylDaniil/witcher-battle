@@ -1,10 +1,10 @@
-﻿using Witcher.Core.Abstractions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Witcher.Core.Contracts.BaseRequests;
+using MediatR;
 
 namespace Witcher.Core.Contracts.GameRequests
 {
-	public class GetGameQuery : GetBaseQuery, IValidatableCommand<IEnumerable<GetGameResponseItem>>
+	public sealed class GetGameQuery : GetBaseQuery, IRequest<IEnumerable<GetGameResponseItem>>
 	{
 		/// <summary>
 		/// Фильтр по названию
@@ -20,13 +20,5 @@ namespace Witcher.Core.Contracts.GameRequests
 		/// Фильтр по автору
 		/// </summary>
 		public string AuthorName { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

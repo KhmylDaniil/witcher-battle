@@ -13,7 +13,7 @@ namespace Witcher.Core.Requests.BattleRequests
 	/// <summary>
 	/// Обработчик создания боя
 	/// </summary>
-	public class CreateBattleHandler : BaseHandler<CreateBattleCommand, Battle>
+	public sealed class CreateBattleHandler : BaseHandler<CreateBattleCommand, Battle>
 	{
 		public CreateBattleHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -37,7 +37,7 @@ namespace Witcher.Core.Requests.BattleRequests
 				: await _appDbContext.ImgFiles.FirstOrDefaultAsync(x => x.Id == request.ImgFileId, cancellationToken)
 				?? throw new EntityNotFoundException<ImgFile>(request.ImgFileId.Value);
 
-			if (game.Battles.Any(x => x.Name == request.Name))
+			if (game.Battles.Exists(x => x.Name == request.Name))
 				throw new RequestNameNotUniqException<CreateBattleCommand>(nameof(request.Name));
 
 			var newBattle = new Battle(

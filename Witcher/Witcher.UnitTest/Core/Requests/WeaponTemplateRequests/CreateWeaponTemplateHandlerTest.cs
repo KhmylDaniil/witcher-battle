@@ -1,22 +1,16 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Abstractions;
-using Witcher.Core.BaseData;
 using Witcher.Core.Entities;
-using Witcher.Core.Requests.AbilityRequests;
 using Witcher.Core.Contracts.WeaponTemplateRequests;
 using Witcher.Core.Requests.WeaponTemplateRequests;
-using Witcher.Core.Contracts.BaseRequests;
 
 namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 {
 	[TestClass]
-	public class CreateWeaponTemplateHandlerTest : UnitTestBase
+	public sealed class CreateWeaponTemplateHandlerTest : UnitTestBase
 	{
 		private readonly IAppDbContext _dbContext;
 		private readonly Game _game;
@@ -43,15 +37,7 @@ namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 				AttackSkill = Skill.Melee,
 				DamageType = DamageType.Slashing,
 				Durability = 10,
-				Range = null,
-				AppliedConditions = new List<UpdateAttackFormulaCommandItemAppledCondition>
-				{
-					new UpdateAttackFormulaCommandItemAppledCondition()
-					{
-						Condition = Condition.Bleed,
-						ApplyChance = 50
-					}
-				}
+				Range = null
 			};
 
 			var newHandler = new CreateWeaponTemplateHandler(_dbContext, AuthorizationService.Object);
@@ -80,10 +66,6 @@ namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 			Assert.AreEqual(3, weaponTemplate.DefensiveSkills.Count);
 
 			Assert.IsNotNull(weaponTemplate.AppliedConditions);
-			Assert.AreEqual(1, weaponTemplate.AppliedConditions.Count);
-			var appliedCondition = weaponTemplate.AppliedConditions.First();
-			Assert.AreEqual(Condition.Bleed, appliedCondition.Condition);
-			Assert.AreEqual(50, appliedCondition.ApplyChance);
 		}
 	}
 }

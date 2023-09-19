@@ -1,9 +1,9 @@
-﻿using Witcher.Core.Abstractions;
-using System;
+﻿using System;
+using MediatR;
 
 namespace Witcher.Core.Contracts.BattleRequests
 {
-	public class GetCreatureByIdQuery : IValidatableCommand<GetCreatureByIdResponse>
+	public sealed class GetCreatureByIdQuery : IRequest<GetCreatureByIdResponse>
 	{
 		/// <summary>
 		/// Айди битвы
@@ -14,13 +14,5 @@ namespace Witcher.Core.Contracts.BattleRequests
 		/// Айди
 		/// </summary>
 		public Guid Id { get; set; }
-
-		/// <summary>
-		/// Валидация
-		/// </summary>
-		public void Validate()
-		{
-			// Method intentionally left empty.
-		}
 	}
 }

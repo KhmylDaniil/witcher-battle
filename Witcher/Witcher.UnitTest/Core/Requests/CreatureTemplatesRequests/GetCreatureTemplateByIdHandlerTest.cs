@@ -90,8 +90,8 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.IsNotNull(result);
 			Assert.AreEqual(result.ImgFileId, _creatureTemplate.ImgFileId);
 			Assert.AreEqual(result.BodyTemplateId, _bodyTemplate.Id);
-			Assert.AreEqual(result.Name, "testName");
-			Assert.AreEqual(result.CreatureType, CreatureType.Human);
+			Assert.AreEqual("testName", result.Name);
+			Assert.AreEqual(CreatureType.Human, result.CreatureType);
 			Assert.AreEqual(result.Int, _creatureTemplate.Int);
 			Assert.AreEqual(result.Ref, _creatureTemplate.Ref);
 			Assert.AreEqual(result.Dex, _creatureTemplate.Dex);
@@ -108,29 +108,29 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(result.ModifiedOn, _creatureTemplate.ModifiedOn);
 
 			Assert.IsNotNull(result.CreatureTemplateParts);
-			var creatureTemplatePart = result.CreatureTemplateParts.First();
+			var creatureTemplatePart = result.CreatureTemplateParts[0];
 			Assert.IsNotNull(creatureTemplatePart);
 			Assert.AreEqual(creatureTemplatePart.Id, _creatureTemplatePart.Id);
-			Assert.AreEqual(creatureTemplatePart.Name, "Torso");
-			Assert.AreEqual(creatureTemplatePart.HitPenalty, 1);
-			Assert.AreEqual(creatureTemplatePart.DamageModifier, 1);
-			Assert.AreEqual(creatureTemplatePart.MinToHit, 1);
-			Assert.AreEqual(creatureTemplatePart.MaxToHit, 10);
-			Assert.AreEqual(creatureTemplatePart.Armor, 5);
+			Assert.AreEqual("Torso", creatureTemplatePart.Name);
+			Assert.AreEqual(1, creatureTemplatePart.HitPenalty);
+			Assert.AreEqual(1, creatureTemplatePart.DamageModifier);
+			Assert.AreEqual(1, creatureTemplatePart.MinToHit);
+			Assert.AreEqual(10, creatureTemplatePart.MaxToHit);
+			Assert.AreEqual(5, creatureTemplatePart.Armor);
 
 			Assert.IsNotNull(result.CreatureTemplateSkills);
-			var creatureTemplateParameter = result.CreatureTemplateSkills.First();
+			var creatureTemplateParameter = result.CreatureTemplateSkills[0];
 			Assert.IsNotNull(creatureTemplateParameter);
 			Assert.AreEqual(creatureTemplateParameter.Id, _creatureTemplateSkill.Id);
-			Assert.AreEqual(creatureTemplateParameter.Skill, Skill.Melee);
-			Assert.AreEqual(creatureTemplateParameter.SkillValue, 5);
+			Assert.AreEqual(Skill.Melee, creatureTemplateParameter.Skill);
+			Assert.AreEqual(5, creatureTemplateParameter.SkillValue);
 
 			Assert.IsNotNull(result.Abilities);
-			var ability = result.Abilities.First();
+			var ability = result.Abilities[0];
 			Assert.IsNotNull(ability);
 			Assert.AreEqual(ability.Name, _ability.Name);
 			Assert.AreEqual(ability.Id, _ability.Id);
-			Assert.AreEqual(ability.AttackSkill, Skill.Melee);
+			Assert.AreEqual(Skill.Melee, ability.AttackSkill);
 			Assert.AreEqual(ability.Description, _ability.Description);
 			Assert.AreEqual(ability.Accuracy, _ability.Accuracy);
 			Assert.AreEqual(ability.AttackDiceQuantity, _ability.AttackDiceQuantity);
@@ -138,10 +138,10 @@ namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 			Assert.AreEqual(ability.AttackSpeed, _ability.AttackSpeed);
 
 			Assert.IsNotNull(ability.AppliedConditions);
-			var appliedCondition = ability.AppliedConditions.First();
+			var appliedCondition = ability.AppliedConditions[0];
 			Assert.IsNotNull(appliedCondition);
-			Assert.AreEqual(appliedCondition.Condition, Condition.Bleed);
-			Assert.AreEqual(appliedCondition.ApplyChance, 100);
+			Assert.AreEqual(Condition.Bleed, appliedCondition.Condition);
+			Assert.AreEqual(100, appliedCondition.ApplyChance);
 		}
 	}
 }

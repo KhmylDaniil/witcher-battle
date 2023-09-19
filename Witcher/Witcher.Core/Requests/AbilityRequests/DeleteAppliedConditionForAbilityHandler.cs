@@ -11,7 +11,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.AbilityRequests
 {
-	public class DeleteAppliedConditionForAbilityHandler : BaseHandler<DeleteAppliedConditionForAbilityCommand, Unit>
+	public sealed class DeleteAppliedConditionForAbilityHandler : BaseHandler<DeleteAppliedConditionForAbilityCommand, Unit>
 	{
 		public DeleteAppliedConditionForAbilityHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService)
 			: base(appDbContext, authorizationService) { }
@@ -23,10 +23,10 @@ namespace Witcher.Core.Requests.AbilityRequests
 				.FirstOrDefaultAsync(cancellationToken)
 				?? throw new NoAccessToEntityException<Game>();
 
-			var ability = game.Abilities.FirstOrDefault(a => a.Id == request.AbilityId)
+			var ability = game.Abilities.Find(a => a.Id == request.AbilityId)
 				?? throw new EntityNotFoundException<Ability>(request.AbilityId);
 
-			var appliedCondition = ability.AppliedConditions.FirstOrDefault(x => x.Id == request.Id)
+			var appliedCondition = ability.AppliedConditions.Find(x => x.Id == request.Id)
 				?? throw new EntityNotFoundException<AppliedCondition>(request.Id);
 
 			ability.AppliedConditions.Remove(appliedCondition);

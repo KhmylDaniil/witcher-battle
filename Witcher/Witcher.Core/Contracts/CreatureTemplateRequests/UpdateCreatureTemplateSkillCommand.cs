@@ -1,26 +1,32 @@
-﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions.RequestExceptions;
-using System;
+﻿using System;
+using MediatR;
+using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Contracts.CreatureTemplateRequests
 {
 	/// <summary>
 	/// Команда на создание/изменение навыка шаблона персонажа
 	/// </summary>
-	public class UpdateCreatureTemplateSkillCommand : UpdateCreatureTemplateRequestSkill, IValidatableCommand
+	public class UpdateCreatureTemplateSkillCommand : IRequest
 	{
+		/// <summary>
+		/// Айди
+		/// </summary>
+		public Guid? Id { get; set; }
+
 		/// <summary>
 		/// Айди шаблона существа
 		/// </summary>
 		public Guid CreatureTemplateId { get; set; }
 
-		public void Validate()
-		{
-			if (!Enum.IsDefined(Skill))
-				throw new RequestFieldIncorrectDataException<UpdateCreatureTemplateSkillCommand>(nameof(Skill));
+		/// <summary>
+		/// Навык
+		/// </summary>
+		public Skill Skill { get; set; }
 
-			if (Value < 1 || Value > 10)
-				throw new RequestFieldIncorrectDataException<UpdateCreatureTemplateSkillCommand>(nameof(Value), "Значение должно быть в диапазоне от 1 до 10");
-		}
+		/// <summary>
+		/// Значение навыка
+		/// </summary>
+		public int Value { get; set; } = 1;
 	}
 }

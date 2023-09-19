@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Witcher.Core.Entities;
-using static Witcher.Core.BaseData.Enums;
-using System;
 
 namespace Witcher.Storage.Postgresql.Configurations
 {
@@ -47,9 +45,6 @@ namespace Witcher.Storage.Postgresql.Configurations
 			builder.Property(x => x.BodyPartType)
 				.HasColumnName("BodyPartType")
 				.HasComment("Тип части тела")
-				.HasConversion(
-					v => v.ToString(),
-					v => Enum.Parse<BodyPartType>(v))
 				.IsRequired();
 		}
 	}

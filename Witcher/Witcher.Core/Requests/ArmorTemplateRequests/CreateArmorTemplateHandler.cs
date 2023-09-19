@@ -11,7 +11,7 @@ using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.ArmorTemplateRequests
 {
-	public class CreateArmorTemplateHandler : BaseHandler<CreateArmorTemplateCommand, Guid>
+	public sealed class CreateArmorTemplateHandler : BaseHandler<CreateArmorTemplateCommand, Guid>
 	{
 		public CreateArmorTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -26,10 +26,10 @@ namespace Witcher.Core.Requests.ArmorTemplateRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			if (game.ItemTemplates.Any(x => x.Name == request.Name))
-				throw new RequestNameNotUniqException<CreateArmorTemplateCommand>(nameof(request.Name));
+			if (game.ItemTemplates.Exists(x => x.Name == request.Name))
+				throw new RequestNameNotUniqException<ItemTemplate>(request.Name);
 
-			var bodyTemplate = game.BodyTemplates.FirstOrDefault(bt => bt.Id == request.BodyTemplateId)
+			var bodyTemplate = game.BodyTemplates.Find(bt => bt.Id == request.BodyTemplateId)
 				?? throw new EntityNotFoundException<BodyTemplate>(request.BodyTemplateId);
 
 			var newTemplate = ArmorTemplate.CreateArmorTemplate(

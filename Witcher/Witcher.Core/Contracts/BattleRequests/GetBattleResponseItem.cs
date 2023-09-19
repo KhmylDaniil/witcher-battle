@@ -5,7 +5,7 @@ namespace Witcher.Core.Contracts.BattleRequests
 	/// <summary>
 	/// Элемент ответа на запрос списка битв
 	/// </summary>
-	public class GetBattleResponseItem
+	public sealed class GetBattleResponseItem
 	{
 		/// <summary>
 		/// Айди

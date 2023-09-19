@@ -14,7 +14,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 	/// <summary>
 	/// Обработчик удаления способности
 	/// </summary>
-	public class DeleteAbilityByIdHandler : BaseHandler<DeleteAbilityByIdCommand, Unit>
+	public sealed class DeleteAbilityByIdHandler : BaseHandler<DeleteAbilityByIdCommand, Unit>
 	{
 		public DeleteAbilityByIdHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService) { }
 
@@ -31,7 +31,7 @@ namespace Witcher.Core.Requests.AbilityRequests
 				.FirstOrDefaultAsync(cancellationToken)
 					?? throw new NoAccessToEntityException<Game>();
 
-			var ability = game.Abilities.FirstOrDefault(x => x.Id == request.Id)
+			var ability = game.Abilities.Find(x => x.Id == request.Id)
 				?? throw new EntityNotFoundException<Ability>(request.Id);
 
 			game.Abilities.Remove(ability);

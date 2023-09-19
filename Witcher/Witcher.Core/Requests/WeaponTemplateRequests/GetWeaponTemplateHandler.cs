@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +12,7 @@ using Witcher.Core.ExtensionMethods;
 
 namespace Witcher.Core.Requests.WeaponTemplateRequests
 {
-	public class GetWeaponTemplateHandler : BaseHandler<GetWeaponTemplateQuery, IEnumerable<GetWeaponTemplateResponse>>
+	public sealed class GetWeaponTemplateHandler : BaseHandler<GetWeaponTemplateQuery, IEnumerable<GetWeaponTemplateResponse>>
 	{
 		public GetWeaponTemplateHandler(IAppDbContext appDbContext, IAuthorizationService authorizationService) : base(appDbContext, authorizationService)
 		{
@@ -21,6 +20,12 @@ namespace Witcher.Core.Requests.WeaponTemplateRequests
 
 		public async override Task<IEnumerable<GetWeaponTemplateResponse>> Handle(GetWeaponTemplateQuery request, CancellationToken cancellationToken)
 		{
+			var attackSkillMatches = request.AttackSkillName.GetPossibleEnumNumbersFromSearchString<Enums.Skill>();
+
+			var damageTypeMatches = request.DamageType.GetPossibleEnumNumbersFromSearchString<Enums.DamageType>();
+
+			var conditionMatches = request.ConditionName.GetPossibleEnumNumbersFromSearchString<Condition>();
+
 			var filter =  _authorizationService.AuthorizedGameFilter(_appDbContext.Games)
 				.Include(g => g.ItemTemplates.Where(it => it.ItemType == Enums.ItemType.Weapon))
 				.SelectMany(g => g.ItemTemplates)
@@ -29,10 +34,10 @@ namespace Witcher.Core.Requests.WeaponTemplateRequests
 				.Where(x => request.UserName == null || x.Game.UserGames
 					.Any(u => u.User.Name.Contains(request.UserName) && u.UserId == x.CreatedByUserId))
 				.Where(x => request.Name == null || x.Name.Contains(request.Name))
-				.Where(x => request.AttackSkillName == null || Enum.GetName(x.AttackSkill).Contains(request.AttackSkillName))
-				.Where(x => request.DamageType == null || Enum.GetName(x.DamageType).Contains(request.DamageType))
-				.Where(x => request.ConditionName == null
-				|| x.AppliedConditions.Select(ac => CritNames.GetConditionFullName(ac.Condition)).Contains(request.ConditionName));
+				.Where(x => request.AttackSkillName == null || attackSkillMatches.Any(s => (int)x.AttackSkill == s))
+						.Where(x => request.DamageType == null || damageTypeMatches.Any(dt => (int)x.DamageType == dt))
+						.Where(x => request.ConditionName == null
+						|| x.AppliedConditions.Any(ac => conditionMatches.Any(cm => cm == (int)ac.Condition)));
 
 			return await filter
 				.OrderBy(request.OrderBy, request.IsAscending)

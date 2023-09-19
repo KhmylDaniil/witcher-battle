@@ -17,7 +17,7 @@ namespace Witcher.UnitTest.Core.Requests.UserGameRequests
 	/// Тест для <see cref="DeleteUserGameHandler"/>
 	/// </summary>
 	[TestClass]
-	public class DeleteUserGameHandlerTest: UnitTestBase
+	public sealed class DeleteUserGameHandlerTest: UnitTestBase
 	{
 		private readonly User _currentUser;
 		private readonly User _targetUser;

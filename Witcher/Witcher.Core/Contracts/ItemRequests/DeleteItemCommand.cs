@@ -1,10 +1,9 @@
-﻿using System;
-using Witcher.Core.Abstractions;
-using Witcher.Core.Exceptions.RequestExceptions;
+﻿using MediatR;
+using System;
 
 namespace Witcher.Core.Contracts.ItemRequests
 {
-	public class DeleteItemCommand : IValidatableCommand
+	public sealed class DeleteItemCommand : IRequest
 	{
 		public Guid CharacterId { get; set; }
 
@@ -13,11 +12,5 @@ namespace Witcher.Core.Contracts.ItemRequests
 		public int Quantity { get; set; } = 1;
 
 		public string Name { get; set; }
-
-		public void Validate()
-		{
-			if (Quantity < 1)
-				throw new RequestFieldIncorrectDataException<CreateItemCommand>(nameof(Quantity), "Значение должно быть больше нуля");
-		}
 	}
 }
