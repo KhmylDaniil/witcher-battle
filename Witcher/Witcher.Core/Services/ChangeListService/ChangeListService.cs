@@ -1,11 +1,11 @@
 ﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 using System.Collections.Generic;
 using System.Linq;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using Witcher.Core.Exceptions.SystemExceptions;
 using Witcher.Core.Services.Authorization;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Services.ChangeListService
 {

@@ -6,9 +6,9 @@ using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
 using Witcher.Core.Contracts.GameRequests;
 using Witcher.Core.Notifications;
-using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 using MediatR;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Requests.GameRequests
 {

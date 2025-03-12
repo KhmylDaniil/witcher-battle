@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.WeaponTemplateRequests;
-using Witcher.Core.Entities;
+using Witcher.Core.DAL.Entities;
 using Witcher.Core.Exceptions.RequestExceptions;
 
 namespace Witcher.Core.Requests.WeaponTemplateRequests

@@ -2,12 +2,12 @@
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BattleRequests;
 using Witcher.Core.Contracts.RunBattleRequests;
-using Witcher.Core.Entities;
 using Witcher.Core.Logic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Exceptions.RequestExceptions;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {

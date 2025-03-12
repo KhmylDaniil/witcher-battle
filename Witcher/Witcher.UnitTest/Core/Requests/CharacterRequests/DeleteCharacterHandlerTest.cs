@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.CharacterRequests;
-using Witcher.Core.Entities;
+using Witcher.Core.DAL.Entities;
 using Witcher.Core.Requests.CharacterRequests;
 
 namespace Witcher.UnitTest.Core.Requests.CharacterRequests

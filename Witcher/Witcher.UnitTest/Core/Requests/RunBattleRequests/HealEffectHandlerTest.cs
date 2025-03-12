@@ -2,12 +2,12 @@
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
 using Witcher.Core.Contracts.RunBattleRequests;
-using Witcher.Core.Entities;
-using Witcher.Core.Entities.Effects;
 using Witcher.Core.Requests.RunBattleRequests;
 using System.Linq;
 using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.DAL.Entities;
+using Witcher.Core.DAL.Entities.Effects;
 
 namespace Witcher.UnitTest.Core.RunBattleRequests
 {

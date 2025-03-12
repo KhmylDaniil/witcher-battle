@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BattleRequests;
 using Witcher.Core.Contracts.CharacterRequests;
-using Witcher.Core.Entities;
+using Witcher.Core.DAL.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Requests.CharacterRequests

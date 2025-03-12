@@ -8,6 +8,7 @@ using Witcher.Core.Exceptions;
 using Witcher.Core.Exceptions.EntityExceptions;
 using System.Threading;
 using System.Threading.Tasks;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Requests.UserGameRequests
 {

@@ -1,7 +1,7 @@
 ﻿using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BodyTemplateRequests;
-using Witcher.Core.Entities;
 using System.Collections.Generic;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Requests.BodyTemplateRequests
 {

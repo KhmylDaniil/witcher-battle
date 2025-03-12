@@ -1,9 +1,9 @@
-﻿using Witcher.Core.Entities;
-using System;
+﻿using System;
 using System.Linq;
 using Witcher.Core.BaseData;
 using Witcher.Core.Exceptions.SystemExceptions;
 using Witcher.Core.Services.Authorization;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Abstractions
 {

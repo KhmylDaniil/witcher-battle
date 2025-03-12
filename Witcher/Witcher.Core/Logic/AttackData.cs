@@ -1,8 +1,8 @@
 ﻿using Witcher.Core.Abstractions;
-using Witcher.Core.Entities;
 using System;
 using System.Linq;
 using Witcher.Core.Exceptions;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Logic
 {

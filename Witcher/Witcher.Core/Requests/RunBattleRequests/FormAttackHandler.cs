@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.RunBattleRequests;
-using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {

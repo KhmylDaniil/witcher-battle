@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.RunBattleRequests;
-using Witcher.Core.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 using System.Linq;
 using System.Text;
@@ -10,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Exceptions.RequestExceptions;
 using Witcher.Core.ExtensionMethods;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Requests.RunBattleRequests
 {

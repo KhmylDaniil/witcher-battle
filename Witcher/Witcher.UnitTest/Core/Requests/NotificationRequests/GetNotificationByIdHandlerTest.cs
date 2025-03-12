@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.NotificationRequests;
-using Witcher.Core.Entities;
+using Witcher.Core.DAL.Entities;
 using Witcher.Core.Notifications;
 using Witcher.Core.Requests.NotificationRequests;
 

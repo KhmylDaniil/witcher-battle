@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.ItemRequests;
+using Witcher.Core.DAL.Entities;
 using Witcher.Core.Drafts.BodyTemplateDrafts;
-using Witcher.Core.Entities;
 using Witcher.Core.Requests.ItemRequests;
 
 namespace Witcher.UnitTest.Core.Requests.BagRequests

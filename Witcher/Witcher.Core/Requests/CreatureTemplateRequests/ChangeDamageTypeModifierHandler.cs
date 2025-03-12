@@ -2,12 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.CreatureTemplateRequests;
-using Witcher.Core.Entities;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Exceptions.RequestExceptions;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Requests.CreatureTemplateRequests
 {

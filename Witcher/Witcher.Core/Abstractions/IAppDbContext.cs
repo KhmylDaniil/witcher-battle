@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Witcher.Core.Entities;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Abstractions
 {

@@ -1,10 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Entities;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Contracts.WeaponTemplateRequests;
 using Witcher.Core.Requests.WeaponTemplateRequests;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 {

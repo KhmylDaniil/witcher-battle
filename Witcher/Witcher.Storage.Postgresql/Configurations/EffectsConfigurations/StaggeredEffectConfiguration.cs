@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Witcher.Core.Entities.Effects;
+using Witcher.Core.DAL.Entities.Effects;
 
 namespace Witcher.Storage.Postgresql.Configurations.EffectsConfigurations
 {

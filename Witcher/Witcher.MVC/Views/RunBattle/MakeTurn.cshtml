@@ -64,7 +64,7 @@ Model.TurnState < Witcher.Core.BaseData.Enums.TurnState.TurnIsDone)
                     else
                     {
                         <div class="form-group">
-                            <label asp-for="AttackFormulaId" class="control-label"></label>
+                            <label asp-for="AttackFormulaId" class="control-label">Weapon</label>
                             <select asp-items="@(new SelectList(Model.EquippedWeapons, "Key", "Value"))" asp-for="AttackFormulaId"></select><br /><br />
                             <span asp-validation-for="AttackFormulaId" class="text-danger"></span>
                         </div>

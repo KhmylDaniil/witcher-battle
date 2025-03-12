@@ -1,5 +1,5 @@
-﻿using Witcher.Core.Entities;
-using MediatR;
+﻿using MediatR;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Contracts.BodyTemplateRequests
 {

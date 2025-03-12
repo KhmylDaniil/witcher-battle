@@ -2,12 +2,12 @@
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BodyTemplateRequests;
 using Witcher.Core.Drafts.BodyTemplateDrafts;
-using Witcher.Core.Entities;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Requests.BodyTemplateRequests;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core.Requests.BodyTemplateRequests
 {

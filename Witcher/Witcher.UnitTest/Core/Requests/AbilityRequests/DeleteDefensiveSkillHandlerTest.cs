@@ -2,10 +2,10 @@
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
 using Witcher.Core.Contracts.AbilityRequests;
-using Witcher.Core.Entities;
 using Witcher.Core.Requests.AbilityRequests;
 using System.Linq;
 using System.Threading.Tasks;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core.Requests.AbilityRequests
 {
