@@ -8,7 +8,6 @@ using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.BattleRequests;
 using Witcher.Core.Contracts.BodyTemplateRequests;
 using Witcher.Core.Contracts.RunBattleRequests;
-using Witcher.Core.Entities;
 using Witcher.Core.Exceptions;
 using Witcher.Core.ExtensionMethods;
 using Witcher.MVC.Hubs;

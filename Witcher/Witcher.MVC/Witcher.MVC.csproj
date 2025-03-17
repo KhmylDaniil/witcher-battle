@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
 	<UserSecretsId>1b3724a5-9b56-4355-afab-3ef699b01287</UserSecretsId>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -31,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Infrastructure\Wastelands.EfDataAccess\Wastelands.EfDataAccess.csproj" />
     <ProjectReference Include="..\Witcher.Core\Witcher.Core.csproj" />
     <ProjectReference Include="..\Witcher.Storage.Postgresql\Witcher.Storage.Postgresql.csproj" />
   </ItemGroup>

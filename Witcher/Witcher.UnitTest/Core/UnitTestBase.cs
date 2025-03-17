@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
-using Witcher.Core.Entities;
 using Witcher.Storage.Postgresql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Witcher.Core.Entities.UserAccount;
+using static Witcher.Core.DAL.Entities.UserAccount;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core
 {

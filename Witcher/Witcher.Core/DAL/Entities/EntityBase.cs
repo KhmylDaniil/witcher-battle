@@ -1,11 +1,12 @@
 ﻿using System;
+using Witcher.Core.Abstractions;
 
 namespace Witcher.Core.DAL.Entities
 {
 	/// <summary>
 	/// Базовые сущности
 	/// </summary>
-	public abstract class EntityBase
+	public abstract class EntityBase : IEntity
 	{
 		/// <summary>
 		/// Конструктор
@@ -21,7 +22,7 @@ namespace Witcher.Core.DAL.Entities
 		/// <param name="id">Ид</param>
 		/// <param name="createdOn">Дата создания</param>
 		/// <param name="modifiedOn">Дата изменения</param>
-		/// <param name="сreatedByUserId">Айди создавшего пользователя</param>
+		/// <param name="createdByUserId">Айди создавшего пользователя</param>
 		/// <param name="modifiedByUserId">Айди изменившего пользователя</param>
 		/// <param name="roleCreatedUser">Роль создавшего пользователя</param>
 		/// <param name="roleModifiedUser">Роль изменившего пользователя</param>
@@ -29,7 +30,7 @@ namespace Witcher.Core.DAL.Entities
 			Guid id,
 			DateTime createdOn,
 			DateTime modifiedOn,
-			Guid сreatedByUserId,
+			Guid createdByUserId,
 			Guid modifiedByUserId,
 			string roleCreatedUser = "Default",
 			string roleModifiedUser = "Default")
@@ -37,7 +38,7 @@ namespace Witcher.Core.DAL.Entities
 			Id = id;
 			CreatedOn = DateTime.SpecifyKind(createdOn, DateTimeKind.Utc);
 			ModifiedOn = DateTime.SpecifyKind(modifiedOn, DateTimeKind.Utc);
-			CreatedByUserId = сreatedByUserId;
+			CreatedByUserId = createdByUserId;
 			ModifiedByUserId = modifiedByUserId;
 			RoleCreatedUser = roleCreatedUser;
 			RoleModifiedUser = roleModifiedUser;
@@ -46,7 +47,7 @@ namespace Witcher.Core.DAL.Entities
 		/// <summary>
 		/// Базовый конструктор для создания и изменения сущности
 		/// </summary>
-		/// <param name="createdUser">Cоздавший пользователь</param>
+		/// <param name="createdUser">Создавший пользователь</param>
 		/// <param name="modifiedUser">Изменивший пользователь</param>
 		/// <param name="roleCreatedUser">Роль создавшего пользователя</param>
 		/// <param name="roleModifiedUser">Роль изменившего пользователя</param>

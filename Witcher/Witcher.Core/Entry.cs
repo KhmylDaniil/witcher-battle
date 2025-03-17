@@ -3,7 +3,6 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Entities;
 using Witcher.Core.Services.Authorization;
 using Witcher.Core.Services.ChangeListService;
 using Witcher.Core.Services.DateTimeProvider;
@@ -11,6 +10,7 @@ using Witcher.Core.Services.Hasher;
 using Witcher.Core.Services.Roll;
 using System.Linq;
 using Witcher.Core.Exceptions;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core
 {
