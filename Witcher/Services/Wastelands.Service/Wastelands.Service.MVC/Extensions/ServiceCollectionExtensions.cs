@@ -1,9 +1,11 @@
-﻿using Wastelands.Service.Domain.Contracts;
+﻿using Wastelands.Core.Contracts.Contracts;
+using Wastelands.Service.Domain.Contracts;
 using Wastelands.Service.Domain.Contracts.Repositories;
 using Wastelands.Service.Infrastructure.Mapping;
 using Wastelands.Service.Infrastructure.Options;
 using Wastelands.Service.Infrastructure.Repositories;
 using Wastelands.Service.Infrastructure.Services;
+using Wastelands.Service.MVC.Services;
 
 namespace Wastelands.Service.MVC.Extensions
 {
@@ -16,9 +18,13 @@ namespace Wastelands.Service.MVC.Extensions
 			services.Configure<HasherOptions>(configuration.GetSection(HasherOptions.SectionName));
 
 			services.AddScoped<IUserRepository, UserRepository>();
+			services.AddScoped<ICharacterRepository, CharacterRepository>();
+
+			services.AddScoped<IUserContext, UserContext>();
 
 			services.AddScoped<IPasswordService, PasswordService>();
 			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<ICharacterService, CharacterService>();
 
 			services.AddAutoMapper(typeof(MappingProfile));
 

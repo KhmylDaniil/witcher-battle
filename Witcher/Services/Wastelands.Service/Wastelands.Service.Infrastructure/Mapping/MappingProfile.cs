@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Wastelands.Service.Domain.Entities;
+using Wastelands.Service.Domain.Models.Dto;
 using Wastelands.Service.Domain.Models.Requests;
 
 namespace Wastelands.Service.Infrastructure.Mapping
@@ -14,7 +10,17 @@ namespace Wastelands.Service.Infrastructure.Mapping
 		public MappingProfile()
 		{
 			CreateMap<RegisterUserRequest, User>()
-		   .ForMember(dst => dst.Password, opt => opt.Ignore());
+				.ForMember(dst => dst.Password, opt => opt.Ignore());
+
+			CreateMap<Character, CharacterDto>()
+				.ReverseMap();
+
+			CreateMap<CreateCharacterRequest, Character>()
+				.ForMember(dst => dst.UserId, opt => opt.Ignore());
+
+			CreateMap<UpdateCharacterRequest, Character>()
+				.ForMember(dst => dst.Id, opt => opt.Ignore())
+				.ForMember(dst => dst.UserId, opt => opt.Ignore());
 		}
 	}
 }

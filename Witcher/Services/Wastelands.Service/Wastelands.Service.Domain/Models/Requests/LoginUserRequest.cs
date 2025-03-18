@@ -1,6 +1,6 @@
 ﻿namespace Wastelands.Service.Domain.Models.Requests
 {
-	public class LoginUserRequest
+	public class LoginUserRequest : BaseRequest
 	{
 		public string Login { get; set; }
 

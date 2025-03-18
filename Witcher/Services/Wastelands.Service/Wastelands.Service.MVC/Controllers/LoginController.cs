@@ -25,7 +25,7 @@ namespace Wastelands.Service.MVC.Controllers
 		{
 			await _userService.RegisterUserAsync(request);
 			await _userService.LoginUserAsync(new LoginUserRequest { Login = request.Login, Password = request.Password });
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction("Index", "Character");
 
 		}
 
@@ -37,7 +37,7 @@ namespace Wastelands.Service.MVC.Controllers
 		public async Task<IActionResult> LoginAsync(LoginUserRequest request, CancellationToken cancellationToken)
 		{
 			await _userService.LoginUserAsync(request);
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction("Index", "Character");
 		}
 	}
 }

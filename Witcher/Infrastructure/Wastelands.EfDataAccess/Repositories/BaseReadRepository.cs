@@ -75,25 +75,25 @@ namespace Wastelands.EfDataAccess.Repositories
 
 		public async Task<long> CountAsync()
 		{
-			return await _context.Set<TEntity>().CountAsync();
+			return await GetQuery().CountAsync();
 		}
 
 		public async Task<long> CountAsync(Expression<Func<TEntity, bool>> condition)
 		{
-			return await _context.Set<TEntity>().CountAsync(condition);
+			return await GetQuery().CountAsync(condition);
 		}
 
 		public async Task<bool> AnyAsync()
 		{
-			return await _context.Set<TEntity>().AnyAsync();
+			return await GetQuery().AnyAsync();
 		}
 
 		public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> condition)
 		{
-			return await _context.Set<TEntity>().AnyAsync(condition);
+			return await GetQuery().AnyAsync(condition);
 		}
 
-		protected IQueryable<TEntity> GetQuery()
+		protected virtual IQueryable<TEntity> GetQuery()
 		{
 			return _context.Set<TEntity>().AsQueryable();
 		}

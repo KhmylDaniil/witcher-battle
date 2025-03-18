@@ -1,0 +1,32 @@
+﻿@model Wastelands.Service.Domain.Models.Dto.CharacterDto
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Character Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+    </dl>
+</div>
+
+<p>@TempData["ErrorMessage"]</p>
+
+<div>
+    @Html.ActionLink("Delete", "Delete", new { id = Model.Id, name = Model.Name }) |
+    <a asp-action="Index">Back to Characters</a>
+</div>

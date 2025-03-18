@@ -19,5 +19,7 @@
 		public const string LoginNotFound = "Пользователь с таким логином не найден.";
 
 		public const string PasswordIsIncorrect = "Пароль неверен.";
+
+		public const string UserNotAuthorized = "User is not authorized";
 	}
 }

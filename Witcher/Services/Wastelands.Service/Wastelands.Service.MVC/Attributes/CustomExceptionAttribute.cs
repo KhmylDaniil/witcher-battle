@@ -7,22 +7,28 @@ namespace Wastelands.Service.MVC.Attributes
 {
 	public class ExceptionAttribute : Attribute, IExceptionFilter
 	{
-		private readonly string? _path;
-
-		public ExceptionAttribute(string? path = null)
+		public ExceptionAttribute(string path = null)
 		{
-			_path = path;
+			Path = path;
 		}
+
+		public string Path { get; private set; }
 
 		public void OnException(ExceptionContext filterContext)
 		{
 			Exception ex = filterContext.Exception;
 			filterContext.ExceptionHandled = true;
 
+			var action = filterContext.RouteData.Values["action"].ToString();
+			var id = filterContext.RouteData.Values["id"]?.ToString();
+
+			var path = string.Join('/', action, id);
+			var model = 
+
 			var result = new ViewResult
 			{
-				ViewName = _path ?? "Error",
-				ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), filterContext.ModelState)
+				ViewName = Path ?? action,
+				ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), filterContext.ModelState),
 			};
 
 			result.ViewData["ErrorMessage"] = ex.Message;

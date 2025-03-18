@@ -5,6 +5,10 @@
 		// auth errors
 		LoginNotFound = 1,
 		InvalidPassword = 2,
+		UserNotAuthorized = 3,
+
+		// character errors
+		CharacterNotFound = 100,
 
 		// Common error codes 1100...1199
 		RequestValidationError = 1100,

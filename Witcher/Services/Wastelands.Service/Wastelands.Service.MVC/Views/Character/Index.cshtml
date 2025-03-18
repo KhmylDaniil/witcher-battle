@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Wastelands.Service.Domain.Models.Dto.CharacterDto>
+
+@{
+    ViewData["Title"] = "Characters";
+}
+
+<h1>Characters</h1>
+
+<p>
+    <a asp-action="Create">Create New Character</a>
+</p>
+
+<form asp-action="Index">
+    <p><input type="text" name="name" /> Name</p>
+    <p><input type="submit" value="Search"/></p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) | @Html.ActionLink("Update", "Update", item)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>@TempData["ErrorMessage"]</p>
