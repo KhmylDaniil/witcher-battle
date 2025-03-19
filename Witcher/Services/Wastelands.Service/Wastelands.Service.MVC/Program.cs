@@ -33,6 +33,12 @@ builder.Services.AddCors(o => o.AddPolicy("AllowAll", builder => builder.AllowAn
 
 var app = builder.Build();
 
+app.Use(next => context =>
+{
+	context.Request.EnableBuffering();
+	return next(context);
+});
+
 await app.MigrateDatabaseAsync<WastelandsDbContext>();
 
 // Configure the HTTP request pipeline.

@@ -20,7 +20,7 @@ namespace Wastelands.Service.MVC.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Exception("register")]
+		[Exception]
 		public async Task<IActionResult> RegisterUserAsync(RegisterUserRequest request, CancellationToken cancellationToken)
 		{
 			await _userService.RegisterUserAsync(request);
@@ -33,7 +33,7 @@ namespace Wastelands.Service.MVC.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Exception("login")]
+		[Exception]
 		public async Task<IActionResult> LoginAsync(LoginUserRequest request, CancellationToken cancellationToken)
 		{
 			await _userService.LoginUserAsync(request);

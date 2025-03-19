@@ -25,7 +25,7 @@ namespace Wastelands.Service.MVC.Controllers
 		}
 
 		[Route("[controller]/{id}")]
-		[Exception("details")]
+		[Exception]
 		public async Task<IActionResult> Details(long id, CancellationToken cancellationToken)
 		{
 			var result = await _characterService.GetCharacterByIdAsync(id);
@@ -72,7 +72,7 @@ namespace Wastelands.Service.MVC.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{id}")]
-		[Exception("delete")]
+		[Exception]
 		public async Task<IActionResult> Delete(BaseDeleteRequest request, CancellationToken cancellationToken)
 		{
 			await _characterService.DeleteCharacterAsync(request.Id);
