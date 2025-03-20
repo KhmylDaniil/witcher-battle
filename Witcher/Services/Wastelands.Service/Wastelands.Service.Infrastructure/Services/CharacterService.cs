@@ -45,11 +45,20 @@ namespace Wastelands.Service.Infrastructure.Services
 		{
 			if(await _characterRepository.AnyAsync(x => x.Name == request.Name))
 			{
-				throw new BadRequestException(ErrorCode.InvalidArgument, ExceptionMessages.ValueMustBeUnique);
+				throw new BadRequestException(ErrorCode.InvalidArgument, string.Format(ExceptionMessages.ValueMustBeUnique, nameof(request.Name)));
 			}
 
-			var entity = _mapper.Map<Character>(request);
-			entity.UserId = _userContext.CurrentUserId;
+			var entity = new Character(
+				userId: _userContext.CurrentUserId,
+				name: request.Name,
+				@int: request.Int,
+				str: request.Str,
+				rea: request.Rea,
+				dex: request.Dex,
+				cra: request.Cra,
+				emp: request.Emp,
+				wil: request.Wil);
+
 			await _characterRepository.CreateAsync(entity);
 
 			return _mapper.Map<CharacterDto>(entity);
@@ -57,13 +66,21 @@ namespace Wastelands.Service.Infrastructure.Services
 
 		public async Task<CharacterDto> UpdateCharacterAsync(UpdateCharacterRequest request)
 		{
-			if (await _characterRepository.AnyAsync(x => x.Name == request.Name))
+			if (await _characterRepository.AnyAsync(x => x.Name == request.Name && x.Id != request.Id))
 			{
-				throw new BadRequestException(ErrorCode.InvalidArgument, ExceptionMessages.ValueMustBeUnique);
+				throw new BadRequestException(ErrorCode.InvalidArgument, string.Format(ExceptionMessages.ValueMustBeUnique, nameof(request.Name)));
 			}
 
 			var character = await GetByIdAsync(request.Id);
-			_mapper.Map(request, character);
+			character.UpdateCharacter(
+				name: request.Name,
+				@int: request.Int,
+				str: request.Str,
+				rea: request.Rea,
+				dex: request.Dex,
+				cra: request.Cra,
+				emp: request.Emp,
+				wil: request.Wil);
 
 			await _characterRepository.UpdateAsync(character);
 

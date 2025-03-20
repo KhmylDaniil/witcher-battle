@@ -14,13 +14,6 @@ namespace Wastelands.Service.Infrastructure.Mapping
 
 			CreateMap<Character, CharacterDto>()
 				.ReverseMap();
-
-			CreateMap<CreateCharacterRequest, Character>()
-				.ForMember(dst => dst.UserId, opt => opt.Ignore());
-
-			CreateMap<UpdateCharacterRequest, Character>()
-				.ForMember(dst => dst.Id, opt => opt.Ignore())
-				.ForMember(dst => dst.UserId, opt => opt.Ignore());
 		}
 	}
 }

@@ -14,9 +14,44 @@ namespace Wastelands.Service.Infrastructure.Configurations
 			builder.ToTable("Character");
 
 			builder.Property(x => x.Name)
-				.HasColumnName("Login")
-				.HasColumnType("varchar(30)")
-				.IsRequired();
+			.HasColumnName("Name")
+			.HasColumnType("varchar(30)")
+			.IsRequired();
+
+			builder.Property(r => r.Int)
+			.HasColumnName("Int")
+			.HasComment("Intellect")
+			.IsRequired();
+
+			builder.Property(r => r.Rea)
+			.HasColumnName("Rea")
+			.HasComment("Reaction")
+			.IsRequired();
+
+			builder.Property(r => r.Dex)
+			.HasColumnName("Dex")
+			.HasComment("Dexterity")
+			.IsRequired();
+
+			builder.Property(r => r.Str)
+			.HasColumnName("Str")
+			.HasComment("Strength")
+			.IsRequired();
+
+			builder.Property(r => r.Emp)
+			.HasColumnName("Emp")
+			.HasComment("Empathy")
+			.IsRequired();
+
+			builder.Property(r => r.Cra)
+			.HasColumnName("Cra")
+			.HasComment("Craft")
+			.IsRequired();
+
+			builder.Property(r => r.Wil)
+			.HasColumnName("Wil")
+			.HasComment("Willpower")
+			.IsRequired();
 		}
 	}
 }
