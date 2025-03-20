@@ -1,14 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Wastelands.Service.Domain.Contracts;
 using Wastelands.Service.Domain.Models.Filters;
 using Wastelands.Service.Domain.Models.Requests;
-using Wastelands.Service.MVC.Attributes;
 
 namespace Wastelands.Service.MVC.Controllers
 {
-	[Authorize]
-	public class CharacterController : Controller
+	public class CharacterController : BaseController
 	{
 		private readonly ICharacterService _characterService;
 
@@ -25,7 +22,6 @@ namespace Wastelands.Service.MVC.Controllers
 		}
 
 		[Route("[controller]/{id}")]
-		[Exception]
 		public async Task<IActionResult> Details(long id, CancellationToken cancellationToken)
 		{
 			var result = await _characterService.GetCharacterByIdAsync(id);
@@ -42,7 +38,6 @@ namespace Wastelands.Service.MVC.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]")]
-		[Exception]
 		public async Task<IActionResult> Create(CreateCharacterRequest request, CancellationToken cancellationToken)
 		{
 			var result = await _characterService.CreateCharacterAsync(request);
@@ -59,7 +54,6 @@ namespace Wastelands.Service.MVC.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{id}")]
-		[Exception]
 		public async Task<IActionResult> Update(UpdateCharacterRequest request, CancellationToken cancellationToken)
 		{
 			var result = await _characterService.UpdateCharacterAsync(request);
@@ -72,7 +66,6 @@ namespace Wastelands.Service.MVC.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]/{id}")]
-		[Exception]
 		public async Task<IActionResult> Delete(BaseDeleteRequest request, CancellationToken cancellationToken)
 		{
 			await _characterService.DeleteCharacterAsync(request.Id);

@@ -5,10 +5,12 @@ using System.Text.Json.Serialization;
 using Wastelands.EfDataAccess.Extensions;
 using Wastelands.Service.Infrastructure;
 using Wastelands.Service.MVC.Extensions;
+using Wastelands.Service.MVC.Filters;
 using Wastelands.Service.MVC.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<ExceptionFilter>();
 builder.Services.AddMvcCore().AddRazorViewEngine();
 builder.Services.AddControllersWithViews()
 	.AddJsonOptions(options =>

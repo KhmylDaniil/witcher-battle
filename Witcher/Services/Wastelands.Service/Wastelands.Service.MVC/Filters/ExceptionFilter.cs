@@ -6,17 +6,10 @@ using Newtonsoft.Json;
 using System.Web;
 using Wastelands.Service.Domain.Models.Requests;
 
-namespace Wastelands.Service.MVC.Attributes
+namespace Wastelands.Service.MVC.Filters
 {
-	public class ExceptionAttribute : Attribute, IAsyncExceptionFilter
+	public class ExceptionFilter : IAsyncExceptionFilter
 	{
-		public ExceptionAttribute(string path = null)
-		{
-			Path = path;
-		}
-
-		public string Path { get; private set; }
-
 		public async Task OnExceptionAsync(ExceptionContext context)
 		{
 			var modelType = context.ActionDescriptor.Parameters.Select(x => x.ParameterType).FirstOrDefault(x => x.IsAssignableTo(typeof(BaseRequest)));
@@ -31,7 +24,7 @@ namespace Wastelands.Service.MVC.Attributes
 
 			var result = new ViewResult
 			{
-				ViewName = Path ?? context.RouteData.Values["action"]?.ToString(),
+				ViewName = context.RouteData.Values["action"]?.ToString() ?? "Error",
 				ViewData = new ViewDataDictionary(provider, modelState),
 			};
 			result.ViewData = viewData;
@@ -57,3 +50,4 @@ namespace Wastelands.Service.MVC.Attributes
 		}
 	}
 }
+

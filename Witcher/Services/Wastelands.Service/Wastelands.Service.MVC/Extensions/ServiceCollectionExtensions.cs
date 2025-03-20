@@ -1,4 +1,5 @@
-﻿using Wastelands.Core.Contracts.Contracts;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Wastelands.Core.Contracts.Contracts;
 using Wastelands.Service.Domain.Contracts;
 using Wastelands.Service.Domain.Contracts.Repositories;
 using Wastelands.Service.Infrastructure.Mapping;
