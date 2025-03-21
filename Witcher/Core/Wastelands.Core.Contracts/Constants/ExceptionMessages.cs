@@ -14,7 +14,7 @@
 
 		public const string ValueMustBeBetween = "Значение должно быть в заданных пределах.";
 
-		public const string ValueMustBeUnique = "Значение {0} должно быть уникальным.";
+		public const string ValueMustBeUnique = "Value {0} must be unique";
 
 		public const string LoginNotFound = "Пользователь с таким логином не найден.";
 

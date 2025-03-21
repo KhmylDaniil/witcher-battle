@@ -2,11 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using Wastelands.EfDataAccess.Configurations;
 using Wastelands.Service.Domain.Entities;
+using Wastelands.Service.Domain.Enums;
+using Newtonsoft.Json;
 
 namespace Wastelands.Service.Infrastructure.Configurations
 {
 	public class CharacterConfiguration : EntityConfiguration<Character>
 	{
+		private static readonly string _defaultSkillsValue = JsonConvert.SerializeObject(new Dictionary<Skill, int>());
+
 		public override void Configure(EntityTypeBuilder<Character> builder)
 		{
 			base.Configure(builder);
@@ -51,6 +55,12 @@ namespace Wastelands.Service.Infrastructure.Configurations
 			builder.Property(r => r.Wil)
 			.HasColumnName("Wil")
 			.HasComment("Willpower")
+			.IsRequired();
+
+			builder.Property(x => x.Skills)
+			.HasColumnType("jsonb")
+			.HasColumnName("Skills")
+			.HasComment("Skills")
 			.IsRequired();
 		}
 	}

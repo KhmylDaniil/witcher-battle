@@ -13,6 +13,7 @@
 
 		// character errors
 		CharacterNotFound = 200,
+		CharacterSkillAlreadyExisted = 201,
 
 		// Common error codes 1100...1199
 		RequestValidationError = 1100,
@@ -20,6 +21,5 @@
 		UnexpectedError = 1102,
 		RequiredParameterCannotBeNull = 1103,
 		CurrentUserNotAllowedToPerformThisAction = 1104,
-
 	}
 }

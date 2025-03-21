@@ -14,6 +14,12 @@ namespace Wastelands.Service.Domain.Contracts
 
 		Task<CharacterDto> UpdateCharacterAsync(UpdateCharacterRequest request);
 
+		Task AddSkillAsync(AddOrUpdateCharacterSkillRequest request);
+
+		Task UpdateSkillAsync(AddOrUpdateCharacterSkillRequest request);
+
 		Task DeleteCharacterAsync(long id);
+
+		Task DeleteSkillAsync(DeleteCharacterSkillRequest request);
 	}
 }

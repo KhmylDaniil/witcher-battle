@@ -7,6 +7,7 @@ using Wastelands.Core.Contracts.Exceptions.WebExceptions;
 using Wastelands.Service.Domain.Contracts;
 using Wastelands.Service.Domain.Contracts.Repositories;
 using Wastelands.Service.Domain.Entities;
+using Wastelands.Service.Domain.Enums;
 using Wastelands.Service.Domain.Models.Dto;
 using Wastelands.Service.Domain.Models.Filters;
 using Wastelands.Service.Domain.Models.Requests;
@@ -93,6 +94,30 @@ namespace Wastelands.Service.Infrastructure.Services
 			await _characterRepository.DeleteAsync(character);
 		}
 
+		public async Task AddSkillAsync(AddOrUpdateCharacterSkillRequest request)
+		{
+			var character = await GetByIdAsync(request.CharacterId);
+
+			if (character.Skills.ContainsKey(request.Skill))
+				throw new InvalidArgumentException(ErrorCode.CharacterSkillAlreadyExisted, string.Format(ExceptionMessages.ValueMustBeUnique, nameof(request.Skill)));
+
+			await AddOrUpdateSkillAsync(character, request.Skill, request.Value);
+		}
+
+		public async Task UpdateSkillAsync(AddOrUpdateCharacterSkillRequest request)
+		{
+			var character = await GetByIdAsync(request.CharacterId);
+			await AddOrUpdateSkillAsync(character, request.Skill, request.Value);
+		}
+
+		public async Task DeleteSkillAsync(DeleteCharacterSkillRequest request)
+		{
+			var character = await GetByIdAsync(request.Id);
+			character.Skills.Remove(request.Skill);
+
+			await _characterRepository.UpdateAsync(character);
+		}
+
 		private async Task<Character> GetByIdAsync(long id)
 		{
 			var character = await _characterRepository.GetByIdAsync(id);
@@ -105,6 +130,14 @@ namespace Wastelands.Service.Infrastructure.Services
 			id.ToString());
 
 			return character;
+		}
+
+		private async Task AddOrUpdateSkillAsync(Character character, Skill skill, int value)
+		{
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(value, nameof(value));
+
+			character.Skills[skill] = value;
+			await _characterRepository.UpdateAsync(character);
 		}
 	}
 }

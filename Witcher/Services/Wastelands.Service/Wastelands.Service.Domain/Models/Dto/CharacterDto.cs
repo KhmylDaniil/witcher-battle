@@ -1,4 +1,6 @@
-﻿namespace Wastelands.Service.Domain.Models.Dto
+﻿using Wastelands.Service.Domain.Enums;
+
+namespace Wastelands.Service.Domain.Models.Dto
 {
 	public class CharacterDto : BaseDto
 	{
@@ -19,5 +21,7 @@
 		public int Emp { get; set; }
 
 		public int Wil { get; set; }
+
+		public Dictionary<Skill, int> Skills { get; set; }
 	}
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
+using System.Text.Json;
 
 namespace Wastelands.EfDataAccess.Extensions
 {
@@ -12,7 +14,10 @@ namespace Wastelands.EfDataAccess.Extensions
 			string connectionStringName)
 			where TDbContext : DbContext
 		{
-			services.AddDbContext<DbContext, TDbContext>(options => options.UseNpgsql(configuration.GetConnectionString(connectionStringName)));
+			var builder = new NpgsqlDataSourceBuilder(configuration.GetConnectionString(connectionStringName));
+			builder.EnableDynamicJson().ConfigureJsonOptions(new JsonSerializerOptions { AllowOutOfOrderMetadataProperties = true });
+
+			services.AddDbContext<DbContext, TDbContext>(options => options.UseNpgsql(builder.Build()));
 
 			return services;
 		}

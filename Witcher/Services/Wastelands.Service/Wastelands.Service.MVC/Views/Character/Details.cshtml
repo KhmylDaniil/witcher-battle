@@ -60,7 +60,49 @@
     </dl>
 </div>
 
-<p>@TempData["ErrorMessage"]</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayName("Skill")
+            </th>
+            <th>
+                @Html.DisplayName("Value")
+            </th>
+            <th>
+                @Html.ActionLink("Add new skill", "AddSkill",
+                                  new { CharacterId = Model.Id })
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Skills)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayName(item.Key.ToString())
+                </td>
+                <td>
+                    @Html.DisplayName(item.Value.ToString())
+                </td>
+                <td>
+                    @Html.ActionLink("Update value", "EditSkill",
+                             new { CharacterId = Model.Id, Skill = item.Key, Value = item.Value })
+                </td>
+                <td>
+                    <form asp-action="DeleteSkill" asp-route-Id=@Model.Id asp-route-skill=@item.Key>
+                        <div class="form-group">
+                            <input type="submit" value="Delete" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>@ViewData["ErrorMessage"]</p>
 
 <div>
     @Html.ActionLink("Delete", "Delete", new { id = Model.Id, name = Model.Name }) |

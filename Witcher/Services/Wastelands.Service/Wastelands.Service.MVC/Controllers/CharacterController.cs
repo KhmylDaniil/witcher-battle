@@ -71,5 +71,38 @@ namespace Wastelands.Service.MVC.Controllers
 			await _characterService.DeleteCharacterAsync(request.Id);
 			return RedirectToAction(nameof(Index), new CharacterFilter());
 		}
+
+		[Route("[controller]/[action]/{characterId}")]
+		public ActionResult AddSkill(AddOrUpdateCharacterSkillRequest request) => View(request);
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Route("[controller]/[action]/{characterId}")]
+		public async Task<IActionResult> AddSkill(AddOrUpdateCharacterSkillRequest request, CancellationToken cancellationToken)
+		{
+			await _characterService.AddSkillAsync(request);
+			return RedirectToAction(nameof(Details), routeValues: new { id = request.CharacterId });
+		}
+
+		[Route("[controller]/[action]/{characterId}")]
+		public ActionResult EditSkill(AddOrUpdateCharacterSkillRequest request) => View(request);
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Route("[controller]/[action]/{characterId}")]
+		public async Task<IActionResult> EditSkill(AddOrUpdateCharacterSkillRequest request, CancellationToken cancellationToken)
+		{
+			await _characterService.UpdateSkillAsync(request);
+			return RedirectToAction(nameof(Details), routeValues: new { id = request.CharacterId });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Route("[controller]/[action]/{id}")]
+		public async Task<IActionResult> DeleteSkill(DeleteCharacterSkillRequest request, CancellationToken cancellationToken)
+		{
+			await _characterService.DeleteSkillAsync(request);
+			return RedirectToAction(nameof(Details), routeValues: new { id = request.Id });
+		}
 	}
 }

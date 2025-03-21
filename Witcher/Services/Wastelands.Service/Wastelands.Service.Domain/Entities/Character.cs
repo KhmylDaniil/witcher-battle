@@ -1,5 +1,6 @@
 ﻿using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
 using Wastelands.Core.EfDataAccess.Entities;
+using Wastelands.Service.Domain.Enums;
 
 namespace Wastelands.Service.Domain.Entities
 {
@@ -22,6 +23,8 @@ namespace Wastelands.Service.Domain.Entities
 		public int Emp { get; private set; }
 
 		public int Wil { get; private set; }
+
+		public Dictionary<Skill, int> Skills { get; private set; } = [];
 
 		private Character()
 		{
