@@ -7,7 +7,7 @@ namespace Witcher.Core.Contracts.AbilityRequests
 	/// <summary>
 	/// Запрос изменения способности
 	/// </summary>
-	public sealed class ChangeAbilityCommand : IRequest
+	public sealed class ChangeAbilityCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди

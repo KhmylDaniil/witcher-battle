@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.ItemRequests
 {
-	public class CreateItemCommand : IRequest
+	public class CreateItemCommand : IRequest<Unit>
 	{
 		public Guid CharacterId { get; set; }
 

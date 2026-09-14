@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.AbilityRequests
 	/// <summary>
 	/// Команда удаления накладываемого состояния
 	/// </summary>
-	public sealed class DeleteAppliedConditionForAbilityCommand : IRequest
+	public sealed class DeleteAppliedConditionForAbilityCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди способности

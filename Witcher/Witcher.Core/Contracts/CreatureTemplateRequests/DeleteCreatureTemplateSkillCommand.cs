@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.CreatureTemplateRequests
 	/// <summary>
 	/// Команда удаления навыка шаблона существа
 	/// </summary>
-	public sealed class DeleteCreatureTemplateSkillCommand : IRequest
+	public sealed class DeleteCreatureTemplateSkillCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди шаблона существ

@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 	/// <summary>
 	/// Команда попытки снятия эффекта
 	/// </summary>
-	public class HealEffectCommand : IRequest
+	public class HealEffectCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди боя

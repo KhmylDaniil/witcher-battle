@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
-	public sealed class PassInMultiattackCommand : IRequest
+	public sealed class PassInMultiattackCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди битвы

@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.AbilityRequests
 	/// <summary>
 	/// Команда удаления защитного навыка для способности
 	/// </summary>
-	public sealed class DeleteDefensiveSkillCommand : IRequest
+	public sealed class DeleteDefensiveSkillCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди способности

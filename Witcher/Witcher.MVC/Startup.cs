@@ -75,7 +75,9 @@ namespace Witcher.MVC
 			services.AddSignalR();
 			services.AddSingleton<IUserIdProvider, SignalRUserProvider>();
 
-			services.AddAutoMapper(typeof(Program));
+			// AutoMapper 16 folded DI registration into the main package with a different signature —
+			// configAction is required now (no-op here, profiles are still discovered from the marker assembly).
+			services.AddAutoMapper(cfg => { }, typeof(Program));
 		}
 	}
 }

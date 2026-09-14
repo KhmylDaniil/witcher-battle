@@ -7,7 +7,7 @@ namespace Witcher.Core.Contracts.CreatureTemplateRequests
 	/// <summary>
 	/// Команда изменения модификатора урона по типу 
 	/// </summary>
-	public class ChangeDamageTypeModifierForCreatureTemplateCommand : ChangeDamageTypeModifierCommandBase, IRequest
+	public class ChangeDamageTypeModifierForCreatureTemplateCommand : ChangeDamageTypeModifierCommandBase, IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди шаблона существа

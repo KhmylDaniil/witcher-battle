@@ -58,7 +58,7 @@ namespace Witcher.UnitTest.Core.Hasher
 			var passwordHasher = new PasswordHasher(hasherOptions);
 
 			//Assert
-			Assert.ThrowsException<ApplicationSystemNullException<PasswordHasher>>(() =>
+			Assert.ThrowsExactly<ApplicationSystemNullException<PasswordHasher>>(() =>
 				passwordHasher.Hash(null));
 		}
 
@@ -113,7 +113,7 @@ namespace Witcher.UnitTest.Core.Hasher
 			var passwordHasher = new PasswordHasher(hasherOptions);
 
 			//Assert
-			Assert.ThrowsException<ApplicationSystemNullException<PasswordHasher>>(() =>
+			Assert.ThrowsExactly<ApplicationSystemNullException<PasswordHasher>>(() =>
 				passwordHasher.VerifyHash(password, hash));
 		}
 	}

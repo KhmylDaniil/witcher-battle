@@ -7,7 +7,7 @@ namespace Witcher.Core.Contracts.AbilityRequests
 	/// <summary>
 	/// Команда создания или изменения накладываемого состояния
 	/// </summary>
-	public sealed class UpdateAppliedConditionForAbilityCommand : UpdateAttackFormulaCommandItemAppledCondition, IRequest
+	public sealed class UpdateAppliedConditionForAbilityCommand : UpdateAttackFormulaCommandItemAppledCondition, IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди способности

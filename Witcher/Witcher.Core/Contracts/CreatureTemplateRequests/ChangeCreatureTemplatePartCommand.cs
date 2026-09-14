@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.CreatureTemplateRequests
 	/// <summary>
 	/// Команда изменения брони для шаблона существа или его части
 	/// </summary>
-	public sealed class ChangeCreatureTemplatePartCommand : IRequest
+	public sealed class ChangeCreatureTemplatePartCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди шаблона существа

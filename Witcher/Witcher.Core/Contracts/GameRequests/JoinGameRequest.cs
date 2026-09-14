@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.GameRequests
 {
-	public sealed class JoinGameRequest : IRequest
+	public sealed class JoinGameRequest : IRequest<Unit>
 	{
 		public Guid UserId { get; set; }
 

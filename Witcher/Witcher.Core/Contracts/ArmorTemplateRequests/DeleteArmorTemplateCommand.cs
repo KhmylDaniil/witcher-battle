@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.ArmorTemplateRequests
 {
-	public class DeleteArmorTemplateCommand : IRequest
+	public class DeleteArmorTemplateCommand : IRequest<Unit>
 	{
 		public Guid Id { get; set; }
 

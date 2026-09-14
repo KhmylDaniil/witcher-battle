@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.ItemRequests
 {
-	public sealed class DeleteItemCommand : IRequest
+	public sealed class DeleteItemCommand : IRequest<Unit>
 	{
 		public Guid CharacterId { get; set; }
 

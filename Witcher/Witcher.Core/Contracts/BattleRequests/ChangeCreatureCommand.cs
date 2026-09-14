@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.BattleRequests
 	/// <summary>
 	/// Команда изменения существа в битве
 	/// </summary>
-	public sealed class ChangeCreatureCommand : IRequest
+	public sealed class ChangeCreatureCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди боя

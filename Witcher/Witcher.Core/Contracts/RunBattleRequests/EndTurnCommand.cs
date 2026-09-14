@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.RunBattleRequests
 {
-	public sealed class EndTurnCommand : IRequest
+	public sealed class EndTurnCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди битвы

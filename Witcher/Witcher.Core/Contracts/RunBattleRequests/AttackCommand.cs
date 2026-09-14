@@ -7,7 +7,7 @@ namespace Witcher.Core.Contracts.RunBattleRequests
 	/// <summary>
 	/// Команда проведения атаки
 	/// </summary>
-	public class AttackCommand : IRequest
+	public class AttackCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди боя

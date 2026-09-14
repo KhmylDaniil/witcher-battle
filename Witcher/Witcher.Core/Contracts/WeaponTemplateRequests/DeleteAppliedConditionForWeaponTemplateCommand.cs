@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.WeaponTemplateRequests
 {
-	public sealed class DeleteAppliedConditionForWeaponTemplateCommand : IRequest
+	public sealed class DeleteAppliedConditionForWeaponTemplateCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди способности

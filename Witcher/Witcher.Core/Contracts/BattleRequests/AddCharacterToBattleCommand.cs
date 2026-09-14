@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.BattleRequests
 {
-	public class AddCharacterToBattleCommand : IRequest
+	public class AddCharacterToBattleCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди боя

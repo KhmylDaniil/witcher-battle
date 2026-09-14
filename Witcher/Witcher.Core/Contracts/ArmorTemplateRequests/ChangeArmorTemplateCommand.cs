@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Witcher.Core.Contracts.ArmorTemplateRequests
 {
-	public sealed class ChangeArmorTemplateCommand : CreateOrUpdateItemTemplateCommandBase, IRequest
+	public sealed class ChangeArmorTemplateCommand : CreateOrUpdateItemTemplateCommandBase, IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди

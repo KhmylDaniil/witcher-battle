@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.UserGameRequests
 	/// <summary>
 	/// Команда удаления пользователя игры
 	/// </summary>
-	public sealed class DeleteUserGameCommand : IRequest
+	public sealed class DeleteUserGameCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди пользователя игры

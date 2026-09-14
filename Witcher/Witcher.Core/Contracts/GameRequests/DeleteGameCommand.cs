@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Witcher.Core.Contracts.GameRequests
 {
-	public sealed class DeleteGameCommand : IRequest
+	public sealed class DeleteGameCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди

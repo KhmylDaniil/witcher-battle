@@ -7,7 +7,7 @@ namespace Witcher.Core.Contracts.GameRequests
 	/// <summary>
 	/// Команда создания игры
 	/// </summary>
-	public sealed class CreateGameCommand : IRequest
+	public sealed class CreateGameCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди аватара игры

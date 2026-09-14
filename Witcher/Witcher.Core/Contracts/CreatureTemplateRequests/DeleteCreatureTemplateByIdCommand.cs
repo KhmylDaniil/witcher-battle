@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.CreatureTemplateRequests
 	/// <summary>
 	/// Команда на удаление шаблона существа по айди
 	/// </summary>
-	public sealed class DeleteCreatureTemplateByIdCommand : IRequest
+	public sealed class DeleteCreatureTemplateByIdCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди

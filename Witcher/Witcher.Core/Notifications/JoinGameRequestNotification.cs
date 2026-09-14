@@ -27,10 +27,10 @@ namespace Witcher.Core.Notifications
 			Message = string.Format("Пользователь {0} желает присоединиться к игре {1}. {2}{3}", sender.Name, GameName, isMessageEmpty, message);
 		}
 
-		public override IRequest Accept()
+		public override IRequest<Unit> Accept()
 			=> new CreateUserGameCommand { UserId = SenderId, RoleId = BaseData.GameRoles.PlayerRoleId };
 
-		public override IRequest Decline()
+		public override IRequest<Unit> Decline()
 			=> new CreateNotificationCommand { ReceiverId = SenderId, Message = $"Мастер игры не разрешил вам присоединиться к игре {GameName}." };
 
 	}

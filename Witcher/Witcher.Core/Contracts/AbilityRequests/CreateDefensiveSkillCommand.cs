@@ -9,7 +9,7 @@ namespace Witcher.Core.Contracts.AbilityRequests
 	/// <summary>
 	/// Команда добавления защитного навыка для способности
 	/// </summary>
-	public sealed class CreateDefensiveSkillCommand : IRequest
+	public sealed class CreateDefensiveSkillCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди способности

@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.BattleRequests
 	/// <summary>
 	/// Команда добавлени существа в битву
 	/// </summary>
-	public class CreateCreatureCommand : IRequest
+	public class CreateCreatureCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди боя

@@ -15,10 +15,10 @@ namespace Witcher.Core
 		{
 			_validators = validators;
 		}
-		public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+		public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
 		{
 			if (request == null) { throw new RequestNullException<TRequest>(); }
-			
+
 			if (_validators.Any())
 			{
 				var context = new ValidationContext<TRequest>(request);
@@ -27,7 +27,7 @@ namespace Witcher.Core
 				if (failures.Count != 0)
 					throw new ValidationException(failures);
 			}
-			return await next();
+			return await next(cancellationToken);
 		}
 	}
 }

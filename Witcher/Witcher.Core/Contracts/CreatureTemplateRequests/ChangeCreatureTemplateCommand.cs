@@ -8,7 +8,7 @@ namespace Witcher.Core.Contracts.CreatureTemplateRequests
 	/// <summary>
 	/// Запрос изменения шаблона существа
 	/// </summary>
-	public class ChangeCreatureTemplateCommand : IRequest
+	public class ChangeCreatureTemplateCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди

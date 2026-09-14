@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.NotificationRequests
 {
-	public sealed class CreateNotificationCommand : IRequest
+	public sealed class CreateNotificationCommand : IRequest<Unit>
 	{
 		public Guid ReceiverId { get; set; }
 		

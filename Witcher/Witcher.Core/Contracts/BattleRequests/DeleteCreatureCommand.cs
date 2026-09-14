@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.BattleRequests
 	/// <summary>
 	/// Команда удаления существа
 	/// </summary>
-	public sealed class DeleteCreatureCommand : IRequest
+	public sealed class DeleteCreatureCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди битвы

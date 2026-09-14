@@ -82,7 +82,7 @@ namespace Witcher.MVC.Controllers
 			catch (Exception ex) { return HandleException<NotificationController>(ex, () => RedirectToAction(nameof(Details), new { Id = id })); }
 		}
 
-		private async Task<IRequest> FormDecisionFromNotification(Guid id, bool accept)
+		private async Task<IRequest<Unit>> FormDecisionFromNotification(Guid id, bool accept)
 		{
 			var notification = await _mediator.Send(new GetNotificationByIdQuery { Id = id }) as YesOrNoDecisionNotification
 				?? throw new EntityBaseException("Уведомление не найдено.");

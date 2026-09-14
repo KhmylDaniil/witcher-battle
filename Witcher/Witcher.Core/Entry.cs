@@ -30,7 +30,7 @@ namespace Witcher.Core
 				throw new ApplicationSystemBaseException(string.Format("При работе класса {0} отсутствует необходимый параметр {1}.", nameof(Entry), hasherOptions.Salt));
 
 			//Mediatr + fluent validation
-			services.AddMediatR(typeof(Entry).Assembly);
+			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Entry).Assembly));
 			services.AddFluentValidationAutoValidation();
 			services.AddValidatorsFromAssembly(typeof(Core.Validators.UserRequestsValidators.LoginUserCommandValidator).Assembly);
 			services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));

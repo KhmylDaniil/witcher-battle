@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.UserGameRequests
 	/// <summary>
 	/// Команда создания пользователя игры
 	/// </summary>
-	public class CreateUserGameCommand: IRequest
+	public class CreateUserGameCommand: IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди пользователя игры

@@ -3,7 +3,7 @@ using System;
 
 namespace Witcher.Core.Contracts.CharacterRequests
 {
-	public sealed class DeleteCharacterCommand : IRequest
+	public sealed class DeleteCharacterCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди

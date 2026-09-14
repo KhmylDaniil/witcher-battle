@@ -7,7 +7,7 @@ namespace Witcher.Core.Contracts.CreatureTemplateRequests
 	/// <summary>
 	/// Команда на создание/изменение навыка шаблона персонажа
 	/// </summary>
-	public class UpdateCreatureTemplateSkillCommand : IRequest
+	public class UpdateCreatureTemplateSkillCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди

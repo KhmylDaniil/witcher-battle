@@ -6,7 +6,7 @@ namespace Witcher.Core.Contracts.BodyTemplateRequests
 	/// <summary>
 	/// Запрос на изменение шаблона тела
 	/// </summary>
-	public class ChangeBodyTemplateCommand : IRequest
+	public class ChangeBodyTemplateCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди шаблона тела

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Witcher.Core.Contracts.GameRequests
 {
-	public sealed class ChangeGameCommand : IRequest
+	public sealed class ChangeGameCommand : IRequest<Unit>
 	{
 		/// <summary>
 		/// Айди игры
