@@ -36,4 +36,10 @@ app.MapControllerRoute(
 
 app.MapHub<MessageHub>("/messageHub");
 
+// React SPA (witcher-frontend/) — прод-сборка (`npm run build`) копируется в wwwroot/app, отсюда раздаётся
+// статикой (UseStaticFiles выше), а client-side роутинг (react-router) обслуживается этим фолбэком:
+// любой GET без расширения файла под /app/** получает index.html и дальше маршрутизируется в браузере.
+// В dev SPA не использует этот путь — там Vite dev-server + прокси на /api и /messageHub (см. vite.config.ts).
+app.MapFallbackToFile("/app/{*path:nonfile}", "app/index.html");
+
 app.Run();

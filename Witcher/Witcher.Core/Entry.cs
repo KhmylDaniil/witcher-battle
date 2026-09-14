@@ -38,7 +38,9 @@ namespace Witcher.Core
 			services.AddTransient<IPasswordHasher>
 				(o => new PasswordHasher(hasherOptions));
 
-			services.AddSingleton<IGameIdService, GameIdService>();
+			// Scoped: GameId must be resolved per-request (route-driven), not shared process-wide state —
+			// a Singleton here would race across concurrent requests from different users/games.
+			services.AddScoped<IGameIdService, GameIdService>();
 
 			services.AddScoped<IAuthorizationService, AuthorizationService>();
 
