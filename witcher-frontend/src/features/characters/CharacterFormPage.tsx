@@ -8,6 +8,8 @@ import type { CharacterFormValues } from '../../types/api'
 import { charactersApi } from './api'
 
 const STATS = ['int', 'str', 'rea', 'dex', 'cra', 'emp', 'wil'] as const
+const STAT_MIN = 1
+const STAT_MAX = 15
 
 export function CharacterFormPage() {
   const { gameId, characterId } = useParams<{ gameId: string; characterId: string }>()
@@ -63,7 +65,18 @@ export function CharacterFormPage() {
             <div className="grid grid-cols-3 gap-3 sm:grid-cols-7">
               {STATS.map((s) => (
                 <Field key={s} label={s.toUpperCase()}>
-                  <Input type="number" {...register(s, { required: true, valueAsNumber: true, min: 1 })} />
+                  <Input
+                    type="number"
+                    min={STAT_MIN}
+                    max={STAT_MAX}
+                    {...register(s, {
+                      required: true,
+                      valueAsNumber: true,
+                      min: { value: STAT_MIN, message: `От ${STAT_MIN} до ${STAT_MAX}` },
+                      max: { value: STAT_MAX, message: `От ${STAT_MIN} до ${STAT_MAX}` },
+                    })}
+                  />
+                  {formState.errors[s] && <span className="text-xs text-red-600">{formState.errors[s]?.message}</span>}
                 </Field>
               ))}
             </div>

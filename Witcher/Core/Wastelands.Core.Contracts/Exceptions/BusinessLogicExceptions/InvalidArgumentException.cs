@@ -34,6 +34,15 @@ namespace Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions
 			}
 		}
 
+		public static void ThrowIfNotInRange<T>(T value, T min, T max, string paramName)
+			where T : struct, INumber<T>
+		{
+			if (value < min || value > max)
+			{
+				throw new InvalidArgumentException(ErrorCode.InvalidArgument, ExceptionMessages.ValueMustBeBetween);
+			}
+		}
+
 		public static void ThrowIfLessOrEqualToZero<T>(T? value, string paramName)
 			where T : struct, INumber<T>
 		{

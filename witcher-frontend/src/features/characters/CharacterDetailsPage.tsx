@@ -7,6 +7,8 @@ import { SKILLS_BY_STAT, type Skill } from '../../types/api'
 import { charactersApi } from './api'
 
 const STATS = ['int', 'str', 'rea', 'dex', 'cra', 'emp', 'wil'] as const
+const SKILL_VALUE_MIN = 1
+const SKILL_VALUE_MAX = 10
 
 export function CharacterDetailsPage() {
   const { characterId } = useParams<{ characterId: string }>()
@@ -96,7 +98,15 @@ export function CharacterDetailsPage() {
                 <td className="py-2 pr-3">{skill}</td>
                 <td className="py-2 pr-3">
                   {editingSkill === skill ? (
-                    <Input type="number" className="w-20" value={editValue} onChange={(e) => setEditValue(Number(e.target.value))} autoFocus />
+                    <Input
+                      type="number"
+                      min={SKILL_VALUE_MIN}
+                      max={SKILL_VALUE_MAX}
+                      className="w-20"
+                      value={editValue}
+                      onChange={(e) => setEditValue(Number(e.target.value))}
+                      autoFocus
+                    />
                   ) : (
                     value
                   )}
@@ -106,7 +116,7 @@ export function CharacterDetailsPage() {
                     <div className="flex gap-2">
                       <Button
                         className="px-2 py-1"
-                        disabled={upsertSkill.isPending}
+                        disabled={upsertSkill.isPending || editValue < SKILL_VALUE_MIN || editValue > SKILL_VALUE_MAX}
                         onClick={() => upsertSkill.mutate({ skill, value: editValue })}
                       >
                         OK
@@ -164,9 +174,21 @@ export function CharacterDetailsPage() {
               </option>
             ))}
           </Select>
-          <Input type="number" className="w-20" value={newValue} onChange={(e) => setNewValue(Number(e.target.value))} />
+          <Input
+            type="number"
+            min={SKILL_VALUE_MIN}
+            max={SKILL_VALUE_MAX}
+            className="w-20"
+            value={newValue}
+            onChange={(e) => setNewValue(Number(e.target.value))}
+          />
           <Button
-            disabled={availableInStat.length === 0 || upsertSkill.isPending}
+            disabled={
+              availableInStat.length === 0 ||
+              upsertSkill.isPending ||
+              newValue < SKILL_VALUE_MIN ||
+              newValue > SKILL_VALUE_MAX
+            }
             onClick={() => upsertSkill.mutate({ skill: newSkill, value: newValue })}
           >
             Добавить навык

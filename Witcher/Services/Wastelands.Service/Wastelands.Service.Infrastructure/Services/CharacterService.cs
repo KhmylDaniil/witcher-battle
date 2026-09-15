@@ -157,7 +157,7 @@ namespace Wastelands.Service.Infrastructure.Services
 
 		private async Task AddOrUpdateSkillAsync(Character character, Skill skill, int value)
 		{
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(value, nameof(value));
+			InvalidArgumentException.ThrowIfNotInRange(value, Character.MinSkillValue, Character.MaxSkillValue, nameof(value));
 
 			character.Skills[skill] = value;
 			await _characterRepository.UpdateAsync(character);

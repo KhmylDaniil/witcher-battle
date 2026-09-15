@@ -6,6 +6,11 @@ namespace Wastelands.Service.Domain.Entities
 {
 	public class Character : Entity
 	{
+		public const int MinStat = 1;
+		public const int MaxStat = 15;
+		public const int MinSkillValue = 1;
+		public const int MaxSkillValue = 10;
+
 		public long UserId { get; private set; }
 
 		public long GameId { get; private set; }
@@ -37,13 +42,13 @@ namespace Wastelands.Service.Domain.Entities
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(userId, nameof(userId));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(gameId, nameof(gameId));
 			InvalidArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(@int, nameof(@int));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(str, nameof(str));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(rea, nameof(rea));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(dex, nameof(dex));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(cra, nameof(cra));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(emp, nameof(emp));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(wil, nameof(wil));
+			InvalidArgumentException.ThrowIfNotInRange(@int, MinStat, MaxStat, nameof(@int));
+			InvalidArgumentException.ThrowIfNotInRange(str, MinStat, MaxStat, nameof(str));
+			InvalidArgumentException.ThrowIfNotInRange(rea, MinStat, MaxStat, nameof(rea));
+			InvalidArgumentException.ThrowIfNotInRange(dex, MinStat, MaxStat, nameof(dex));
+			InvalidArgumentException.ThrowIfNotInRange(cra, MinStat, MaxStat, nameof(cra));
+			InvalidArgumentException.ThrowIfNotInRange(emp, MinStat, MaxStat, nameof(emp));
+			InvalidArgumentException.ThrowIfNotInRange(wil, MinStat, MaxStat, nameof(wil));
 
 			UserId = userId;
 			GameId = gameId;
@@ -60,13 +65,13 @@ namespace Wastelands.Service.Domain.Entities
 		public void UpdateCharacter(string name, int @int, int str, int rea, int dex, int cra, int emp, int wil)
 		{
 			InvalidArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(@int, nameof(@int));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(str, nameof(str));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(rea, nameof(rea));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(dex, nameof(dex));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(cra, nameof(cra));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(emp, nameof(emp));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(wil, nameof(wil));
+			InvalidArgumentException.ThrowIfNotInRange(@int, MinStat, MaxStat, nameof(@int));
+			InvalidArgumentException.ThrowIfNotInRange(str, MinStat, MaxStat, nameof(str));
+			InvalidArgumentException.ThrowIfNotInRange(rea, MinStat, MaxStat, nameof(rea));
+			InvalidArgumentException.ThrowIfNotInRange(dex, MinStat, MaxStat, nameof(dex));
+			InvalidArgumentException.ThrowIfNotInRange(cra, MinStat, MaxStat, nameof(cra));
+			InvalidArgumentException.ThrowIfNotInRange(emp, MinStat, MaxStat, nameof(emp));
+			InvalidArgumentException.ThrowIfNotInRange(wil, MinStat, MaxStat, nameof(wil));
 
 			Name = name;
 			Int = @int;
