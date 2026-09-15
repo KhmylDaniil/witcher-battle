@@ -28,6 +28,8 @@
 		CreatureTemplateNotFound = 401,
 		BodyTemplateBelongsToAnotherGame = 402,
 		CreatureTemplatePartNotFound = 403,
+		BodyTemplatePartNotFound = 404,
+		BodyTemplatePartRangeOverlap = 405,
 
 		// Common error codes 1100...1199
 		RequestValidationError = 1100,

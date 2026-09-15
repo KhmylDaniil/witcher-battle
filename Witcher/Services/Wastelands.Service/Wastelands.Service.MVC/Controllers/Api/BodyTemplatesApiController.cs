@@ -42,5 +42,24 @@ namespace Wastelands.Service.MVC.Controllers.Api
 			await _bodyTemplateService.DeleteBodyTemplateAsync(id);
 			return NoContent();
 		}
+
+		[HttpPost("{bodyTemplateId:long}/parts")]
+		public async Task<BodyTemplateDto> AddPart(long bodyTemplateId, CreateBodyTemplatePartRequest request)
+		{
+			request.BodyTemplateId = bodyTemplateId;
+			return await _bodyTemplateService.AddPartAsync(request);
+		}
+
+		[HttpPut("{bodyTemplateId:long}/parts/{partId:long}")]
+		public async Task<BodyTemplateDto> UpdatePart(long bodyTemplateId, long partId, UpdateBodyTemplatePartRequest request)
+		{
+			request.BodyTemplateId = bodyTemplateId;
+			request.PartId = partId;
+			return await _bodyTemplateService.UpdatePartAsync(request);
+		}
+
+		[HttpDelete("{bodyTemplateId:long}/parts/{partId:long}")]
+		public async Task<BodyTemplateDto> RemovePart(long bodyTemplateId, long partId)
+			=> await _bodyTemplateService.RemovePartAsync(bodyTemplateId, partId);
 	}
 }

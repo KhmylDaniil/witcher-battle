@@ -120,6 +120,15 @@ export interface BodyTemplateFormValues {
   description: string
 }
 
+export interface BodyTemplatePartFormValues {
+  name: string
+  bodyPartType: BodyPartType
+  damageModifier: number
+  hitPenalty: number
+  minToHit: number
+  maxToHit: number
+}
+
 // ---- Creature templates (CreatureTemplatesApiController) — доступны только мастеру игры ----
 
 export const CREATURE_TYPES = [

@@ -33,11 +33,7 @@ namespace Wastelands.Service.Domain.Entities
 		// Core при SaveChanges по связи навигации (тот же приём, что и Game.Characters/Character.GameId).
 		internal BodyTemplatePart(BodyTemplatePartDraft draft)
 		{
-			InvalidArgumentException.ThrowIfNullOrEmpty(draft.Name, nameof(draft.Name));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(draft.DamageModifier, nameof(draft.DamageModifier));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(draft.HitPenalty, nameof(draft.HitPenalty));
-			InvalidArgumentException.ThrowIfNotInRange(draft.MinToHit, MinHitRange, MaxHitRange, nameof(draft.MinToHit));
-			InvalidArgumentException.ThrowIfNotInRange(draft.MaxToHit, draft.MinToHit, MaxHitRange, nameof(draft.MaxToHit));
+			Validate(draft.Name, draft.DamageModifier, draft.HitPenalty, draft.MinToHit, draft.MaxToHit);
 
 			Name = draft.Name;
 			BodyPartType = draft.BodyPartType;
@@ -45,6 +41,42 @@ namespace Wastelands.Service.Domain.Entities
 			HitPenalty = draft.HitPenalty;
 			MinToHit = draft.MinToHit;
 			MaxToHit = draft.MaxToHit;
+		}
+
+		// Часть, добавляемая мастером игры вручную (в отличие от драфта — с произвольным именем/типом/
+		// диапазоном кубика д10). Пересечение диапазона с уже существующими частями проверяет
+		// BodyTemplate.AddPart, у самой части нет доступа к соседям.
+		internal BodyTemplatePart(string name, BodyPartType bodyPartType, double damageModifier, int hitPenalty, int minToHit, int maxToHit)
+		{
+			Validate(name, damageModifier, hitPenalty, minToHit, maxToHit);
+
+			Name = name;
+			BodyPartType = bodyPartType;
+			DamageModifier = damageModifier;
+			HitPenalty = hitPenalty;
+			MinToHit = minToHit;
+			MaxToHit = maxToHit;
+		}
+
+		internal void UpdatePart(string name, BodyPartType bodyPartType, double damageModifier, int hitPenalty, int minToHit, int maxToHit)
+		{
+			Validate(name, damageModifier, hitPenalty, minToHit, maxToHit);
+
+			Name = name;
+			BodyPartType = bodyPartType;
+			DamageModifier = damageModifier;
+			HitPenalty = hitPenalty;
+			MinToHit = minToHit;
+			MaxToHit = maxToHit;
+		}
+
+		private static void Validate(string name, double damageModifier, int hitPenalty, int minToHit, int maxToHit)
+		{
+			InvalidArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(damageModifier, nameof(damageModifier));
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(hitPenalty, nameof(hitPenalty));
+			InvalidArgumentException.ThrowIfNotInRange(minToHit, MinHitRange, MaxHitRange, nameof(minToHit));
+			InvalidArgumentException.ThrowIfNotInRange(maxToHit, minToHit, MaxHitRange, nameof(maxToHit));
 		}
 	}
 }

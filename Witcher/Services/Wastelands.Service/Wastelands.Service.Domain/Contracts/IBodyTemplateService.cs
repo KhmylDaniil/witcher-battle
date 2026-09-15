@@ -15,5 +15,11 @@ namespace Wastelands.Service.Domain.Contracts
 		Task<BodyTemplateDto> UpdateBodyTemplateAsync(UpdateBodyTemplateRequest request);
 
 		Task DeleteBodyTemplateAsync(long id);
+
+		Task<BodyTemplateDto> AddPartAsync(CreateBodyTemplatePartRequest request);
+
+		Task<BodyTemplateDto> UpdatePartAsync(UpdateBodyTemplatePartRequest request);
+
+		Task<BodyTemplateDto> RemovePartAsync(long bodyTemplateId, long partId);
 	}
 }
