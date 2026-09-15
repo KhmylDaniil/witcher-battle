@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
-using Witcher.Core.Entities;
 using Witcher.Core.Services.Authorization;
 using System.Linq;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core.Services.Authorization
 {

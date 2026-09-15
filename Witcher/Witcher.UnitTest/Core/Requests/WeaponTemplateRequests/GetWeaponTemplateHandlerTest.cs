@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
-using Witcher.Core.Entities;
 using Witcher.Core.Contracts.WeaponTemplateRequests;
 using Witcher.Core.Requests.WeaponTemplateRequests;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core.Requests.WeaponTemplateRequests
 {

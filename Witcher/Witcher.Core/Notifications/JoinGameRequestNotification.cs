@@ -2,7 +2,7 @@
 using System;
 using Witcher.Core.Contracts.NotificationRequests;
 using Witcher.Core.Contracts.UserGameRequests;
-using Witcher.Core.Entities;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Notifications
 {

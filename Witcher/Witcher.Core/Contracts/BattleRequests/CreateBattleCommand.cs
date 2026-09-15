@@ -1,6 +1,6 @@
-﻿using Witcher.Core.Entities;
-using System;
+﻿using System;
 using MediatR;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Contracts.BattleRequests
 {

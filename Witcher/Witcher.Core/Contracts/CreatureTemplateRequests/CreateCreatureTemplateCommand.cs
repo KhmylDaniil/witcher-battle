@@ -1,8 +1,8 @@
-﻿using Witcher.Core.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using static Witcher.Core.BaseData.Enums;
 using MediatR;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Contracts.CreatureTemplateRequests
 {

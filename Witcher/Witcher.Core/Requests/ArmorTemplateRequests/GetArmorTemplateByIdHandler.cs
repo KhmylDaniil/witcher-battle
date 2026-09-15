@@ -6,7 +6,7 @@ using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
 using Witcher.Core.Contracts.ArmorTemplateRequests;
 using Witcher.Core.Contracts.BaseRequests;
-using Witcher.Core.Entities;
+using Witcher.Core.DAL.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Requests.ArmorTemplateRequests

@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Witcher.Core.Entities;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Contracts.Notifications
 {

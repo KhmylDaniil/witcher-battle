@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using System;
-using Witcher.Core.Entities;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Contracts.CharacterRequests
 {

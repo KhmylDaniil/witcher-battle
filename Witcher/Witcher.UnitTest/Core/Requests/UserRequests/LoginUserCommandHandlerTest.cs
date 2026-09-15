@@ -2,13 +2,13 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Entities;
 using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Witcher.Core.Requests.UserRequests;
 using Witcher.Core.Contracts.UserRequests;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core.Requests.UserRequests
 {

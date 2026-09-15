@@ -3,13 +3,13 @@ using Moq;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
 using Witcher.Core.Contracts.UserGameRequests;
-using Witcher.Core.Entities;
 using Witcher.Core.Requests.UserGameRequests;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core.Requests.UserGameRequests
 {

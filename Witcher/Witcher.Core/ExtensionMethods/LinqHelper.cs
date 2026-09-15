@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using Witcher.Core.Entities;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.ExtensionMethods
 {

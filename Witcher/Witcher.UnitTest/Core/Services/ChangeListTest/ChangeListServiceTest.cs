@@ -1,10 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Witcher.Core.Entities;
 using Witcher.Core.Abstractions;
 using System.Collections.Generic;
 using System.Linq;
 using System;
 using Witcher.Core.Services.ChangeListService;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core.Services.ChangeListTest
 {

@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
-using Witcher.Core.Entities;
 using Witcher.Core.Contracts.CharacterRequests;
 using Witcher.Core.Requests.CharacterRequests;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core.Requests.CharacterRequests
 {

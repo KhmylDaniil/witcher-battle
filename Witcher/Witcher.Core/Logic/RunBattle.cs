@@ -1,10 +1,10 @@
 ﻿using Witcher.Core.BaseData;
-using Witcher.Core.Entities;
 using Witcher.Core.Exceptions;
 using System;
 using System.Linq;
 using System.Text;
-using Witcher.Core.Entities.Effects;
+using Witcher.Core.DAL.Entities;
+using Witcher.Core.DAL.Entities.Effects;
 
 namespace Witcher.Core.Logic
 {

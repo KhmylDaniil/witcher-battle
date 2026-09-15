@@ -1,6 +1,6 @@
-﻿using Witcher.Core.Entities;
-using System;
+﻿using System;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Abstractions
 {

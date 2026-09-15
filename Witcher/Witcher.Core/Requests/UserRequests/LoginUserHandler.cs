@@ -8,7 +8,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Witcher.Core.Exceptions.SystemExceptions;
 using System;
 using Witcher.Core.Contracts.UserRequests;
 using Witcher.Core.Exceptions;

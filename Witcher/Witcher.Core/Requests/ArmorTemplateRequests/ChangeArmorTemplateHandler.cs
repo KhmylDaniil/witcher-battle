@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.ArmorTemplateRequests;
-using Witcher.Core.Entities;
+using Witcher.Core.DAL.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 using Witcher.Core.Exceptions.RequestExceptions;
 

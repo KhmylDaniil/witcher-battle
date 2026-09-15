@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.ArmorTemplateRequests;
-using Witcher.Core.Entities;
 using Witcher.Core.Requests.ArmorTemplateRequests;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core.Requests.ArmorTemplateRequests
 {

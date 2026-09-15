@@ -3,12 +3,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
 using Witcher.Core.Contracts.CreatureTemplateRequests;
-using Witcher.Core.Entities;
 using Witcher.Core.Requests.CreatureTemplateRequests;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using static Witcher.Core.BaseData.Enums;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core.Requests.CreatureTemplatesRequests
 {

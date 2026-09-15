@@ -226,7 +226,7 @@ namespace Witcher.MVC.Controllers
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[Route("[controller]/[action]")]
-		public async Task<IActionResult> CreateUserGame(CreateUserGameCommandViewModel command, CancellationToken cancellationToken)
+		public async Task<IActionResult> AddUser(CreateUserGameCommandViewModel command, CancellationToken cancellationToken)
 		{
 			ViewData["GameId"] = _gameIdService.GameId;
 			return View(await CreateVM(command, cancellationToken));
@@ -241,7 +241,7 @@ namespace Witcher.MVC.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("[controller]/[action]")]
-		public async Task<IActionResult> CreateUserGame(CreateUserGameCommand command, CancellationToken cancellationToken)
+		public async Task<IActionResult> AddUser(CreateUserGameCommand command, CancellationToken cancellationToken)
 		{
 			try
 			{

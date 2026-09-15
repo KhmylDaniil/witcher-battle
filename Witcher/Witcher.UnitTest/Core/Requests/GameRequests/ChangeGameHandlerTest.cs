@@ -1,10 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Witcher.Core.Abstractions;
 using Witcher.Core.Contracts.GameRequests;
-using Witcher.Core.Entities;
 using Witcher.Core.Requests.GameRequests;
 using System.Linq;
 using System.Threading.Tasks;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core.Requests.GameRequests
 {

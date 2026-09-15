@@ -1,5 +1,5 @@
 ﻿using System;
-using Witcher.Core.Entities;
+using Witcher.Core.DAL.Entities;
 using Witcher.Core.Exceptions.EntityExceptions;
 
 namespace Witcher.Core.Notifications

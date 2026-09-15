@@ -3,12 +3,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
-using Witcher.Core.Entities;
 using Witcher.Storage.Postgresql;
 using System;
 using System.Threading.Tasks;
 using Witcher.Core.Requests.UserRequests;
 using Witcher.Core.Contracts.UserRequests;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.UnitTest.Core.Requests.UserRequests
 {

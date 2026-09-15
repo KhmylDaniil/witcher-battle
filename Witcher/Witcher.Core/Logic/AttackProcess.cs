@@ -1,13 +1,13 @@
 ﻿using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
-using Witcher.Core.Entities;
-using Witcher.Core.Entities.Effects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using static Witcher.Core.BaseData.Enums;
 using Witcher.Core.Exceptions;
+using Witcher.Core.DAL.Entities;
+using Witcher.Core.DAL.Entities.Effects;
 
 namespace Witcher.Core.Logic
 {

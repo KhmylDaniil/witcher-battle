@@ -1,10 +1,10 @@
 ﻿using Witcher.Core.Abstractions;
 using Witcher.Core.BaseData;
-using Witcher.Core.Entities;
 using System;
 using System.Linq;
 using Witcher.Core.Exceptions.SystemExceptions;
 using Witcher.Core.Services.Hasher;
+using Witcher.Core.DAL.Entities;
 
 namespace Witcher.Core.Services.Authorization
 {

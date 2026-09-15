@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.Design;
 using Witcher.Core.Abstractions;
-using Witcher.Core.Entities;
+using Witcher.Core.DAL.Entities;
 using static Witcher.Core.BaseData.Enums;
 
 namespace Witcher.Core.Logic
