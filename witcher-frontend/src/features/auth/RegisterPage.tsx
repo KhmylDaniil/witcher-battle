@@ -13,7 +13,7 @@ export function RegisterPage() {
   const onSubmit = handleSubmit(async (values) => {
     try {
       await register_.mutateAsync(values)
-      navigate('/games', { replace: true })
+      navigate('/characters', { replace: true })
     } catch {
       // ошибка уже доступна через register_.error ниже
     }
@@ -27,11 +27,8 @@ export function RegisterPage() {
           <Field label="Имя">
             <Input {...register('name', { required: true, maxLength: 20 })} autoFocus />
           </Field>
-          <Field label="Email">
+          <Field label="Email (необязательно)">
             <Input type="email" {...register('email', { maxLength: 50 })} />
-          </Field>
-          <Field label="Телефон">
-            <Input {...register('phone')} />
           </Field>
           <Field label="Логин">
             <Input {...register('login', { required: true, maxLength: 25 })} />

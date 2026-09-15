@@ -270,3 +270,4 @@ Witcher/Witcher.MVC/log.txt
 
 # React SPA build output copied in for production hosting (built from witcher-frontend/, see its README)
 Witcher/Witcher.MVC/wwwroot/app/
+Witcher/Services/Wastelands.Service/Wastelands.Service.MVC/wwwroot/app/

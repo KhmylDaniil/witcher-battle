@@ -25,7 +25,34 @@ builder.Services.AddFluentValidationAutoValidation(configuration => configuratio
 
 ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.Stop;
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => options.LoginPath = "/login");
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+{
+	options.LoginPath = "/login";
+
+	// JSON API-клиент (SPA) ожидает 401/403 статусы, а не редирект на страницу логина —
+	// редиректим только запросы Razor-страниц, /api/** оставляем со статус-кодом как есть.
+	var originalRedirectToLogin = options.Events.OnRedirectToLogin;
+	options.Events.OnRedirectToLogin = context =>
+	{
+		if (context.Request.Path.StartsWithSegments("/api"))
+		{
+			context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+			return Task.CompletedTask;
+		}
+		return originalRedirectToLogin(context);
+	};
+
+	var originalRedirectToAccessDenied = options.Events.OnRedirectToAccessDenied;
+	options.Events.OnRedirectToAccessDenied = context =>
+	{
+		if (context.Request.Path.StartsWithSegments("/api"))
+		{
+			context.Response.StatusCode = StatusCodes.Status403Forbidden;
+			return Task.CompletedTask;
+		}
+		return originalRedirectToAccessDenied(context);
+	};
+});
 
 builder.Services.AddServiceDbContext<WastelandsDbContext>(builder.Configuration, "postgres");
 
@@ -64,5 +91,10 @@ app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Character}/{action=Index}")
 	.WithStaticAssets();
+
+// React SPA (witcher-frontend/) — прод-сборка (`npm run build`) копируется в wwwroot/app, отсюда раздаётся
+// статикой (UseStaticFiles выше), а client-side роутинг (react-router) обслуживается этим фолбэком.
+// В dev SPA не использует этот путь — там Vite dev-server + прокси на /api (см. vite.config.ts).
+app.MapFallbackToFile("/app/{*path:nonfile}", "app/index.html");
 
 app.Run();

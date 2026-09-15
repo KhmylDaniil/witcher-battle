@@ -13,7 +13,7 @@ export function LoginPage() {
   const onSubmit = handleSubmit(async (values) => {
     try {
       await login.mutateAsync(values)
-      navigate('/games', { replace: true })
+      navigate('/characters', { replace: true })
     } catch {
       // ошибка уже доступна через login.error ниже
     }

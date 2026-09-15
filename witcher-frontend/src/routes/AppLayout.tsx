@@ -9,8 +9,8 @@ export function AppLayout() {
   return (
     <div className="min-h-screen">
       <header className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 dark:border-neutral-800">
-        <Link to="/games" className="font-semibold">
-          Witcher Battle
+        <Link to="/characters" className="font-semibold">
+          Wastelands
         </Link>
         {user && (
           <Button variant="secondary" onClick={() => logout.mutate()} disabled={logout.isPending}>

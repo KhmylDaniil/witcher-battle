@@ -1,20 +1,21 @@
-# Witcher Battle — фронтенд
+# Wastelands — фронтенд
 
-React + TypeScript SPA поверх нового JSON API (`Witcher.MVC/Controllers/Api/*`). Полное описание архитектуры и
-причин выбора этого стека — в плане реализации (сообщение в истории чата / `joyful-hatching-wilkinson.md`).
+React + TypeScript SPA поверх JSON API `Wastelands.Service.MVC/Controllers/Api/*`.
 
-Реализовано в этой итерации: аутентификация, список/вступление в игры, полный CRUD шаблонов существ (включая
-части тела/навыки/модификаторы урона), CRUD боёв, и интерактивный экран проведения боя в реальном времени
-(SignalR вместо `location.reload()`). Остальные CRUD-разделы (BodyTemplate, WeaponTemplate, ArmorTemplate,
-Ability, Character, Item, Notification) — по тому же паттерну, что и `features/creatureTemplates/`, следующими
-итерациями.
+> Изначально этот проект был SPA для Witcher (`Witcher.MVC`) — полная история и обоснование стека в первом
+> плане реализации. Проект переведён на Wastelands (вторая, более чистая попытка того же приложения) —
+> полный снапшот версии для Witcher сохранён в ветке `archive/witcher-full-app-2026-09-15`.
+
+Реализовано: аутентификация (регистрация/логин/логаут), CRUD персонажей (7 характеристик), добавление/
+изменение/удаление навыков. У Wastelands пока нет концепции игр/боёв/шаблонов существ — по мере переноса
+логики Witcher в Wastelands сюда добавятся соответствующие разделы фронтенда.
 
 ## Разработка
 
 Нужны два параллельных процесса — бэкенд и dev-сервер фронтенда:
 
 ```bash
-# терминал 1 — бэкенд (из Witcher/Witcher.MVC)
+# терминал 1 — бэкенд (из Witcher/Services/Wastelands.Service/Wastelands.Service.MVC)
 dotnet run
 
 # терминал 2 — фронтенд (из witcher-frontend/)
@@ -22,10 +23,16 @@ npm install
 npm run dev
 ```
 
-Vite dev-сервер (обычно `http://localhost:5173`) проксирует `/api/**` и `/messageHub` на бэкенд
-(`http://localhost:5277` — см. `vite.config.ts` и `Witcher.MVC/Properties/launchSettings.json`), поэтому
-cookie-аутентификация работает без какой-либо настройки CORS — браузер видит всё как один origin. Открывать
-нужно именно адрес Vite (5173), а не адрес бэкенда.
+Vite dev-сервер (обычно `http://localhost:5173`) проксирует `/api/**` на бэкенд (`https://localhost:7114` —
+см. `vite.config.ts` и `Wastelands.Service.MVC/Properties/launchSettings.json`), поэтому cookie-аутентификация
+работает без какой-либо настройки CORS — браузер видит всё как один origin. Открывать нужно именно адрес
+Vite (5173), а не адрес бэкенда. Прокси нацелен на HTTPS-порт намеренно — на HTTP-порту бэкенд обязательно
+редиректит на HTTPS (`app.UseHttpsRedirection()`), и если прокси целится в HTTP, браузер сам идёт по этому
+редиректу как по настоящему кросс-origin запросу — упирается в CORS, которого специально нет.
+
+Бэкенду нужен Postgres по адресу из `Wastelands.Service.MVC/appsettings.json`
+(`Host=localhost;Port=5431;Database=wastelands;Username=postgres;Password=admin`) — либо подними такой
+кластер, либо переопредели `ConnectionStrings__Postgres` через переменную окружения под то, что есть локально.
 
 ## Продакшен-сборка
 
@@ -33,10 +40,10 @@ cookie-аутентификация работает без какой-либо 
 
 ```bash
 npm run build
-rm -rf ../Witcher/Witcher.MVC/wwwroot/app
-cp -r dist ../Witcher/Witcher.MVC/wwwroot/app
+rm -rf ../Witcher/Services/Wastelands.Service/Wastelands.Service.MVC/wwwroot/app
+cp -r dist ../Witcher/Services/Wastelands.Service/Wastelands.Service.MVC/wwwroot/app
 ```
 
-После этого `dotnet run`/деплой `Witcher.MVC` — SPA доступен на `/app`, API и SignalR-хаб на том же origin
-(см. `app.MapFallbackToFile` в `Program.cs`). Шаг пока ручной (см. план) — не завязан на MSBuild, чтобы не
-усложнять .NET-сборку зависимостью от Node.
+После этого `dotnet run`/деплой `Wastelands.Service.MVC` — SPA доступен на `/app`, API на том же origin
+(см. `app.MapFallbackToFile` в `Program.cs`). Шаг пока ручной — не завязан на MSBuild, чтобы не усложнять
+.NET-сборку зависимостью от Node.
