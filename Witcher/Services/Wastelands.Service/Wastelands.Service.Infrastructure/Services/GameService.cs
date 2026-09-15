@@ -53,9 +53,10 @@ namespace Wastelands.Service.Infrastructure.Services
 			var myMemberships = await _userGameRepository.GetListByFilterAsync(new UserGameFilter { UserId = currentUserId });
 			var myGameIds = myMemberships.Select(x => x.GameId).ToHashSet();
 
-			var myPendingRequests = await _gameJoinRequestRepository.GetListByFilterAsync(
-				new GameJoinRequestFilter { UserId = currentUserId, Status = GameJoinRequestStatus.Pending });
-			var myPendingGameIds = myPendingRequests.Select(x => x.GameId).ToHashSet();
+			var myRequests = await _gameJoinRequestRepository.GetListByFilterAsync(
+				new GameJoinRequestFilter { UserId = currentUserId });
+			var myPendingGameIds = myRequests.Where(x => x.Status == GameJoinRequestStatus.Pending).Select(x => x.GameId).ToHashSet();
+			var myDeclinedGameIds = myRequests.Where(x => x.Status == GameJoinRequestStatus.Declined).Select(x => x.GameId).ToHashSet();
 
 			foreach (var dto in dtos)
 			{
@@ -65,7 +66,9 @@ namespace Wastelands.Service.Infrastructure.Services
 						? GameMembershipStatus.Member
 						: myPendingGameIds.Contains(dto.Id)
 							? GameMembershipStatus.RequestPending
-							: GameMembershipStatus.None;
+							: myDeclinedGameIds.Contains(dto.Id)
+								? GameMembershipStatus.Declined
+								: GameMembershipStatus.None;
 			}
 
 			return dtos;
@@ -155,6 +158,9 @@ namespace Wastelands.Service.Infrastructure.Services
 
 			if (await _gameJoinRequestRepository.AnyAsync(x => x.GameId == game.Id && x.UserId == currentUserId && x.Status == GameJoinRequestStatus.Pending))
 				return GameMembershipStatus.RequestPending;
+
+			if (await _gameJoinRequestRepository.AnyAsync(x => x.GameId == game.Id && x.UserId == currentUserId && x.Status == GameJoinRequestStatus.Declined))
+				return GameMembershipStatus.Declined;
 
 			return GameMembershipStatus.None;
 		}

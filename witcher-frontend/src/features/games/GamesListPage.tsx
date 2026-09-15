@@ -10,6 +10,7 @@ const STATUS_LABEL: Record<GameMembershipStatus, string> = {
   Owner: 'Вы — мастер',
   Member: 'Вы участник',
   RequestPending: 'Заявка отправлена',
+  Declined: 'Заявка отклонена',
   None: '',
 }
 
@@ -17,8 +18,12 @@ const STATUS_CLASS: Record<GameMembershipStatus, string> = {
   Owner: 'bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300',
   Member: 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300',
   RequestPending: 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
+  Declined: 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300',
   None: '',
 }
+
+/** Для этих статусов кнопка запроса на присоединение активна */
+const CAN_REQUEST_JOIN: GameMembershipStatus[] = ['None', 'Declined']
 
 export function GamesListPage() {
   const queryClient = useQueryClient()
@@ -85,19 +90,27 @@ export function GamesListPage() {
             <Link to={`/games/${g.id}`} className="font-semibold hover:text-violet-600">
               {g.name}
             </Link>
-            <div className="flex items-center justify-between gap-2">
-              {g.membershipStatus !== 'None' ? (
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              {!CAN_REQUEST_JOIN.includes(g.membershipStatus) && (
                 <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_CLASS[g.membershipStatus]}`}>
                   {STATUS_LABEL[g.membershipStatus]}
                 </span>
-              ) : (
-                <Button
-                  className="px-2 py-1 text-xs"
-                  disabled={requestJoin.isPending}
-                  onClick={() => requestJoin.mutate(g.id)}
-                >
-                  Запросить присоединение
-                </Button>
+              )}
+              {CAN_REQUEST_JOIN.includes(g.membershipStatus) && (
+                <>
+                  {g.membershipStatus === 'Declined' && (
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_CLASS.Declined}`}>
+                      {STATUS_LABEL.Declined}
+                    </span>
+                  )}
+                  <Button
+                    className="px-2 py-1 text-xs"
+                    disabled={requestJoin.isPending}
+                    onClick={() => requestJoin.mutate(g.id)}
+                  >
+                    Запросить присоединение
+                  </Button>
+                </>
               )}
             </div>
           </Card>

@@ -40,7 +40,7 @@ export interface CurrentUser {
 
 // ---- Games (GamesApiController) ----
 
-export type GameMembershipStatus = 'None' | 'Owner' | 'Member' | 'RequestPending'
+export type GameMembershipStatus = 'None' | 'Owner' | 'Member' | 'RequestPending' | 'Declined'
 
 export interface Game {
   id: number

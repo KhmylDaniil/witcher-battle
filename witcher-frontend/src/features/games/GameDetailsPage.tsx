@@ -80,6 +80,14 @@ export function GameDetailsPage() {
           </Button>
         </Card>
       )}
+      {g.membershipStatus === 'Declined' && (
+        <Card className="flex items-center justify-between gap-3">
+          <p className="text-sm text-red-600 dark:text-red-400">Ваша заявка на присоединение была отклонена мастером.</p>
+          <Button disabled={requestJoin.isPending} onClick={() => requestJoin.mutate()}>
+            Запросить присоединение снова
+          </Button>
+        </Card>
+      )}
       {g.membershipStatus === 'RequestPending' && (
         <Card>
           <p className="text-sm text-neutral-500">Заявка на присоединение отправлена, ожидает решения мастера.</p>

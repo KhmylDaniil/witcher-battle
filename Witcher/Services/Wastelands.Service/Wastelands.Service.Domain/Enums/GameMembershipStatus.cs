@@ -6,5 +6,6 @@ namespace Wastelands.Service.Domain.Enums
 		Owner = 1,
 		Member = 2,
 		RequestPending = 3,
+		Declined = 4,
 	}
 }
