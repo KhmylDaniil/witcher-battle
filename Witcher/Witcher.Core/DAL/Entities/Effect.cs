@@ -100,7 +100,7 @@ namespace Witcher.Core.DAL.Entities
 		/// <returns>Эффект нужного типа</returns>
 		public static T CreateEffect<T>(IRollService rollService, Creature attacker, Creature target, Condition condition) where T : Effect
 		{
-			var name = "Witcher.Core.Entities.Effects." + Enum.GetName(condition) + "Effect";
+			var name = "Witcher.Core.DAL.Entities.Effects." + Enum.GetName(condition) + "Effect";
 
 			Type type = Type.GetType(name);
 

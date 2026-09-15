@@ -76,7 +76,7 @@ namespace Witcher.Core.DAL.Entities
 		/// <returns>Критический эффект нужного типа</returns>
 		public static T CreateCritEffect<T>(Creature target, CreaturePart aimedPart, Condition crit) where T : Effect
 		{
-			var name = "Witcher.Core.Entities.Effects." + Enum.GetName(crit) + "CritEffect";
+			var name = "Witcher.Core.DAL.Entities.Effects." + Enum.GetName(crit) + "CritEffect";
 
 			Type type = Type.GetType(name);
 
