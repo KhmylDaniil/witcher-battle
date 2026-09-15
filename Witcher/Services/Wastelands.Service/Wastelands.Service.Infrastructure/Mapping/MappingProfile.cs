@@ -17,6 +17,11 @@ namespace Wastelands.Service.Infrastructure.Mapping
 
 			CreateMap<Game, GameDto>();
 			CreateMap<GameJoinRequest, GameJoinRequestDto>();
+
+			CreateMap<BodyTemplatePart, BodyTemplatePartDto>();
+			CreateMap<BodyTemplate, BodyTemplateDto>();
+			CreateMap<CreatureTemplatePart, CreatureTemplatePartDto>();
+			CreateMap<CreatureTemplate, CreatureTemplateDto>();
 		}
 	}
 }

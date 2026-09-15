@@ -23,6 +23,8 @@ namespace Wastelands.Service.MVC.Extensions
 			services.AddScoped<IGameRepository, GameRepository>();
 			services.AddScoped<IUserGameRepository, UserGameRepository>();
 			services.AddScoped<IGameJoinRequestRepository, GameJoinRequestRepository>();
+			services.AddScoped<IBodyTemplateRepository, BodyTemplateRepository>();
+			services.AddScoped<ICreatureTemplateRepository, CreatureTemplateRepository>();
 
 			services.AddScoped<IUserContext, UserContext>();
 
@@ -31,6 +33,8 @@ namespace Wastelands.Service.MVC.Extensions
 			services.AddScoped<ICharacterService, CharacterService>();
 			services.AddScoped<IGameService, GameService>();
 			services.AddScoped<IGameJoinRequestService, GameJoinRequestService>();
+			services.AddScoped<IBodyTemplateService, BodyTemplateService>();
+			services.AddScoped<ICreatureTemplateService, CreatureTemplateService>();
 
 			services.AddAutoMapper(typeof(MappingProfile));
 

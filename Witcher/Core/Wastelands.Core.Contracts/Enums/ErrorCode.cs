@@ -23,6 +23,11 @@
 		UserNotGameMember = 304,
 		GameJoinRequestNotPending = 305,
 
+		// body/creature template errors
+		BodyTemplateNotFound = 400,
+		CreatureTemplateNotFound = 401,
+		BodyTemplateBelongsToAnotherGame = 402,
+
 		// Common error codes 1100...1199
 		RequestValidationError = 1100,
 		InvalidArgument = 1101,

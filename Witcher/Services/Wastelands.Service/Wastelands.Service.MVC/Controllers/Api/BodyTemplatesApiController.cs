@@ -1,0 +1,46 @@
+using Microsoft.AspNetCore.Mvc;
+using Wastelands.Service.Domain.Contracts;
+using Wastelands.Service.Domain.Models.Dto;
+using Wastelands.Service.Domain.Models.Filters;
+using Wastelands.Service.Domain.Models.Requests;
+
+namespace Wastelands.Service.MVC.Controllers.Api
+{
+	/// <summary>Создание и редактирование шаблонов тела — доступно только мастеру игры (см. BodyTemplateService/BodyTemplateRepository).</summary>
+	[Route("api/body-templates")]
+	public class BodyTemplatesApiController : ApiControllerBase
+	{
+		private readonly IBodyTemplateService _bodyTemplateService;
+
+		public BodyTemplatesApiController(IBodyTemplateService bodyTemplateService)
+		{
+			_bodyTemplateService = bodyTemplateService;
+		}
+
+		[HttpGet]
+		public async Task<List<BodyTemplateDto>> Index([FromQuery] BodyTemplateFilter filter)
+			=> await _bodyTemplateService.GetBodyTemplatesAsync(filter);
+
+		[HttpGet("{id:long}")]
+		public async Task<BodyTemplateDto> Get(long id)
+			=> await _bodyTemplateService.GetBodyTemplateByIdAsync(id);
+
+		[HttpPost]
+		public async Task<BodyTemplateDto> Create(CreateBodyTemplateRequest request)
+			=> await _bodyTemplateService.CreateBodyTemplateAsync(request);
+
+		[HttpPut("{id:long}")]
+		public async Task<BodyTemplateDto> Update(long id, UpdateBodyTemplateRequest request)
+		{
+			request.Id = id;
+			return await _bodyTemplateService.UpdateBodyTemplateAsync(request);
+		}
+
+		[HttpDelete("{id:long}")]
+		public async Task<IActionResult> Delete(long id)
+		{
+			await _bodyTemplateService.DeleteBodyTemplateAsync(id);
+			return NoContent();
+		}
+	}
+}

@@ -15,6 +15,14 @@ namespace Wastelands.Service.Infrastructure
 
 		DbSet<GameJoinRequest> GameJoinRequests { get; set; }
 
+		DbSet<BodyTemplate> BodyTemplates { get; set; }
+
+		DbSet<BodyTemplatePart> BodyTemplateParts { get; set; }
+
+		DbSet<CreatureTemplate> CreatureTemplates { get; set; }
+
+		DbSet<CreatureTemplatePart> CreatureTemplateParts { get; set; }
+
 		public WastelandsDbContext(DbContextOptions<WastelandsDbContext> options) : base(options)
 		{
 		}

@@ -91,3 +91,89 @@ export interface CharacterFormValues {
   emp: number
   wil: number
 }
+
+// ---- Body templates (BodyTemplatesApiController) — доступны только мастеру игры ----
+
+export const BODY_PART_TYPES = ['Void', 'Head', 'Torso', 'Arm', 'Leg', 'Wing', 'Tail'] as const
+export type BodyPartType = (typeof BODY_PART_TYPES)[number]
+
+export interface BodyTemplatePart {
+  id: number
+  name: string
+  bodyPartType: BodyPartType
+  damageModifier: number
+  hitPenalty: number
+  minToHit: number
+  maxToHit: number
+}
+
+export interface BodyTemplate {
+  id: number
+  gameId: number
+  name: string
+  description: string | null
+  parts: BodyTemplatePart[]
+}
+
+export interface BodyTemplateFormValues {
+  name: string
+  description: string
+}
+
+// ---- Creature templates (CreatureTemplatesApiController) — доступны только мастеру игры ----
+
+export const CREATURE_TYPES = [
+  'Human', 'Necrophage', 'Specter', 'Beast', 'Cursed', 'Hybrid',
+  'Insectoid', 'Elementa', 'Relict', 'Orgoid', 'Draconid', 'Vampire',
+] as const
+export type CreatureType = (typeof CREATURE_TYPES)[number]
+
+export interface CreatureTemplatePart {
+  id: number
+  name: string
+  bodyPartType: BodyPartType
+  damageModifier: number
+  hitPenalty: number
+  minToHit: number
+  maxToHit: number
+  armor: number
+}
+
+export interface CreatureTemplate {
+  id: number
+  gameId: number
+  bodyTemplateId: number
+  creatureType: CreatureType
+  name: string
+  description: string | null
+  hp: number
+  sta: number
+  int: number
+  ref: number
+  dex: number
+  body: number
+  emp: number
+  cra: number
+  will: number
+  speed: number
+  luck: number
+  parts: CreatureTemplatePart[]
+}
+
+export interface CreatureTemplateFormValues {
+  bodyTemplateId: number
+  creatureType: CreatureType
+  name: string
+  description: string
+  hp: number
+  sta: number
+  int: number
+  ref: number
+  dex: number
+  body: number
+  emp: number
+  cra: number
+  will: number
+  speed: number
+  luck: number
+}
