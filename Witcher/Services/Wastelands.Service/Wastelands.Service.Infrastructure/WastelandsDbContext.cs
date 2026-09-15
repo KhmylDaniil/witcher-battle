@@ -9,6 +9,12 @@ namespace Wastelands.Service.Infrastructure
 
 		DbSet<Character> Characters { get; set; }
 
+		DbSet<Game> Games { get; set; }
+
+		DbSet<UserGame> UserGames { get; set; }
+
+		DbSet<GameJoinRequest> GameJoinRequests { get; set; }
+
 		public WastelandsDbContext(DbContextOptions<WastelandsDbContext> options) : base(options)
 		{
 		}

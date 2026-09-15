@@ -2,6 +2,8 @@
 {
 	public class CreateCharacterRequest : BaseRequest
 	{
+		public long GameId { get; set; }
+
 		public string Name { get; set; }
 
 		public int Int { get; set; }

@@ -10,7 +10,8 @@ import { charactersApi } from './api'
 const STATS = ['int', 'str', 'rea', 'dex', 'cra', 'emp', 'wil'] as const
 
 export function CharacterFormPage() {
-  const { characterId } = useParams<{ characterId: string }>()
+  const { gameId, characterId } = useParams<{ gameId: string; characterId: string }>()
+  const gameIdNum = Number(gameId)
   const isEdit = !!characterId
   const id = characterId ? Number(characterId) : undefined
   const navigate = useNavigate()
@@ -36,11 +37,11 @@ export function CharacterFormPage() {
   const save = useMutation({
     mutationFn: (values: CharacterFormValues) => {
       const payload: CharacterFormValues = { ...values, ...Object.fromEntries(STATS.map((s) => [s, Number(values[s])])) }
-      return isEdit ? charactersApi.update(id!, payload) : charactersApi.create(payload)
+      return isEdit ? charactersApi.update(id!, payload) : charactersApi.create(gameIdNum, payload)
     },
     onSuccess: async (result) => {
       await queryClient.invalidateQueries({ queryKey: ['characters'] })
-      navigate(`/characters/${result.id}`)
+      navigate(`/games/${gameIdNum}/characters/${result.id}`)
     },
   })
 

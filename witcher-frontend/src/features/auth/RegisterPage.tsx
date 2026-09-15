@@ -13,7 +13,7 @@ export function RegisterPage() {
   const onSubmit = handleSubmit(async (values) => {
     try {
       await register_.mutateAsync(values)
-      navigate('/characters', { replace: true })
+      navigate('/games', { replace: true })
     } catch {
       // ошибка уже доступна через register_.error ниже
     }

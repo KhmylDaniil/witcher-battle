@@ -1,17 +1,19 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Wastelands.Service.Domain.Entities;
 
 namespace Wastelands.Service.Domain.Models.Filters
 {
-	public class CharacterFilter : BaseFilter<Character>
+	public class UserGameFilter : BaseFilter<UserGame>
 	{
-		public string Name { get; set; }
+		public long? UserId { get; set; }
+
 		public long? GameId { get; set; }
-		public override Expression<Func<Character, bool>> GetFilterExpression()
+
+		public override Expression<Func<UserGame, bool>> GetFilterExpression()
 		{
 			return entity =>
 			(Id == null || entity.Id == Id) &&
-			(Name == null || entity.Name.Contains(Name)) &&
+			(UserId == null || entity.UserId == UserId) &&
 			(GameId == null || entity.GameId == GameId);
 		}
 	}

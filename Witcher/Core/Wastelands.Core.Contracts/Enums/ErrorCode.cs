@@ -15,6 +15,14 @@
 		CharacterNotFound = 200,
 		CharacterSkillAlreadyExisted = 201,
 
+		// game errors
+		GameNotFound = 300,
+		GameJoinRequestNotFound = 301,
+		GameJoinRequestAlreadyPending = 302,
+		UserAlreadyGameMember = 303,
+		UserNotGameMember = 304,
+		GameJoinRequestNotPending = 305,
+
 		// Common error codes 1100...1199
 		RequestValidationError = 1100,
 		InvalidArgument = 1101,

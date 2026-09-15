@@ -38,11 +38,38 @@ export interface CurrentUser {
   userId: number
 }
 
+// ---- Games (GamesApiController) ----
+
+export type GameMembershipStatus = 'None' | 'Owner' | 'Member' | 'RequestPending'
+
+export interface Game {
+  id: number
+  name: string
+  createdByUserId: number
+  membershipStatus: GameMembershipStatus
+}
+
+export interface GameFormValues {
+  name: string
+}
+
+// ---- Join requests (GameJoinRequestsApiController) ----
+
+export type GameJoinRequestStatus = 'Pending' | 'Accepted' | 'Declined'
+
+export interface GameJoinRequest {
+  id: number
+  userId: number
+  gameId: number
+  status: GameJoinRequestStatus
+}
+
 // ---- Characters (CharactersApiController) ----
 
 export interface Character {
   id: number
   userId: number
+  gameId: number
   name: string
   int: number
   str: number

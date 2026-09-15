@@ -3,7 +3,8 @@ import { LoginPage } from './features/auth/LoginPage'
 import { RegisterPage } from './features/auth/RegisterPage'
 import { CharacterDetailsPage } from './features/characters/CharacterDetailsPage'
 import { CharacterFormPage } from './features/characters/CharacterFormPage'
-import { CharactersListPage } from './features/characters/CharactersListPage'
+import { GameDetailsPage } from './features/games/GameDetailsPage'
+import { GamesListPage } from './features/games/GamesListPage'
 import { AppLayout } from './routes/AppLayout'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 
@@ -16,11 +17,12 @@ export default function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
-            <Route path="/" element={<Navigate to="/characters" replace />} />
-            <Route path="/characters" element={<CharactersListPage />} />
-            <Route path="/characters/new" element={<CharacterFormPage />} />
-            <Route path="/characters/:characterId" element={<CharacterDetailsPage />} />
-            <Route path="/characters/:characterId/edit" element={<CharacterFormPage />} />
+            <Route path="/" element={<Navigate to="/games" replace />} />
+            <Route path="/games" element={<GamesListPage />} />
+            <Route path="/games/:gameId" element={<GameDetailsPage />} />
+            <Route path="/games/:gameId/characters/new" element={<CharacterFormPage />} />
+            <Route path="/games/:gameId/characters/:characterId" element={<CharacterDetailsPage />} />
+            <Route path="/games/:gameId/characters/:characterId/edit" element={<CharacterFormPage />} />
           </Route>
         </Route>
 

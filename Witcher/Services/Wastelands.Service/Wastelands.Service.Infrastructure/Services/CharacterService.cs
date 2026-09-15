@@ -18,11 +18,20 @@ namespace Wastelands.Service.Infrastructure.Services
 	{
 		private readonly IMapper _mapper;
 		private readonly ICharacterRepository _characterRepository;
+		private readonly IGameRepository _gameRepository;
+		private readonly IUserGameRepository _userGameRepository;
 		private readonly IUserContext _userContext;
 
-		public CharacterService(ICharacterRepository repository, IMapper mapper, IUserContext userContext)
+		public CharacterService(
+			ICharacterRepository repository,
+			IGameRepository gameRepository,
+			IUserGameRepository userGameRepository,
+			IMapper mapper,
+			IUserContext userContext)
 		{
 			_characterRepository = repository;
+			_gameRepository = gameRepository;
+			_userGameRepository = userGameRepository;
 			_mapper = mapper;
 			_userContext = userContext;
 		}
@@ -44,13 +53,27 @@ namespace Wastelands.Service.Infrastructure.Services
 
 		public async Task<CharacterDto> CreateCharacterAsync(CreateCharacterRequest request)
 		{
-			if(await _characterRepository.AnyAsync(x => x.Name == request.Name))
+			var currentUserId = _userContext.CurrentUserId;
+
+			var game = await _gameRepository.GetByIdAsync(request.GameId);
+			NotFoundException.ThrowIfNull(game, ErrorCode.GameNotFound, nameof(Game), nameof(Game.Id), request.GameId.ToString());
+
+			var isGameMember = game.CreatedByUserId == currentUserId
+				|| await _userGameRepository.AnyAsync(x => x.GameId == request.GameId && x.UserId == currentUserId);
+
+			if (!isGameMember)
+			{
+				throw new InvalidArgumentException(ErrorCode.UserNotGameMember, "Персонажа можно создать только в игре, в которой вы участвуете.");
+			}
+
+			if (await _characterRepository.AnyAsync(x => x.Name == request.Name))
 			{
 				throw new BadRequestException(ErrorCode.InvalidArgument, string.Format(ExceptionMessages.ValueMustBeUnique, nameof(request.Name)));
 			}
 
 			var entity = new Character(
-				userId: _userContext.CurrentUserId,
+				userId: currentUserId,
+				gameId: request.GameId,
 				name: request.Name,
 				@int: request.Int,
 				str: request.Str,

@@ -14,6 +14,9 @@ namespace Wastelands.Service.Infrastructure.Mapping
 
 			CreateMap<Character, CharacterDto>()
 				.ReverseMap();
+
+			CreateMap<Game, GameDto>();
+			CreateMap<GameJoinRequest, GameJoinRequestDto>();
 		}
 	}
 }

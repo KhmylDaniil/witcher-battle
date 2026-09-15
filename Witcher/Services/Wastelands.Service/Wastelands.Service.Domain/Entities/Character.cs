@@ -8,6 +8,8 @@ namespace Wastelands.Service.Domain.Entities
 	{
 		public long UserId { get; private set; }
 
+		public long GameId { get; private set; }
+
 		public string Name { get; private set; }
 
 		public int Int {  get; private set; }
@@ -30,9 +32,10 @@ namespace Wastelands.Service.Domain.Entities
 		{
 		}
 
-		public Character(long userId, string name, int @int, int str, int rea, int dex, int cra, int emp, int wil)
+		public Character(long userId, long gameId, string name, int @int, int str, int rea, int dex, int cra, int emp, int wil)
 		{
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(userId, nameof(userId));
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(gameId, nameof(gameId));
 			InvalidArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(@int, nameof(@int));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(str, nameof(str));
@@ -43,6 +46,7 @@ namespace Wastelands.Service.Domain.Entities
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(wil, nameof(wil));
 
 			UserId = userId;
+			GameId = gameId;
 			Name = name;
 			Int = @int;
 			Str = str;

@@ -21,7 +21,7 @@ export function CharacterDetailsPage() {
     mutationFn: () => charactersApi.remove(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['characters'] })
-      navigate('/characters')
+      navigate(character.data ? `/games/${character.data.gameId}` : '/games')
     },
   })
 
@@ -56,7 +56,10 @@ export function CharacterDetailsPage() {
         title={c.name}
         actions={
           <>
-            <Link to={`/characters/${c.id}/edit`}>
+            <Link to={`/games/${c.gameId}`}>
+              <Button variant="secondary">К игре</Button>
+            </Link>
+            <Link to={`/games/${c.gameId}/characters/${c.id}/edit`}>
               <Button variant="secondary">Изменить</Button>
             </Link>
             <Button

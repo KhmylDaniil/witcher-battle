@@ -20,12 +20,17 @@ namespace Wastelands.Service.MVC.Extensions
 
 			services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<ICharacterRepository, CharacterRepository>();
+			services.AddScoped<IGameRepository, GameRepository>();
+			services.AddScoped<IUserGameRepository, UserGameRepository>();
+			services.AddScoped<IGameJoinRequestRepository, GameJoinRequestRepository>();
 
 			services.AddScoped<IUserContext, UserContext>();
 
 			services.AddScoped<IPasswordService, PasswordService>();
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<ICharacterService, CharacterService>();
+			services.AddScoped<IGameService, GameService>();
+			services.AddScoped<IGameJoinRequestService, GameJoinRequestService>();
 
 			services.AddAutoMapper(typeof(MappingProfile));
 

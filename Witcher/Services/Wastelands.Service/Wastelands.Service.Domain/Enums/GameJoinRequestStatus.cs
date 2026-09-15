@@ -1,0 +1,9 @@
+namespace Wastelands.Service.Domain.Enums
+{
+	public enum GameJoinRequestStatus
+	{
+		Pending = 0,
+		Accepted = 1,
+		Declined = 2,
+	}
+}
