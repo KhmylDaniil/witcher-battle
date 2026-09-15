@@ -68,11 +68,11 @@ namespace Wastelands.EfDataAccess.Repositories
 			}
 
 			var ids = entities.Select(x => x.Id).ToList();
-			var expression = GetUpdateExpression(GetPropertyExpression<TValue>(propertyName), value);
+			var property = GetPropertyExpression<TValue>(propertyName);
 
 			await GetQuery()
 				.Where(x => ids.Contains(x.Id))
-				.ExecuteUpdateAsync(expression);
+				.ExecuteUpdateAsync(setters => setters.SetProperty(property, value));
 		}
 
 		private static Expression<Func<TEntity, TValue>> GetPropertyExpression<TValue>(string propertyName)
@@ -81,20 +81,6 @@ namespace Wastelands.EfDataAccess.Repositories
 			var property = Expression.Property(arg, propertyName);
 
 			return Expression.Lambda<Func<TEntity, TValue>>(property, arg);
-		}
-
-		private static Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> GetUpdateExpression<TProperty>(
-			Expression<Func<TEntity, TProperty>> property, TProperty value)
-		{
-			var setParameter = Expression.Parameter(typeof(SetPropertyCalls<TEntity>), "x");
-
-			var method = typeof(SetPropertyCalls<TEntity>)
-				.GetMethods()
-				.Last(x => x.Name == nameof(SetPropertyCalls<TEntity>.SetProperty));
-
-			var call = Expression.Call(setParameter, method.MakeGenericMethod(typeof(TProperty)), property, Expression.Constant(value));
-
-			return Expression.Lambda<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>>(call, setParameter);
 		}
 	}
 }
