@@ -27,6 +27,7 @@
 		BodyTemplateNotFound = 400,
 		CreatureTemplateNotFound = 401,
 		BodyTemplateBelongsToAnotherGame = 402,
+		CreatureTemplatePartNotFound = 403,
 
 		// Common error codes 1100...1199
 		RequestValidationError = 1100,

@@ -9,4 +9,7 @@ export const creatureTemplatesApi = {
   update: (id: number, payload: CreatureTemplateFormValues) =>
     api.put<CreatureTemplate>(`/api/creature-templates/${id}`, payload),
   remove: (id: number) => api.delete<void>(`/api/creature-templates/${id}`),
+
+  updatePartArmor: (creatureTemplateId: number, partId: number, armor: number) =>
+    api.put<CreatureTemplate>(`/api/creature-templates/${creatureTemplateId}/parts/${partId}/armor`, { armor }),
 }

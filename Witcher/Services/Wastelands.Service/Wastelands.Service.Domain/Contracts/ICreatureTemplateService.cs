@@ -14,6 +14,8 @@ namespace Wastelands.Service.Domain.Contracts
 
 		Task<CreatureTemplateDto> UpdateCreatureTemplateAsync(UpdateCreatureTemplateRequest request);
 
+		Task<CreatureTemplateDto> UpdatePartArmorAsync(long creatureTemplateId, long partId, int armor);
+
 		Task DeleteCreatureTemplateAsync(long id);
 	}
 }

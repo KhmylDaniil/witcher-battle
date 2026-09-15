@@ -1,3 +1,4 @@
+using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
 using Wastelands.Core.EfDataAccess.Entities;
 using Wastelands.Service.Domain.Enums;
 
@@ -37,6 +38,12 @@ namespace Wastelands.Service.Domain.Entities
 			MinToHit = sourcePart.MinToHit;
 			MaxToHit = sourcePart.MaxToHit;
 			Armor = 0;
+		}
+
+		public void UpdateArmor(int armor)
+		{
+			InvalidArgumentException.ThrowIfLessThanZero(armor, nameof(armor));
+			Armor = armor;
 		}
 	}
 }

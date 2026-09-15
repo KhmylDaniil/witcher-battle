@@ -98,6 +98,24 @@ namespace Wastelands.Service.Infrastructure.Services
 			return _mapper.Map<CreatureTemplateDto>(creatureTemplate);
 		}
 
+		public async Task<CreatureTemplateDto> UpdatePartArmorAsync(long creatureTemplateId, long partId, int armor)
+		{
+			var creatureTemplate = await GetByIdAsync(creatureTemplateId);
+			var part = creatureTemplate.Parts.FirstOrDefault(x => x.Id == partId);
+
+			NotFoundException.ThrowIfNull(
+				part,
+				ErrorCode.CreatureTemplatePartNotFound,
+				nameof(CreatureTemplatePart),
+				nameof(CreatureTemplatePart.Id),
+				partId.ToString());
+
+			part.UpdateArmor(armor);
+			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
+
+			return _mapper.Map<CreatureTemplateDto>(creatureTemplate);
+		}
+
 		public async Task DeleteCreatureTemplateAsync(long id)
 		{
 			var creatureTemplate = await GetByIdAsync(id);

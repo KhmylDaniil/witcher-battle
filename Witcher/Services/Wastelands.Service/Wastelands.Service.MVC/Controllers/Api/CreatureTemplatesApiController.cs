@@ -42,5 +42,14 @@ namespace Wastelands.Service.MVC.Controllers.Api
 			await _creatureTemplateService.DeleteCreatureTemplateAsync(id);
 			return NoContent();
 		}
+
+		[HttpPut("{creatureTemplateId:long}/parts/{partId:long}/armor")]
+		public async Task<CreatureTemplateDto> UpdatePartArmor(long creatureTemplateId, long partId, [FromBody] UpdateArmorPayload payload)
+			=> await _creatureTemplateService.UpdatePartArmorAsync(creatureTemplateId, partId, payload.Armor);
+	}
+
+	public sealed class UpdateArmorPayload
+	{
+		public int Armor { get; set; }
 	}
 }

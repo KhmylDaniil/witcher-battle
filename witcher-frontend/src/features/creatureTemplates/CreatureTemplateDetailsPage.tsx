@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Button, Card, PageHeader, Spinner } from '../../components/ui'
+import { Button, Card, ErrorText, Input, PageHeader, Spinner } from '../../components/ui'
+import { ApiError } from '../../lib/apiClient'
 import { creatureTemplatesApi } from './api'
 
 const STATS = ['hp', 'sta', 'int', 'ref', 'dex', 'body', 'emp', 'cra', 'will', 'speed', 'luck'] as const
@@ -18,6 +20,16 @@ export function CreatureTemplateDetailsPage() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['creature-templates'] })
       navigate(`/games/${gameId}`)
+    },
+  })
+
+  const [editingPartId, setEditingPartId] = useState<number | null>(null)
+  const [armorValue, setArmorValue] = useState(0)
+  const updateArmor = useMutation({
+    mutationFn: (partId: number) => creatureTemplatesApi.updatePartArmor(id, partId, armorValue),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['creature-templates', id] })
+      setEditingPartId(null)
     },
   })
 
@@ -71,6 +83,7 @@ export function CreatureTemplateDetailsPage() {
               <th className="py-1 pr-3">Пенальти</th>
               <th className="py-1 pr-3">To hit</th>
               <th className="py-1 pr-3">Броня</th>
+              <th className="py-1 pr-3" />
             </tr>
           </thead>
           <tbody>
@@ -83,11 +96,55 @@ export function CreatureTemplateDetailsPage() {
                 <td className="py-1 pr-3">
                   {p.minToHit}–{p.maxToHit}
                 </td>
-                <td className="py-1 pr-3">{p.armor}</td>
+                <td className="py-1 pr-3">
+                  {editingPartId === p.id ? (
+                    <Input
+                      type="number"
+                      min={0}
+                      className="w-16"
+                      value={armorValue}
+                      onChange={(e) => setArmorValue(Number(e.target.value))}
+                      autoFocus
+                    />
+                  ) : (
+                    p.armor
+                  )}
+                </td>
+                <td className="py-1 pr-3">
+                  {editingPartId === p.id ? (
+                    <div className="flex gap-2">
+                      <Button
+                        className="px-2 py-1"
+                        disabled={updateArmor.isPending || armorValue < 0}
+                        onClick={() => updateArmor.mutate(p.id)}
+                      >
+                        OK
+                      </Button>
+                      <Button variant="secondary" className="px-2 py-1" onClick={() => setEditingPartId(null)}>
+                        Отмена
+                      </Button>
+                    </div>
+                  ) : (
+                    <button
+                      className="text-violet-600 hover:underline"
+                      onClick={() => {
+                        setEditingPartId(p.id)
+                        setArmorValue(p.armor)
+                      }}
+                    >
+                      Изменить
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {updateArmor.error && (
+          <div className="mt-2">
+            <ErrorText>{updateArmor.error instanceof ApiError ? updateArmor.error.message : 'Не удалось изменить броню'}</ErrorText>
+          </div>
+        )}
       </Card>
     </div>
   )

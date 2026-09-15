@@ -79,6 +79,18 @@ export function GameDetailsPage() {
     mutationFn: (bodyTemplateId: number) => bodyTemplatesApi.remove(bodyTemplateId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['body-templates', { gameId: id }] }),
   })
+
+  const [editingBodyTemplateId, setEditingBodyTemplateId] = useState<number | null>(null)
+  const [editBodyTemplateName, setEditBodyTemplateName] = useState('')
+  const [editBodyTemplateDescription, setEditBodyTemplateDescription] = useState('')
+  const updateBodyTemplate = useMutation({
+    mutationFn: (bodyTemplateId: number) =>
+      bodyTemplatesApi.update(bodyTemplateId, { name: editBodyTemplateName, description: editBodyTemplateDescription }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['body-templates', { gameId: id }] })
+      setEditingBodyTemplateId(null)
+    },
+  })
   const removeCreatureTemplate = useMutation({
     mutationFn: (creatureTemplateId: number) => creatureTemplatesApi.remove(creatureTemplateId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['creature-templates', { gameId: id }] }),
@@ -211,25 +223,69 @@ export function GameDetailsPage() {
             <p className="text-sm text-neutral-500">Шаблонов тела пока нет.</p>
           )}
           <div className="flex flex-col gap-2">
-            {bodyTemplates.data?.map((bt) => (
-              <div key={bt.id} className="flex items-center justify-between gap-2 text-sm">
-                <span>
-                  {bt.name} <span className="text-neutral-400">— {bt.parts.length} частей тела</span>
-                </span>
-                <Button
-                  variant="danger"
-                  className="px-2 py-1"
-                  disabled={removeBodyTemplate.isPending}
-                  onClick={() => {
-                    if (confirm(`Удалить шаблон тела "${bt.name}"? Связанные шаблоны существ тоже удалятся.`)) {
-                      removeBodyTemplate.mutate(bt.id)
-                    }
+            {bodyTemplates.data?.map((bt) =>
+              editingBodyTemplateId === bt.id ? (
+                <form
+                  key={bt.id}
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    updateBodyTemplate.mutate(bt.id)
                   }}
+                  className="flex flex-col gap-3 rounded-md border border-neutral-200 p-3 dark:border-neutral-800"
                 >
-                  Удалить
-                </Button>
-              </div>
-            ))}
+                  <Field label="Название">
+                    <Input value={editBodyTemplateName} onChange={(e) => setEditBodyTemplateName(e.target.value)} required autoFocus />
+                  </Field>
+                  <Field label="Описание">
+                    <Textarea rows={2} value={editBodyTemplateDescription} onChange={(e) => setEditBodyTemplateDescription(e.target.value)} />
+                  </Field>
+                  {updateBodyTemplate.error && (
+                    <ErrorText>
+                      {updateBodyTemplate.error instanceof ApiError ? updateBodyTemplate.error.message : 'Не удалось изменить шаблон тела'}
+                    </ErrorText>
+                  )}
+                  <div className="flex gap-2">
+                    <Button type="submit" className="px-2 py-1" disabled={updateBodyTemplate.isPending}>
+                      Сохранить
+                    </Button>
+                    <Button type="button" variant="secondary" className="px-2 py-1" onClick={() => setEditingBodyTemplateId(null)}>
+                      Отмена
+                    </Button>
+                  </div>
+                </form>
+              ) : (
+                <div key={bt.id} className="flex items-center justify-between gap-2 text-sm">
+                  <span>
+                    {bt.name} <span className="text-neutral-400">— {bt.parts.length} частей тела</span>
+                  </span>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="secondary"
+                      className="px-2 py-1"
+                      onClick={() => {
+                        setEditingBodyTemplateId(bt.id)
+                        setEditBodyTemplateName(bt.name)
+                        setEditBodyTemplateDescription(bt.description ?? '')
+                      }}
+                    >
+                      Изменить
+                    </Button>
+                    <Button
+                      variant="danger"
+                      className="px-2 py-1"
+                      disabled={removeBodyTemplate.isPending}
+                      onClick={() => {
+                        if (confirm(`Удалить шаблон тела "${bt.name}"? Связанные шаблоны существ тоже удалятся.`)) {
+                          removeBodyTemplate.mutate(bt.id)
+                        }
+                      }}
+                    >
+                      Удалить
+                    </Button>
+                  </div>
+                </div>
+              ),
+            )}
           </div>
         </Card>
       )}
