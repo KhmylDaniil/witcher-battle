@@ -167,6 +167,9 @@ export interface CreatureTemplate {
   speed: number
   luck: number
   parts: CreatureTemplatePart[]
+  skills: Partial<Record<Skill, number>>
+  damageTypeModifiers: Partial<Record<DamageType, DamageTypeModifierKind>>
+  abilities: Ability[]
 }
 
 export interface CreatureTemplateFormValues {
@@ -185,4 +188,59 @@ export interface CreatureTemplateFormValues {
   will: number
   speed: number
   luck: number
+}
+
+// ---- Damage types / modifiers ----
+
+export const DAMAGE_TYPES = ['Slashing', 'Piercing', 'Bludgeoning', 'Elemental', 'Fire', 'Silver'] as const
+export type DamageType = (typeof DAMAGE_TYPES)[number]
+
+export const DAMAGE_TYPE_MODIFIERS = ['Vulnerability', 'Resistance', 'Immunity'] as const
+export type DamageTypeModifierKind = (typeof DAMAGE_TYPE_MODIFIERS)[number]
+
+// ---- Conditions (эффекты, накладываемые атакующими способностями) ----
+
+export const CONDITIONS = [
+  'Bleed', 'BleedingWound', 'Poison', 'Fire', 'Freeze', 'Stun', 'Staggered', 'Intoxication',
+  'Hallutination', 'Nausea', 'Sufflocation', 'Blinded', 'Dying',
+
+  'SimpleLeg', 'SimpleArm', 'SimpleWing', 'SimpleTail', 'SimpleHead1', 'SimpleHead2', 'SimpleTorso1', 'SimpleTorso2',
+  'ComplexLeg', 'ComplexArm', 'ComplexWing', 'ComplexTail', 'ComplexHead1', 'ComplexHead2', 'ComplexTorso1', 'ComplexTorso2',
+  'DifficultLeg', 'DifficultArm', 'DifficultWing', 'DifficultTail', 'DifficultHead1', 'DifficultHead2', 'DifficultTorso1', 'DifficultTorso2',
+  'DeadlyLeg', 'DeadlyArm', 'DeadlyWing', 'DeadlyTail', 'DeadlyHead1', 'DeadlyHead2', 'DeadlyTorso1', 'DeadlyTorso2',
+] as const
+export type Condition = (typeof CONDITIONS)[number]
+
+// ---- Abilities (атакующие способности шаблона существа) ----
+
+export interface AbilityAppliedCondition {
+  id: number
+  condition: Condition
+  applyChance: number
+}
+
+export interface AbilityDefensiveSkill {
+  id: number
+  skill: Skill
+}
+
+export interface Ability {
+  id: number
+  name: string
+  attackSkill: Skill
+  attacksPerTurn: number
+  damageDiceCount: number
+  damageModifier: number
+  damageType: DamageType
+  appliedConditions: AbilityAppliedCondition[]
+  defensiveSkills: AbilityDefensiveSkill[]
+}
+
+export interface AbilityFormValues {
+  name: string
+  attackSkill: Skill
+  attacksPerTurn: number
+  damageDiceCount: number
+  damageModifier: number
+  damageType: DamageType
 }

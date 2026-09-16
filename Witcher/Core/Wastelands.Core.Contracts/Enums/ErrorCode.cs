@@ -15,6 +15,14 @@
 		CharacterNotFound = 200,
 		CharacterSkillAlreadyExisted = 201,
 
+		// ability errors
+		AbilityNotFound = 500,
+		AbilityConditionNotFound = 501,
+		AbilityConditionAlreadyExisted = 502,
+		AbilityDefensiveSkillNotFound = 503,
+		AbilityDefensiveSkillAlreadyExisted = 504,
+		CreatureTemplateSkillAlreadyExisted = 505,
+
 		// game errors
 		GameNotFound = 300,
 		GameJoinRequestNotFound = 301,

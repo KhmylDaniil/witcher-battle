@@ -22,6 +22,9 @@ namespace Wastelands.Service.Infrastructure.Mapping
 			CreateMap<BodyTemplate, BodyTemplateDto>();
 			CreateMap<CreatureTemplatePart, CreatureTemplatePartDto>();
 			CreateMap<CreatureTemplate, CreatureTemplateDto>();
+			CreateMap<Ability, AbilityDto>();
+			CreateMap<AbilityAppliedCondition, AbilityAppliedConditionDto>();
+			CreateMap<AbilityDefensiveSkill, AbilityDefensiveSkillDto>();
 		}
 	}
 }

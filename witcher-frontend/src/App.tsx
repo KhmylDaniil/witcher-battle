@@ -4,6 +4,8 @@ import { RegisterPage } from './features/auth/RegisterPage'
 import { BodyTemplateDetailsPage } from './features/bodyTemplates/BodyTemplateDetailsPage'
 import { CharacterDetailsPage } from './features/characters/CharacterDetailsPage'
 import { CharacterFormPage } from './features/characters/CharacterFormPage'
+import { AbilityDetailsPage } from './features/creatureTemplates/AbilityDetailsPage'
+import { AbilityFormPage } from './features/creatureTemplates/AbilityFormPage'
 import { CreatureTemplateDetailsPage } from './features/creatureTemplates/CreatureTemplateDetailsPage'
 import { CreatureTemplateFormPage } from './features/creatureTemplates/CreatureTemplateFormPage'
 import { GameDetailsPage } from './features/games/GameDetailsPage'
@@ -28,6 +30,8 @@ export default function App() {
             <Route path="/games/:gameId/characters/:characterId/edit" element={<CharacterFormPage />} />
             <Route path="/games/:gameId/creature-templates/new" element={<CreatureTemplateFormPage />} />
             <Route path="/games/:gameId/creature-templates/:creatureTemplateId" element={<CreatureTemplateDetailsPage />} />
+            <Route path="/games/:gameId/creature-templates/:creatureTemplateId/abilities/new" element={<AbilityFormPage />} />
+            <Route path="/games/:gameId/creature-templates/:creatureTemplateId/abilities/:abilityId" element={<AbilityDetailsPage />} />
             <Route path="/games/:gameId/body-templates/:bodyTemplateId" element={<BodyTemplateDetailsPage />} />
           </Route>
         </Route>

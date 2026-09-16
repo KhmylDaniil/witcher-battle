@@ -6,6 +6,9 @@ namespace Wastelands.Service.Domain.Entities
 {
 	public class CreatureTemplate : Entity
 	{
+		public const int MinSkillValue = 1;
+		public const int MaxSkillValue = 10;
+
 		public long GameId { get; private set; }
 
 		public long BodyTemplateId { get; private set; }
@@ -39,6 +42,12 @@ namespace Wastelands.Service.Domain.Entities
 		public int Luck { get; private set; }
 
 		public List<CreatureTemplatePart> Parts { get; private set; } = [];
+
+		public Dictionary<Skill, int> Skills { get; private set; } = [];
+
+		public Dictionary<DamageType, DamageTypeModifier> DamageTypeModifiers { get; private set; } = [];
+
+		public List<Ability> Abilities { get; private set; } = [];
 
 		private CreatureTemplate()
 		{

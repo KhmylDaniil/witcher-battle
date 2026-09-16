@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Wastelands.Service.Domain.Contracts;
+using Wastelands.Service.Domain.Enums;
 using Wastelands.Service.Domain.Models.Dto;
 using Wastelands.Service.Domain.Models.Filters;
 using Wastelands.Service.Domain.Models.Requests;
@@ -46,10 +47,111 @@ namespace Wastelands.Service.MVC.Controllers.Api
 		[HttpPut("{creatureTemplateId:long}/parts/{partId:long}/armor")]
 		public async Task<CreatureTemplateDto> UpdatePartArmor(long creatureTemplateId, long partId, [FromBody] UpdateArmorPayload payload)
 			=> await _creatureTemplateService.UpdatePartArmorAsync(creatureTemplateId, partId, payload.Armor);
+
+		/// <summary>Создание/изменение навыка (upsert) — AddSkillAsync кидает на дубликат, поэтому сперва проверяем</summary>
+		[HttpPut("{creatureTemplateId:long}/skills")]
+		public async Task<IActionResult> UpsertSkill(long creatureTemplateId, [FromBody] CreatureTemplateSkillPayload payload)
+		{
+			var request = new AddOrUpdateCreatureTemplateSkillRequest { CreatureTemplateId = creatureTemplateId, Skill = payload.Skill, Value = payload.Value };
+
+			var creatureTemplate = await _creatureTemplateService.GetCreatureTemplateByIdAsync(creatureTemplateId);
+			if (creatureTemplate.Skills.ContainsKey(payload.Skill))
+				await _creatureTemplateService.UpdateSkillAsync(request);
+			else
+				await _creatureTemplateService.AddSkillAsync(request);
+
+			return Ok();
+		}
+
+		[HttpDelete("{creatureTemplateId:long}/skills/{skill}")]
+		public async Task<IActionResult> DeleteSkill(long creatureTemplateId, Skill skill)
+		{
+			await _creatureTemplateService.DeleteSkillAsync(new DeleteCreatureTemplateSkillRequest { Id = creatureTemplateId, Skill = skill });
+			return NoContent();
+		}
+
+		[HttpPut("{creatureTemplateId:long}/damage-type-modifiers")]
+		public async Task<IActionResult> SetDamageTypeModifier(long creatureTemplateId, [FromBody] DamageTypeModifierPayload payload)
+		{
+			await _creatureTemplateService.SetDamageTypeModifierAsync(
+				new SetDamageTypeModifierRequest { CreatureTemplateId = creatureTemplateId, DamageType = payload.DamageType, Modifier = payload.Modifier });
+			return Ok();
+		}
+
+		[HttpDelete("{creatureTemplateId:long}/damage-type-modifiers/{damageType}")]
+		public async Task<IActionResult> RemoveDamageTypeModifier(long creatureTemplateId, DamageType damageType)
+		{
+			await _creatureTemplateService.RemoveDamageTypeModifierAsync(creatureTemplateId, damageType);
+			return NoContent();
+		}
+
+		[HttpPost("{creatureTemplateId:long}/abilities")]
+		public async Task<CreatureTemplateDto> AddAbility(long creatureTemplateId, CreateAbilityRequest request)
+		{
+			request.CreatureTemplateId = creatureTemplateId;
+			return await _creatureTemplateService.AddAbilityAsync(request);
+		}
+
+		[HttpPut("{creatureTemplateId:long}/abilities/{abilityId:long}")]
+		public async Task<CreatureTemplateDto> UpdateAbility(long creatureTemplateId, long abilityId, UpdateAbilityRequest request)
+		{
+			request.CreatureTemplateId = creatureTemplateId;
+			request.AbilityId = abilityId;
+			return await _creatureTemplateService.UpdateAbilityAsync(request);
+		}
+
+		[HttpDelete("{creatureTemplateId:long}/abilities/{abilityId:long}")]
+		public async Task<CreatureTemplateDto> RemoveAbility(long creatureTemplateId, long abilityId)
+			=> await _creatureTemplateService.RemoveAbilityAsync(creatureTemplateId, abilityId);
+
+		[HttpPost("{creatureTemplateId:long}/abilities/{abilityId:long}/conditions")]
+		public async Task<CreatureTemplateDto> AddCondition(long creatureTemplateId, long abilityId, AddAbilityConditionRequest request)
+		{
+			request.CreatureTemplateId = creatureTemplateId;
+			request.AbilityId = abilityId;
+			return await _creatureTemplateService.AddAbilityConditionAsync(request);
+		}
+
+		[HttpPut("{creatureTemplateId:long}/abilities/{abilityId:long}/conditions/{conditionId:long}")]
+		public async Task<CreatureTemplateDto> UpdateCondition(long creatureTemplateId, long abilityId, long conditionId, UpdateAbilityConditionRequest request)
+		{
+			request.CreatureTemplateId = creatureTemplateId;
+			request.AbilityId = abilityId;
+			request.ConditionId = conditionId;
+			return await _creatureTemplateService.UpdateAbilityConditionAsync(request);
+		}
+
+		[HttpDelete("{creatureTemplateId:long}/abilities/{abilityId:long}/conditions/{conditionId:long}")]
+		public async Task<CreatureTemplateDto> RemoveCondition(long creatureTemplateId, long abilityId, long conditionId)
+			=> await _creatureTemplateService.RemoveAbilityConditionAsync(creatureTemplateId, abilityId, conditionId);
+
+		[HttpPost("{creatureTemplateId:long}/abilities/{abilityId:long}/defensive-skills")]
+		public async Task<CreatureTemplateDto> AddDefensiveSkill(long creatureTemplateId, long abilityId, AddAbilityDefensiveSkillRequest request)
+		{
+			request.CreatureTemplateId = creatureTemplateId;
+			request.AbilityId = abilityId;
+			return await _creatureTemplateService.AddAbilityDefensiveSkillAsync(request);
+		}
+
+		[HttpDelete("{creatureTemplateId:long}/abilities/{abilityId:long}/defensive-skills/{defensiveSkillId:long}")]
+		public async Task<CreatureTemplateDto> RemoveDefensiveSkill(long creatureTemplateId, long abilityId, long defensiveSkillId)
+			=> await _creatureTemplateService.RemoveAbilityDefensiveSkillAsync(creatureTemplateId, abilityId, defensiveSkillId);
 	}
 
 	public sealed class UpdateArmorPayload
 	{
 		public int Armor { get; set; }
+	}
+
+	public sealed class CreatureTemplateSkillPayload
+	{
+		public Skill Skill { get; set; }
+		public int Value { get; set; }
+	}
+
+	public sealed class DamageTypeModifierPayload
+	{
+		public DamageType DamageType { get; set; }
+		public DamageTypeModifier Modifier { get; set; }
 	}
 }

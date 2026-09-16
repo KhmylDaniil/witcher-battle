@@ -1,10 +1,12 @@
 using AutoMapper;
+using Wastelands.Core.Contracts.Constants;
 using Wastelands.Core.Contracts.Contracts;
 using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
 using Wastelands.Service.Domain.Contracts;
 using Wastelands.Service.Domain.Contracts.Repositories;
 using Wastelands.Service.Domain.Entities;
+using Wastelands.Service.Domain.Enums;
 using Wastelands.Service.Domain.Models.Dto;
 using Wastelands.Service.Domain.Models.Filters;
 using Wastelands.Service.Domain.Models.Requests;
@@ -120,6 +122,191 @@ namespace Wastelands.Service.Infrastructure.Services
 		{
 			var creatureTemplate = await GetByIdAsync(id);
 			await _creatureTemplateRepository.DeleteAsync(creatureTemplate);
+		}
+
+		public async Task AddSkillAsync(AddOrUpdateCreatureTemplateSkillRequest request)
+		{
+			var creatureTemplate = await GetByIdAsync(request.CreatureTemplateId);
+
+			if (creatureTemplate.Skills.ContainsKey(request.Skill))
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.CreatureTemplateSkillAlreadyExisted,
+					string.Format(ExceptionMessages.ValueMustBeUnique, nameof(request.Skill)));
+			}
+
+			await AddOrUpdateSkillAsync(creatureTemplate, request.Skill, request.Value);
+		}
+
+		public async Task UpdateSkillAsync(AddOrUpdateCreatureTemplateSkillRequest request)
+		{
+			var creatureTemplate = await GetByIdAsync(request.CreatureTemplateId);
+			await AddOrUpdateSkillAsync(creatureTemplate, request.Skill, request.Value);
+		}
+
+		public async Task DeleteSkillAsync(DeleteCreatureTemplateSkillRequest request)
+		{
+			var creatureTemplate = await GetByIdAsync(request.Id);
+			creatureTemplate.Skills.Remove(request.Skill);
+			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
+		}
+
+		public async Task SetDamageTypeModifierAsync(SetDamageTypeModifierRequest request)
+		{
+			var creatureTemplate = await GetByIdAsync(request.CreatureTemplateId);
+			creatureTemplate.DamageTypeModifiers[request.DamageType] = request.Modifier;
+			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
+		}
+
+		public async Task RemoveDamageTypeModifierAsync(long creatureTemplateId, DamageType damageType)
+		{
+			var creatureTemplate = await GetByIdAsync(creatureTemplateId);
+			creatureTemplate.DamageTypeModifiers.Remove(damageType);
+			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
+		}
+
+		public async Task<CreatureTemplateDto> AddAbilityAsync(CreateAbilityRequest request)
+		{
+			var creatureTemplate = await GetByIdAsync(request.CreatureTemplateId);
+
+			var ability = new Ability(
+				creatureTemplate.Id, request.Name, request.AttackSkill, request.AttacksPerTurn,
+				request.DamageDiceCount, request.DamageModifier, request.DamageType);
+
+			creatureTemplate.Abilities.Add(ability);
+			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
+
+			return _mapper.Map<CreatureTemplateDto>(creatureTemplate);
+		}
+
+		public async Task<CreatureTemplateDto> UpdateAbilityAsync(UpdateAbilityRequest request)
+		{
+			var creatureTemplate = await GetByIdAsync(request.CreatureTemplateId);
+			var ability = GetAbility(creatureTemplate, request.AbilityId);
+
+			ability.ChangeAbility(
+				request.Name, request.AttackSkill, request.AttacksPerTurn,
+				request.DamageDiceCount, request.DamageModifier, request.DamageType);
+
+			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
+
+			return _mapper.Map<CreatureTemplateDto>(creatureTemplate);
+		}
+
+		public async Task<CreatureTemplateDto> RemoveAbilityAsync(long creatureTemplateId, long abilityId)
+		{
+			var creatureTemplate = await GetByIdAsync(creatureTemplateId);
+			var ability = GetAbility(creatureTemplate, abilityId);
+
+			creatureTemplate.Abilities.Remove(ability);
+			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
+
+			return _mapper.Map<CreatureTemplateDto>(creatureTemplate);
+		}
+
+		public async Task<CreatureTemplateDto> AddAbilityConditionAsync(AddAbilityConditionRequest request)
+		{
+			var creatureTemplate = await GetByIdAsync(request.CreatureTemplateId);
+			var ability = GetAbility(creatureTemplate, request.AbilityId);
+
+			ThrowIfConditionDuplicate(ability, request.Condition, excludeConditionId: null);
+
+			ability.AppliedConditions.Add(new AbilityAppliedCondition(ability.Id, request.Condition, request.ApplyChance));
+			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
+
+			return _mapper.Map<CreatureTemplateDto>(creatureTemplate);
+		}
+
+		public async Task<CreatureTemplateDto> UpdateAbilityConditionAsync(UpdateAbilityConditionRequest request)
+		{
+			var creatureTemplate = await GetByIdAsync(request.CreatureTemplateId);
+			var ability = GetAbility(creatureTemplate, request.AbilityId);
+			var condition = ability.AppliedConditions.FirstOrDefault(x => x.Id == request.ConditionId);
+
+			NotFoundException.ThrowIfNull(
+				condition, ErrorCode.AbilityConditionNotFound, nameof(AbilityAppliedCondition), nameof(AbilityAppliedCondition.Id), request.ConditionId.ToString());
+
+			ThrowIfConditionDuplicate(ability, request.Condition, excludeConditionId: request.ConditionId);
+
+			condition.ChangeCondition(request.Condition, request.ApplyChance);
+			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
+
+			return _mapper.Map<CreatureTemplateDto>(creatureTemplate);
+		}
+
+		public async Task<CreatureTemplateDto> RemoveAbilityConditionAsync(long creatureTemplateId, long abilityId, long conditionId)
+		{
+			var creatureTemplate = await GetByIdAsync(creatureTemplateId);
+			var ability = GetAbility(creatureTemplate, abilityId);
+			var condition = ability.AppliedConditions.FirstOrDefault(x => x.Id == conditionId);
+
+			NotFoundException.ThrowIfNull(
+				condition, ErrorCode.AbilityConditionNotFound, nameof(AbilityAppliedCondition), nameof(AbilityAppliedCondition.Id), conditionId.ToString());
+
+			ability.AppliedConditions.Remove(condition);
+			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
+
+			return _mapper.Map<CreatureTemplateDto>(creatureTemplate);
+		}
+
+		public async Task<CreatureTemplateDto> AddAbilityDefensiveSkillAsync(AddAbilityDefensiveSkillRequest request)
+		{
+			var creatureTemplate = await GetByIdAsync(request.CreatureTemplateId);
+			var ability = GetAbility(creatureTemplate, request.AbilityId);
+
+			if (ability.DefensiveSkills.Any(x => x.Skill == request.Skill))
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.AbilityDefensiveSkillAlreadyExisted,
+					string.Format(ExceptionMessages.ValueMustBeUnique, nameof(request.Skill)));
+			}
+
+			ability.DefensiveSkills.Add(new AbilityDefensiveSkill(ability.Id, request.Skill));
+			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
+
+			return _mapper.Map<CreatureTemplateDto>(creatureTemplate);
+		}
+
+		public async Task<CreatureTemplateDto> RemoveAbilityDefensiveSkillAsync(long creatureTemplateId, long abilityId, long defensiveSkillId)
+		{
+			var creatureTemplate = await GetByIdAsync(creatureTemplateId);
+			var ability = GetAbility(creatureTemplate, abilityId);
+			var defensiveSkill = ability.DefensiveSkills.FirstOrDefault(x => x.Id == defensiveSkillId);
+
+			NotFoundException.ThrowIfNull(
+				defensiveSkill, ErrorCode.AbilityDefensiveSkillNotFound, nameof(AbilityDefensiveSkill), nameof(AbilityDefensiveSkill.Id), defensiveSkillId.ToString());
+
+			ability.DefensiveSkills.Remove(defensiveSkill);
+			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
+
+			return _mapper.Map<CreatureTemplateDto>(creatureTemplate);
+		}
+
+		private async Task AddOrUpdateSkillAsync(CreatureTemplate creatureTemplate, Skill skill, int value)
+		{
+			InvalidArgumentException.ThrowIfNotInRange(value, CreatureTemplate.MinSkillValue, CreatureTemplate.MaxSkillValue, nameof(value));
+			creatureTemplate.Skills[skill] = value;
+			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
+		}
+
+		private static Ability GetAbility(CreatureTemplate creatureTemplate, long abilityId)
+		{
+			var ability = creatureTemplate.Abilities.FirstOrDefault(x => x.Id == abilityId);
+
+			NotFoundException.ThrowIfNull(
+				ability, ErrorCode.AbilityNotFound, nameof(Ability), nameof(Ability.Id), abilityId.ToString());
+
+			return ability;
+		}
+
+		private static void ThrowIfConditionDuplicate(Ability ability, Condition condition, long? excludeConditionId)
+		{
+			if (ability.AppliedConditions.Any(x => x.Condition == condition && x.Id != excludeConditionId))
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.AbilityConditionAlreadyExisted,
+					string.Format(ExceptionMessages.ValueMustBeUnique, nameof(condition)));
+			}
 		}
 
 		private async Task<CreatureTemplate> GetByIdAsync(long id)

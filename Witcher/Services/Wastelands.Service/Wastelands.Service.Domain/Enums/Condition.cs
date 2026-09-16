@@ -1,0 +1,55 @@
+namespace Wastelands.Service.Domain.Enums
+{
+	public enum Condition
+	{
+		Bleed,
+		BleedingWound,
+		Poison,
+		Fire,
+		Freeze,
+		Stun,
+		Staggered,
+		Intoxication,
+		Hallutination,
+		Nausea,
+		Sufflocation,
+		Blinded,
+		Dying,
+
+		SimpleLeg,
+		SimpleArm,
+		SimpleWing,
+		SimpleTail,
+		SimpleHead1,
+		SimpleHead2,
+		SimpleTorso1,
+		SimpleTorso2,
+
+		ComplexLeg,
+		ComplexArm,
+		ComplexWing,
+		ComplexTail,
+		ComplexHead1,
+		ComplexHead2,
+		ComplexTorso1,
+		ComplexTorso2,
+
+		DifficultLeg,
+		DifficultArm,
+		DifficultWing,
+		DifficultTail,
+		DifficultHead1,
+		DifficultHead2,
+		DifficultTorso1,
+		DifficultTorso2,
+
+		DeadlyLeg,
+		DeadlyArm,
+		DeadlyWing,
+		DeadlyTail,
+		DeadlyHead1,
+		DeadlyHead2,
+		DeadlyTorso1,
+		DeadlyTorso2,
+	}
+}

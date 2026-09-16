@@ -28,7 +28,10 @@ namespace Wastelands.Service.Infrastructure.Repositories
 
 		protected override IQueryable<CreatureTemplate> IncludeRelatedEntities(IQueryable<CreatureTemplate> query)
 		{
-			return query.Include(x => x.Parts);
+			return query
+				.Include(x => x.Parts)
+				.Include(x => x.Abilities).ThenInclude(a => a.AppliedConditions)
+				.Include(x => x.Abilities).ThenInclude(a => a.DefensiveSkills);
 		}
 	}
 }

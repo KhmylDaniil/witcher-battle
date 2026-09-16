@@ -3,7 +3,16 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, ErrorText, Field, Input, PageHeader, Select, Spinner, Textarea } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
-import { CREATURE_TYPES, type CreatureTemplateFormValues } from '../../types/api'
+import {
+  CREATURE_TYPES,
+  DAMAGE_TYPES,
+  DAMAGE_TYPE_MODIFIERS,
+  SKILLS_BY_STAT,
+  type CreatureTemplateFormValues,
+  type DamageType,
+  type DamageTypeModifierKind,
+  type Skill,
+} from '../../types/api'
 import { creatureTemplatesApi } from './api'
 
 const STATS = ['hp', 'sta', 'int', 'ref', 'dex', 'body', 'emp', 'cra', 'will', 'speed', 'luck'] as const
@@ -86,10 +95,48 @@ export function CreatureTemplateDetailsPage() {
     },
   })
 
+  const [editingSkill, setEditingSkill] = useState<Skill | null>(null)
+  const [editSkillValue, setEditSkillValue] = useState(1)
+  const upsertSkill = useMutation({
+    mutationFn: ({ skill, value }: { skill: Skill; value: number }) => creatureTemplatesApi.upsertSkill(id, skill, value),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['creature-templates', id] })
+      setEditingSkill(null)
+    },
+  })
+  const deleteSkill = useMutation({
+    mutationFn: (skill: Skill) => creatureTemplatesApi.deleteSkill(id, skill),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['creature-templates', id] }),
+  })
+  const [newSkillStat, setNewSkillStat] = useState<string>('Int')
+  const [newSkill, setNewSkill] = useState<Skill>('Awareness')
+  const [newSkillValue, setNewSkillValue] = useState(1)
+
+  const [newDamageType, setNewDamageType] = useState<DamageType>('Slashing')
+  const [newModifier, setNewModifier] = useState<DamageTypeModifierKind>('Vulnerability')
+  const setDamageTypeModifier = useMutation({
+    mutationFn: () => creatureTemplatesApi.setDamageTypeModifier(id, newDamageType, newModifier),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['creature-templates', id] }),
+  })
+  const removeDamageTypeModifier = useMutation({
+    mutationFn: (damageType: DamageType) => creatureTemplatesApi.removeDamageTypeModifier(id, damageType),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['creature-templates', id] }),
+  })
+
+  const removeAbility = useMutation({
+    mutationFn: (abilityId: number) => creatureTemplatesApi.removeAbility(id, abilityId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['creature-templates', id] }),
+  })
+
   if (creatureTemplate.isLoading) return <Spinner />
   if (!creatureTemplate.data) return null
   const ct = creatureTemplate.data
   const sortedParts = [...ct.parts].sort((a, b) => a.minToHit - b.minToHit)
+
+  const usedSkills = new Set(Object.keys(ct.skills) as Skill[])
+  const availableInStat = SKILLS_BY_STAT[newSkillStat].filter((s) => !usedSkills.has(s))
+  const usedDamageTypes = new Set(Object.keys(ct.damageTypeModifiers) as DamageType[])
+  const availableDamageTypes = DAMAGE_TYPES.filter((t) => !usedDamageTypes.has(t))
 
   return (
     <div className="flex flex-col gap-4">
@@ -283,6 +330,205 @@ export function CreatureTemplateDetailsPage() {
             <ErrorText>{updateArmor.error instanceof ApiError ? updateArmor.error.message : 'Не удалось изменить броню'}</ErrorText>
           </div>
         )}
+      </Card>
+
+      <Card>
+        <h2 className="mb-3 font-semibold">Навыки</h2>
+        {Object.keys(ct.skills).length === 0 && <p className="mb-3 text-sm text-neutral-500">Навыков пока нет.</p>}
+        <table className="w-full max-w-md text-left text-sm">
+          <tbody>
+            {(Object.entries(ct.skills) as [Skill, number][]).map(([skill, value]) => (
+              <tr key={skill} className="border-b border-neutral-100 dark:border-neutral-900">
+                <td className="py-2 pr-3">{skill}</td>
+                <td className="py-2 pr-3">
+                  {editingSkill === skill ? (
+                    <Input
+                      type="number"
+                      min={1}
+                      max={10}
+                      className="w-20"
+                      value={editSkillValue}
+                      onChange={(e) => setEditSkillValue(Number(e.target.value))}
+                      autoFocus
+                    />
+                  ) : (
+                    value
+                  )}
+                </td>
+                <td className="py-2">
+                  {editingSkill === skill ? (
+                    <div className="flex gap-2">
+                      <Button
+                        className="px-2 py-1"
+                        disabled={upsertSkill.isPending || editSkillValue < 1 || editSkillValue > 10}
+                        onClick={() => upsertSkill.mutate({ skill, value: editSkillValue })}
+                      >
+                        OK
+                      </Button>
+                      <Button variant="secondary" className="px-2 py-1" onClick={() => setEditingSkill(null)}>
+                        Отмена
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-3">
+                      <button
+                        className="text-violet-600 hover:underline"
+                        onClick={() => {
+                          setEditingSkill(skill)
+                          setEditSkillValue(value)
+                        }}
+                      >
+                        Изменить
+                      </button>
+                      <button
+                        className="text-red-600 hover:underline"
+                        disabled={deleteSkill.isPending}
+                        onClick={() => deleteSkill.mutate(skill)}
+                      >
+                        Удалить
+                      </button>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="mt-4 flex flex-wrap items-end gap-2">
+          <Select
+            value={newSkillStat}
+            onChange={(e) => {
+              setNewSkillStat(e.target.value)
+              const first = SKILLS_BY_STAT[e.target.value].find((s) => !usedSkills.has(s))
+              if (first) setNewSkill(first)
+            }}
+          >
+            {Object.keys(SKILLS_BY_STAT).map((stat) => (
+              <option key={stat} value={stat}>
+                {stat.toUpperCase()}
+              </option>
+            ))}
+          </Select>
+          <Select value={newSkill} onChange={(e) => setNewSkill(e.target.value as Skill)}>
+            {availableInStat.length === 0 && <option value="">— все добавлены —</option>}
+            {availableInStat.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </Select>
+          <Input
+            type="number"
+            min={1}
+            max={10}
+            className="w-20"
+            value={newSkillValue}
+            onChange={(e) => setNewSkillValue(Number(e.target.value))}
+          />
+          <Button
+            disabled={availableInStat.length === 0 || upsertSkill.isPending || newSkillValue < 1 || newSkillValue > 10}
+            onClick={() => upsertSkill.mutate({ skill: newSkill, value: newSkillValue })}
+          >
+            Добавить навык
+          </Button>
+        </div>
+
+        {upsertSkill.error && (
+          <div className="mt-2">
+            <ErrorText>{upsertSkill.error instanceof ApiError ? upsertSkill.error.message : 'Не удалось сохранить навык'}</ErrorText>
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <h2 className="mb-3 font-semibold">Модификаторы урона</h2>
+        {Object.keys(ct.damageTypeModifiers).length === 0 && (
+          <p className="mb-3 text-sm text-neutral-500">Модификаторов пока нет.</p>
+        )}
+        <table className="w-full max-w-md text-left text-sm">
+          <tbody>
+            {(Object.entries(ct.damageTypeModifiers) as [DamageType, DamageTypeModifierKind][]).map(([damageType, modifier]) => (
+              <tr key={damageType} className="border-b border-neutral-100 dark:border-neutral-900">
+                <td className="py-2 pr-3">{damageType}</td>
+                <td className="py-2 pr-3">{modifier}</td>
+                <td className="py-2">
+                  <button
+                    className="text-red-600 hover:underline"
+                    disabled={removeDamageTypeModifier.isPending}
+                    onClick={() => removeDamageTypeModifier.mutate(damageType)}
+                  >
+                    Удалить
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="mt-4 flex flex-wrap items-end gap-2">
+          <Select value={newDamageType} onChange={(e) => setNewDamageType(e.target.value as DamageType)}>
+            {availableDamageTypes.length === 0 && <option value="">— все добавлены —</option>}
+            {availableDamageTypes.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </Select>
+          <Select value={newModifier} onChange={(e) => setNewModifier(e.target.value as DamageTypeModifierKind)}>
+            {DAMAGE_TYPE_MODIFIERS.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </Select>
+          <Button
+            disabled={availableDamageTypes.length === 0 || setDamageTypeModifier.isPending}
+            onClick={() => setDamageTypeModifier.mutate()}
+          >
+            Добавить модификатор
+          </Button>
+        </div>
+
+        {setDamageTypeModifier.error && (
+          <div className="mt-2">
+            <ErrorText>
+              {setDamageTypeModifier.error instanceof ApiError ? setDamageTypeModifier.error.message : 'Не удалось сохранить модификатор'}
+            </ErrorText>
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-semibold">Способности</h2>
+          <Link to={`/games/${gameId}/creature-templates/${id}/abilities/new`}>
+            <Button className="px-2 py-1 text-xs">Добавить способность</Button>
+          </Link>
+        </div>
+
+        {ct.abilities.length === 0 && <p className="text-sm text-neutral-500">Способностей пока нет.</p>}
+        <div className="flex flex-col gap-2">
+          {ct.abilities.map((a) => (
+            <div key={a.id} className="flex items-center justify-between gap-2 text-sm">
+              <Link to={`/games/${gameId}/creature-templates/${id}/abilities/${a.id}`} className="hover:text-violet-600">
+                {a.name}{' '}
+                <span className="text-neutral-400">
+                  — {a.attacksPerTurn}× {a.damageDiceCount}д6+{a.damageModifier} {a.damageType} ({a.attackSkill})
+                </span>
+              </Link>
+              <button
+                className="text-red-600 hover:underline"
+                disabled={removeAbility.isPending}
+                onClick={() => {
+                  if (confirm(`Удалить способность "${a.name}"?`)) removeAbility.mutate(a.id)
+                }}
+              >
+                Удалить
+              </button>
+            </div>
+          ))}
+        </div>
       </Card>
     </div>
   )

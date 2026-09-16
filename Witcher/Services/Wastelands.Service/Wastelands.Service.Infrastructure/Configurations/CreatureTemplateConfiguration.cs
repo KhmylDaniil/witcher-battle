@@ -47,7 +47,25 @@ namespace Wastelands.Service.Infrastructure.Configurations
 			builder.Property(x => x.Speed).HasColumnName("Speed").IsRequired();
 			builder.Property(x => x.Luck).HasColumnName("Luck").IsRequired();
 
+			builder.Property(x => x.Skills)
+				.HasColumnType("jsonb")
+				.HasColumnName("Skills")
+				.HasComment("Skills")
+				.IsRequired();
+
+			builder.Property(x => x.DamageTypeModifiers)
+				.HasColumnType("jsonb")
+				.HasColumnName("DamageTypeModifiers")
+				.HasComment("DamageTypeModifiers")
+				.IsRequired();
+
 			builder.HasMany(x => x.Parts)
+				.WithOne()
+				.HasForeignKey(x => x.CreatureTemplateId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.Abilities)
 				.WithOne()
 				.HasForeignKey(x => x.CreatureTemplateId)
 				.HasPrincipalKey(x => x.Id)
