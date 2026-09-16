@@ -3,7 +3,7 @@ using Wastelands.Core.Contracts.Constants;
 using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.WebExceptions;
 using Wastelands.EfDataAccess.Repositories;
-using Wastelands.Service.Domain.Contracts.Repositories;
+using Wastelands.Service.Application.Contracts.Repositories;
 using Wastelands.Service.Domain.Entities;
 
 namespace Wastelands.Service.Infrastructure.Repositories

@@ -1,29 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Wastelands.Service.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Wastelands.Service.Infrastructure
 {
     public class WastelandsDbContext : DbContext
     {
-		DbSet<User> Users { get; set; }
-
-		DbSet<Character> Characters { get; set; }
-
-		DbSet<Game> Games { get; set; }
-
-		DbSet<UserGame> UserGames { get; set; }
-
-		DbSet<GameJoinRequest> GameJoinRequests { get; set; }
-
-		DbSet<BodyTemplate> BodyTemplates { get; set; }
-
-		DbSet<BodyTemplatePart> BodyTemplateParts { get; set; }
-
-		DbSet<CreatureTemplate> CreatureTemplates { get; set; }
-
-		DbSet<CreatureTemplatePart> CreatureTemplateParts { get; set; }
-
-		DbSet<Battle> Battles { get; set; }
+		// Намеренно без DbSet<T>-свойств: EF узнаёт о сущностях через IEntityTypeConfiguration<T>
+		// (см. ApplyConfigurationsFromAssembly ниже), а все запросы идут через generic _context.Set<T>()
+		// в BaseReadRepository — свойства DbSet здесь были бы мёртвым кодом.
 
 		public WastelandsDbContext(DbContextOptions<WastelandsDbContext> options) : base(options)
 		{

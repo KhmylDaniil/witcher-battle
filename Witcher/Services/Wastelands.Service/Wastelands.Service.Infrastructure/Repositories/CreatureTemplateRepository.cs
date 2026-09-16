@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Wastelands.Core.Contracts.Contracts;
 using Wastelands.EfDataAccess.Repositories;
-using Wastelands.Service.Domain.Contracts.Repositories;
+using Wastelands.Service.Application.Contracts.Repositories;
 using Wastelands.Service.Domain.Entities;
 
 namespace Wastelands.Service.Infrastructure.Repositories

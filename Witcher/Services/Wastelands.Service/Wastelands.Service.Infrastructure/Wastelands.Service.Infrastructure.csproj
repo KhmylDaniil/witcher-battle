@@ -7,9 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="14.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="10.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.12">
       <PrivateAssets>all</PrivateAssets>
@@ -21,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Infrastructure\Wastelands.EfDataAccess\Wastelands.EfDataAccess.csproj" />
     <ProjectReference Include="..\Wastelands.Service.Domain\Wastelands.Service.Domain.csproj" />
+    <ProjectReference Include="..\Wastelands.Service.Application\Wastelands.Service.Application.csproj" />
   </ItemGroup>
 
 </Project>

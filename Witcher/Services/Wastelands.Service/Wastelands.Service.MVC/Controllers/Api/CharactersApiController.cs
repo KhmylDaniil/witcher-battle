@@ -1,17 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
-using Wastelands.Service.Domain.Contracts;
+using Wastelands.Service.Application.Contracts;
 using Wastelands.Service.Domain.Enums;
-using Wastelands.Service.Domain.Models.Dto;
-using Wastelands.Service.Domain.Models.Filters;
-using Wastelands.Service.Domain.Models.Requests;
+using Wastelands.Service.Application.Models.Dto;
+using Wastelands.Service.Application.Models.Filters;
+using Wastelands.Service.Application.Models.Requests;
 
 namespace Wastelands.Service.MVC.Controllers.Api
 {
 	/// <summary>
-	/// Зеркалит Wastelands.Service.MVC/Controllers/CharacterController.cs — тонкая JSON-обёртка над
-	/// ICharacterService, без изменений в бизнес-логике (включая известное отсутствие проверки владельца —
-	/// GetCharactersAsync/GetById/Update/Delete/skills сегодня не скоупятся на текущего пользователя, это
-	/// оставлено как есть по решению владельца проекта).
+	/// Тонкая JSON-обёртка над ICharacterService. Чтение/изменение/удаление персонажа и его навыков
+	/// скоупится на текущего пользователя внутри CharacterRepository.GetQuery() — see GameCharacters
+	/// ниже для GM-варианта без этого скоупинга.
 	/// </summary>
 	[Route("api/characters")]
 	public class CharactersApiController : ApiControllerBase

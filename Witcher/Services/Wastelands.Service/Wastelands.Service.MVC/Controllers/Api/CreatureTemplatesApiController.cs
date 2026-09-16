@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Wastelands.Service.Domain.Contracts;
+using Wastelands.Service.Application.Contracts;
 using Wastelands.Service.Domain.Enums;
-using Wastelands.Service.Domain.Models.Dto;
-using Wastelands.Service.Domain.Models.Filters;
-using Wastelands.Service.Domain.Models.Requests;
+using Wastelands.Service.Application.Models.Dto;
+using Wastelands.Service.Application.Models.Filters;
+using Wastelands.Service.Application.Models.Requests;
 
 namespace Wastelands.Service.MVC.Controllers.Api
 {

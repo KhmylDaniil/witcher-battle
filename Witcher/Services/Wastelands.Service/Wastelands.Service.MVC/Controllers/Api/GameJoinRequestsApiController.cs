@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Wastelands.Service.Domain.Contracts;
-using Wastelands.Service.Domain.Models.Dto;
+using Wastelands.Service.Application.Contracts;
+using Wastelands.Service.Application.Models.Dto;
 
 namespace Wastelands.Service.MVC.Controllers.Api
 {

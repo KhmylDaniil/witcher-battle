@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Wastelands.Core.Contracts.Contracts;
-using Wastelands.Service.Domain.Contracts;
-using Wastelands.Service.Domain.Models.Requests;
+using Wastelands.Service.Application.Contracts;
+using Wastelands.Service.Application.Models.Requests;
 
 namespace Wastelands.Service.MVC.Controllers.Api
 {

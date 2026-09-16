@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Wastelands.Core.Contracts.Contracts;
-using Wastelands.Service.Domain.Contracts;
-using Wastelands.Service.Domain.Contracts.Repositories;
-using Wastelands.Service.Infrastructure.Mapping;
-using Wastelands.Service.Infrastructure.Options;
+using Wastelands.Service.Application.Contracts;
+using Wastelands.Service.Application.Contracts.Repositories;
+using Wastelands.Service.Application.Mapping;
+using Wastelands.Service.Application.Options;
 using Wastelands.Service.Infrastructure.Repositories;
-using Wastelands.Service.Infrastructure.Services;
+using Wastelands.Service.Application.Services;
 using Wastelands.Service.MVC.Services;
 
 namespace Wastelands.Service.MVC.Extensions
@@ -28,6 +28,7 @@ namespace Wastelands.Service.MVC.Extensions
 			services.AddScoped<IBattleRepository, BattleRepository>();
 
 			services.AddScoped<IUserContext, UserContext>();
+			services.AddScoped<IGameAccessGuard, GameAccessGuard>();
 
 			services.AddScoped<IPasswordService, PasswordService>();
 			services.AddScoped<IUserService, UserService>();
