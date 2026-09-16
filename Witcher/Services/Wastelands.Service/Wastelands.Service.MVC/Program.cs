@@ -81,7 +81,14 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseSwagger();
-app.UseSwaggerUI(options => options.RoutePrefix = string.Empty);
+app.UseSwaggerUI(options =>
+{
+	// RoutePrefix пустой (UI на "/"), но JSON-документ всё равно раздаётся по маршруту
+	// UseSwagger() по умолчанию ("swagger/{documentName}/swagger.json") — указываем его явно,
+	// иначе UI резолвит относительный путь "v1/swagger.json" от "/" и получает 404.
+	options.RoutePrefix = string.Empty;
+	options.SwaggerEndpoint("/swagger/v1/swagger.json", "Wastelands.Service API v1");
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
