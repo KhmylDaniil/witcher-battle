@@ -14,10 +14,16 @@ namespace Wastelands.EfDataAccess.Extensions
 			string connectionStringName)
 			where TDbContext : DbContext
 		{
-			var builder = new NpgsqlDataSourceBuilder(configuration.GetConnectionString(connectionStringName));
-			builder.EnableDynamicJson().ConfigureJsonOptions(new JsonSerializerOptions { AllowOutOfOrderMetadataProperties = true });
+			// NpgsqlDataSource — это пул подключений, а не просто конфигурация; Build() рассчитан на однократный
+			// вызов. AddDbContext резолвит DbContextOptions<TDbContext> в каждом новом scope (на каждый запрос),
+			// поэтому дата-сорс собирается здесь один раз заранее и переиспользуется, а не пересобирается
+			// в options-делегате на каждый resolve.
+			var dataSource = new NpgsqlDataSourceBuilder(configuration.GetConnectionString(connectionStringName))
+				.EnableDynamicJson()
+				.ConfigureJsonOptions(new JsonSerializerOptions { AllowOutOfOrderMetadataProperties = true })
+				.Build();
 
-			services.AddDbContext<DbContext, TDbContext>(options => options.UseNpgsql(builder.Build()));
+			services.AddDbContext<DbContext, TDbContext>(options => options.UseNpgsql(dataSource));
 
 			return services;
 		}
