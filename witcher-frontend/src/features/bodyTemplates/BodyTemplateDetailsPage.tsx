@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Button, Card, ErrorText, Field, Input, PageHeader, Select, Spinner, Textarea } from '../../components/ui'
+import { Button, Card, ConfirmButton, ErrorText, Field, Input, PageHeader, Select, Spinner, Textarea } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
 import { BODY_PART_TYPES, type BodyTemplatePartFormValues } from '../../types/api'
 import { bodyTemplatesApi } from './api'
@@ -95,15 +95,13 @@ export function BodyTemplateDetailsPage() {
             <Link to={`/games/${gameId}`}>
               <Button variant="secondary">К игре</Button>
             </Link>
-            <Button
-              variant="danger"
+            <ConfirmButton
+              confirmMessage={`Удалить шаблон тела "${bt.name}"? Связанные шаблоны существ тоже удалятся.`}
+              onConfirm={() => removeTemplate.mutate()}
               disabled={removeTemplate.isPending}
-              onClick={() => {
-                if (confirm(`Удалить шаблон тела "${bt.name}"? Связанные шаблоны существ тоже удалятся.`)) removeTemplate.mutate()
-              }}
             >
               Удалить
-            </Button>
+            </ConfirmButton>
           </>
         }
       />
@@ -255,15 +253,14 @@ export function BodyTemplateDetailsPage() {
                       >
                         Изменить
                       </button>
-                      <button
-                        className="text-red-600 hover:underline"
+                      <ConfirmButton
+                        link
+                        confirmMessage={`Удалить часть тела "${p.name}"?`}
+                        onConfirm={() => removePart.mutate(p.id)}
                         disabled={removePart.isPending}
-                        onClick={() => {
-                          if (confirm(`Удалить часть тела "${p.name}"?`)) removePart.mutate(p.id)
-                        }}
                       >
                         Удалить
-                      </button>
+                      </ConfirmButton>
                     </div>
                   </td>
                 </tr>

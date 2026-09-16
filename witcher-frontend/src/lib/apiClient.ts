@@ -1,20 +1,13 @@
 // Тонкий fetch-клиент поверх Witcher.MVC/Controllers/Api/*. Бэкенд аутентифицирует через ту же cookie-схему,
 // что и Razor MVC (см. план: SPA раздаётся с того же origin, поэтому credentials работают без CORS/токенов).
 
-export interface FieldError {
-  field: string
-  message: string
-}
-
 export class ApiError extends Error {
   status: number
-  fieldErrors?: FieldError[]
 
-  constructor(status: number, message: string, fieldErrors?: FieldError[]) {
+  constructor(status: number, message: string) {
     super(message)
     this.name = 'ApiError'
     this.status = status
-    this.fieldErrors = fieldErrors
   }
 }
 
@@ -32,7 +25,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   if (!res.ok) {
     const message = (data && typeof data === 'object' && 'message' in data ? String(data.message) : null) ?? `Ошибка запроса (${res.status})`
-    throw new ApiError(res.status, message, data?.errors)
+    throw new ApiError(res.status, message)
   }
 
   return data as T

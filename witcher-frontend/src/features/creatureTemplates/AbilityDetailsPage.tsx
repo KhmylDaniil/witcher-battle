@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Button, Card, ErrorText, Field, Input, PageHeader, Select, Spinner } from '../../components/ui'
+import { Button, Card, ConfirmButton, ErrorText, Field, Input, PageHeader, Select, Spinner } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
+import { getAvailableOptions } from '../../lib/options'
 import { CONDITIONS, DAMAGE_TYPES, SKILLS, type AbilityFormValues, type Condition, type Skill } from '../../types/api'
 import { creatureTemplatesApi } from './api'
 
@@ -83,7 +84,7 @@ export function AbilityDetailsPage() {
   if (!ct || !ability) return null
 
   const usedDefensiveSkills = new Set(ability.defensiveSkills.map((d) => d.skill))
-  const availableDefensiveSkills = SKILLS.filter((s) => !usedDefensiveSkills.has(s))
+  const availableDefensiveSkills = getAvailableOptions(SKILLS, usedDefensiveSkills)
 
   return (
     <div className="flex flex-col gap-4">
@@ -112,15 +113,13 @@ export function AbilityDetailsPage() {
                 Изменить
               </Button>
             )}
-            <Button
-              variant="danger"
+            <ConfirmButton
+              confirmMessage={`Удалить способность "${ability.name}"?`}
+              onConfirm={() => removeAbility.mutate()}
               disabled={removeAbility.isPending}
-              onClick={() => {
-                if (confirm(`Удалить способность "${ability.name}"?`)) removeAbility.mutate()
-              }}
             >
               Удалить
-            </Button>
+            </ConfirmButton>
           </>
         }
       />

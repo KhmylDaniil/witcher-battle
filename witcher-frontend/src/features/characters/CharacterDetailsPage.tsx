@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Button, Card, ErrorText, Input, PageHeader, Select, Spinner } from '../../components/ui'
+import { Button, Card, ConfirmButton, ErrorText, Input, PageHeader, Select, Spinner } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
+import { getAvailableOptions } from '../../lib/options'
 import { SKILLS_BY_STAT, type Skill } from '../../types/api'
 import { charactersApi } from './api'
 
@@ -50,7 +51,7 @@ export function CharacterDetailsPage() {
   const c = character.data
 
   const usedSkills = new Set(Object.keys(c.skills) as Skill[])
-  const availableInStat = SKILLS_BY_STAT[newSkillStat].filter((s) => !usedSkills.has(s))
+  const availableInStat = getAvailableOptions(SKILLS_BY_STAT[newSkillStat], usedSkills)
 
   return (
     <div className="flex flex-col gap-4">
@@ -72,15 +73,13 @@ export function CharacterDetailsPage() {
                 <Button variant="secondary">Мои персонажи</Button>
               </Link>
             )}
-            <Button
-              variant="danger"
+            <ConfirmButton
+              confirmMessage={`Удалить персонажа "${c.name}"?`}
+              onConfirm={() => remove.mutate()}
               disabled={remove.isPending}
-              onClick={() => {
-                if (confirm(`Удалить персонажа "${c.name}"?`)) remove.mutate()
-              }}
             >
               Удалить
-            </Button>
+            </ConfirmButton>
           </>
         }
       />

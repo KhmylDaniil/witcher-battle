@@ -14,6 +14,42 @@ export function Button({
   return <button className={`${base} ${styles[variant]} ${className}`} {...props} />
 }
 
+/**
+ * Кнопка удаления с браузерным confirm() перед вызовом действия — единая реализация вместо
+ * повторяющегося `if (confirm(msg)) mutate()` в каждой карточке. `link` переключает вид на
+ * текстовую ссылку (для рядов таблиц), иначе рендерится как обычный <Button variant="danger">.
+ */
+export function ConfirmButton({
+  confirmMessage,
+  onConfirm,
+  link = false,
+  className = '',
+  children,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  confirmMessage: string
+  onConfirm: () => void
+  link?: boolean
+}) {
+  const handleClick = () => {
+    if (confirm(confirmMessage)) onConfirm()
+  }
+
+  if (link) {
+    return (
+      <button className={`text-red-600 hover:underline ${className}`} onClick={handleClick} {...props}>
+        {children}
+      </button>
+    )
+  }
+
+  return (
+    <Button variant="danger" className={className} onClick={handleClick} {...props}>
+      {children}
+    </Button>
+  )
+}
+
 export function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="flex flex-col gap-1 text-sm">

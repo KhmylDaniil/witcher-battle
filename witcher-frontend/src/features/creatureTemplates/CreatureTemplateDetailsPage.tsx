@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Button, Card, ErrorText, Field, Input, PageHeader, Select, Spinner, Textarea } from '../../components/ui'
+import { Button, Card, ConfirmButton, ErrorText, Field, Input, PageHeader, Select, Spinner, Textarea } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
+import { getAvailableOptions } from '../../lib/options'
 import {
   CREATURE_TYPES,
   DAMAGE_TYPES,
@@ -134,9 +135,9 @@ export function CreatureTemplateDetailsPage() {
   const sortedParts = [...ct.parts].sort((a, b) => a.minToHit - b.minToHit)
 
   const usedSkills = new Set(Object.keys(ct.skills) as Skill[])
-  const availableInStat = SKILLS_BY_STAT[newSkillStat].filter((s) => !usedSkills.has(s))
+  const availableInStat = getAvailableOptions(SKILLS_BY_STAT[newSkillStat], usedSkills)
   const usedDamageTypes = new Set(Object.keys(ct.damageTypeModifiers) as DamageType[])
-  const availableDamageTypes = DAMAGE_TYPES.filter((t) => !usedDamageTypes.has(t))
+  const availableDamageTypes = getAvailableOptions(DAMAGE_TYPES, usedDamageTypes)
 
   return (
     <div className="flex flex-col gap-4">
@@ -158,15 +159,13 @@ export function CreatureTemplateDetailsPage() {
                 Изменить
               </Button>
             )}
-            <Button
-              variant="danger"
+            <ConfirmButton
+              confirmMessage={`Удалить шаблон существа "${ct.name}"?`}
+              onConfirm={() => remove.mutate()}
               disabled={remove.isPending}
-              onClick={() => {
-                if (confirm(`Удалить шаблон существа "${ct.name}"?`)) remove.mutate()
-              }}
             >
               Удалить
-            </Button>
+            </ConfirmButton>
           </>
         }
       />
@@ -517,15 +516,14 @@ export function CreatureTemplateDetailsPage() {
                   — {a.attacksPerTurn}× {a.damageDiceCount}д6+{a.damageModifier} {a.damageType} ({a.attackSkill})
                 </span>
               </Link>
-              <button
-                className="text-red-600 hover:underline"
+              <ConfirmButton
+                link
+                confirmMessage={`Удалить способность "${a.name}"?`}
+                onConfirm={() => removeAbility.mutate(a.id)}
                 disabled={removeAbility.isPending}
-                onClick={() => {
-                  if (confirm(`Удалить способность "${a.name}"?`)) removeAbility.mutate(a.id)
-                }}
               >
                 Удалить
-              </button>
+              </ConfirmButton>
             </div>
           ))}
         </div>
