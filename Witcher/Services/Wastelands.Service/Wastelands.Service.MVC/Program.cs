@@ -5,18 +5,21 @@ using System.Text.Json.Serialization;
 using Wastelands.EfDataAccess.Extensions;
 using Wastelands.Service.Infrastructure;
 using Wastelands.Service.MVC.Extensions;
-using Wastelands.Service.MVC.Filters;
 using Wastelands.Service.MVC.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<ExceptionFilter>();
-builder.Services.AddMvcCore().AddRazorViewEngine();
-builder.Services.AddControllersWithViews()
+builder.Services.AddControllers()
 	.AddJsonOptions(options =>
 	{
 		options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 	});
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+	options.SupportNonNullableReferenceTypes();
+});
 
 builder.Services.AddHttpContextAccessor();
 
@@ -73,10 +76,12 @@ await app.MigrateDatabaseAsync<WastelandsDbContext>();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-	app.UseExceptionHandler("/Home/Error");
 	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	app.UseHsts();
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -85,12 +90,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapStaticAssets();
-
-app.MapControllerRoute(
-	name: "default",
-	pattern: "{controller=Character}/{action=Index}")
-	.WithStaticAssets();
+app.MapControllers();
 
 // React SPA (witcher-frontend/) — прод-сборка (`npm run build`) копируется в wwwroot/app, отсюда раздаётся
 // статикой (UseStaticFiles выше), а client-side роутинг (react-router) обслуживается этим фолбэком.
