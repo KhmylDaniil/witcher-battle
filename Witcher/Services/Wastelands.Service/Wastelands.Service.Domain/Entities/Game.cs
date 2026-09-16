@@ -24,6 +24,9 @@ namespace Wastelands.Service.Domain.Entities
 		/// <summary>EF-навигация — нужна только для конфигурации FK CreatureTemplate.GameId.</summary>
 		public List<CreatureTemplate> CreatureTemplates { get; set; } = [];
 
+		/// <summary>EF-навигация — нужна только для конфигурации FK Battle.GameId.</summary>
+		public List<Battle> Battles { get; set; } = [];
+
 		private Game()
 		{
 		}

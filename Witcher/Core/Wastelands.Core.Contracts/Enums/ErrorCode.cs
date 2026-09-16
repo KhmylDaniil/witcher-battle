@@ -39,6 +39,16 @@
 		BodyTemplatePartNotFound = 404,
 		BodyTemplatePartRangeOverlap = 405,
 
+		// battle errors 600...
+		BattleNotFound = 600,
+		BattleAlreadyStarted = 601,
+		BattleHasNoParticipants = 602,
+		CreatureNotFoundInBattle = 603,
+		BattleCharacterAlreadyExisted = 604,
+		BattleCharacterNotFound = 605,
+		CreatureTemplateBelongsToAnotherGame = 606,
+		CharacterBelongsToAnotherGame = 607,
+
 		// Common error codes 1100...1199
 		RequestValidationError = 1100,
 		InvalidArgument = 1101,

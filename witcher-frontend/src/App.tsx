@@ -1,6 +1,7 @@
 import { Navigate, Route, BrowserRouter, Routes } from 'react-router-dom'
 import { LoginPage } from './features/auth/LoginPage'
 import { RegisterPage } from './features/auth/RegisterPage'
+import { BattleDetailsPage } from './features/battles/BattleDetailsPage'
 import { BodyTemplateDetailsPage } from './features/bodyTemplates/BodyTemplateDetailsPage'
 import { CharacterDetailsPage } from './features/characters/CharacterDetailsPage'
 import { CharacterFormPage } from './features/characters/CharacterFormPage'
@@ -36,6 +37,7 @@ export default function App() {
             <Route path="/games/:gameId/creature-templates/:creatureTemplateId/abilities/new" element={<AbilityFormPage />} />
             <Route path="/games/:gameId/creature-templates/:creatureTemplateId/abilities/:abilityId" element={<AbilityDetailsPage />} />
             <Route path="/games/:gameId/body-templates/:bodyTemplateId" element={<BodyTemplateDetailsPage />} />
+            <Route path="/games/:gameId/battles/:battleId" element={<BattleDetailsPage />} />
           </Route>
         </Route>
 

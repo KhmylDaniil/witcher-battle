@@ -72,6 +72,8 @@ export interface Character {
   /** null — игра, в которой был создан персонаж, удалена; персонаж хранится архивно. */
   gameId: number | null
   name: string
+  hp: number
+  sta: number
   int: number
   str: number
   rea: number
@@ -84,6 +86,8 @@ export interface Character {
 
 export interface CharacterFormValues {
   name: string
+  hp: number
+  sta: number
   int: number
   str: number
   rea: number
@@ -244,4 +248,57 @@ export interface AbilityFormValues {
   damageDiceCount: number
   damageModifier: number
   damageType: DamageType
+}
+
+// ---- Battles (BattlesApiController) ----
+
+export type BattleStatus = 'Draft' | 'InProgress'
+
+export interface BattleCreature {
+  id: number
+  creatureTemplateId: number
+  name: string
+  creatureType: CreatureType
+  maxHP: number
+  currentHP: number
+  maxSta: number
+  currentSta: number
+  initiative: number | null
+  appliedConditions: Condition[]
+}
+
+export interface BattleCharacterEntry {
+  id: number
+  characterId: number
+  characterName: string
+  maxHP: number
+  currentHP: number
+  maxSta: number
+  currentSta: number
+  initiative: number | null
+  appliedConditions: Condition[]
+}
+
+export interface Battle {
+  id: number
+  gameId: number
+  name: string
+  status: BattleStatus
+  creatures: BattleCreature[]
+  characters: BattleCharacterEntry[]
+}
+
+export interface BattleFormValues {
+  name: string
+}
+
+export interface AddCreatureToBattleFormValues {
+  creatureTemplateId: number
+  name?: string
+}
+
+export interface UpdateBattleCreatureFormValues {
+  name: string
+  currentHP: number
+  currentSta: number
 }

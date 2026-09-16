@@ -23,6 +23,8 @@ namespace Wastelands.Service.Infrastructure
 
 		DbSet<CreatureTemplatePart> CreatureTemplateParts { get; set; }
 
+		DbSet<Battle> Battles { get; set; }
+
 		public WastelandsDbContext(DbContextOptions<WastelandsDbContext> options) : base(options)
 		{
 		}

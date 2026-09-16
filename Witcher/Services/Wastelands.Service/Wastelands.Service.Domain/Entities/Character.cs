@@ -21,6 +21,10 @@ namespace Wastelands.Service.Domain.Entities
 
 		public string Name { get; private set; }
 
+		public int HP { get; private set; }
+
+		public int Sta { get; private set; }
+
 		public int Int {  get; private set; }
 
 		public int Str { get; private set; }
@@ -41,11 +45,13 @@ namespace Wastelands.Service.Domain.Entities
 		{
 		}
 
-		public Character(long userId, long gameId, string name, int @int, int str, int rea, int dex, int cra, int emp, int wil)
+		public Character(long userId, long gameId, string name, int hp, int sta, int @int, int str, int rea, int dex, int cra, int emp, int wil)
 		{
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(userId, nameof(userId));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(gameId, nameof(gameId));
 			InvalidArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(hp, nameof(hp));
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(sta, nameof(sta));
 			InvalidArgumentException.ThrowIfNotInRange(@int, MinStat, MaxStat, nameof(@int));
 			InvalidArgumentException.ThrowIfNotInRange(str, MinStat, MaxStat, nameof(str));
 			InvalidArgumentException.ThrowIfNotInRange(rea, MinStat, MaxStat, nameof(rea));
@@ -57,6 +63,8 @@ namespace Wastelands.Service.Domain.Entities
 			UserId = userId;
 			GameId = gameId;
 			Name = name;
+			HP = hp;
+			Sta = sta;
 			Int = @int;
 			Str = str;
 			Rea = rea;
@@ -66,9 +74,11 @@ namespace Wastelands.Service.Domain.Entities
 			Wil = wil;
 		}
 
-		public void UpdateCharacter(string name, int @int, int str, int rea, int dex, int cra, int emp, int wil)
+		public void UpdateCharacter(string name, int hp, int sta, int @int, int str, int rea, int dex, int cra, int emp, int wil)
 		{
 			InvalidArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(hp, nameof(hp));
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(sta, nameof(sta));
 			InvalidArgumentException.ThrowIfNotInRange(@int, MinStat, MaxStat, nameof(@int));
 			InvalidArgumentException.ThrowIfNotInRange(str, MinStat, MaxStat, nameof(str));
 			InvalidArgumentException.ThrowIfNotInRange(rea, MinStat, MaxStat, nameof(rea));
@@ -78,6 +88,8 @@ namespace Wastelands.Service.Domain.Entities
 			InvalidArgumentException.ThrowIfNotInRange(wil, MinStat, MaxStat, nameof(wil));
 
 			Name = name;
+			HP = hp;
+			Sta = sta;
 			Int = @int;
 			Str = str;
 			Rea = rea;

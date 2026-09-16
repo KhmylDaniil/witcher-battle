@@ -25,6 +25,11 @@ namespace Wastelands.Service.Infrastructure.Mapping
 			CreateMap<Ability, AbilityDto>();
 			CreateMap<AbilityAppliedCondition, AbilityAppliedConditionDto>();
 			CreateMap<AbilityDefensiveSkill, AbilityDefensiveSkillDto>();
+
+			CreateMap<Battle, BattleDto>();
+			CreateMap<Creature, BattleCreatureDto>();
+			CreateMap<BattleCharacter, BattleCharacterDto>()
+				.ForMember(dst => dst.CharacterName, opt => opt.MapFrom(src => src.Character.Name));
 		}
 	}
 }

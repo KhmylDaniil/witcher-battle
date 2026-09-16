@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, ErrorText, Field, Input, PageHeader, Spinner, Textarea } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
+import { battlesApi } from '../battles/api'
 import { bodyTemplatesApi } from '../bodyTemplates/api'
 import { charactersApi } from '../characters/api'
 import { creatureTemplatesApi } from '../creatureTemplates/api'
@@ -85,6 +86,24 @@ export function GameDetailsPage() {
   const removeCreatureTemplate = useMutation({
     mutationFn: (creatureTemplateId: number) => creatureTemplatesApi.remove(creatureTemplateId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['creature-templates', { gameId: id }] }),
+  })
+
+  const battles = useQuery({
+    queryKey: ['battles', { gameId: id }],
+    queryFn: () => battlesApi.list(id),
+    enabled: isMember,
+  })
+
+  const [showBattleForm, setShowBattleForm] = useState(false)
+  const [battleName, setBattleName] = useState('')
+  const createBattle = useMutation({
+    mutationFn: () => battlesApi.create(id, { name: battleName }),
+    onSuccess: async (created) => {
+      await queryClient.invalidateQueries({ queryKey: ['battles', { gameId: id }] })
+      setBattleName('')
+      setShowBattleForm(false)
+      navigate(`/games/${id}/battles/${created.id}`)
+    },
   })
 
   if (game.isLoading) return <Spinner />
@@ -268,6 +287,59 @@ export function GameDetailsPage() {
                   Удалить
                 </Button>
               </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {isMember && (
+        <Card>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="font-semibold">Бои</h2>
+            {isOwner && !showBattleForm && (
+              <Button className="px-2 py-1 text-xs" onClick={() => setShowBattleForm(true)}>
+                Создать
+              </Button>
+            )}
+          </div>
+
+          {showBattleForm && (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                createBattle.mutate()
+              }}
+              className="mb-4 flex flex-col gap-3 rounded-md border border-neutral-200 p-3 dark:border-neutral-800"
+            >
+              <Field label="Название боя">
+                <Input value={battleName} onChange={(e) => setBattleName(e.target.value)} required autoFocus />
+              </Field>
+              {createBattle.error && (
+                <ErrorText>{createBattle.error instanceof ApiError ? createBattle.error.message : 'Не удалось создать бой'}</ErrorText>
+              )}
+              <div className="flex gap-2">
+                <Button type="submit" disabled={createBattle.isPending}>
+                  Создать
+                </Button>
+                <Button type="button" variant="secondary" onClick={() => setShowBattleForm(false)}>
+                  Отмена
+                </Button>
+              </div>
+            </form>
+          )}
+
+          {battles.isLoading && <Spinner />}
+          {battles.data && battles.data.length === 0 && <p className="text-sm text-neutral-500">Боёв пока нет.</p>}
+          <div className="flex flex-col gap-2">
+            {battles.data?.map((b) => (
+              <Link
+                key={b.id}
+                to={`/games/${id}/battles/${b.id}`}
+                className="flex items-center justify-between gap-2 text-sm hover:text-violet-600"
+              >
+                <span>{b.name}</span>
+                <span className="text-xs text-neutral-400">{b.status === 'Draft' ? 'подготовка' : 'идёт бой'}</span>
+              </Link>
             ))}
           </div>
         </Card>

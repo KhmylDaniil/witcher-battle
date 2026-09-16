@@ -10,6 +10,9 @@ namespace Wastelands.Service.Domain.Contracts
 
 		Task<List<CharacterDto>> GetCharactersAsync(CharacterFilter filter);
 
+		/// <summary>Персонажи всех игроков этой игры — доступно только мастеру игры.</summary>
+		Task<List<CharacterDto>> GetGameCharactersAsync(long gameId);
+
 		Task<CharacterDto> CreateCharacterAsync(CreateCharacterRequest request);
 
 		Task<CharacterDto> UpdateCharacterAsync(UpdateCharacterRequest request);

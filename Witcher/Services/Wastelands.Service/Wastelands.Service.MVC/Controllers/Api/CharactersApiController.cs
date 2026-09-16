@@ -31,6 +31,11 @@ namespace Wastelands.Service.MVC.Controllers.Api
 		public async Task<CharacterDto> Get(long id)
 			=> await _characterService.GetCharacterByIdAsync(id);
 
+		/// <summary>Персонажи всех игроков этой игры — например, для добавления в бой мастером.</summary>
+		[HttpGet("/api/games/{gameId:long}/characters")]
+		public async Task<List<CharacterDto>> GameCharacters(long gameId)
+			=> await _characterService.GetGameCharactersAsync(gameId);
+
 		[HttpPost]
 		public async Task<CharacterDto> Create(CreateCharacterRequest request)
 			=> await _characterService.CreateCharacterAsync(request);

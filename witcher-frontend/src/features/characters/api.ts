@@ -4,6 +4,8 @@ import type { Character, CharacterFormValues, Skill } from '../../types/api'
 export const charactersApi = {
   list: (filters: { name?: string; gameId?: number } = {}) => api.get<Character[]>(`/api/characters${buildQuery(filters)}`),
   get: (id: number) => api.get<Character>(`/api/characters/${id}`),
+  /** Персонажи всех игроков этой игры — доступно только мастеру (например, для добавления в бой). */
+  gameCharacters: (gameId: number) => api.get<Character[]>(`/api/games/${gameId}/characters`),
   create: (gameId: number, payload: CharacterFormValues) => api.post<Character>('/api/characters', { ...payload, gameId }),
   update: (id: number, payload: CharacterFormValues) => api.put<Character>(`/api/characters/${id}`, payload),
   remove: (id: number) => api.delete<void>(`/api/characters/${id}`),

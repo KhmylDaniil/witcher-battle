@@ -53,6 +53,13 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasForeignKey(x => x.GameId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
+
+			// Cascade — бои не персонажи, архивировать нечего: удаление игры сносит все её бои.
+			builder.HasMany(x => x.Battles)
+				.WithOne()
+				.HasForeignKey(x => x.GameId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 		}
 	}
 }

@@ -10,6 +10,10 @@ namespace Wastelands.Service.Domain.Models.Dto
 
 		public string Name { get; set; }
 
+		public int HP { get; set; }
+
+		public int Sta { get; set; }
+
 		public int Int { get; set; }
 
 		public int Str { get; set; }

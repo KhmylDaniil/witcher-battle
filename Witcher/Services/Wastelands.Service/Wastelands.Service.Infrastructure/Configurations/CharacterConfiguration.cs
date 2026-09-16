@@ -22,6 +22,14 @@ namespace Wastelands.Service.Infrastructure.Configurations
 			.HasColumnType("varchar(30)")
 			.IsRequired();
 
+			builder.Property(x => x.HP)
+			.HasColumnName("HP")
+			.IsRequired();
+
+			builder.Property(x => x.Sta)
+			.HasColumnName("Sta")
+			.IsRequired();
+
 			builder.Property(r => r.Int)
 			.HasColumnName("Int")
 			.HasComment("Intellect")

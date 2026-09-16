@@ -51,6 +51,22 @@ namespace Wastelands.Service.Infrastructure.Services
 			return dtos;
 		}
 
+		public async Task<List<CharacterDto>> GetGameCharactersAsync(long gameId)
+		{
+			var game = await _gameRepository.GetByIdAsync(gameId);
+			NotFoundException.ThrowIfNull(game, ErrorCode.GameNotFound, nameof(Game), nameof(Game.Id), gameId.ToString());
+
+			if (game.CreatedByUserId != _userContext.CurrentUserId)
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.CurrentUserNotAllowedToPerformThisAction,
+					"Персонажей игроков может смотреть только мастер игры.");
+			}
+
+			var characters = await _characterRepository.GetCharactersByGameIdAsync(gameId);
+			return _mapper.Map<List<CharacterDto>>(characters);
+		}
+
 		public async Task<CharacterDto> CreateCharacterAsync(CreateCharacterRequest request)
 		{
 			var currentUserId = _userContext.CurrentUserId;
@@ -75,6 +91,8 @@ namespace Wastelands.Service.Infrastructure.Services
 				userId: currentUserId,
 				gameId: request.GameId,
 				name: request.Name,
+				hp: request.HP,
+				sta: request.Sta,
 				@int: request.Int,
 				str: request.Str,
 				rea: request.Rea,
@@ -98,6 +116,8 @@ namespace Wastelands.Service.Infrastructure.Services
 			var character = await GetByIdAsync(request.Id);
 			character.UpdateCharacter(
 				name: request.Name,
+				hp: request.HP,
+				sta: request.Sta,
 				@int: request.Int,
 				str: request.Str,
 				rea: request.Rea,

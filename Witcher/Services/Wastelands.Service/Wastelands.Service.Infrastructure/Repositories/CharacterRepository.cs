@@ -19,5 +19,15 @@ namespace Wastelands.Service.Infrastructure.Repositories
 		{
 			return base.GetQuery().Where(x => x.UserId == _userContext.CurrentUserId);
 		}
+
+		public async Task<List<Character>> GetCharactersByGameIdAsync(long gameId)
+		{
+			return await _context.Set<Character>().Where(x => x.GameId == gameId).ToListAsync();
+		}
+
+		public async Task<Character?> GetByIdUnscopedAsync(long id)
+		{
+			return await _context.Set<Character>().FirstOrDefaultAsync(x => x.Id == id);
+		}
 	}
 }

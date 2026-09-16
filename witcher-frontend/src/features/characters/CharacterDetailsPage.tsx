@@ -96,6 +96,14 @@ export function CharacterDetailsPage() {
 
       <Card>
         <h2 className="mb-2 font-semibold">Характеристики</h2>
+        <div className="mb-3 grid grid-cols-4 gap-3 text-sm sm:grid-cols-7">
+          <div>
+            <span className="text-neutral-400">HP</span> <span className="font-medium">{c.hp}</span>
+          </div>
+          <div>
+            <span className="text-neutral-400">STA</span> <span className="font-medium">{c.sta}</span>
+          </div>
+        </div>
         <div className="grid grid-cols-4 gap-3 text-sm sm:grid-cols-7">
           {STATS.map((s) => (
             <div key={s}>
