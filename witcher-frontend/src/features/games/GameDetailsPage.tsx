@@ -68,11 +68,13 @@ export function GameDetailsPage() {
   const [bodyTemplateDescription, setBodyTemplateDescription] = useState('')
   const createBodyTemplate = useMutation({
     mutationFn: () => bodyTemplatesApi.create(id, { name: bodyTemplateName, description: bodyTemplateDescription }),
-    onSuccess: async () => {
+    onSuccess: async (created) => {
       await queryClient.invalidateQueries({ queryKey: ['body-templates', { gameId: id }] })
       setBodyTemplateName('')
       setBodyTemplateDescription('')
       setShowBodyTemplateForm(false)
+      // Сразу переходим на страницу шаблона — там добавляются/редактируются части тела.
+      navigate(`/games/${id}/body-templates/${created.id}`)
     },
   })
   const removeBodyTemplate = useMutation({
@@ -189,7 +191,8 @@ export function GameDetailsPage() {
                 <Textarea rows={2} value={bodyTemplateDescription} onChange={(e) => setBodyTemplateDescription(e.target.value)} />
               </Field>
               <p className="text-xs text-neutral-500">
-                Части тела (голова, торс, руки, ноги) добавятся автоматически по дефолтному шаблону человека.
+                Части тела (голова, торс, руки, ноги) добавятся автоматически по дефолтному шаблону человека — их
+                можно будет изменить, удалить или добавить свои на странице шаблона после создания.
               </p>
               {createBodyTemplate.error && (
                 <ErrorText>
