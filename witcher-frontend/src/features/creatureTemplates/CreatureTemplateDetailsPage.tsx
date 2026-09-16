@@ -47,6 +47,7 @@ function toFormValues(ct: {
 export function CreatureTemplateDetailsPage() {
   const { gameId, creatureTemplateId } = useParams<{ gameId: string; creatureTemplateId: string }>()
   const id = Number(creatureTemplateId)
+  const gameIdNum = Number(gameId)
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
@@ -65,7 +66,12 @@ export function CreatureTemplateDetailsPage() {
   const updateTemplate = useMutation({
     mutationFn: () => creatureTemplatesApi.update(id, templateValues!),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['creature-templates', id] })
+      // Инвалидируем и детальную карточку, и список на экране игры — иначе имя/тип/HP там
+      // обновятся только когда react-query сам решит, что список устарел (staleTime).
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['creature-templates', id] }),
+        queryClient.invalidateQueries({ queryKey: ['creature-templates', { gameId: gameIdNum }] }),
+      ])
       setEditingTemplate(false)
     },
   })

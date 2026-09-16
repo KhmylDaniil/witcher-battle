@@ -20,11 +20,18 @@ const EMPTY_PART: BodyTemplatePartFormValues = {
 export function BodyTemplateDetailsPage() {
   const { gameId, bodyTemplateId } = useParams<{ gameId: string; bodyTemplateId: string }>()
   const id = Number(bodyTemplateId)
+  const gameIdNum = Number(gameId)
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
   const bodyTemplate = useQuery({ queryKey: ['body-templates', id], queryFn: () => bodyTemplatesApi.get(id) })
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['body-templates', id] })
+  // Инвалидируем и детальную карточку, и список на экране игры — иначе название/число частей
+  // на экране игры обновится только когда react-query сам решит, что список устарел (staleTime).
+  const invalidate = () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['body-templates', id] }),
+      queryClient.invalidateQueries({ queryKey: ['body-templates', { gameId: gameIdNum }] }),
+    ])
 
   const [editingTemplate, setEditingTemplate] = useState(false)
   const [templateName, setTemplateName] = useState('')
