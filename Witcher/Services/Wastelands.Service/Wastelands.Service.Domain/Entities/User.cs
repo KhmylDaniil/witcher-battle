@@ -17,5 +17,14 @@ namespace Wastelands.Service.Domain.Entities
 		public string Password { get; set; }
 
 		public List<Character> Characters { get; set; }
+
+		/// <summary>EF-навигация — нужна только для конфигурации FK Game.CreatedByUserId.</summary>
+		public List<Game> CreatedGames { get; set; } = [];
+
+		/// <summary>EF-навигация — нужна только для конфигурации FK UserGame.UserId.</summary>
+		public List<UserGame> UserGames { get; set; } = [];
+
+		/// <summary>EF-навигация — нужна только для конфигурации FK GameJoinRequest.UserId.</summary>
+		public List<GameJoinRequest> GameJoinRequests { get; set; } = [];
 	}
 }

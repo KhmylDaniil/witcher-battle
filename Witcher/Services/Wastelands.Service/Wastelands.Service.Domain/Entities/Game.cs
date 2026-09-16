@@ -12,6 +12,18 @@ namespace Wastelands.Service.Domain.Entities
 		/// <summary>EF-навигация (как <see cref="User.Characters"/>) — нужна только для конфигурации FK Character.GameId.</summary>
 		public List<Character> Characters { get; set; } = [];
 
+		/// <summary>EF-навигация — нужна только для конфигурации FK UserGame.GameId.</summary>
+		public List<UserGame> UserGames { get; set; } = [];
+
+		/// <summary>EF-навигация — нужна только для конфигурации FK GameJoinRequest.GameId.</summary>
+		public List<GameJoinRequest> GameJoinRequests { get; set; } = [];
+
+		/// <summary>EF-навигация — нужна только для конфигурации FK BodyTemplate.GameId.</summary>
+		public List<BodyTemplate> BodyTemplates { get; set; } = [];
+
+		/// <summary>EF-навигация — нужна только для конфигурации FK CreatureTemplate.GameId.</summary>
+		public List<CreatureTemplate> CreatureTemplates { get; set; } = [];
+
 		private Game()
 		{
 		}

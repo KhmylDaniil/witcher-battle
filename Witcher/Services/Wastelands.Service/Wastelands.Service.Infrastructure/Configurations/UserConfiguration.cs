@@ -38,6 +38,24 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasForeignKey(x => x.UserId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.CreatedGames)
+				.WithOne()
+				.HasForeignKey(x => x.CreatedByUserId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.UserGames)
+				.WithOne()
+				.HasForeignKey(x => x.UserId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.GameJoinRequests)
+				.WithOne()
+				.HasForeignKey(x => x.UserId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 		}
 	}
 }

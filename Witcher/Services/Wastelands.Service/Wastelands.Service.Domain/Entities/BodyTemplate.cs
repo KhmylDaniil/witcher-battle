@@ -16,6 +16,9 @@ namespace Wastelands.Service.Domain.Entities
 
 		public List<BodyTemplatePart> Parts { get; private set; } = [];
 
+		/// <summary>EF-навигация — нужна только для конфигурации FK CreatureTemplate.BodyTemplateId.</summary>
+		public List<CreatureTemplate> CreatureTemplates { get; set; } = [];
+
 		private BodyTemplate()
 		{
 		}

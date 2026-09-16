@@ -32,6 +32,12 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasForeignKey(x => x.BodyTemplateId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.CreatureTemplates)
+				.WithOne()
+				.HasForeignKey(x => x.BodyTemplateId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 		}
 	}
 }
