@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, ErrorText, Field, Input, PageHeader, Select, Spinner, Textarea } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
 import { CREATURE_TYPES, type CreatureTemplateFormValues } from '../../types/api'
@@ -65,7 +65,14 @@ export function CreatureTemplateFormPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title="Новый шаблон существа" />
+      <PageHeader
+        title="Новый шаблон существа"
+        actions={
+          <Link to={`/games/${gameIdNum}`}>
+            <Button variant="secondary">К игре</Button>
+          </Link>
+        }
+      />
       <Card>
         {bodyTemplates.data && bodyTemplates.data.length === 0 ? (
           <p className="text-sm text-neutral-500">

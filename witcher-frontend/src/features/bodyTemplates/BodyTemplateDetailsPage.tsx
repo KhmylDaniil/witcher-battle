@@ -77,6 +77,7 @@ export function BodyTemplateDetailsPage() {
 
   const diceValues = Array.from({ length: 10 }, (_, i) => i + 1)
   const partForValue = (n: number) => bt.parts.find((p) => p.minToHit <= n && n <= p.maxToHit)
+  const sortedParts = [...bt.parts].sort((a, b) => a.minToHit - b.minToHit)
 
   return (
     <div className="flex flex-col gap-4">
@@ -205,7 +206,7 @@ export function BodyTemplateDetailsPage() {
             </tr>
           </thead>
           <tbody>
-            {bt.parts.map((p) =>
+            {sortedParts.map((p) =>
               editingPartId === p.id ? (
                 <tr key={p.id} className="border-t border-neutral-100 dark:border-neutral-900">
                   <td colSpan={6} className="py-2">
