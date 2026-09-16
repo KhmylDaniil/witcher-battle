@@ -13,7 +13,11 @@ namespace Wastelands.Service.Domain.Entities
 
 		public long UserId { get; private set; }
 
-		public long GameId { get; private set; }
+		/// <summary>
+		/// Игра, в которой создан персонаж. Может стать null — если игру снесли, персонаж не удаляется
+		/// вместе с ней (в отличие от остального содержимого игры), а остаётся у игрока в архивном виде.
+		/// </summary>
+		public long? GameId { get; private set; }
 
 		public string Name { get; private set; }
 

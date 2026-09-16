@@ -23,7 +23,7 @@ export function CharacterDetailsPage() {
     mutationFn: () => charactersApi.remove(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['characters'] })
-      navigate(character.data ? `/games/${character.data.gameId}` : '/games')
+      navigate(character.data?.gameId ? `/games/${character.data.gameId}` : '/characters')
     },
   })
 
@@ -58,12 +58,20 @@ export function CharacterDetailsPage() {
         title={c.name}
         actions={
           <>
-            <Link to={`/games/${c.gameId}`}>
-              <Button variant="secondary">К игре</Button>
-            </Link>
-            <Link to={`/games/${c.gameId}/characters/${c.id}/edit`}>
-              <Button variant="secondary">Изменить</Button>
-            </Link>
+            {c.gameId ? (
+              <>
+                <Link to={`/games/${c.gameId}`}>
+                  <Button variant="secondary">К игре</Button>
+                </Link>
+                <Link to={`/games/${c.gameId}/characters/${c.id}/edit`}>
+                  <Button variant="secondary">Изменить</Button>
+                </Link>
+              </>
+            ) : (
+              <Link to="/characters">
+                <Button variant="secondary">Мои персонажи</Button>
+              </Link>
+            )}
             <Button
               variant="danger"
               disabled={remove.isPending}
@@ -76,6 +84,15 @@ export function CharacterDetailsPage() {
           </>
         }
       />
+
+      {!c.gameId && (
+        <Card className="border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950">
+          <p className="text-sm text-amber-800 dark:text-amber-300">
+            Игра, в которой был этот персонаж, была удалена мастером. Персонаж сохранён в архивном виде —
+            вы можете его просматривать, но не редактировать.
+          </p>
+        </Card>
+      )}
 
       <Card>
         <h2 className="mb-2 font-semibold">Характеристики</h2>
@@ -112,7 +129,7 @@ export function CharacterDetailsPage() {
                   )}
                 </td>
                 <td className="py-2">
-                  {editingSkill === skill ? (
+                  {!c.gameId ? null : editingSkill === skill ? (
                     <div className="flex gap-2">
                       <Button
                         className="px-2 py-1"
@@ -151,54 +168,58 @@ export function CharacterDetailsPage() {
           </tbody>
         </table>
 
-        <div className="mt-4 flex flex-wrap items-end gap-2">
-          <Select
-            value={newSkillStat}
-            onChange={(e) => {
-              setNewSkillStat(e.target.value)
-              const first = SKILLS_BY_STAT[e.target.value].find((s) => !usedSkills.has(s))
-              if (first) setNewSkill(first)
-            }}
-          >
-            {Object.keys(SKILLS_BY_STAT).map((stat) => (
-              <option key={stat} value={stat}>
-                {stat.toUpperCase()}
-              </option>
-            ))}
-          </Select>
-          <Select value={newSkill} onChange={(e) => setNewSkill(e.target.value as Skill)}>
-            {availableInStat.length === 0 && <option value="">— все добавлены —</option>}
-            {availableInStat.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </Select>
-          <Input
-            type="number"
-            min={SKILL_VALUE_MIN}
-            max={SKILL_VALUE_MAX}
-            className="w-20"
-            value={newValue}
-            onChange={(e) => setNewValue(Number(e.target.value))}
-          />
-          <Button
-            disabled={
-              availableInStat.length === 0 ||
-              upsertSkill.isPending ||
-              newValue < SKILL_VALUE_MIN ||
-              newValue > SKILL_VALUE_MAX
-            }
-            onClick={() => upsertSkill.mutate({ skill: newSkill, value: newValue })}
-          >
-            Добавить навык
-          </Button>
-        </div>
+        {c.gameId && (
+          <>
+            <div className="mt-4 flex flex-wrap items-end gap-2">
+              <Select
+                value={newSkillStat}
+                onChange={(e) => {
+                  setNewSkillStat(e.target.value)
+                  const first = SKILLS_BY_STAT[e.target.value].find((s) => !usedSkills.has(s))
+                  if (first) setNewSkill(first)
+                }}
+              >
+                {Object.keys(SKILLS_BY_STAT).map((stat) => (
+                  <option key={stat} value={stat}>
+                    {stat.toUpperCase()}
+                  </option>
+                ))}
+              </Select>
+              <Select value={newSkill} onChange={(e) => setNewSkill(e.target.value as Skill)}>
+                {availableInStat.length === 0 && <option value="">— все добавлены —</option>}
+                {availableInStat.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </Select>
+              <Input
+                type="number"
+                min={SKILL_VALUE_MIN}
+                max={SKILL_VALUE_MAX}
+                className="w-20"
+                value={newValue}
+                onChange={(e) => setNewValue(Number(e.target.value))}
+              />
+              <Button
+                disabled={
+                  availableInStat.length === 0 ||
+                  upsertSkill.isPending ||
+                  newValue < SKILL_VALUE_MIN ||
+                  newValue > SKILL_VALUE_MAX
+                }
+                onClick={() => upsertSkill.mutate({ skill: newSkill, value: newValue })}
+              >
+                Добавить навык
+              </Button>
+            </div>
 
-        {upsertSkill.error && (
-          <div className="mt-2">
-            <ErrorText>{upsertSkill.error instanceof ApiError ? upsertSkill.error.message : 'Не удалось сохранить навык'}</ErrorText>
-          </div>
+            {upsertSkill.error && (
+              <div className="mt-2">
+                <ErrorText>{upsertSkill.error instanceof ApiError ? upsertSkill.error.message : 'Не удалось сохранить навык'}</ErrorText>
+              </div>
+            )}
+          </>
         )}
       </Card>
     </div>

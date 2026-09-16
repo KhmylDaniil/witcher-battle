@@ -13,9 +13,14 @@ export function AppLayout() {
           Wastelands
         </Link>
         {user && (
-          <Button variant="secondary" onClick={() => logout.mutate()} disabled={logout.isPending}>
-            Выйти
-          </Button>
+          <div className="flex items-center gap-3">
+            <Link to="/characters" className="text-sm text-neutral-600 hover:text-violet-600 dark:text-neutral-300">
+              Мои персонажи
+            </Link>
+            <Button variant="secondary" onClick={() => logout.mutate()} disabled={logout.isPending}>
+              Выйти
+            </Button>
+          </div>
         )}
       </header>
       <main className="mx-auto max-w-5xl px-4 py-6">

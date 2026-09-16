@@ -22,11 +22,13 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnName("CreatedByUserId")
 				.IsRequired();
 
+			// SetNull, а не Cascade: если игру снесли, персонажи игроков не удаляются вместе с ней —
+			// они остаются у владельца в архивном виде (GameId становится null).
 			builder.HasMany(x => x.Characters)
 				.WithOne()
 				.HasForeignKey(x => x.GameId)
 				.HasPrincipalKey(x => x.Id)
-				.OnDelete(DeleteBehavior.Cascade);
+				.OnDelete(DeleteBehavior.SetNull);
 
 			builder.HasMany(x => x.UserGames)
 				.WithOne()

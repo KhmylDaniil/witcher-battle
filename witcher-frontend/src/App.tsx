@@ -4,6 +4,7 @@ import { RegisterPage } from './features/auth/RegisterPage'
 import { BodyTemplateDetailsPage } from './features/bodyTemplates/BodyTemplateDetailsPage'
 import { CharacterDetailsPage } from './features/characters/CharacterDetailsPage'
 import { CharacterFormPage } from './features/characters/CharacterFormPage'
+import { CharactersListPage } from './features/characters/CharactersListPage'
 import { AbilityDetailsPage } from './features/creatureTemplates/AbilityDetailsPage'
 import { AbilityFormPage } from './features/creatureTemplates/AbilityFormPage'
 import { CreatureTemplateDetailsPage } from './features/creatureTemplates/CreatureTemplateDetailsPage'
@@ -24,6 +25,8 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route path="/" element={<Navigate to="/games" replace />} />
             <Route path="/games" element={<GamesListPage />} />
+            <Route path="/characters" element={<CharactersListPage />} />
+            <Route path="/characters/:characterId" element={<CharacterDetailsPage />} />
             <Route path="/games/:gameId" element={<GameDetailsPage />} />
             <Route path="/games/:gameId/characters/new" element={<CharacterFormPage />} />
             <Route path="/games/:gameId/characters/:characterId" element={<CharacterDetailsPage />} />

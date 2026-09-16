@@ -69,7 +69,8 @@ export interface GameJoinRequest {
 export interface Character {
   id: number
   userId: number
-  gameId: number
+  /** null — игра, в которой был создан персонаж, удалена; персонаж хранится архивно. */
+  gameId: number | null
   name: string
   int: number
   str: number

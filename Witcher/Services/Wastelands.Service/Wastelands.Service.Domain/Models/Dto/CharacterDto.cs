@@ -6,7 +6,7 @@ namespace Wastelands.Service.Domain.Models.Dto
 	{
 		public long UserId { get; set; }
 
-		public long GameId { get; set; }
+		public long? GameId { get; set; }
 
 		public string Name { get; set; }
 
