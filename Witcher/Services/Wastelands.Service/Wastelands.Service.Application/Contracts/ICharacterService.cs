@@ -4,6 +4,7 @@ using Wastelands.Service.Application.Models.Requests;
 
 namespace Wastelands.Service.Application.Contracts
 {
+	/// <summary>Лист персонажа и навыки. Способности — в ICharacterAbilityService.</summary>
 	public interface ICharacterService
 	{
 		Task<CharacterDto> GetCharacterByIdAsync(long id);
@@ -24,21 +25,5 @@ namespace Wastelands.Service.Application.Contracts
 		Task DeleteCharacterAsync(long id);
 
 		Task DeleteSkillAsync(DeleteCharacterSkillRequest request);
-
-		Task<CharacterDto> AddAbilityAsync(CreateCharacterAbilityRequest request);
-
-		Task<CharacterDto> UpdateAbilityAsync(UpdateCharacterAbilityRequest request);
-
-		Task<CharacterDto> RemoveAbilityAsync(long characterId, long abilityId);
-
-		Task<CharacterDto> AddAbilityConditionAsync(AddCharacterAbilityConditionRequest request);
-
-		Task<CharacterDto> UpdateAbilityConditionAsync(UpdateCharacterAbilityConditionRequest request);
-
-		Task<CharacterDto> RemoveAbilityConditionAsync(long characterId, long abilityId, long conditionId);
-
-		Task<CharacterDto> AddAbilityDefensiveSkillAsync(AddCharacterAbilityDefensiveSkillRequest request);
-
-		Task<CharacterDto> RemoveAbilityDefensiveSkillAsync(long characterId, long abilityId, long defensiveSkillId);
 	}
 }

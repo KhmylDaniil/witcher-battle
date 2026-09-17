@@ -5,6 +5,10 @@ using Wastelands.Service.Application.Models.Requests;
 
 namespace Wastelands.Service.Application.Contracts
 {
+	/// <summary>
+	/// Создание боя, состав участников (существа/персонажи), их состояния и старт боя (расчёт
+	/// инициативы). Процесс самих атак внутри уже идущего боя — в IBattleCombatService.
+	/// </summary>
 	public interface IBattleService
 	{
 		Task<BattleDto> GetBattleByIdAsync(long id);
@@ -34,25 +38,5 @@ namespace Wastelands.Service.Application.Contracts
 		Task<BattleDto> RemoveCharacterConditionAsync(long battleId, long characterId, Condition condition);
 
 		Task<BattleDto> StartBattleAsync(long battleId);
-
-		Task<BattleDto> StartAttackAsync(StartAttackRequest request);
-
-		Task<BattleDto> SetAttackerChoicesAsync(SetAttackerChoicesRequest request);
-
-		Task<BattleDto> ConfirmAttackerAsync(long battleId);
-
-		Task<BattleDto> SetDefenderChoiceAsync(SetDefenderChoiceRequest request);
-
-		Task<BattleDto> ConfirmDefenderAsync(long battleId);
-
-		Task<BattleDto> SetDamageRollAsync(SetDamageRollRequest request);
-
-		Task<BattleDto> ContinueDamageAsync(long battleId);
-
-		Task<BattleDto> NextSwingAsync(NextSwingRequest request);
-
-		Task<BattleDto> EndActivationAsync(long battleId);
-
-		Task<BattleDto> SkipTurnAsync(long battleId);
 	}
 }

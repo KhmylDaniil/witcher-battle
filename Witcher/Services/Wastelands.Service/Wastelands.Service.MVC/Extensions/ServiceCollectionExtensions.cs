@@ -31,15 +31,22 @@ namespace Wastelands.Service.MVC.Extensions
 			services.AddScoped<IUserContext, UserContext>();
 			services.AddScoped<IGameAccessGuard, GameAccessGuard>();
 			services.AddScoped<IBattleNotifier, BattleNotifier>();
+			services.AddScoped<IBattleParticipantAuthorizer, BattleParticipantAuthorizer>();
+			services.AddScoped<IBattleCombatContextProvider, BattleCombatContextProvider>();
+			services.AddScoped<IBattleHitResolver, BattleHitResolver>();
+			services.AddScoped<IBattleDtoMapper, BattleDtoMapper>();
 
 			services.AddScoped<IPasswordService, PasswordService>();
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<ICharacterService, CharacterService>();
+			services.AddScoped<ICharacterAbilityService, CharacterAbilityService>();
 			services.AddScoped<IGameService, GameService>();
 			services.AddScoped<IGameJoinRequestService, GameJoinRequestService>();
 			services.AddScoped<IBodyTemplateService, BodyTemplateService>();
 			services.AddScoped<ICreatureTemplateService, CreatureTemplateService>();
+			services.AddScoped<ICreatureTemplateAbilityService, CreatureTemplateAbilityService>();
 			services.AddScoped<IBattleService, BattleService>();
+			services.AddScoped<IBattleCombatService, BattleCombatService>();
 
 			services.AddAutoMapper(typeof(MappingProfile));
 

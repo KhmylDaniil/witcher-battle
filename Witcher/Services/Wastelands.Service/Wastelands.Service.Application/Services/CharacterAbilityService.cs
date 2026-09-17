@@ -1,0 +1,156 @@
+using AutoMapper;
+using Wastelands.Core.Contracts.Constants;
+using Wastelands.Core.Contracts.Enums;
+using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
+using Wastelands.Service.Application.Contracts;
+using Wastelands.Service.Application.Contracts.Repositories;
+using Wastelands.Service.Domain.Entities;
+using Wastelands.Service.Application.Models.Dto;
+using Wastelands.Service.Application.Models.Requests;
+
+namespace Wastelands.Service.Application.Services
+{
+	/// <summary>Способности персонажа и их наложенные эффекты/защитные навыки — см. ICharacterAbilityService.</summary>
+	public class CharacterAbilityService : ICharacterAbilityService
+	{
+		private readonly ICharacterRepository _characterRepository;
+		private readonly IMapper _mapper;
+
+		public CharacterAbilityService(ICharacterRepository characterRepository, IMapper mapper)
+		{
+			_characterRepository = characterRepository;
+			_mapper = mapper;
+		}
+
+		public async Task<CharacterDto> AddAbilityAsync(CreateCharacterAbilityRequest request)
+		{
+			var character = await GetByIdAsync(request.CharacterId);
+
+			var ability = Ability.ForCharacter(
+				character.Id, request.Name, request.AttackSkill, request.AttacksPerTurn,
+				request.DamageDiceCount, request.DamageModifier, request.DamageType);
+
+			character.Abilities.Add(ability);
+			await _characterRepository.UpdateAsync(character);
+
+			return _mapper.Map<CharacterDto>(character);
+		}
+
+		public async Task<CharacterDto> UpdateAbilityAsync(UpdateCharacterAbilityRequest request)
+		{
+			var character = await GetByIdAsync(request.CharacterId);
+			var ability = AbilityHelpers.GetAbility(character.Abilities, request.AbilityId);
+
+			ability.ChangeAbility(
+				request.Name, request.AttackSkill, request.AttacksPerTurn,
+				request.DamageDiceCount, request.DamageModifier, request.DamageType);
+
+			await _characterRepository.UpdateAsync(character);
+
+			return _mapper.Map<CharacterDto>(character);
+		}
+
+		public async Task<CharacterDto> RemoveAbilityAsync(long characterId, long abilityId)
+		{
+			var character = await GetByIdAsync(characterId);
+			var ability = AbilityHelpers.GetAbility(character.Abilities, abilityId);
+
+			character.Abilities.Remove(ability);
+			await _characterRepository.UpdateAsync(character);
+
+			return _mapper.Map<CharacterDto>(character);
+		}
+
+		public async Task<CharacterDto> AddAbilityConditionAsync(AddCharacterAbilityConditionRequest request)
+		{
+			var character = await GetByIdAsync(request.CharacterId);
+			var ability = AbilityHelpers.GetAbility(character.Abilities, request.AbilityId);
+
+			AbilityHelpers.ThrowIfConditionDuplicate(ability, request.Condition, excludeConditionId: null);
+
+			ability.AppliedConditions.Add(new AbilityAppliedCondition(ability.Id, request.Condition, request.ApplyChance));
+			await _characterRepository.UpdateAsync(character);
+
+			return _mapper.Map<CharacterDto>(character);
+		}
+
+		public async Task<CharacterDto> UpdateAbilityConditionAsync(UpdateCharacterAbilityConditionRequest request)
+		{
+			var character = await GetByIdAsync(request.CharacterId);
+			var ability = AbilityHelpers.GetAbility(character.Abilities, request.AbilityId);
+			var condition = ability.AppliedConditions.FirstOrDefault(x => x.Id == request.ConditionId);
+
+			NotFoundException.ThrowIfNull(
+				condition, ErrorCode.AbilityConditionNotFound, nameof(AbilityAppliedCondition), nameof(AbilityAppliedCondition.Id), request.ConditionId.ToString());
+
+			AbilityHelpers.ThrowIfConditionDuplicate(ability, request.Condition, excludeConditionId: request.ConditionId);
+
+			condition.ChangeCondition(request.Condition, request.ApplyChance);
+			await _characterRepository.UpdateAsync(character);
+
+			return _mapper.Map<CharacterDto>(character);
+		}
+
+		public async Task<CharacterDto> RemoveAbilityConditionAsync(long characterId, long abilityId, long conditionId)
+		{
+			var character = await GetByIdAsync(characterId);
+			var ability = AbilityHelpers.GetAbility(character.Abilities, abilityId);
+			var condition = ability.AppliedConditions.FirstOrDefault(x => x.Id == conditionId);
+
+			NotFoundException.ThrowIfNull(
+				condition, ErrorCode.AbilityConditionNotFound, nameof(AbilityAppliedCondition), nameof(AbilityAppliedCondition.Id), conditionId.ToString());
+
+			ability.AppliedConditions.Remove(condition);
+			await _characterRepository.UpdateAsync(character);
+
+			return _mapper.Map<CharacterDto>(character);
+		}
+
+		public async Task<CharacterDto> AddAbilityDefensiveSkillAsync(AddCharacterAbilityDefensiveSkillRequest request)
+		{
+			var character = await GetByIdAsync(request.CharacterId);
+			var ability = AbilityHelpers.GetAbility(character.Abilities, request.AbilityId);
+
+			if (ability.DefensiveSkills.Any(x => x.Skill == request.Skill))
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.AbilityDefensiveSkillAlreadyExisted,
+					string.Format(ExceptionMessages.ValueMustBeUnique, nameof(request.Skill)));
+			}
+
+			ability.DefensiveSkills.Add(new AbilityDefensiveSkill(ability.Id, request.Skill));
+			await _characterRepository.UpdateAsync(character);
+
+			return _mapper.Map<CharacterDto>(character);
+		}
+
+		public async Task<CharacterDto> RemoveAbilityDefensiveSkillAsync(long characterId, long abilityId, long defensiveSkillId)
+		{
+			var character = await GetByIdAsync(characterId);
+			var ability = AbilityHelpers.GetAbility(character.Abilities, abilityId);
+			var defensiveSkill = ability.DefensiveSkills.FirstOrDefault(x => x.Id == defensiveSkillId);
+
+			NotFoundException.ThrowIfNull(
+				defensiveSkill, ErrorCode.AbilityDefensiveSkillNotFound, nameof(AbilityDefensiveSkill), nameof(AbilityDefensiveSkill.Id), defensiveSkillId.ToString());
+
+			ability.DefensiveSkills.Remove(defensiveSkill);
+			await _characterRepository.UpdateAsync(character);
+
+			return _mapper.Map<CharacterDto>(character);
+		}
+
+		private async Task<Character> GetByIdAsync(long id)
+		{
+			var character = await _characterRepository.GetByIdAsync(id);
+
+			NotFoundException.ThrowIfNull(
+				character,
+				ErrorCode.CharacterNotFound,
+				nameof(Character),
+				nameof(Character.Id),
+				id.ToString());
+
+			return character;
+		}
+	}
+}

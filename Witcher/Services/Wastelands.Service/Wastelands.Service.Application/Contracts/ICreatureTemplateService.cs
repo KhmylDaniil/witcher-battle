@@ -5,6 +5,7 @@ using Wastelands.Service.Application.Models.Requests;
 
 namespace Wastelands.Service.Application.Contracts
 {
+	/// <summary>Статблок, части тела, навыки, модификаторы урона. Способности — в ICreatureTemplateAbilityService.</summary>
 	public interface ICreatureTemplateService
 	{
 		Task<CreatureTemplateDto> GetCreatureTemplateByIdAsync(long id);
@@ -28,21 +29,5 @@ namespace Wastelands.Service.Application.Contracts
 		Task SetDamageTypeModifierAsync(SetDamageTypeModifierRequest request);
 
 		Task RemoveDamageTypeModifierAsync(long creatureTemplateId, DamageType damageType);
-
-		Task<CreatureTemplateDto> AddAbilityAsync(CreateAbilityRequest request);
-
-		Task<CreatureTemplateDto> UpdateAbilityAsync(UpdateAbilityRequest request);
-
-		Task<CreatureTemplateDto> RemoveAbilityAsync(long creatureTemplateId, long abilityId);
-
-		Task<CreatureTemplateDto> AddAbilityConditionAsync(AddAbilityConditionRequest request);
-
-		Task<CreatureTemplateDto> UpdateAbilityConditionAsync(UpdateAbilityConditionRequest request);
-
-		Task<CreatureTemplateDto> RemoveAbilityConditionAsync(long creatureTemplateId, long abilityId, long conditionId);
-
-		Task<CreatureTemplateDto> AddAbilityDefensiveSkillAsync(AddAbilityDefensiveSkillRequest request);
-
-		Task<CreatureTemplateDto> RemoveAbilityDefensiveSkillAsync(long creatureTemplateId, long abilityId, long defensiveSkillId);
 	}
 }

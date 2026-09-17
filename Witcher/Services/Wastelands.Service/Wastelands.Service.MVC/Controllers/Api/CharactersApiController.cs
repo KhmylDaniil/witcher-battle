@@ -16,10 +16,12 @@ namespace Wastelands.Service.MVC.Controllers.Api
 	public class CharactersApiController : ApiControllerBase
 	{
 		private readonly ICharacterService _characterService;
+		private readonly ICharacterAbilityService _characterAbilityService;
 
-		public CharactersApiController(ICharacterService characterService)
+		public CharactersApiController(ICharacterService characterService, ICharacterAbilityService characterAbilityService)
 		{
 			_characterService = characterService;
+			_characterAbilityService = characterAbilityService;
 		}
 
 		[HttpGet]
@@ -79,7 +81,7 @@ namespace Wastelands.Service.MVC.Controllers.Api
 		public async Task<CharacterDto> AddAbility(long characterId, CreateCharacterAbilityRequest request)
 		{
 			request.CharacterId = characterId;
-			return await _characterService.AddAbilityAsync(request);
+			return await _characterAbilityService.AddAbilityAsync(request);
 		}
 
 		[HttpPut("{characterId:long}/abilities/{abilityId:long}")]
@@ -87,19 +89,19 @@ namespace Wastelands.Service.MVC.Controllers.Api
 		{
 			request.CharacterId = characterId;
 			request.AbilityId = abilityId;
-			return await _characterService.UpdateAbilityAsync(request);
+			return await _characterAbilityService.UpdateAbilityAsync(request);
 		}
 
 		[HttpDelete("{characterId:long}/abilities/{abilityId:long}")]
 		public async Task<CharacterDto> RemoveAbility(long characterId, long abilityId)
-			=> await _characterService.RemoveAbilityAsync(characterId, abilityId);
+			=> await _characterAbilityService.RemoveAbilityAsync(characterId, abilityId);
 
 		[HttpPost("{characterId:long}/abilities/{abilityId:long}/conditions")]
 		public async Task<CharacterDto> AddCondition(long characterId, long abilityId, AddCharacterAbilityConditionRequest request)
 		{
 			request.CharacterId = characterId;
 			request.AbilityId = abilityId;
-			return await _characterService.AddAbilityConditionAsync(request);
+			return await _characterAbilityService.AddAbilityConditionAsync(request);
 		}
 
 		[HttpPut("{characterId:long}/abilities/{abilityId:long}/conditions/{conditionId:long}")]
@@ -108,24 +110,24 @@ namespace Wastelands.Service.MVC.Controllers.Api
 			request.CharacterId = characterId;
 			request.AbilityId = abilityId;
 			request.ConditionId = conditionId;
-			return await _characterService.UpdateAbilityConditionAsync(request);
+			return await _characterAbilityService.UpdateAbilityConditionAsync(request);
 		}
 
 		[HttpDelete("{characterId:long}/abilities/{abilityId:long}/conditions/{conditionId:long}")]
 		public async Task<CharacterDto> RemoveCondition(long characterId, long abilityId, long conditionId)
-			=> await _characterService.RemoveAbilityConditionAsync(characterId, abilityId, conditionId);
+			=> await _characterAbilityService.RemoveAbilityConditionAsync(characterId, abilityId, conditionId);
 
 		[HttpPost("{characterId:long}/abilities/{abilityId:long}/defensive-skills")]
 		public async Task<CharacterDto> AddDefensiveSkill(long characterId, long abilityId, AddCharacterAbilityDefensiveSkillRequest request)
 		{
 			request.CharacterId = characterId;
 			request.AbilityId = abilityId;
-			return await _characterService.AddAbilityDefensiveSkillAsync(request);
+			return await _characterAbilityService.AddAbilityDefensiveSkillAsync(request);
 		}
 
 		[HttpDelete("{characterId:long}/abilities/{abilityId:long}/defensive-skills/{defensiveSkillId:long}")]
 		public async Task<CharacterDto> RemoveDefensiveSkill(long characterId, long abilityId, long defensiveSkillId)
-			=> await _characterService.RemoveAbilityDefensiveSkillAsync(characterId, abilityId, defensiveSkillId);
+			=> await _characterAbilityService.RemoveAbilityDefensiveSkillAsync(characterId, abilityId, defensiveSkillId);
 	}
 
 	public sealed class SkillPayload

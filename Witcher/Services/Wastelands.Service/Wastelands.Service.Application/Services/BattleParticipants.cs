@@ -1,0 +1,94 @@
+using Wastelands.Core.Contracts.Enums;
+using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
+using Wastelands.Service.Domain.Entities;
+using Wastelands.Service.Domain.Enums;
+
+namespace Wastelands.Service.Application.Services
+{
+	/// <summary>
+	/// Поиск участника уже загруженного Battle по id — переиспользуется BattleService, BattleCombatService
+	/// и BattleCombatContextProvider. Чисто на данных Battle, без обращений к репозиториям.
+	/// </summary>
+	internal static class BattleParticipants
+	{
+		public static Creature GetCreature(Battle battle, long creatureId)
+		{
+			var creature = battle.Creatures.FirstOrDefault(x => x.Id == creatureId);
+
+			NotFoundException.ThrowIfNull(
+				creature, ErrorCode.CreatureNotFoundInBattle, nameof(Creature), nameof(Creature.Id), creatureId.ToString());
+
+			return creature;
+		}
+
+		public static BattleCharacter GetBattleCharacter(Battle battle, long characterId)
+		{
+			var battleCharacter = battle.Characters.FirstOrDefault(x => x.CharacterId == characterId);
+
+			NotFoundException.ThrowIfNull(
+				battleCharacter, ErrorCode.BattleCharacterNotFound, nameof(BattleCharacter), nameof(BattleCharacter.CharacterId), characterId.ToString());
+
+			return battleCharacter;
+		}
+
+		public static string GetName(Battle battle, ParticipantKind kind, long participantId)
+		{
+			return kind == ParticipantKind.Creature
+				? GetCreature(battle, participantId).Name
+				: GetBattleCharacter(battle, participantId).Character.Name;
+		}
+
+		public static void EnsureExists(Battle battle, ParticipantKind kind, long participantId)
+		{
+			if (kind == ParticipantKind.Creature)
+			{
+				GetCreature(battle, participantId);
+			}
+			else
+			{
+				GetBattleCharacter(battle, participantId);
+			}
+		}
+
+		/// <summary>Участник, чей сейчас ход — определяется по Battle.CurrentInitiative.</summary>
+		public static (ParticipantKind Kind, long Id) GetActive(Battle battle)
+		{
+			if (battle.CurrentInitiative is null)
+			{
+				throw new InvalidArgumentException(ErrorCode.BattleNotInProgress, "Бой ещё не начат.");
+			}
+
+			var creature = battle.Creatures.FirstOrDefault(c => c.Initiative == battle.CurrentInitiative);
+			if (creature is not null)
+			{
+				return (ParticipantKind.Creature, creature.Id);
+			}
+
+			var character = battle.Characters.FirstOrDefault(c => c.Initiative == battle.CurrentInitiative);
+			if (character is not null)
+			{
+				return (ParticipantKind.Character, character.CharacterId);
+			}
+
+			throw new InvalidArgumentException(ErrorCode.NotYourTurn, "Не найден активный по инициативе участник боя.");
+		}
+
+		public static BattleAttack GetActiveAttack(Battle battle)
+		{
+			if (battle.Attack is null)
+			{
+				throw new InvalidArgumentException(ErrorCode.NoActiveAttack, "В бою сейчас нет незавершённой атаки.");
+			}
+
+			return battle.Attack;
+		}
+
+		public static void EnsureInProgress(Battle battle)
+		{
+			if (battle.Status != BattleStatus.InProgress)
+			{
+				throw new InvalidArgumentException(ErrorCode.BattleNotInProgress, "Бой ещё не начат.");
+			}
+		}
+	}
+}
