@@ -77,11 +77,11 @@ namespace Wastelands.Service.Application.Services
 		}
 
 		/// <summary>
-		/// Бросок урона способности + модификатор, для существа — сначала модификатор типа урона
-		/// (Vulnerability×2/Resistance÷2/Immunity×0), затем броня части (шаблонная минус уже
-		/// накопленный в этом бою износ), и только к урону, не поглощённому бронёй, применяется
-		/// модификатор части тела. Для персонажа — без частей тела и без брони (см. ключевые решения
-		/// плана боя).
+		/// Бросок урона способности + модификатор; для существа — сначала броня части (шаблонная минус
+		/// уже накопленный в этом бою износ) поглощает часть урона, затем к оставшемуся применяется
+		/// модификатор части тела, и последним — модификатор типа урона (Vulnerability×2/Resistance÷2/
+		/// Immunity×0). Для персонажа — без частей тела, без брони и без модификатора типа урона (у
+		/// персонажа нет DamageTypeModifiers; см. ключевые решения плана боя).
 		/// </summary>
 		public static DamageResult CalculateDamage(
 			ParticipantCombatContext attackerContext,
@@ -101,26 +101,45 @@ namespace Wastelands.Service.Application.Services
 
 			var part = defenderContext!.Template!.Parts.First(p => p.Id == attack.ResolvedCreaturePartId);
 
-			if (defenderContext.Template.DamageTypeModifiers.TryGetValue(ability.DamageType, out var modifier))
-			{
-				raw = modifier switch
-				{
-					DamageTypeModifier.Vulnerability => raw * 2,
-					DamageTypeModifier.Resistance => raw / 2,
-					DamageTypeModifier.Immunity => 0,
-					_ => raw,
-				};
-			}
-
 			var rawDamage = Math.Max(0, (int)Math.Round(raw));
 			var armorReduction = defenderContext.Creature!.GetArmorReduction(part.Id);
 			var armorBeforeHit = Math.Max(0, part.Armor - armorReduction);
 			var armorAfterHit = Math.Max(0, part.Armor - (armorReduction + 1));
 			var armorAbsorbed = Math.Min(rawDamage, armorBeforeHit);
 			var damageAfterArmor = Math.Max(0, rawDamage - armorBeforeHit);
-			var finalDamage = Math.Max(0, (int)Math.Round(damageAfterArmor * part.DamageModifier));
+
+			double afterPartModifier = damageAfterArmor * part.DamageModifier;
+
+			if (defenderContext.Template.DamageTypeModifiers.TryGetValue(ability.DamageType, out var modifier))
+			{
+				afterPartModifier = modifier switch
+				{
+					DamageTypeModifier.Vulnerability => afterPartModifier * 2,
+					DamageTypeModifier.Resistance => afterPartModifier / 2,
+					DamageTypeModifier.Immunity => 0,
+					_ => afterPartModifier,
+				};
+			}
+
+			var finalDamage = Math.Max(0, (int)Math.Round(afterPartModifier));
 
 			return new DamageResult(finalDamage, part.Name, rawDamage, armorBeforeHit, armorAbsorbed, armorAfterHit);
+		}
+
+		/// <summary>Каждое состояние способности накладывается независимо, с вероятностью, равной его ApplyChance (%).</summary>
+		public static List<Condition> RollAppliedConditions(Ability ability)
+		{
+			var applied = new List<Condition>();
+
+			foreach (var appliedCondition in ability.AppliedConditions)
+			{
+				if (RollDie(100) <= appliedCondition.ApplyChance)
+				{
+					applied.Add(appliedCondition.Condition);
+				}
+			}
+
+			return applied;
 		}
 	}
 }

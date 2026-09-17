@@ -160,22 +160,15 @@ namespace Wastelands.Service.Application.Services
 
 			var damage = BattleCombatCalculator.CalculateDamage(attackerContext, defenderContext, attack.DefenderKind, ability, attack);
 
-			if (attack.DefenderKind == ParticipantKind.Creature)
-			{
-				defenderContext!.Creature!.ApplyDamage(damage.FinalDamage);
-				if (damage.PartName is not null)
-				{
-					defenderContext.Creature.WearArmor(attack.ResolvedCreaturePartId!.Value);
-				}
-			}
-			else
-			{
-				BattleParticipants.GetBattleCharacter(battle, attack.DefenderId).ApplyDamage(damage.FinalDamage);
-			}
+			// Проверка состояний — только если удар нанёс хоть какой-то урон, независимо от того, кто защищается.
+			var appliedConditions = damage.FinalDamage >= 1
+				? BattleCombatCalculator.RollAppliedConditions(ability)
+				: [];
+			BattleParticipants.ApplyDamage(battle, attack, attack.DefenderKind, attack.DefenderId, damage, appliedConditions);
 
 			var attackerName = BattleParticipants.GetName(battle, attack.AttackerKind, attack.AttackerId);
 			var defenderName = BattleParticipants.GetName(battle, attack.DefenderKind, attack.DefenderId);
-			battle.AddLogEntry(BattleCombatLogFormatter.FormatHit(attackerName, ability.Name, defenderName, attack, damage));
+			battle.AddLogEntry(BattleCombatLogFormatter.FormatHit(attackerName, ability.Name, defenderName, attack, damage, appliedConditions));
 
 			attack.MarkDamageResolved();
 

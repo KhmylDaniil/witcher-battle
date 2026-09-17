@@ -105,5 +105,40 @@ namespace Wastelands.Service.Application.Services
 				throw new InvalidArgumentException(ErrorCode.CreatureTemplatePartNotFound, "Часть тела не найдена у защитника.");
 			}
 		}
+
+		/// <summary>Применяет итог урона к защитнику (существо — ещё и износ брони) и накладывает состояния, прошедшие проверку.</summary>
+		public static void ApplyDamage(
+			Battle battle,
+			BattleAttack attack,
+			ParticipantKind defenderKind,
+			long defenderId,
+			DamageResult damage,
+			IReadOnlyList<Condition> appliedConditions)
+		{
+			if (defenderKind == ParticipantKind.Creature)
+			{
+				var creature = GetCreature(battle, defenderId);
+				creature.ApplyDamage(damage.FinalDamage);
+				if (damage.PartName is not null)
+				{
+					creature.WearArmor(attack.ResolvedCreaturePartId!.Value);
+				}
+
+				foreach (var condition in appliedConditions)
+				{
+					creature.AddCondition(condition);
+				}
+			}
+			else
+			{
+				var character = GetBattleCharacter(battle, defenderId);
+				character.ApplyDamage(damage.FinalDamage);
+
+				foreach (var condition in appliedConditions)
+				{
+					character.AddCondition(condition);
+				}
+			}
+		}
 	}
 }
