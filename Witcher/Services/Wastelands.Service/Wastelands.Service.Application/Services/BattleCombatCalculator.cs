@@ -77,10 +77,11 @@ namespace Wastelands.Service.Application.Services
 		}
 
 		/// <summary>
-		/// Бросок урона способности + модификатор, для существа — умноженный на модификатор части тела
-		/// и модификатор типа урона (Vulnerability×2/Resistance÷2/Immunity×0), минус эффективная броня
-		/// части (шаблонная броня за вычетом уже накопленного в этом бою износа). Для персонажа — без
-		/// частей тела и без брони (см. ключевые решения плана боя).
+		/// Бросок урона способности + модификатор, для существа — сначала модификатор типа урона
+		/// (Vulnerability×2/Resistance÷2/Immunity×0), затем броня части (шаблонная минус уже
+		/// накопленный в этом бою износ), и только к урону, не поглощённому бронёй, применяется
+		/// модификатор части тела. Для персонажа — без частей тела и без брони (см. ключевые решения
+		/// плана боя).
 		/// </summary>
 		public static DamageResult CalculateDamage(
 			ParticipantCombatContext attackerContext,
@@ -99,7 +100,6 @@ namespace Wastelands.Service.Application.Services
 			}
 
 			var part = defenderContext!.Template!.Parts.First(p => p.Id == attack.ResolvedCreaturePartId);
-			raw *= part.DamageModifier;
 
 			if (defenderContext.Template.DamageTypeModifiers.TryGetValue(ability.DamageType, out var modifier))
 			{
@@ -117,7 +117,8 @@ namespace Wastelands.Service.Application.Services
 			var armorBeforeHit = Math.Max(0, part.Armor - armorReduction);
 			var armorAfterHit = Math.Max(0, part.Armor - (armorReduction + 1));
 			var armorAbsorbed = Math.Min(rawDamage, armorBeforeHit);
-			var finalDamage = Math.Max(0, rawDamage - armorBeforeHit);
+			var damageAfterArmor = Math.Max(0, rawDamage - armorBeforeHit);
+			var finalDamage = Math.Max(0, (int)Math.Round(damageAfterArmor * part.DamageModifier));
 
 			return new DamageResult(finalDamage, part.Name, rawDamage, armorBeforeHit, armorAbsorbed, armorAfterHit);
 		}
