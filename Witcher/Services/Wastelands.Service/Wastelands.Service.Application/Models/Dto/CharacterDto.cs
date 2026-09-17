@@ -29,5 +29,7 @@ namespace Wastelands.Service.Application.Models.Dto
 		public int Wil { get; set; }
 
 		public Dictionary<Skill, int> Skills { get; set; }
+
+		public List<AbilityDto> Abilities { get; set; } = [];
 	}
 }

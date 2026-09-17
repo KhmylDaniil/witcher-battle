@@ -82,6 +82,7 @@ export interface Character {
   emp: number
   wil: number
   skills: Partial<Record<Skill, number>>
+  abilities: Ability[]
 }
 
 export interface CharacterFormValues {

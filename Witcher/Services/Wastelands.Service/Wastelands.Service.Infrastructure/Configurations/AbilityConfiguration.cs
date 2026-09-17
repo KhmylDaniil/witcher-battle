@@ -15,7 +15,11 @@ namespace Wastelands.Service.Infrastructure.Configurations
 
 			builder.Property(x => x.CreatureTemplateId)
 				.HasColumnName("CreatureTemplateId")
-				.IsRequired();
+				.IsRequired(false);
+
+			builder.Property(x => x.CharacterId)
+				.HasColumnName("CharacterId")
+				.IsRequired(false);
 
 			builder.Property(x => x.Name)
 				.HasColumnName("Name")

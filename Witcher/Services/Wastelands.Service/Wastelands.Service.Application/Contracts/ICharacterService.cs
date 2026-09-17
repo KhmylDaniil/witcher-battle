@@ -24,5 +24,21 @@ namespace Wastelands.Service.Application.Contracts
 		Task DeleteCharacterAsync(long id);
 
 		Task DeleteSkillAsync(DeleteCharacterSkillRequest request);
+
+		Task<CharacterDto> AddAbilityAsync(CreateCharacterAbilityRequest request);
+
+		Task<CharacterDto> UpdateAbilityAsync(UpdateCharacterAbilityRequest request);
+
+		Task<CharacterDto> RemoveAbilityAsync(long characterId, long abilityId);
+
+		Task<CharacterDto> AddAbilityConditionAsync(AddCharacterAbilityConditionRequest request);
+
+		Task<CharacterDto> UpdateAbilityConditionAsync(UpdateCharacterAbilityConditionRequest request);
+
+		Task<CharacterDto> RemoveAbilityConditionAsync(long characterId, long abilityId, long conditionId);
+
+		Task<CharacterDto> AddAbilityDefensiveSkillAsync(AddCharacterAbilityDefensiveSkillRequest request);
+
+		Task<CharacterDto> RemoveAbilityDefensiveSkillAsync(long characterId, long abilityId, long defensiveSkillId);
 	}
 }

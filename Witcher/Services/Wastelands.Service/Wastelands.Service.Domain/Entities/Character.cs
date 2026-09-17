@@ -41,6 +41,8 @@ namespace Wastelands.Service.Domain.Entities
 
 		public Dictionary<Skill, int> Skills { get; private set; } = [];
 
+		public List<Ability> Abilities { get; private set; } = [];
+
 		private Character()
 		{
 		}

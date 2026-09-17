@@ -165,7 +165,7 @@ namespace Wastelands.Service.Application.Services
 		{
 			var creatureTemplate = await GetByIdAsync(request.CreatureTemplateId);
 
-			var ability = new Ability(
+			var ability = Ability.ForCreatureTemplate(
 				creatureTemplate.Id, request.Name, request.AttackSkill, request.AttacksPerTurn,
 				request.DamageDiceCount, request.DamageModifier, request.DamageType);
 
@@ -178,7 +178,7 @@ namespace Wastelands.Service.Application.Services
 		public async Task<CreatureTemplateDto> UpdateAbilityAsync(UpdateAbilityRequest request)
 		{
 			var creatureTemplate = await GetByIdAsync(request.CreatureTemplateId);
-			var ability = GetAbility(creatureTemplate, request.AbilityId);
+			var ability = AbilityHelpers.GetAbility(creatureTemplate.Abilities, request.AbilityId);
 
 			ability.ChangeAbility(
 				request.Name, request.AttackSkill, request.AttacksPerTurn,
@@ -192,7 +192,7 @@ namespace Wastelands.Service.Application.Services
 		public async Task<CreatureTemplateDto> RemoveAbilityAsync(long creatureTemplateId, long abilityId)
 		{
 			var creatureTemplate = await GetByIdAsync(creatureTemplateId);
-			var ability = GetAbility(creatureTemplate, abilityId);
+			var ability = AbilityHelpers.GetAbility(creatureTemplate.Abilities, abilityId);
 
 			creatureTemplate.Abilities.Remove(ability);
 			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
@@ -203,9 +203,9 @@ namespace Wastelands.Service.Application.Services
 		public async Task<CreatureTemplateDto> AddAbilityConditionAsync(AddAbilityConditionRequest request)
 		{
 			var creatureTemplate = await GetByIdAsync(request.CreatureTemplateId);
-			var ability = GetAbility(creatureTemplate, request.AbilityId);
+			var ability = AbilityHelpers.GetAbility(creatureTemplate.Abilities, request.AbilityId);
 
-			ThrowIfConditionDuplicate(ability, request.Condition, excludeConditionId: null);
+			AbilityHelpers.ThrowIfConditionDuplicate(ability, request.Condition, excludeConditionId: null);
 
 			ability.AppliedConditions.Add(new AbilityAppliedCondition(ability.Id, request.Condition, request.ApplyChance));
 			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
@@ -216,13 +216,13 @@ namespace Wastelands.Service.Application.Services
 		public async Task<CreatureTemplateDto> UpdateAbilityConditionAsync(UpdateAbilityConditionRequest request)
 		{
 			var creatureTemplate = await GetByIdAsync(request.CreatureTemplateId);
-			var ability = GetAbility(creatureTemplate, request.AbilityId);
+			var ability = AbilityHelpers.GetAbility(creatureTemplate.Abilities, request.AbilityId);
 			var condition = ability.AppliedConditions.FirstOrDefault(x => x.Id == request.ConditionId);
 
 			NotFoundException.ThrowIfNull(
 				condition, ErrorCode.AbilityConditionNotFound, nameof(AbilityAppliedCondition), nameof(AbilityAppliedCondition.Id), request.ConditionId.ToString());
 
-			ThrowIfConditionDuplicate(ability, request.Condition, excludeConditionId: request.ConditionId);
+			AbilityHelpers.ThrowIfConditionDuplicate(ability, request.Condition, excludeConditionId: request.ConditionId);
 
 			condition.ChangeCondition(request.Condition, request.ApplyChance);
 			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
@@ -233,7 +233,7 @@ namespace Wastelands.Service.Application.Services
 		public async Task<CreatureTemplateDto> RemoveAbilityConditionAsync(long creatureTemplateId, long abilityId, long conditionId)
 		{
 			var creatureTemplate = await GetByIdAsync(creatureTemplateId);
-			var ability = GetAbility(creatureTemplate, abilityId);
+			var ability = AbilityHelpers.GetAbility(creatureTemplate.Abilities, abilityId);
 			var condition = ability.AppliedConditions.FirstOrDefault(x => x.Id == conditionId);
 
 			NotFoundException.ThrowIfNull(
@@ -248,7 +248,7 @@ namespace Wastelands.Service.Application.Services
 		public async Task<CreatureTemplateDto> AddAbilityDefensiveSkillAsync(AddAbilityDefensiveSkillRequest request)
 		{
 			var creatureTemplate = await GetByIdAsync(request.CreatureTemplateId);
-			var ability = GetAbility(creatureTemplate, request.AbilityId);
+			var ability = AbilityHelpers.GetAbility(creatureTemplate.Abilities, request.AbilityId);
 
 			if (ability.DefensiveSkills.Any(x => x.Skill == request.Skill))
 			{
@@ -266,7 +266,7 @@ namespace Wastelands.Service.Application.Services
 		public async Task<CreatureTemplateDto> RemoveAbilityDefensiveSkillAsync(long creatureTemplateId, long abilityId, long defensiveSkillId)
 		{
 			var creatureTemplate = await GetByIdAsync(creatureTemplateId);
-			var ability = GetAbility(creatureTemplate, abilityId);
+			var ability = AbilityHelpers.GetAbility(creatureTemplate.Abilities, abilityId);
 			var defensiveSkill = ability.DefensiveSkills.FirstOrDefault(x => x.Id == defensiveSkillId);
 
 			NotFoundException.ThrowIfNull(
@@ -283,26 +283,6 @@ namespace Wastelands.Service.Application.Services
 			InvalidArgumentException.ThrowIfNotInRange(value, CreatureTemplate.MinSkillValue, CreatureTemplate.MaxSkillValue, nameof(value));
 			creatureTemplate.Skills[skill] = value;
 			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
-		}
-
-		private static Ability GetAbility(CreatureTemplate creatureTemplate, long abilityId)
-		{
-			var ability = creatureTemplate.Abilities.FirstOrDefault(x => x.Id == abilityId);
-
-			NotFoundException.ThrowIfNull(
-				ability, ErrorCode.AbilityNotFound, nameof(Ability), nameof(Ability.Id), abilityId.ToString());
-
-			return ability;
-		}
-
-		private static void ThrowIfConditionDuplicate(Ability ability, Condition condition, long? excludeConditionId)
-		{
-			if (ability.AppliedConditions.Any(x => x.Condition == condition && x.Id != excludeConditionId))
-			{
-				throw new InvalidArgumentException(
-					ErrorCode.AbilityConditionAlreadyExisted,
-					string.Format(ExceptionMessages.ValueMustBeUnique, nameof(condition)));
-			}
 		}
 
 		private async Task<CreatureTemplate> GetByIdAsync(long id)

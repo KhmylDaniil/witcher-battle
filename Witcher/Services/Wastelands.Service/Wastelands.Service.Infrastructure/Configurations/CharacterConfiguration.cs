@@ -70,6 +70,12 @@ namespace Wastelands.Service.Infrastructure.Configurations
 			.HasColumnName("Skills")
 			.HasComment("Skills")
 			.IsRequired();
+
+			builder.HasMany(x => x.Abilities)
+				.WithOne()
+				.HasForeignKey(x => x.CharacterId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 		}
 	}
 }

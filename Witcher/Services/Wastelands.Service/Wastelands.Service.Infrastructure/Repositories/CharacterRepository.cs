@@ -20,6 +20,13 @@ namespace Wastelands.Service.Infrastructure.Repositories
 			return base.GetQuery().Where(x => x.UserId == _userContext.CurrentUserId);
 		}
 
+		protected override IQueryable<Character> IncludeRelatedEntities(IQueryable<Character> query)
+		{
+			return query
+				.Include(x => x.Abilities).ThenInclude(a => a.AppliedConditions)
+				.Include(x => x.Abilities).ThenInclude(a => a.DefensiveSkills);
+		}
+
 		public async Task<List<Character>> GetCharactersByGameIdAsync(long gameId)
 		{
 			return await _context.Set<Character>().Where(x => x.GameId == gameId).ToListAsync();

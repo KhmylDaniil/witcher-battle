@@ -42,6 +42,11 @@ export function CharacterDetailsPage() {
     onSuccess: invalidate,
   })
 
+  const removeAbility = useMutation({
+    mutationFn: (abilityId: number) => charactersApi.removeAbility(id, abilityId),
+    onSuccess: invalidate,
+  })
+
   const [newSkillStat, setNewSkillStat] = useState<string>('Int')
   const [newSkill, setNewSkill] = useState<Skill>('Awareness')
   const [newValue, setNewValue] = useState(1)
@@ -228,6 +233,41 @@ export function CharacterDetailsPage() {
             )}
           </>
         )}
+      </Card>
+
+      <Card>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-semibold">Способности</h2>
+          {c.gameId && (
+            <Link to={`/characters/${c.id}/abilities/new`}>
+              <Button className="px-2 py-1 text-xs">Добавить способность</Button>
+            </Link>
+          )}
+        </div>
+
+        {c.abilities.length === 0 && <p className="text-sm text-neutral-500">Способностей пока нет.</p>}
+        <div className="flex flex-col gap-2">
+          {c.abilities.map((a) => (
+            <div key={a.id} className="flex items-center justify-between gap-2 text-sm">
+              <Link to={`/characters/${c.id}/abilities/${a.id}`} className="hover:text-violet-600">
+                {a.name}{' '}
+                <span className="text-neutral-400">
+                  — {a.attacksPerTurn}× {a.damageDiceCount}д6+{a.damageModifier} {a.damageType} ({a.attackSkill})
+                </span>
+              </Link>
+              {c.gameId && (
+                <ConfirmButton
+                  link
+                  confirmMessage={`Удалить способность "${a.name}"?`}
+                  onConfirm={() => removeAbility.mutate(a.id)}
+                  disabled={removeAbility.isPending}
+                >
+                  Удалить
+                </ConfirmButton>
+              )}
+            </div>
+          ))}
+        </div>
       </Card>
     </div>
   )
