@@ -1,3 +1,4 @@
+using Wastelands.Core.Contracts.Models;
 using Wastelands.Service.Application.Models.Dto;
 using Wastelands.Service.Application.Models.Filters;
 using Wastelands.Service.Application.Models.Requests;
@@ -8,7 +9,7 @@ namespace Wastelands.Service.Application.Contracts
 	{
 		Task<BodyTemplateDto> GetBodyTemplateByIdAsync(long id);
 
-		Task<List<BodyTemplateDto>> GetBodyTemplatesAsync(BodyTemplateFilter filter);
+		Task<PagedResultDto<BodyTemplateDto>> GetBodyTemplatesAsync(BodyTemplateFilter filter, PagedRequest paging);
 
 		Task<BodyTemplateDto> CreateBodyTemplateAsync(CreateBodyTemplateRequest request);
 

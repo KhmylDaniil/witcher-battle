@@ -1,8 +1,9 @@
 import { api, buildQuery } from '../../lib/apiClient'
-import type { Game, GameFormValues, GameJoinRequest } from '../../types/api'
+import type { Game, GameFormValues, GameJoinRequest, PagedResult, PagingParams } from '../../types/api'
 
 export const gamesApi = {
-  list: (filters: { name?: string } = {}) => api.get<Game[]>(`/api/games${buildQuery(filters)}`),
+  list: (filters: { name?: string } = {}, paging: PagingParams = {}) =>
+    api.get<PagedResult<Game>>(`/api/games${buildQuery({ ...filters, ...paging })}`),
   mine: () => api.get<Game[]>('/api/games/mine'),
   get: (id: number) => api.get<Game>(`/api/games/${id}`),
   create: (payload: GameFormValues) => api.post<Game>('/api/games', payload),

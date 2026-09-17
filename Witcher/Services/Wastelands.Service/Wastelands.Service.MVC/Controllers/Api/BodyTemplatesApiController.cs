@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Wastelands.Core.Contracts.Models;
 using Wastelands.Service.Application.Contracts;
 using Wastelands.Service.Application.Models.Dto;
 using Wastelands.Service.Application.Models.Filters;
@@ -18,8 +19,8 @@ namespace Wastelands.Service.MVC.Controllers.Api
 		}
 
 		[HttpGet]
-		public async Task<List<BodyTemplateDto>> Index([FromQuery] BodyTemplateFilter filter)
-			=> await _bodyTemplateService.GetBodyTemplatesAsync(filter);
+		public async Task<PagedResultDto<BodyTemplateDto>> Index([FromQuery] BodyTemplateFilter filter, [FromQuery] PagedRequest paging)
+			=> await _bodyTemplateService.GetBodyTemplatesAsync(filter, paging);
 
 		[HttpGet("{id:long}")]
 		public async Task<BodyTemplateDto> Get(long id)

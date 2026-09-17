@@ -6,11 +6,14 @@ import type {
   CreatureTemplateFormValues,
   DamageType,
   DamageTypeModifierKind,
+  PagedResult,
+  PagingParams,
   Skill,
 } from '../../types/api'
 
 export const creatureTemplatesApi = {
-  list: (filters: { gameId?: number } = {}) => api.get<CreatureTemplate[]>(`/api/creature-templates${buildQuery(filters)}`),
+  list: (filters: { gameId?: number } = {}, paging: PagingParams = {}) =>
+    api.get<PagedResult<CreatureTemplate>>(`/api/creature-templates${buildQuery({ ...filters, ...paging })}`),
   get: (id: number) => api.get<CreatureTemplate>(`/api/creature-templates/${id}`),
   create: (gameId: number, payload: CreatureTemplateFormValues) =>
     api.post<CreatureTemplate>('/api/creature-templates', { ...payload, gameId }),

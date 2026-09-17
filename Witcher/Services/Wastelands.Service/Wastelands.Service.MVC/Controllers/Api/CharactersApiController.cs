@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Wastelands.Core.Contracts.Models;
 using Wastelands.Service.Application.Contracts;
 using Wastelands.Service.Domain.Enums;
 using Wastelands.Service.Application.Models.Dto;
@@ -25,8 +26,8 @@ namespace Wastelands.Service.MVC.Controllers.Api
 		}
 
 		[HttpGet]
-		public async Task<List<CharacterDto>> Index([FromQuery] CharacterFilter filter)
-			=> await _characterService.GetCharactersAsync(filter);
+		public async Task<PagedResultDto<CharacterDto>> Index([FromQuery] CharacterFilter filter, [FromQuery] PagedRequest paging)
+			=> await _characterService.GetCharactersAsync(filter, paging);
 
 		[HttpGet("{id:long}")]
 		public async Task<CharacterDto> Get(long id)

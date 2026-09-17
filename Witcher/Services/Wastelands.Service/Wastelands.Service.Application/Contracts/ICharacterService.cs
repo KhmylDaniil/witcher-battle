@@ -1,4 +1,5 @@
-﻿using Wastelands.Service.Application.Models.Dto;
+﻿using Wastelands.Core.Contracts.Models;
+using Wastelands.Service.Application.Models.Dto;
 using Wastelands.Service.Application.Models.Filters;
 using Wastelands.Service.Application.Models.Requests;
 
@@ -9,7 +10,7 @@ namespace Wastelands.Service.Application.Contracts
 	{
 		Task<CharacterDto> GetCharacterByIdAsync(long id);
 
-		Task<List<CharacterDto>> GetCharactersAsync(CharacterFilter filter);
+		Task<PagedResultDto<CharacterDto>> GetCharactersAsync(CharacterFilter filter, PagedRequest paging);
 
 		/// <summary>Персонажи всех игроков этой игры — доступно только мастеру игры.</summary>
 		Task<List<CharacterDto>> GetGameCharactersAsync(long gameId);

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate } from 'react-router-dom'
-import { Button, Card, ConfirmButton, ErrorText, Field, Input, Spinner, Textarea } from '../../components/ui'
+import { Button, Card, ConfirmButton, ErrorText, Field, Input, Pagination, Spinner, Textarea } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
 import { bodyTemplatesApi } from './api'
 
@@ -9,10 +9,11 @@ import { bodyTemplatesApi } from './api'
 export function BodyTemplatesCard({ gameId }: { gameId: number }) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const [page, setPage] = useState(1)
 
   const bodyTemplates = useQuery({
-    queryKey: ['body-templates', { gameId }],
-    queryFn: () => bodyTemplatesApi.list({ gameId }),
+    queryKey: ['body-templates', { gameId }, page],
+    queryFn: () => bodyTemplatesApi.list({ gameId }, { pageNumber: page }),
   })
 
   const [showForm, setShowForm] = useState(false)
@@ -78,11 +79,11 @@ export function BodyTemplatesCard({ gameId }: { gameId: number }) {
       )}
 
       {bodyTemplates.isLoading && <Spinner />}
-      {bodyTemplates.data && bodyTemplates.data.length === 0 && (
+      {bodyTemplates.data && bodyTemplates.data.items.length === 0 && (
         <p className="text-sm text-neutral-500">Шаблонов тела пока нет.</p>
       )}
       <div className="flex flex-col gap-2">
-        {bodyTemplates.data?.map((bt) => (
+        {bodyTemplates.data?.items.map((bt) => (
           <div key={bt.id} className="flex items-center justify-between gap-2 text-sm">
             <Link to={`/games/${gameId}/body-templates/${bt.id}`} className="hover:text-violet-600">
               {bt.name} <span className="text-neutral-400">— {bt.parts.length} частей тела</span>
@@ -98,6 +99,15 @@ export function BodyTemplatesCard({ gameId }: { gameId: number }) {
           </div>
         ))}
       </div>
+
+      {bodyTemplates.data && (
+        <Pagination
+          pageNumber={bodyTemplates.data.pageNumber}
+          pageSize={bodyTemplates.data.pageSize}
+          totalCount={bodyTemplates.data.totalCount}
+          onPageChange={setPage}
+        />
+      )}
     </Card>
   )
 }

@@ -1,3 +1,4 @@
+using Wastelands.Core.Contracts.Models;
 using Wastelands.Service.Domain.Enums;
 using Wastelands.Service.Application.Models.Dto;
 using Wastelands.Service.Application.Models.Filters;
@@ -10,7 +11,7 @@ namespace Wastelands.Service.Application.Contracts
 	{
 		Task<CreatureTemplateDto> GetCreatureTemplateByIdAsync(long id);
 
-		Task<List<CreatureTemplateDto>> GetCreatureTemplatesAsync(CreatureTemplateFilter filter);
+		Task<PagedResultDto<CreatureTemplateDto>> GetCreatureTemplatesAsync(CreatureTemplateFilter filter, PagedRequest paging);
 
 		Task<CreatureTemplateDto> CreateCreatureTemplateAsync(CreateCreatureTemplateRequest request);
 

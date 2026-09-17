@@ -26,7 +26,7 @@ namespace Wastelands.Core.Contracts.Models
 		/// <summary>
 		/// Количество записей на странице.
 		/// </summary>
-		public int PageSize { get; set; } = 10;
+		public int PageSize { get; set; } = 20;
 
 		/// <summary>
 		/// Номер страницы.

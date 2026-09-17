@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Button, Card, ConfirmButton, ErrorText, PageHeader, Spinner } from '../../components/ui'
+import { Button, Card, ConfirmButton, ErrorText, PageHeader, Pagination, Spinner } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
 import { BattlesCard } from '../battles/BattlesCard'
 import { CreatureTemplatesCard } from '../creatureTemplates/CreatureTemplatesCard'
@@ -17,7 +18,11 @@ export function GameDetailsPage() {
   const queryClient = useQueryClient()
 
   const game = useQuery({ queryKey: ['games', id], queryFn: () => gamesApi.get(id) })
-  const characters = useQuery({ queryKey: ['characters', { gameId: id }], queryFn: () => charactersApi.list({ gameId: id }) })
+  const [charactersPage, setCharactersPage] = useState(1)
+  const characters = useQuery({
+    queryKey: ['characters', { gameId: id }, charactersPage],
+    queryFn: () => charactersApi.list({ gameId: id }, { pageNumber: charactersPage }),
+  })
 
   const isOwner = game.data?.membershipStatus === 'Owner'
   const isMember = game.data?.membershipStatus === 'Owner' || game.data?.membershipStatus === 'Member'
@@ -139,10 +144,10 @@ export function GameDetailsPage() {
         </div>
 
         {characters.isLoading && <Spinner />}
-        {characters.data && characters.data.length === 0 && <p className="text-sm text-neutral-500">Персонажей пока нет.</p>}
+        {characters.data && characters.data.items.length === 0 && <p className="text-sm text-neutral-500">Персонажей пока нет.</p>}
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {characters.data?.map((c) => (
+          {characters.data?.items.map((c) => (
             <Link key={c.id} to={`/games/${id}/characters/${c.id}`}>
               <Card className="h-full transition hover:border-violet-400">
                 <h3 className="font-semibold">{c.name}</h3>
@@ -157,6 +162,15 @@ export function GameDetailsPage() {
             </Link>
           ))}
         </div>
+
+        {characters.data && (
+          <Pagination
+            pageNumber={characters.data.pageNumber}
+            pageSize={characters.data.pageSize}
+            totalCount={characters.data.totalCount}
+            onPageChange={setCharactersPage}
+          />
+        )}
       </Card>
     </div>
   )

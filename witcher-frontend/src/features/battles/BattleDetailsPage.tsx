@@ -50,9 +50,11 @@ export function BattleDetailsPage() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['battles', gameIdNum, id] })
   useBattleUpdates(id, invalidate)
 
+  // Выпадающий список для добавления существа в бой должен показывать все шаблоны игры —
+  // запрашиваем через тот же пагинируемый эндпоинт, но с большим pageSize.
   const creatureTemplates = useQuery({
-    queryKey: ['creature-templates', { gameId: gameIdNum }],
-    queryFn: () => creatureTemplatesApi.list({ gameId: gameIdNum }),
+    queryKey: ['creature-templates', { gameId: gameIdNum }, 'all'],
+    queryFn: () => creatureTemplatesApi.list({ gameId: gameIdNum }, { pageSize: 500 }),
     enabled: isOwner,
   })
   const gameCharacters = useQuery({
@@ -445,7 +447,7 @@ export function BattleDetailsPage() {
               onChange={(e) => setAddCreatureTemplateId(e.target.value ? Number(e.target.value) : null)}
             >
               <option value="">— выберите шаблон существа —</option>
-              {creatureTemplates.data?.map((ct) => (
+              {creatureTemplates.data?.items.map((ct) => (
                 <option key={ct.id} value={ct.id}>
                   {ct.name} ({ct.creatureType})
                 </option>

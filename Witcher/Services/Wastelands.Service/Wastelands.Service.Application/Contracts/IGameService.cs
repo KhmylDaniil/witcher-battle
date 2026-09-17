@@ -1,3 +1,4 @@
+using Wastelands.Core.Contracts.Models;
 using Wastelands.Service.Application.Models.Dto;
 using Wastelands.Service.Application.Models.Filters;
 using Wastelands.Service.Application.Models.Requests;
@@ -8,7 +9,7 @@ namespace Wastelands.Service.Application.Contracts
 	{
 		Task<GameDto> GetGameByIdAsync(long id);
 
-		Task<List<GameDto>> GetGamesAsync(GameFilter filter);
+		Task<PagedResultDto<GameDto>> GetGamesAsync(GameFilter filter, PagedRequest paging);
 
 		Task<List<GameDto>> GetMyGamesAsync();
 

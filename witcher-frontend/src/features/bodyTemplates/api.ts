@@ -1,8 +1,9 @@
 import { api, buildQuery } from '../../lib/apiClient'
-import type { BodyTemplate, BodyTemplateFormValues, BodyTemplatePartFormValues } from '../../types/api'
+import type { BodyTemplate, BodyTemplateFormValues, BodyTemplatePartFormValues, PagedResult, PagingParams } from '../../types/api'
 
 export const bodyTemplatesApi = {
-  list: (filters: { gameId?: number } = {}) => api.get<BodyTemplate[]>(`/api/body-templates${buildQuery(filters)}`),
+  list: (filters: { gameId?: number } = {}, paging: PagingParams = {}) =>
+    api.get<PagedResult<BodyTemplate>>(`/api/body-templates${buildQuery({ ...filters, ...paging })}`),
   get: (id: number) => api.get<BodyTemplate>(`/api/body-templates/${id}`),
   create: (gameId: number, payload: BodyTemplateFormValues) =>
     api.post<BodyTemplate>('/api/body-templates', { ...payload, gameId }),

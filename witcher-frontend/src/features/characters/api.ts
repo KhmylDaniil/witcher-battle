@@ -1,8 +1,9 @@
 import { api, buildQuery } from '../../lib/apiClient'
-import type { AbilityFormValues, Character, CharacterFormValues, Condition, Skill } from '../../types/api'
+import type { AbilityFormValues, Character, CharacterFormValues, Condition, PagedResult, PagingParams, Skill } from '../../types/api'
 
 export const charactersApi = {
-  list: (filters: { name?: string; gameId?: number } = {}) => api.get<Character[]>(`/api/characters${buildQuery(filters)}`),
+  list: (filters: { name?: string; gameId?: number } = {}, paging: PagingParams = {}) =>
+    api.get<PagedResult<Character>>(`/api/characters${buildQuery({ ...filters, ...paging })}`),
   get: (id: number) => api.get<Character>(`/api/characters/${id}`),
   /** Персонажи всех игроков этой игры — доступно только мастеру (например, для добавления в бой). */
   gameCharacters: (gameId: number) => api.get<Character[]>(`/api/games/${gameId}/characters`),

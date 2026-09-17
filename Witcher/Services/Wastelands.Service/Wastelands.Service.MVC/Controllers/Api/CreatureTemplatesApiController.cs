@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Wastelands.Core.Contracts.Models;
 using Wastelands.Service.Application.Contracts;
 using Wastelands.Service.Domain.Enums;
 using Wastelands.Service.Application.Models.Dto;
@@ -21,8 +22,8 @@ namespace Wastelands.Service.MVC.Controllers.Api
 		}
 
 		[HttpGet]
-		public async Task<List<CreatureTemplateDto>> Index([FromQuery] CreatureTemplateFilter filter)
-			=> await _creatureTemplateService.GetCreatureTemplatesAsync(filter);
+		public async Task<PagedResultDto<CreatureTemplateDto>> Index([FromQuery] CreatureTemplateFilter filter, [FromQuery] PagedRequest paging)
+			=> await _creatureTemplateService.GetCreatureTemplatesAsync(filter, paging);
 
 		[HttpGet("{id:long}")]
 		public async Task<CreatureTemplateDto> Get(long id)

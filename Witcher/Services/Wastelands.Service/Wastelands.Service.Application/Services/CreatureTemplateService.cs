@@ -2,6 +2,7 @@ using AutoMapper;
 using Wastelands.Core.Contracts.Constants;
 using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
+using Wastelands.Core.Contracts.Models;
 using Wastelands.Service.Application.Contracts;
 using Wastelands.Service.Application.Contracts.Repositories;
 using Wastelands.Service.Domain.Entities;
@@ -37,10 +38,12 @@ namespace Wastelands.Service.Application.Services
 			return _mapper.Map<CreatureTemplateDto>(creatureTemplate);
 		}
 
-		public async Task<List<CreatureTemplateDto>> GetCreatureTemplatesAsync(CreatureTemplateFilter filter)
+		public async Task<PagedResultDto<CreatureTemplateDto>> GetCreatureTemplatesAsync(CreatureTemplateFilter filter, PagedRequest paging)
 		{
-			var creatureTemplates = await _creatureTemplateRepository.GetListByFilterAsync(filter);
-			return _mapper.Map<List<CreatureTemplateDto>>(creatureTemplates);
+			var paged = await _creatureTemplateRepository.GetPagedAsync(paging, filter);
+			var dtos = _mapper.Map<List<CreatureTemplateDto>>(paged.Entities);
+
+			return new PagedResultDto<CreatureTemplateDto> { Items = dtos, TotalCount = paged.TotalCount, PageNumber = paging.PageNumber, PageSize = paging.PageSize };
 		}
 
 		public async Task<CreatureTemplateDto> CreateCreatureTemplateAsync(CreateCreatureTemplateRequest request)

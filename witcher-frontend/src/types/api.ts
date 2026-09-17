@@ -32,6 +32,24 @@ export const SKILLS_BY_STAT: Record<string, Skill[]> = {
   Wil: ['Intimidation', 'ResistMagic', 'ResistCoercion', 'Courage'],
 }
 
+// ---- Пагинация (единый механизм для списков существ, шаблонов тела, игр, персонажей) ----
+
+/** Зеркалит Wastelands.Service.Application/Models/Dto/PagedResultDto.cs */
+export interface PagedResult<T> {
+  items: T[]
+  totalCount: number
+  pageNumber: number
+  pageSize: number
+}
+
+/** Зеркалит Wastelands.Core.Contracts/Models/PagedRequest.cs; стандартный размер страницы — 20. */
+export interface PagingParams {
+  pageNumber?: number
+  pageSize?: number
+  orderBy?: string
+  orderDirection?: 'Ascending' | 'Descending'
+}
+
 // ---- Auth (AuthApiController) ----
 
 export interface CurrentUser {

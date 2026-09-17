@@ -100,6 +100,39 @@ export function Spinner() {
 }
 
 /**
+ * Единый переключатель страниц для всех пагинируемых списков (игры, шаблоны существ, шаблоны
+ * тела, персонажи). Ничего не рендерит, если весь список умещается на одной странице.
+ */
+export function Pagination({
+  pageNumber,
+  pageSize,
+  totalCount,
+  onPageChange,
+}: {
+  pageNumber: number
+  pageSize: number
+  totalCount: number
+  onPageChange: (page: number) => void
+}) {
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
+  if (totalPages <= 1) return null
+
+  return (
+    <div className="flex items-center justify-center gap-3 pt-1 text-sm">
+      <Button variant="secondary" className="px-2 py-1" disabled={pageNumber <= 1} onClick={() => onPageChange(pageNumber - 1)}>
+        Назад
+      </Button>
+      <span className="text-neutral-500">
+        Стр. {pageNumber} из {totalPages}
+      </span>
+      <Button variant="secondary" className="px-2 py-1" disabled={pageNumber >= totalPages} onClick={() => onPageChange(pageNumber + 1)}>
+        Вперёд
+      </Button>
+    </div>
+  )
+}
+
+/**
  * Полноэкранный модальный оверлей без закрытия по клику вне/Escape — используется там, где
  * пользователь обязан сделать выбор, прежде чем продолжить (например, разрешение атаки в бою).
  */

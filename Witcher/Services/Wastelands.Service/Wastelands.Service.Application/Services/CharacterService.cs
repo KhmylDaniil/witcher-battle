@@ -4,6 +4,7 @@ using Wastelands.Core.Contracts.Contracts;
 using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
 using Wastelands.Core.Contracts.Exceptions.WebExceptions;
+using Wastelands.Core.Contracts.Models;
 using Wastelands.Service.Application.Contracts;
 using Wastelands.Service.Application.Contracts.Repositories;
 using Wastelands.Service.Domain.Entities;
@@ -42,13 +43,12 @@ namespace Wastelands.Service.Application.Services
 			return _mapper.Map<CharacterDto>(character);
 		}
 
-		public async Task<List<CharacterDto>> GetCharactersAsync(CharacterFilter filter)
+		public async Task<PagedResultDto<CharacterDto>> GetCharactersAsync(CharacterFilter filter, PagedRequest paging)
 		{
-			var characters = await _characterRepository.GetListByFilterAsync(filter);
+			var paged = await _characterRepository.GetPagedAsync(paging, filter);
+			var dtos = _mapper.Map<List<CharacterDto>>(paged.Entities);
 
-			var dtos = _mapper.Map<List<CharacterDto>>(characters);
-
-			return dtos;
+			return new PagedResultDto<CharacterDto> { Items = dtos, TotalCount = paged.TotalCount, PageNumber = paging.PageNumber, PageSize = paging.PageSize };
 		}
 
 		public async Task<List<CharacterDto>> GetGameCharactersAsync(long gameId)

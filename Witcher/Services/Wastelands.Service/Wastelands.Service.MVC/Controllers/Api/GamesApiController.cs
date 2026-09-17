@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Wastelands.Core.Contracts.Models;
 using Wastelands.Service.Application.Contracts;
 using Wastelands.Service.Application.Models.Dto;
 using Wastelands.Service.Application.Models.Filters;
@@ -17,8 +18,8 @@ namespace Wastelands.Service.MVC.Controllers.Api
 		}
 
 		[HttpGet]
-		public async Task<List<GameDto>> Index([FromQuery] GameFilter filter)
-			=> await _gameService.GetGamesAsync(filter);
+		public async Task<PagedResultDto<GameDto>> Index([FromQuery] GameFilter filter, [FromQuery] PagedRequest paging)
+			=> await _gameService.GetGamesAsync(filter, paging);
 
 		[HttpGet("mine")]
 		public async Task<List<GameDto>> Mine()

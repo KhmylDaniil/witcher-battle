@@ -1,6 +1,7 @@
 using AutoMapper;
 using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
+using Wastelands.Core.Contracts.Models;
 using Wastelands.Service.Application.Contracts;
 using Wastelands.Service.Application.Contracts.Repositories;
 using Wastelands.Service.Domain.Entities;
@@ -32,10 +33,12 @@ namespace Wastelands.Service.Application.Services
 			return _mapper.Map<BodyTemplateDto>(bodyTemplate);
 		}
 
-		public async Task<List<BodyTemplateDto>> GetBodyTemplatesAsync(BodyTemplateFilter filter)
+		public async Task<PagedResultDto<BodyTemplateDto>> GetBodyTemplatesAsync(BodyTemplateFilter filter, PagedRequest paging)
 		{
-			var bodyTemplates = await _bodyTemplateRepository.GetListByFilterAsync(filter);
-			return _mapper.Map<List<BodyTemplateDto>>(bodyTemplates);
+			var paged = await _bodyTemplateRepository.GetPagedAsync(paging, filter);
+			var dtos = _mapper.Map<List<BodyTemplateDto>>(paged.Entities);
+
+			return new PagedResultDto<BodyTemplateDto> { Items = dtos, TotalCount = paged.TotalCount, PageNumber = paging.PageNumber, PageSize = paging.PageSize };
 		}
 
 		public async Task<BodyTemplateDto> CreateBodyTemplateAsync(CreateBodyTemplateRequest request)

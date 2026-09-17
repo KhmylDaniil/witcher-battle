@@ -2,6 +2,7 @@ using AutoMapper;
 using Wastelands.Core.Contracts.Contracts;
 using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
+using Wastelands.Core.Contracts.Models;
 using Wastelands.Service.Application.Contracts;
 using Wastelands.Service.Application.Contracts.Repositories;
 using Wastelands.Service.Domain.Entities;
@@ -46,10 +47,10 @@ namespace Wastelands.Service.Application.Services
 			return dto;
 		}
 
-		public async Task<List<GameDto>> GetGamesAsync(GameFilter filter)
+		public async Task<PagedResultDto<GameDto>> GetGamesAsync(GameFilter filter, PagedRequest paging)
 		{
-			var games = await _gameRepository.GetListByFilterAsync(filter);
-			var dtos = _mapper.Map<List<GameDto>>(games);
+			var paged = await _gameRepository.GetPagedAsync(paging, filter);
+			var dtos = _mapper.Map<List<GameDto>>(paged.Entities);
 
 			var currentUserId = _userContext.CurrentUserId;
 
@@ -74,7 +75,7 @@ namespace Wastelands.Service.Application.Services
 								: GameMembershipStatus.None;
 			}
 
-			return dtos;
+			return new PagedResultDto<GameDto> { Items = dtos, TotalCount = paged.TotalCount, PageNumber = paging.PageNumber, PageSize = paging.PageSize };
 		}
 
 		public async Task<List<GameDto>> GetMyGamesAsync()

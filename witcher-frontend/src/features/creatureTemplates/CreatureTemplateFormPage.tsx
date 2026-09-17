@@ -16,9 +16,11 @@ export function CreatureTemplateFormPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
+  // Выпадающий список должен показывать все шаблоны тела игры, а не только первую страницу —
+  // поэтому запрашиваем через тот же пагинируемый эндпоинт, но с большим pageSize.
   const bodyTemplates = useQuery({
-    queryKey: ['body-templates', { gameId: gameIdNum }],
-    queryFn: () => bodyTemplatesApi.list({ gameId: gameIdNum }),
+    queryKey: ['body-templates', { gameId: gameIdNum }, 'all'],
+    queryFn: () => bodyTemplatesApi.list({ gameId: gameIdNum }, { pageSize: 500 }),
   })
 
   const { register, handleSubmit, formState, setValue } = useForm<CreatureTemplateFormValues>({
@@ -44,8 +46,8 @@ export function CreatureTemplateFormPage() {
   // Выбранное по умолчанию значение <select> должно совпадать с одним из уже загруженных вариантов —
   // иначе браузер оставляет выбор пустым (не откатывается на первый option), даже если он единственный.
   useEffect(() => {
-    if (bodyTemplates.data && bodyTemplates.data.length > 0) {
-      setValue('bodyTemplateId', bodyTemplates.data[0].id)
+    if (bodyTemplates.data && bodyTemplates.data.items.length > 0) {
+      setValue('bodyTemplateId', bodyTemplates.data.items[0].id)
     }
   }, [bodyTemplates.data, setValue])
 
@@ -74,7 +76,7 @@ export function CreatureTemplateFormPage() {
         }
       />
       <Card>
-        {bodyTemplates.data && bodyTemplates.data.length === 0 ? (
+        {bodyTemplates.data && bodyTemplates.data.items.length === 0 ? (
           <p className="text-sm text-neutral-500">
             Сначала создайте хотя бы один шаблон тела — шаблон существа наследует от него части тела.
           </p>
@@ -90,7 +92,7 @@ export function CreatureTemplateFormPage() {
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               <Field label="Шаблон тела">
                 <Select {...register('bodyTemplateId', { required: true, valueAsNumber: true })}>
-                  {bodyTemplates.data?.map((bt) => (
+                  {bodyTemplates.data?.items.map((bt) => (
                     <option key={bt.id} value={bt.id}>
                       {bt.name}
                     </option>
