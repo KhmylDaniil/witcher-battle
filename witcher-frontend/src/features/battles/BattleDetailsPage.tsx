@@ -213,7 +213,7 @@ export function BattleDetailsPage() {
     && (attack.defenderKind === 'Creature' ? isOwner : participants.some((p) => p.kind === 'character' && p.refId === attack.defenderId && p.characterUserId === currentUser?.userId))
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 pb-56">
       <PageHeader
         title={b.name}
         actions={
@@ -407,17 +407,21 @@ export function BattleDetailsPage() {
         </Card>
       )}
 
-      <Card>
-        <h2 className="mb-3 font-semibold">Лог боя</h2>
-        {b.logEntries.length === 0 && <p className="text-sm text-neutral-500">Пока пусто.</p>}
-        <ul className="flex flex-col-reverse gap-1 text-sm">
-          {b.logEntries.map((entry) => (
-            <li key={entry.id} className="border-t border-neutral-100 pt-1 first:border-t-0 first:pt-0 dark:border-neutral-900">
-              <span className="text-xs text-neutral-400">{new Date(entry.createdAt).toLocaleTimeString()}</span> {entry.message}
-            </li>
-          ))}
-        </ul>
-      </Card>
+      {/* Зафиксирован по центру внизу экрана и лежит выше модального окна атаки (z-[60] > z-50) —
+          лог должен оставаться доступным всем участникам боя, даже пока открыто AttackModal. */}
+      <div className="fixed inset-x-0 bottom-4 z-[60] flex justify-center px-4">
+        <Card className="max-h-48 w-full max-w-2xl overflow-y-auto shadow-lg">
+          <h2 className="mb-2 font-semibold">Лог боя</h2>
+          {b.logEntries.length === 0 && <p className="text-sm text-neutral-500">Пока пусто.</p>}
+          <ul className="flex flex-col-reverse gap-1 text-sm">
+            {b.logEntries.map((entry) => (
+              <li key={entry.id} className="border-t border-neutral-100 pt-1 first:border-t-0 first:pt-0 dark:border-neutral-900">
+                <span className="text-xs text-neutral-400">{new Date(entry.createdAt).toLocaleTimeString()}</span> {entry.message}
+              </li>
+            ))}
+          </ul>
+        </Card>
+      </div>
 
       {attack && (isAttackerController || isDefenderController) && (
         <AttackModal
