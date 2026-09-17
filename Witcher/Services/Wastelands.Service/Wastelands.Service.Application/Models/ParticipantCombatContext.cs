@@ -16,5 +16,8 @@ namespace Wastelands.Service.Application.Models
 		public required Func<Skill, int> GetSkillValue { get; init; }
 
 		public CreatureTemplate? Template { get; init; }
+
+		/// <summary>Заполнено только для существ — нужна для чтения/износа брони конкретного экземпляра в этом бою.</summary>
+		public Creature? Creature { get; init; }
 	}
 }

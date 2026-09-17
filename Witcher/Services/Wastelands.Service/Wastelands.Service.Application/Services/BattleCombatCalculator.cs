@@ -4,6 +4,15 @@ using Wastelands.Service.Domain.Enums;
 
 namespace Wastelands.Service.Application.Services
 {
+	/// <summary>Итог встречного броска — для MarkHitResolved и для подробного лога боя.</summary>
+	internal readonly record struct HitResult(bool Succeeded, long? ResolvedCreaturePartId, int AttackRoll, int AttackTotal, int DefenseRoll, int DefenseTotal);
+
+	/// <summary>
+	/// Итог расчёта урона. ArmorBeforeHit/ArmorAfterHit/ArmorAbsorbed заполнены, только если защитник —
+	/// существо и попадание пришлось в часть тела (PartName не null); у персонажа брони нет.
+	/// </summary>
+	internal readonly record struct DamageResult(int FinalDamage, string? PartName, int RawDamage, int ArmorBeforeHit, int ArmorAbsorbed, int ArmorAfterHit);
+
 	/// <summary>
 	/// Чистая боевая математика (попадание, урон) — без загрузки данных и без сохранения. Вынесена
 	/// из BattleCombatService, чтобы там остался только оркестрация (авторизация/загрузка/лог/сохранение).
@@ -19,7 +28,7 @@ namespace Wastelands.Service.Application.Services
 		/// (характеристика+навык защиты) + d10. Часть тела — выбранная атакующим, либо (если не выбрана
 		/// и защитник — существо) случайная по d10 в диапазон MinToHit..MaxToHit.
 		/// </summary>
-		public static (bool Succeeded, long? ResolvedCreaturePartId) ResolveHit(
+		public static HitResult ResolveHit(
 			ParticipantCombatContext attackerContext,
 			ParticipantCombatContext defenderContext,
 			Ability ability,
@@ -44,19 +53,23 @@ namespace Wastelands.Service.Application.Services
 				}
 			}
 
-			var attackTotal = attackerContext.GetSkillValue(ability.AttackSkill) + hitPenalty + (attack.AttackRoll ?? RollDie(10));
-			var defenseTotal = defenderContext.GetSkillValue(attack.DefensiveSkill!.Value) + (attack.DefenseRoll ?? RollDie(10));
+			var attackRollUsed = attack.AttackRoll ?? RollDie(10);
+			var attackTotal = attackerContext.GetSkillValue(ability.AttackSkill) + hitPenalty + attackRollUsed;
+
+			var defenseRollUsed = attack.DefenseRoll ?? RollDie(10);
+			var defenseTotal = defenderContext.GetSkillValue(attack.DefensiveSkill!.Value) + defenseRollUsed;
 
 			var succeeded = attackTotal > defenseTotal;
-			return (succeeded, succeeded ? resolvedPartId : null);
+			return new HitResult(succeeded, succeeded ? resolvedPartId : null, attackRollUsed, attackTotal, defenseRollUsed, defenseTotal);
 		}
 
 		/// <summary>
 		/// Бросок урона способности + модификатор, для существа — умноженный на модификатор части тела
-		/// и модификатор типа урона (Vulnerability×2/Resistance÷2/Immunity×0), минус броня части тела.
-		/// Для персонажа — без частей тела и без брони (см. ключевые решения плана боя).
+		/// и модификатор типа урона (Vulnerability×2/Resistance÷2/Immunity×0), минус эффективная броня
+		/// части (шаблонная броня за вычетом уже накопленного в этом бою износа). Для персонажа — без
+		/// частей тела и без брони (см. ключевые решения плана боя).
 		/// </summary>
-		public static (int FinalDamage, string? PartName) CalculateDamage(
+		public static DamageResult CalculateDamage(
 			ParticipantCombatContext attackerContext,
 			ParticipantCombatContext? defenderContext,
 			ParticipantKind defenderKind,
@@ -68,7 +81,8 @@ namespace Wastelands.Service.Application.Services
 
 			if (defenderKind != ParticipantKind.Creature)
 			{
-				return (Math.Max(0, (int)Math.Round(raw)), null);
+				var dmg = Math.Max(0, (int)Math.Round(raw));
+				return new DamageResult(dmg, null, dmg, 0, 0, 0);
 			}
 
 			var part = defenderContext!.Template!.Parts.First(p => p.Id == attack.ResolvedCreaturePartId);
@@ -85,7 +99,14 @@ namespace Wastelands.Service.Application.Services
 				};
 			}
 
-			return (Math.Max(0, (int)Math.Round(raw) - part.Armor), part.Name);
+			var rawDamage = Math.Max(0, (int)Math.Round(raw));
+			var armorReduction = defenderContext.Creature!.GetArmorReduction(part.Id);
+			var armorBeforeHit = Math.Max(0, part.Armor - armorReduction);
+			var armorAfterHit = Math.Max(0, part.Armor - (armorReduction + 1));
+			var armorAbsorbed = Math.Min(rawDamage, armorBeforeHit);
+			var finalDamage = Math.Max(0, rawDamage - armorBeforeHit);
+
+			return new DamageResult(finalDamage, part.Name, rawDamage, armorBeforeHit, armorAbsorbed, armorAfterHit);
 		}
 	}
 }

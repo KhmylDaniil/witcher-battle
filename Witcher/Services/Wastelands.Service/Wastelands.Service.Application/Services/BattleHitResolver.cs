@@ -24,14 +24,14 @@ namespace Wastelands.Service.Application.Services
 			var ability = attackerContext.Abilities.First(a => a.Id == attack.AbilityId);
 			var defenderContext = await _contextProvider.GetContextAsync(battle, attack.DefenderKind, attack.DefenderId);
 
-			var (succeeded, resolvedPartId) = BattleCombatCalculator.ResolveHit(attackerContext, defenderContext, ability, attack);
-			attack.MarkHitResolved(succeeded, resolvedPartId);
+			var hit = BattleCombatCalculator.ResolveHit(attackerContext, defenderContext, ability, attack);
+			attack.MarkHitResolved(hit.Succeeded, hit.ResolvedCreaturePartId, hit.AttackRoll, hit.AttackTotal, hit.DefenseRoll, hit.DefenseTotal);
 
-			if (!succeeded)
+			if (!hit.Succeeded)
 			{
 				var attackerName = BattleParticipants.GetName(battle, attack.AttackerKind, attack.AttackerId);
 				var defenderName = BattleParticipants.GetName(battle, attack.DefenderKind, attack.DefenderId);
-				battle.AddLogEntry($"{attackerName} ({ability.Name}) атакует {defenderName}: промах.");
+				battle.AddLogEntry(BattleCombatLogFormatter.FormatMiss(attackerName, ability.Name, defenderName, hit));
 			}
 		}
 

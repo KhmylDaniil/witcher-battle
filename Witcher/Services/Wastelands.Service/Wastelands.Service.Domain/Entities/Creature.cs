@@ -34,6 +34,13 @@ namespace Wastelands.Service.Domain.Entities
 
 		public List<Condition> AppliedConditions { get; private set; } = [];
 
+		/// <summary>
+		/// Накопленный износ брони по частям тела (partId → сколько очков брони потеряно) — только
+		/// для этого конкретного существа в этом бою, шаблон не меняется. Эффективная броня части
+		/// считается как (шаблонная броня − износ), с полом в 0; см. BattleCombatCalculator.
+		/// </summary>
+		public Dictionary<long, int> ArmorReductionByPartId { get; private set; } = [];
+
 		private Creature()
 		{
 		}
@@ -80,6 +87,14 @@ namespace Wastelands.Service.Domain.Entities
 		{
 			InvalidArgumentException.ThrowIfLessThanZero(damage, nameof(damage));
 			CurrentHP = Math.Max(0, CurrentHP - damage);
+		}
+
+		public int GetArmorReduction(long partId) => ArmorReductionByPartId.TryGetValue(partId, out var reduction) ? reduction : 0;
+
+		/// <summary>Износ от одного попадания в часть тела — на 1 очко брони, независимо от того, поглотила ли броня урон.</summary>
+		public void WearArmor(long partId)
+		{
+			ArmorReductionByPartId[partId] = GetArmorReduction(partId) + 1;
 		}
 
 		public void AddCondition(Condition condition)

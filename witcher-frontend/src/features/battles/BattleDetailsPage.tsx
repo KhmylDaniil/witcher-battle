@@ -262,7 +262,27 @@ export function BattleDetailsPage() {
                   className={`border-t border-neutral-100 dark:border-neutral-900 ${isActive ? 'bg-violet-50 dark:bg-violet-950' : ''}`}
                 >
                   <td className="py-2 pr-3">
-                    {p.name} <span className="text-xs text-neutral-400">({p.kind === 'creature' ? 'существо' : 'персонаж'})</span>
+                    {(() => {
+                      // Ссылка на карточку существа/персонажа — только если она у зрителя доступна:
+                      // шаблон существа виден только мастеру (секретные характеристики монстра),
+                      // лист персонажа — его владельцу или мастеру игры.
+                      const detailsHref =
+                        p.kind === 'creature'
+                          ? isOwner
+                            ? `/games/${gameId}/creature-templates/${p.creatureTemplateId}`
+                            : null
+                          : isOwner || p.characterUserId === currentUser?.userId
+                            ? `/games/${gameId}/characters/${p.refId}`
+                            : null
+                      return detailsHref ? (
+                        <Link to={detailsHref} className="hover:text-violet-600 hover:underline">
+                          {p.name}
+                        </Link>
+                      ) : (
+                        p.name
+                      )
+                    })()}{' '}
+                    <span className="text-xs text-neutral-400">({p.kind === 'creature' ? 'существо' : 'персонаж'})</span>
                     {isActive && <span className="ml-1 text-xs text-violet-600 dark:text-violet-400">● ход</span>}
                   </td>
                   <td className="py-2 pr-3">

@@ -33,6 +33,7 @@ namespace Wastelands.Service.Application.Services
 					Abilities = template.Abilities,
 					GetSkillValue = skill => SkillHelpers.GetCreatureTemplateSkillValue(template, skill),
 					Template = template,
+					Creature = creature,
 				};
 			}
 

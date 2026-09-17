@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Wastelands.EfDataAccess.Configurations;
 using Wastelands.Service.Domain.Entities;
@@ -45,6 +46,22 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnName("AppliedConditions")
 				.HasComment("AppliedConditions")
 				.IsRequired();
+
+			builder.Property(x => x.ArmorReductionByPartId)
+				.HasColumnType("jsonb")
+				.HasColumnName("ArmorReductionByPartId")
+				.HasComment("Износ брони по частям тела, накопленный этим существом в этом бою")
+				.HasDefaultValueSql("'{}'")
+				// HasDefaultValueSql иначе неявно включает конвенцию ValueGeneratedOnAdd — EF решит,
+				// что колонка генерируется базой, и перестанет отправлять её в UPDATE после INSERT.
+				.ValueGeneratedNever()
+				.IsRequired()
+				// Без явного ValueComparer EF сравнивает Dictionary по ссылке — мутация словаря на месте
+				// (WearArmor) не отличалась бы от "не менялось", и колонка не попадала бы в UPDATE.
+				.Metadata.SetValueComparer(new ValueComparer<Dictionary<long, int>>(
+					(a, b) => (a ?? new Dictionary<long, int>()).SequenceEqual(b ?? new Dictionary<long, int>()),
+					d => d.Aggregate(0, (hash, kv) => HashCode.Combine(hash, kv.Key, kv.Value)),
+					d => new Dictionary<long, int>(d)));
 		}
 	}
 }

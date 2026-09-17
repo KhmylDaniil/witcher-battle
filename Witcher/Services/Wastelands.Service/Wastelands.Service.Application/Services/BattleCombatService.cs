@@ -159,22 +159,24 @@ namespace Wastelands.Service.Application.Services
 				? await _contextProvider.GetContextAsync(battle, attack.DefenderKind, attack.DefenderId)
 				: null;
 
-			var (finalDamage, partName) = BattleCombatCalculator.CalculateDamage(attackerContext, defenderContext, attack.DefenderKind, ability, attack);
+			var damage = BattleCombatCalculator.CalculateDamage(attackerContext, defenderContext, attack.DefenderKind, ability, attack);
 
 			if (attack.DefenderKind == ParticipantKind.Creature)
 			{
-				BattleParticipants.GetCreature(battle, attack.DefenderId).ApplyDamage(finalDamage);
+				defenderContext!.Creature!.ApplyDamage(damage.FinalDamage);
+				if (damage.PartName is not null)
+				{
+					defenderContext.Creature.WearArmor(attack.ResolvedCreaturePartId!.Value);
+				}
 			}
 			else
 			{
-				BattleParticipants.GetBattleCharacter(battle, attack.DefenderId).ApplyDamage(finalDamage);
+				BattleParticipants.GetBattleCharacter(battle, attack.DefenderId).ApplyDamage(damage.FinalDamage);
 			}
 
 			var attackerName = BattleParticipants.GetName(battle, attack.AttackerKind, attack.AttackerId);
 			var defenderName = BattleParticipants.GetName(battle, attack.DefenderKind, attack.DefenderId);
-			battle.AddLogEntry(partName is null
-				? $"{attackerName} ({ability.Name}) атакует {defenderName}: попадание, урон {finalDamage}."
-				: $"{attackerName} ({ability.Name}) атакует {defenderName} ({partName}): попадание, урон {finalDamage}.");
+			battle.AddLogEntry(BattleCombatLogFormatter.FormatHit(attackerName, ability.Name, defenderName, attack, damage));
 
 			attack.MarkDamageResolved();
 

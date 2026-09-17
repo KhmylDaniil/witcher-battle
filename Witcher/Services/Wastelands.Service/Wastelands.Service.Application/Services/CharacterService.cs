@@ -37,10 +37,26 @@ namespace Wastelands.Service.Application.Services
 			_userContext = userContext;
 		}
 
+		/// <summary>Чтение (в отличие от изменения) доступно ещё и мастеру игры персонажа — например, переход на лист персонажа со страницы боя.</summary>
 		public async Task<CharacterDto> GetCharacterByIdAsync(long id)
 		{
-			var character = await GetByIdAsync(id);
+			var character = await _characterRepository.GetByIdAsync(id) ?? await GetIfCurrentUserIsGameMasterAsync(id);
+
+			NotFoundException.ThrowIfNull(character, ErrorCode.CharacterNotFound, nameof(Character), nameof(Character.Id), id.ToString());
+
 			return _mapper.Map<CharacterDto>(character);
+		}
+
+		private async Task<Character?> GetIfCurrentUserIsGameMasterAsync(long id)
+		{
+			var character = await _characterRepository.GetByIdUnscopedAsync(id);
+			if (character?.GameId is not { } gameId)
+			{
+				return null;
+			}
+
+			var game = await _gameRepository.GetByIdAsync(gameId);
+			return game?.CreatedByUserId == _userContext.CurrentUserId ? character : null;
 		}
 
 		public async Task<PagedResultDto<CharacterDto>> GetCharactersAsync(CharacterFilter filter, PagedRequest paging)

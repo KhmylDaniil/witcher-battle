@@ -40,12 +40,18 @@ namespace Wastelands.Service.Domain.Entities
 
 		public bool AttackerConfirmed { get; private set; }
 
+		/// <summary>Итог встречного броска атакующего (характеристика+навык[+модификатор части тела]+кубик) — заполняется при разрешении попадания, для лога боя.</summary>
+		public int AttackTotal { get; private set; }
+
 		public Skill? DefensiveSkill { get; private set; }
 
 		/// <summary>Ручной ввод броска защитника. Null — при разрешении атаки бросает сервер.</summary>
 		public int? DefenseRoll { get; private set; }
 
 		public bool DefenderConfirmed { get; private set; }
+
+		/// <summary>Итог встречного броска защитника (характеристика+навык+кубик) — заполняется при разрешении попадания, для лога боя.</summary>
+		public int DefenseTotal { get; private set; }
 
 		public BattleAttackPhase Phase { get; private set; }
 
@@ -161,8 +167,12 @@ namespace Wastelands.Service.Domain.Entities
 			DefenderConfirmed = true;
 		}
 
-		/// <summary>Вызывается сервисом, когда обе стороны подтвердили выбор и попадание посчитано.</summary>
-		public void MarkHitResolved(bool succeeded, long? resolvedCreaturePartId)
+		/// <summary>
+		/// Вызывается сервисом, когда обе стороны подтвердили выбор и попадание посчитано. Заодно
+		/// фиксирует фактически использованные значения бросков (свои — если введены вручную,
+		/// иначе — брошенные сервером) и итоги встречного броска, чтобы лог боя мог их показать.
+		/// </summary>
+		public void MarkHitResolved(bool succeeded, long? resolvedCreaturePartId, int attackRollUsed, int attackTotal, int defenseRollUsed, int defenseTotal)
 		{
 			EnsureAwaitingChoices();
 			if (!AttackerConfirmed || !DefenderConfirmed)
@@ -170,6 +180,10 @@ namespace Wastelands.Service.Domain.Entities
 				throw new InvalidArgumentException(ErrorCode.AttackNotInExpectedPhase, "Обе стороны должны подтвердить выбор перед разрешением попадания.");
 			}
 
+			AttackRoll = attackRollUsed;
+			AttackTotal = attackTotal;
+			DefenseRoll = defenseRollUsed;
+			DefenseTotal = defenseTotal;
 			LastHitSucceeded = succeeded;
 			ResolvedCreaturePartId = resolvedCreaturePartId;
 			Phase = succeeded ? BattleAttackPhase.AwaitingDamageRoll : BattleAttackPhase.SwingResolved;
@@ -218,9 +232,11 @@ namespace Wastelands.Service.Domain.Entities
 			DefenderId = defenderId;
 			TargetedCreaturePartId = null;
 			AttackRoll = null;
+			AttackTotal = 0;
 			AttackerConfirmed = false;
 			DefensiveSkill = null;
 			DefenseRoll = null;
+			DefenseTotal = 0;
 			DefenderConfirmed = false;
 			Phase = BattleAttackPhase.AwaitingChoices;
 			LastHitSucceeded = null;
