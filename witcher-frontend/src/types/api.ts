@@ -90,6 +90,7 @@ export interface Character {
   /** null — игра, в которой был создан персонаж, удалена; персонаж хранится архивно. */
   gameId: number | null
   name: string
+  imageUrl: string | null
   hp: number
   sta: number
   int: number
@@ -105,6 +106,7 @@ export interface Character {
 
 export interface CharacterFormValues {
   name: string
+  imageUrl?: string
   hp: number
   sta: number
   int: number
@@ -179,6 +181,7 @@ export interface CreatureTemplate {
   creatureType: CreatureType
   name: string
   description: string | null
+  imageUrl: string | null
   hp: number
   sta: number
   int: number
@@ -201,6 +204,7 @@ export interface CreatureTemplateFormValues {
   creatureType: CreatureType
   name: string
   description: string
+  imageUrl?: string
   hp: number
   sta: number
   int: number
@@ -284,6 +288,8 @@ export interface BattleCreature {
   currentSta: number
   initiative: number | null
   appliedConditions: Condition[]
+  /** Износ брони по частям тела в этом бою (partId -> сколько очков брони потеряно). */
+  armorReductionByPartId: Partial<Record<number, number>>
 }
 
 export interface BattleCharacterEntry {

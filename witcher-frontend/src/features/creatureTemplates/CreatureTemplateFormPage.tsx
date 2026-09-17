@@ -29,6 +29,7 @@ export function CreatureTemplateFormPage() {
       creatureType: 'Beast',
       name: '',
       description: '',
+      imageUrl: '',
       hp: 10,
       sta: 10,
       int: 1,
@@ -87,6 +88,9 @@ export function CreatureTemplateFormPage() {
             </Field>
             <Field label="Описание">
               <Textarea rows={2} {...register('description')} />
+            </Field>
+            <Field label="Ссылка на изображение (необязательно)">
+              <Input {...register('imageUrl')} placeholder="https://..." />
             </Field>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">

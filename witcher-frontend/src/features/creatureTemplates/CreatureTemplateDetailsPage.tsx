@@ -29,6 +29,7 @@ function toFormValues(ct: {
   creatureType: CreatureTemplateFormValues['creatureType']
   name: string
   description: string | null
+  imageUrl: string | null
   hp: number
   sta: number
   int: number
@@ -46,6 +47,7 @@ function toFormValues(ct: {
     creatureType: ct.creatureType,
     name: ct.name,
     description: ct.description ?? '',
+    imageUrl: ct.imageUrl ?? '',
     hp: ct.hp,
     sta: ct.sta,
     int: ct.int,
@@ -198,6 +200,13 @@ export function CreatureTemplateDetailsPage() {
                 rows={2}
                 value={templateValues.description}
                 onChange={(e) => setTemplateValues({ ...templateValues, description: e.target.value })}
+              />
+            </Field>
+            <Field label="Ссылка на изображение (необязательно)">
+              <Input
+                value={templateValues.imageUrl ?? ''}
+                onChange={(e) => setTemplateValues({ ...templateValues, imageUrl: e.target.value })}
+                placeholder="https://..."
               />
             </Field>
             <Field label="Тип существа">

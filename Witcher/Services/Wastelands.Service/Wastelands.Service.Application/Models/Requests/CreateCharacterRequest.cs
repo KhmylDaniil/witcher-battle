@@ -6,6 +6,8 @@
 
 		public string Name { get; set; }
 
+		public string? ImageUrl { get; set; }
+
 		public int HP { get; set; }
 
 		public int Sta { get; set; }

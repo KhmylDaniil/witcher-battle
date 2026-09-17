@@ -47,6 +47,7 @@ namespace Wastelands.Service.MVC.Extensions
 			services.AddScoped<ICreatureTemplateAbilityService, CreatureTemplateAbilityService>();
 			services.AddScoped<IBattleService, BattleService>();
 			services.AddScoped<IBattleCombatService, BattleCombatService>();
+			services.AddScoped<IBattleParticipantSheetService, BattleParticipantSheetService>();
 
 			services.AddAutoMapper(typeof(MappingProfile));
 

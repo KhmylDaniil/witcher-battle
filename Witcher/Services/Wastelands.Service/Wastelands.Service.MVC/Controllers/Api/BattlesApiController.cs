@@ -16,11 +16,13 @@ namespace Wastelands.Service.MVC.Controllers.Api
 	{
 		private readonly IBattleService _battleService;
 		private readonly IBattleCombatService _battleCombatService;
+		private readonly IBattleParticipantSheetService _sheetService;
 
-		public BattlesApiController(IBattleService battleService, IBattleCombatService battleCombatService)
+		public BattlesApiController(IBattleService battleService, IBattleCombatService battleCombatService, IBattleParticipantSheetService sheetService)
 		{
 			_battleService = battleService;
 			_battleCombatService = battleCombatService;
+			_sheetService = sheetService;
 		}
 
 		[HttpGet]
@@ -152,6 +154,14 @@ namespace Wastelands.Service.MVC.Controllers.Api
 		[HttpPost("{id:long}/skip-turn")]
 		public async Task<BattleDto> SkipTurn(long gameId, long id)
 			=> await _battleCombatService.SkipTurnAsync(id);
+
+		[HttpGet("{id:long}/creatures/{creatureId:long}/sheet")]
+		public async Task<CreatureTemplateDto> GetCreatureSheet(long gameId, long id, long creatureId)
+			=> await _sheetService.GetCreatureSheetAsync(id, creatureId);
+
+		[HttpGet("{id:long}/characters/{characterId:long}/sheet")]
+		public async Task<CharacterDto> GetCharacterSheet(long gameId, long id, long characterId)
+			=> await _sheetService.GetCharacterSheetAsync(id, characterId);
 	}
 
 	public sealed class ConditionPayload

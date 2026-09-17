@@ -10,6 +10,7 @@ import { creatureTemplatesApi } from '../creatureTemplates/api'
 import { gamesApi } from '../games/api'
 import { CONDITIONS, type Ability, type Condition, type ParticipantKind } from '../../types/api'
 import { AttackModal } from './AttackModal'
+import { ParticipantSheetModal } from './ParticipantSheetModal'
 import { battlesApi } from './api'
 
 type Participant = {
@@ -27,6 +28,8 @@ type Participant = {
   appliedConditions: Condition[]
   creatureTemplateId?: number
   characterUserId?: number
+  /** Только для существ — износ брони по частям тела в этом бою (для расчёта текущей брони в карточке). */
+  armorReductionByPartId?: Partial<Record<number, number>>
 }
 
 export function BattleDetailsPage() {
@@ -139,6 +142,8 @@ export function BattleDetailsPage() {
   })
   const skipTurn = useMutation({ mutationFn: () => battlesApi.skipTurn(gameIdNum, id), onSuccess: invalidate })
 
+  const [sheetTarget, setSheetTarget] = useState<{ kind: 'creature' | 'character'; refId: number } | null>(null)
+
   const [conditionDrafts, setConditionDrafts] = useState<Record<string, Condition>>({})
   const addCondition = useMutation({
     mutationFn: (params: { kind: 'creature' | 'character'; refId: number; condition: Condition }) =>
@@ -186,6 +191,7 @@ export function BattleDetailsPage() {
       initiative: c.initiative,
       appliedConditions: c.appliedConditions,
       creatureTemplateId: c.creatureTemplateId,
+      armorReductionByPartId: c.armorReductionByPartId,
     })),
     ...b.characters.map((bc): Participant => ({
       kind: 'character',
@@ -306,7 +312,14 @@ export function BattleDetailsPage() {
                         p.name
                       )
                     })()}{' '}
-                    <span className="text-xs text-neutral-400">({p.kind === 'creature' ? 'существо' : 'персонаж'})</span>
+                    <span className="text-xs text-neutral-400">({p.kind === 'creature' ? 'существо' : 'персонаж'})</span>{' '}
+                    <button
+                      className="text-xs text-neutral-400 hover:text-violet-600"
+                      title="Карточка участника"
+                      onClick={() => setSheetTarget({ kind: p.kind, refId: p.refId })}
+                    >
+                      ℹ️
+                    </button>
                     {isActive && <span className="ml-1 text-xs text-violet-600 dark:text-violet-400">● ход</span>}
                   </td>
                   <td className="py-2 pr-3">
@@ -479,6 +492,26 @@ export function BattleDetailsPage() {
           isDefenderController={isDefenderController}
         />
       )}
+
+      {sheetTarget && (() => {
+        const p = participants.find((x) => x.kind === sheetTarget.kind && x.refId === sheetTarget.refId)
+        if (!p) return null
+        return (
+          <ParticipantSheetModal
+            gameId={gameIdNum}
+            battleId={id}
+            kind={p.kind === 'creature' ? 'Creature' : 'Character'}
+            refId={p.refId}
+            currentHP={p.currentHP}
+            maxHP={p.maxHP}
+            currentSta={p.currentSta}
+            maxSta={p.maxSta}
+            appliedConditions={p.appliedConditions}
+            armorReductionByPartId={p.armorReductionByPartId}
+            onClose={() => setSheetTarget(null)}
+          />
+        )
+      })()}
 
       {isOwner && b.status === 'Draft' && (
         <Card>

@@ -21,5 +21,8 @@ namespace Wastelands.Service.Application.Models.Dto
 		public int? Initiative { get; set; }
 
 		public List<Condition> AppliedConditions { get; set; } = [];
+
+		/// <summary>Износ брони по частям тела в этом бою — для расчёта текущей (эффективной) брони на фронте.</summary>
+		public Dictionary<long, int> ArmorReductionByPartId { get; set; } = [];
 	}
 }

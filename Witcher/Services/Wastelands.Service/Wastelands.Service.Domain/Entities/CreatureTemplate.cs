@@ -19,6 +19,9 @@ namespace Wastelands.Service.Domain.Entities
 
 		public string? Description { get; private set; }
 
+		/// <summary>Ссылка на изображение существа — показывается в листе персонажа/существа во время боя.</summary>
+		public string? ImageUrl { get; private set; }
+
 		public int HP { get; private set; }
 
 		public int Sta { get; private set; }
@@ -59,6 +62,7 @@ namespace Wastelands.Service.Domain.Entities
 			CreatureType creatureType,
 			string name,
 			string? description,
+			string? imageUrl,
 			int hp,
 			int sta,
 			int @int,
@@ -90,6 +94,7 @@ namespace Wastelands.Service.Domain.Entities
 			CreatureType = creatureType;
 			Name = name;
 			Description = description;
+			ImageUrl = imageUrl;
 			HP = hp;
 			Sta = sta;
 			Int = @int;
@@ -109,6 +114,7 @@ namespace Wastelands.Service.Domain.Entities
 			CreatureType creatureType,
 			string name,
 			string? description,
+			string? imageUrl,
 			int hp,
 			int sta,
 			int @int,
@@ -137,6 +143,7 @@ namespace Wastelands.Service.Domain.Entities
 			CreatureType = creatureType;
 			Name = name;
 			Description = description;
+			ImageUrl = imageUrl;
 			HP = hp;
 			Sta = sta;
 			Int = @int;

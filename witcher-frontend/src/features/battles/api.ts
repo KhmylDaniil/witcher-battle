@@ -3,7 +3,9 @@ import type {
   AddCreatureToBattleFormValues,
   Battle,
   BattleFormValues,
+  Character,
   Condition,
+  CreatureTemplate,
   ParticipantKind,
   Skill,
   UpdateBattleCreatureFormValues,
@@ -65,4 +67,9 @@ export const battlesApi = {
   endActivation: (gameId: number, battleId: number) =>
     api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/end`),
   skipTurn: (gameId: number, battleId: number) => api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/skip-turn`),
+
+  creatureSheet: (gameId: number, battleId: number, creatureId: number) =>
+    api.get<CreatureTemplate>(`/api/games/${gameId}/battles/${battleId}/creatures/${creatureId}/sheet`),
+  characterSheet: (gameId: number, battleId: number, characterId: number) =>
+    api.get<Character>(`/api/games/${gameId}/battles/${battleId}/characters/${characterId}/sheet`),
 }

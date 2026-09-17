@@ -35,6 +35,11 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnType("varchar(500)")
 				.IsRequired(false);
 
+			builder.Property(x => x.ImageUrl)
+				.HasColumnName("ImageUrl")
+				.HasColumnType("varchar(500)")
+				.IsRequired(false);
+
 			builder.Property(x => x.HP).HasColumnName("HP").IsRequired();
 			builder.Property(x => x.Sta).HasColumnName("Sta").IsRequired();
 			builder.Property(x => x.Int).HasColumnName("Int").IsRequired();

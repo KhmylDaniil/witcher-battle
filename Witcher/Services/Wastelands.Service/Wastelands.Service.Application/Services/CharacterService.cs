@@ -107,6 +107,7 @@ namespace Wastelands.Service.Application.Services
 				userId: currentUserId,
 				gameId: request.GameId,
 				name: request.Name,
+				imageUrl: request.ImageUrl,
 				hp: request.HP,
 				sta: request.Sta,
 				@int: request.Int,
@@ -132,6 +133,7 @@ namespace Wastelands.Service.Application.Services
 			var character = await GetByIdAsync(request.Id);
 			character.UpdateCharacter(
 				name: request.Name,
+				imageUrl: request.ImageUrl,
 				hp: request.HP,
 				sta: request.Sta,
 				@int: request.Int,

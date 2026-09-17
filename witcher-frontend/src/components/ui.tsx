@@ -133,14 +133,24 @@ export function Pagination({
 }
 
 /**
- * Полноэкранный модальный оверлей без закрытия по клику вне/Escape — используется там, где
- * пользователь обязан сделать выбор, прежде чем продолжить (например, разрешение атаки в бою).
+ * Полноэкранный модальный оверлей. Без onClose — не закрывается по клику вне/Escape (используется
+ * там, где пользователь обязан сделать выбор, прежде чем продолжить, например разрешение атаки в
+ * бою). С onClose — клик по фону закрывает окно (для read-only информационных модалок).
  */
-export function Modal({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function Modal({
+  children,
+  className = 'max-w-lg',
+  onClose,
+}: {
+  children: ReactNode
+  className?: string
+  onClose?: () => void
+}) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
       <div
-        className={`max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-neutral-200 bg-white p-4 shadow-lg dark:border-neutral-800 dark:bg-neutral-900 ${className}`}
+        className={`max-h-[90vh] w-full overflow-y-auto rounded-lg border border-neutral-200 bg-white p-4 shadow-lg dark:border-neutral-800 dark:bg-neutral-900 ${className}`}
+        onClick={(e) => e.stopPropagation()}
       >
         {children}
       </div>
