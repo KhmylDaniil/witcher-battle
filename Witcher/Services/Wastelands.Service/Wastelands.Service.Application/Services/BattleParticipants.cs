@@ -1,5 +1,6 @@
 using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
+using Wastelands.Service.Application.Models;
 using Wastelands.Service.Domain.Entities;
 using Wastelands.Service.Domain.Enums;
 
@@ -88,6 +89,20 @@ namespace Wastelands.Service.Application.Services
 			if (battle.Status != BattleStatus.InProgress)
 			{
 				throw new InvalidArgumentException(ErrorCode.BattleNotInProgress, "Бой ещё не начат.");
+			}
+		}
+
+		/// <summary>Целиться можно только в часть тела существа, действительно существующую у его текущего шаблона.</summary>
+		public static void EnsureTargetedPartValid(ParticipantCombatContext defenderContext, ParticipantKind defenderKind, long partId)
+		{
+			if (defenderKind != ParticipantKind.Creature)
+			{
+				throw new InvalidArgumentException(ErrorCode.CreatureTemplatePartNotFound, "У защищающегося персонажа нет частей тела.");
+			}
+
+			if (defenderContext.Template!.Parts.All(p => p.Id != partId))
+			{
+				throw new InvalidArgumentException(ErrorCode.CreatureTemplatePartNotFound, "Часть тела не найдена у защитника.");
 			}
 		}
 	}

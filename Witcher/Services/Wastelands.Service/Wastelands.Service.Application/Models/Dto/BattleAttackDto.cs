@@ -17,6 +17,9 @@ namespace Wastelands.Service.Application.Models.Dto
 		/// <summary>Справочное значение характеристика+навык атакующего для этой способности — менять нельзя.</summary>
 		public int AttackerSkillValue { get; set; }
 
+		/// <summary>Сколько к6 бросает способность — для подсказки допустимого диапазона броска урона на фронте.</summary>
+		public int AbilityDamageDiceCount { get; set; }
+
 		public int AttacksAllowed { get; set; }
 
 		public int AttacksUsed { get; set; }
@@ -37,6 +40,9 @@ namespace Wastelands.Service.Application.Models.Dto
 		public bool AttackerConfirmed { get; set; }
 
 		public List<Skill> AvailableDefensiveSkills { get; set; } = [];
+
+		/// <summary>Справочное значение характеристика+навык защитника для каждого доступного защитного навыка.</summary>
+		public Dictionary<Skill, int> DefensiveSkillValues { get; set; } = [];
 
 		public Skill? DefensiveSkill { get; set; }
 

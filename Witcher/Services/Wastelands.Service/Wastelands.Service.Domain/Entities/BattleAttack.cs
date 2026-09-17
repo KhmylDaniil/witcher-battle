@@ -107,17 +107,14 @@ namespace Wastelands.Service.Domain.Entities
 			TargetedCreaturePartId = creaturePartId;
 		}
 
+		// Бросок d10 в этой системе может "взрываться" (на 10 — бросить ещё и прибавить, на 1 — бросить
+		// ещё и вычесть, рекурсивно), поэтому итоговое значение не ограничено диапазоном 1..10.
 		public void SetAttackRoll(int? roll)
 		{
 			EnsureAwaitingChoices();
 			if (AttackerConfirmed)
 			{
 				throw new InvalidArgumentException(ErrorCode.AttackerAlreadyConfirmed, "Атакующий уже подтвердил свой выбор.");
-			}
-
-			if (roll is not null)
-			{
-				InvalidArgumentException.ThrowIfNotInRange(roll.Value, 1, 10, nameof(roll));
 			}
 
 			AttackRoll = roll;
@@ -140,11 +137,6 @@ namespace Wastelands.Service.Domain.Entities
 			if (DefenderConfirmed)
 			{
 				throw new InvalidArgumentException(ErrorCode.DefenderAlreadyConfirmed, "Защитник уже подтвердил свой выбор.");
-			}
-
-			if (defenseRoll is not null)
-			{
-				InvalidArgumentException.ThrowIfNotInRange(defenseRoll.Value, 1, 10, nameof(defenseRoll));
 			}
 
 			DefensiveSkill = defensiveSkill;

@@ -60,6 +60,7 @@
 		NoAttacksRemaining = 617,
 		AttackNotInExpectedPhase = 618,
 		BattleNotInProgress = 619,
+		InvalidDamageRoll = 620,
 
 		// Common error codes 1100...1199
 		InvalidArgument = 1101,

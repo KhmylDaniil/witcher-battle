@@ -128,11 +128,9 @@ export function AttackModal({
                   </div>
                 )}
                 <div className="mb-2">
-                  <Field label="Бросок атаки (необязательно)">
+                  <Field label="Бросок атаки (необязательно; d10 может «взрываться» — не ограничен 1–10)">
                     <Input
                       type="number"
-                      min={1}
-                      max={10}
                       className="w-24"
                       value={attackRoll}
                       onChange={(e) => setAttackRoll(e.target.value)}
@@ -162,18 +160,16 @@ export function AttackModal({
                     <Select value={defensiveSkill} onChange={(e) => setDefensiveSkill(e.target.value as Skill)}>
                       {attack.availableDefensiveSkills.map((s) => (
                         <option key={s} value={s}>
-                          {s}
+                          {s} (база {attack.defensiveSkillValues[s] ?? '—'})
                         </option>
                       ))}
                     </Select>
                   </Field>
                 </div>
                 <div className="mb-2">
-                  <Field label="Бросок защиты (необязательно)">
+                  <Field label="Бросок защиты (необязательно; d10 может «взрываться» — не ограничен 1–10)">
                     <Input
                       type="number"
-                      min={1}
-                      max={10}
                       className="w-24"
                       value={defenseRoll}
                       onChange={(e) => setDefenseRoll(e.target.value)}
@@ -197,10 +193,13 @@ export function AttackModal({
               <div className="rounded-md border border-neutral-200 p-3 dark:border-neutral-800">
                 <p className="mb-2 text-sm text-green-700 dark:text-green-400">Попадание! Бросок урона.</p>
                 <div className="mb-2">
-                  <Field label="Бросок урона (необязательно)">
+                  <Field
+                    label={`Бросок урона (необязательно; ${attack.abilityDamageDiceCount}к6: ${attack.abilityDamageDiceCount}–${attack.abilityDamageDiceCount * 6})`}
+                  >
                     <Input
                       type="number"
-                      min={1}
+                      min={attack.abilityDamageDiceCount}
+                      max={attack.abilityDamageDiceCount * 6}
                       className="w-24"
                       value={damageRoll}
                       onChange={(e) => setDamageRoll(e.target.value)}

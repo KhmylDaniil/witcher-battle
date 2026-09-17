@@ -317,6 +317,8 @@ export interface BattleAttack {
   abilityName: string
   /** Справочное значение характеристика+навык атакующего — менять нельзя. */
   attackerSkillValue: number
+  /** Сколько к6 бросает способность — допустимый диапазон броска урона: от diceCount до diceCount*6. */
+  abilityDamageDiceCount: number
   attacksAllowed: number
   attacksUsed: number
   defenderKind: ParticipantKind
@@ -328,6 +330,8 @@ export interface BattleAttack {
   attackRoll: number | null
   attackerConfirmed: boolean
   availableDefensiveSkills: Skill[]
+  /** Справочное значение характеристика+навык защитника для каждого доступного защитного навыка. */
+  defensiveSkillValues: Partial<Record<Skill, number>>
   defensiveSkill: Skill | null
   defenseRoll: number | null
   defenderConfirmed: boolean

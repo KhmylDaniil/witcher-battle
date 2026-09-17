@@ -1,3 +1,5 @@
+using Wastelands.Core.Contracts.Enums;
+using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
 using Wastelands.Service.Application.Models;
 using Wastelands.Service.Domain.Entities;
 using Wastelands.Service.Domain.Enums;
@@ -22,6 +24,17 @@ namespace Wastelands.Service.Application.Services
 		private static readonly Random Random = new();
 
 		public static int RollDie(int sides) => Random.Next(1, sides + 1);
+
+		/// <summary>Урон — сумма обычных (не взрывающихся) d6, поэтому диапазон ограничен: от всех единиц до всех шестёрок.</summary>
+		public static void ValidateDamageRoll(int roll, Ability ability)
+		{
+			if (roll < ability.DamageDiceCount || roll > ability.DamageDiceCount * 6)
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.InvalidDamageRoll,
+					$"Бросок урона должен быть от {ability.DamageDiceCount} до {ability.DamageDiceCount * 6} (сумма {ability.DamageDiceCount}к6).");
+			}
+		}
 
 		/// <summary>
 		/// Встречный бросок: (характеристика+навык атаки [+модификатор части тела]) + d10, против

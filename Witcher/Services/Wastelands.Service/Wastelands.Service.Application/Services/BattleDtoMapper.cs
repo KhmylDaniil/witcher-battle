@@ -40,13 +40,16 @@ namespace Wastelands.Service.Application.Services
 			var ability = attackerContext.Abilities.First(a => a.Id == dto.AbilityId);
 			dto.AbilityName = ability.Name;
 			dto.AttackerSkillValue = attackerContext.GetSkillValue(ability.AttackSkill);
+			dto.AbilityDamageDiceCount = ability.DamageDiceCount;
 			dto.AvailableDefensiveSkills = ability.DefensiveSkills.Count > 0
 				? ability.DefensiveSkills.Select(x => x.Skill).ToList()
 				: [Skill.Dodge];
 
+			var defenderContext = await _contextProvider.GetContextAsync(battle, dto.DefenderKind, dto.DefenderId);
+			dto.DefensiveSkillValues = dto.AvailableDefensiveSkills.ToDictionary(s => s, defenderContext.GetSkillValue);
+
 			if (dto.DefenderKind == ParticipantKind.Creature)
 			{
-				var defenderContext = await _contextProvider.GetContextAsync(battle, dto.DefenderKind, dto.DefenderId);
 				dto.AvailableCreatureParts = defenderContext.Template!.Parts
 					.Select(p => new CreaturePartOptionDto { Id = p.Id, Name = p.Name })
 					.ToList();

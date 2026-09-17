@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Link, useParams } from 'react-router-dom'
-import { Button, Card, ErrorText, Field, Input, PageHeader, Select, Spinner } from '../../components/ui'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Button, Card, ConfirmButton, ErrorText, Field, Input, PageHeader, Select, Spinner } from '../../components/ui'
 import { useCurrentUser } from '../auth/useAuth'
 import { ApiError } from '../../lib/apiClient'
 import { useBattleUpdates } from '../../lib/battleHub'
@@ -34,6 +34,7 @@ export function BattleDetailsPage() {
   const gameIdNum = Number(gameId)
   const id = Number(battleId)
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const game = useQuery({ queryKey: ['games', gameIdNum], queryFn: () => gamesApi.get(gameIdNum) })
   const isOwner = game.data?.membershipStatus === 'Owner'
@@ -64,6 +65,13 @@ export function BattleDetailsPage() {
   })
 
   const start = useMutation({ mutationFn: () => battlesApi.start(gameIdNum, id), onSuccess: invalidate })
+  const endBattle = useMutation({
+    mutationFn: () => battlesApi.remove(gameIdNum, id),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['battles', { gameId: gameIdNum }] })
+      navigate(`/games/${gameId}`)
+    },
+  })
 
   const [addCreatureTemplateId, setAddCreatureTemplateId] = useState<number | null>(null)
   const [addCreatureName, setAddCreatureName] = useState('')
@@ -216,6 +224,9 @@ export function BattleDetailsPage() {
 
   return (
     <div className="flex flex-col gap-4 pb-56">
+      {/* relative z-[70] — выше и модалки атаки (z-50), и лога боя (z-[60]), чтобы "Закончить бой"
+          оставался доступен мастеру, даже если бой завис на неразрешённой атаке. */}
+      <div className="relative z-[70]">
       <PageHeader
         title={b.name}
         actions={
@@ -228,12 +239,25 @@ export function BattleDetailsPage() {
                 Начать бой
               </Button>
             )}
+            {isOwner && b.status === 'InProgress' && (
+              <ConfirmButton
+                confirmMessage="Закончить бой? Существа из боя удалятся, персонажи останутся в текущем состоянии."
+                onConfirm={() => endBattle.mutate()}
+                disabled={endBattle.isPending}
+              >
+                Закончить бой
+              </ConfirmButton>
+            )}
           </>
         }
       />
+      </div>
 
       {start.error && (
         <ErrorText>{start.error instanceof ApiError ? start.error.message : 'Не удалось начать бой'}</ErrorText>
+      )}
+      {endBattle.error && (
+        <ErrorText>{endBattle.error instanceof ApiError ? endBattle.error.message : 'Не удалось закончить бой'}</ErrorText>
       )}
 
       <Card>

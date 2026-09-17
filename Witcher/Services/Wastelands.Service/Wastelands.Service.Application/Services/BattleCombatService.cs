@@ -72,16 +72,8 @@ namespace Wastelands.Service.Application.Services
 
 			if (request.TargetedCreaturePartId is { } partId)
 			{
-				if (attack.DefenderKind != ParticipantKind.Creature)
-				{
-					throw new InvalidArgumentException(ErrorCode.CreatureTemplatePartNotFound, "У защищающегося персонажа нет частей тела.");
-				}
-
 				var defenderContext = await _contextProvider.GetContextAsync(battle, attack.DefenderKind, attack.DefenderId);
-				if (defenderContext.Template!.Parts.All(p => p.Id != partId))
-				{
-					throw new InvalidArgumentException(ErrorCode.CreatureTemplatePartNotFound, "Часть тела не найдена у защитника.");
-				}
+				BattleParticipants.EnsureTargetedPartValid(defenderContext, attack.DefenderKind, partId);
 			}
 
 			attack.SetTargetPart(request.TargetedCreaturePartId);
@@ -136,6 +128,13 @@ namespace Wastelands.Service.Application.Services
 			var battle = await GetByIdAsync(request.BattleId);
 			var attack = BattleParticipants.GetActiveAttack(battle);
 			await _authorizer.EnsureControllerAsync(battle, attack.AttackerKind, attack.AttackerId, ErrorCode.CurrentUserNotAttackController);
+
+			if (request.DamageRoll is { } roll)
+			{
+				var attackerContext = await _contextProvider.GetContextAsync(battle, attack.AttackerKind, attack.AttackerId);
+				var ability = attackerContext.Abilities.First(a => a.Id == attack.AbilityId);
+				BattleCombatCalculator.ValidateDamageRoll(roll, ability);
+			}
 
 			attack.SetDamageRoll(request.DamageRoll);
 

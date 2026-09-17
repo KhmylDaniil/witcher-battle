@@ -18,6 +18,12 @@ import { creatureTemplatesApi } from './api'
 
 const STATS = ['hp', 'sta', 'int', 'ref', 'dex', 'body', 'emp', 'cra', 'will', 'speed', 'luck'] as const
 
+// SKILLS_BY_STAT группирует навыки по именам статов персонажа (Str/Rea) — у существа те же группы
+// навыков хранятся под другими именами характеристик (Body/Ref), поэтому для меток используем их,
+// не меняя сами ключи группировки (см. Wastelands.Service.Application/Services/SkillHelpers.cs).
+const CREATURE_STAT_LABEL: Record<string, string> = { Str: 'BODY', Rea: 'REF' }
+const creatureStatLabel = (stat: string) => CREATURE_STAT_LABEL[stat] ?? stat.toUpperCase()
+
 function toFormValues(ct: {
   bodyTemplateId: number
   creatureType: CreatureTemplateFormValues['creatureType']
@@ -405,7 +411,7 @@ export function CreatureTemplateDetailsPage() {
           >
             {Object.keys(SKILLS_BY_STAT).map((stat) => (
               <option key={stat} value={stat}>
-                {stat.toUpperCase()}
+                {creatureStatLabel(stat)}
               </option>
             ))}
           </Select>
