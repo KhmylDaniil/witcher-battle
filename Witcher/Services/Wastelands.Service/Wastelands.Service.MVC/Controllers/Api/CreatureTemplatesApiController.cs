@@ -14,11 +14,16 @@ namespace Wastelands.Service.MVC.Controllers.Api
 	{
 		private readonly ICreatureTemplateService _creatureTemplateService;
 		private readonly ICreatureTemplateAbilityService _creatureTemplateAbilityService;
+		private readonly ICreatureTemplateImageService _creatureTemplateImageService;
 
-		public CreatureTemplatesApiController(ICreatureTemplateService creatureTemplateService, ICreatureTemplateAbilityService creatureTemplateAbilityService)
+		public CreatureTemplatesApiController(
+			ICreatureTemplateService creatureTemplateService,
+			ICreatureTemplateAbilityService creatureTemplateAbilityService,
+			ICreatureTemplateImageService creatureTemplateImageService)
 		{
 			_creatureTemplateService = creatureTemplateService;
 			_creatureTemplateAbilityService = creatureTemplateAbilityService;
+			_creatureTemplateImageService = creatureTemplateImageService;
 		}
 
 		[HttpGet]
@@ -46,6 +51,18 @@ namespace Wastelands.Service.MVC.Controllers.Api
 			await _creatureTemplateService.DeleteCreatureTemplateAsync(id);
 			return NoContent();
 		}
+
+		[HttpPut("{id:long}/image")]
+		[RequestSizeLimit(5_000_000)]
+		public async Task<CreatureTemplateDto> UploadImage(long id, IFormFile file)
+		{
+			await using var stream = file.OpenReadStream();
+			return await _creatureTemplateImageService.SetImageAsync(id, stream, file.ContentType, file.Length);
+		}
+
+		[HttpDelete("{id:long}/image")]
+		public async Task<CreatureTemplateDto> RemoveImage(long id)
+			=> await _creatureTemplateImageService.RemoveImageAsync(id);
 
 		[HttpPut("{creatureTemplateId:long}/parts/{partId:long}/armor")]
 		public async Task<CreatureTemplateDto> UpdatePartArmor(long creatureTemplateId, long partId, [FromBody] UpdateArmorPayload payload)

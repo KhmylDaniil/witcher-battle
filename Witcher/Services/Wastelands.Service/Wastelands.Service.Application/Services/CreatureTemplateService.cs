@@ -18,17 +18,20 @@ namespace Wastelands.Service.Application.Services
 		private readonly ICreatureTemplateRepository _creatureTemplateRepository;
 		private readonly IBodyTemplateRepository _bodyTemplateRepository;
 		private readonly IGameAccessGuard _gameAccessGuard;
+		private readonly IImageStorage _imageStorage;
 		private readonly IMapper _mapper;
 
 		public CreatureTemplateService(
 			ICreatureTemplateRepository creatureTemplateRepository,
 			IBodyTemplateRepository bodyTemplateRepository,
 			IGameAccessGuard gameAccessGuard,
+			IImageStorage imageStorage,
 			IMapper mapper)
 		{
 			_creatureTemplateRepository = creatureTemplateRepository;
 			_bodyTemplateRepository = bodyTemplateRepository;
 			_gameAccessGuard = gameAccessGuard;
+			_imageStorage = imageStorage;
 			_mapper = mapper;
 		}
 
@@ -57,7 +60,6 @@ namespace Wastelands.Service.Application.Services
 				creatureType: request.CreatureType,
 				name: request.Name,
 				description: request.Description,
-				imageUrl: request.ImageUrl,
 				hp: request.HP,
 				sta: request.Sta,
 				@int: request.Int,
@@ -83,7 +85,6 @@ namespace Wastelands.Service.Application.Services
 				creatureType: request.CreatureType,
 				name: request.Name,
 				description: request.Description,
-				imageUrl: request.ImageUrl,
 				hp: request.HP,
 				sta: request.Sta,
 				@int: request.Int,
@@ -123,6 +124,11 @@ namespace Wastelands.Service.Application.Services
 		{
 			var creatureTemplate = await GetByIdAsync(id);
 			await _creatureTemplateRepository.DeleteAsync(creatureTemplate);
+
+			if (creatureTemplate.ImageKey is not null)
+			{
+				await _imageStorage.DeleteAsync(creatureTemplate.ImageKey);
+			}
 		}
 
 		public async Task AddSkillAsync(AddOrUpdateCreatureTemplateSkillRequest request)

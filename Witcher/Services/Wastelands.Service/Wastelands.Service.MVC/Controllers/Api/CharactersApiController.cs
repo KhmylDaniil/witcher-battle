@@ -18,11 +18,16 @@ namespace Wastelands.Service.MVC.Controllers.Api
 	{
 		private readonly ICharacterService _characterService;
 		private readonly ICharacterAbilityService _characterAbilityService;
+		private readonly ICharacterImageService _characterImageService;
 
-		public CharactersApiController(ICharacterService characterService, ICharacterAbilityService characterAbilityService)
+		public CharactersApiController(
+			ICharacterService characterService,
+			ICharacterAbilityService characterAbilityService,
+			ICharacterImageService characterImageService)
 		{
 			_characterService = characterService;
 			_characterAbilityService = characterAbilityService;
+			_characterImageService = characterImageService;
 		}
 
 		[HttpGet]
@@ -55,6 +60,18 @@ namespace Wastelands.Service.MVC.Controllers.Api
 			await _characterService.DeleteCharacterAsync(id);
 			return NoContent();
 		}
+
+		[HttpPut("{id:long}/image")]
+		[RequestSizeLimit(5_000_000)]
+		public async Task<CharacterDto> UploadImage(long id, IFormFile file)
+		{
+			await using var stream = file.OpenReadStream();
+			return await _characterImageService.SetImageAsync(id, stream, file.ContentType, file.Length);
+		}
+
+		[HttpDelete("{id:long}/image")]
+		public async Task<CharacterDto> RemoveImage(long id)
+			=> await _characterImageService.RemoveImageAsync(id);
 
 		/// <summary>Создание/изменение навыка (upsert) — AddSkillAsync кидает на дубликат, поэтому сперва проверяем</summary>
 		[HttpPut("{characterId:long}/skills")]

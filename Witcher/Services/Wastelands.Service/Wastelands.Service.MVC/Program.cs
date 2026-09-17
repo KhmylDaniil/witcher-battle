@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Text.Json.Serialization;
 using Wastelands.EfDataAccess.Extensions;
+using Wastelands.Service.Application.Contracts;
 using Wastelands.Service.Infrastructure;
 using Wastelands.Service.MVC.Extensions;
 using Wastelands.Service.MVC.Hubs;
@@ -75,6 +76,17 @@ app.Use(next => context =>
 });
 
 await app.MigrateDatabaseAsync<WastelandsDbContext>();
+
+// В отличие от миграций (без БД не работает вообще ничего), MinIO нужен только для картинок —
+// недоступность при старте не должна ронять весь остальной API, поэтому только предупреждение.
+try
+{
+	await app.Services.GetRequiredService<IImageStorage>().EnsureBucketExistsAsync();
+}
+catch (Exception ex)
+{
+	app.Logger.LogWarning(ex, "Не удалось подготовить бакет MinIO при старте — загрузка изображений может не работать.");
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

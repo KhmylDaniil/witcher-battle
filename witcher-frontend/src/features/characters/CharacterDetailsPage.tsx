@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, ConfirmButton, ErrorText, Input, PageHeader, Select, Spinner } from '../../components/ui'
@@ -44,6 +44,16 @@ export function CharacterDetailsPage() {
 
   const removeAbility = useMutation({
     mutationFn: (abilityId: number) => charactersApi.removeAbility(id, abilityId),
+    onSuccess: invalidate,
+  })
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const uploadImage = useMutation({
+    mutationFn: (file: File) => charactersApi.uploadImage(id, file),
+    onSuccess: invalidate,
+  })
+  const removeImage = useMutation({
+    mutationFn: () => charactersApi.removeImage(id),
     onSuccess: invalidate,
   })
 
@@ -97,6 +107,52 @@ export function CharacterDetailsPage() {
           </p>
         </Card>
       )}
+
+      <Card>
+        <h2 className="mb-3 font-semibold">Изображение</h2>
+        <div className="flex items-center gap-4">
+          {c.imageUrl && (
+            <img src={c.imageUrl} alt="" className="h-24 w-24 rounded-md border border-neutral-200 object-cover dark:border-neutral-800" />
+          )}
+          {c.gameId && (
+            <div className="flex flex-col items-start gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) uploadImage.mutate(file)
+                  e.target.value = ''
+                }}
+              />
+              <Button
+                variant="secondary"
+                className="px-2 py-1 text-xs"
+                disabled={uploadImage.isPending}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {c.imageUrl ? 'Заменить изображение' : 'Загрузить изображение'}
+              </Button>
+              {c.imageUrl && (
+                <ConfirmButton link confirmMessage="Удалить изображение?" onConfirm={() => removeImage.mutate()} disabled={removeImage.isPending}>
+                  Удалить изображение
+                </ConfirmButton>
+              )}
+            </div>
+          )}
+        </div>
+        {(uploadImage.error ?? removeImage.error) && (
+          <div className="mt-2">
+            <ErrorText>
+              {(uploadImage.error ?? removeImage.error) instanceof ApiError
+                ? (uploadImage.error ?? removeImage.error as ApiError).message
+                : 'Не удалось обновить изображение'}
+            </ErrorText>
+          </div>
+        )}
+      </Card>
 
       <Card>
         <h2 className="mb-2 font-semibold">Характеристики</h2>

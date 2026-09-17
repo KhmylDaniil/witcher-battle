@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Minio;
 using Wastelands.Core.Contracts.Contracts;
 using Wastelands.Service.Application.Contracts;
 using Wastelands.Service.Application.Contracts.Repositories;
 using Wastelands.Service.Application.Mapping;
 using Wastelands.Service.Application.Options;
 using Wastelands.Service.Infrastructure.Repositories;
+using Wastelands.Service.Infrastructure.Storage;
 using Wastelands.Service.Application.Services;
 using Wastelands.Service.MVC.Hubs;
 using Wastelands.Service.MVC.Services;
@@ -18,6 +20,15 @@ namespace Wastelands.Service.MVC.Extensions
 		IConfiguration configuration)
 		{
 			services.Configure<HasherOptions>(configuration.GetSection(HasherOptions.SectionName));
+			services.Configure<MinioOptions>(configuration.GetSection(MinioOptions.SectionName));
+
+			var minioOptions = configuration.GetSection(MinioOptions.SectionName).Get<MinioOptions>();
+			services.AddSingleton<IMinioClient>(_ => new MinioClient()
+				.WithEndpoint(minioOptions.Endpoint)
+				.WithCredentials(minioOptions.AccessKey, minioOptions.SecretKey)
+				.WithSSL(minioOptions.UseSSL)
+				.Build());
+			services.AddSingleton<IImageStorage, MinioImageStorage>();
 
 			services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<ICharacterRepository, CharacterRepository>();
@@ -45,6 +56,8 @@ namespace Wastelands.Service.MVC.Extensions
 			services.AddScoped<IBodyTemplateService, BodyTemplateService>();
 			services.AddScoped<ICreatureTemplateService, CreatureTemplateService>();
 			services.AddScoped<ICreatureTemplateAbilityService, CreatureTemplateAbilityService>();
+			services.AddScoped<ICreatureTemplateImageService, CreatureTemplateImageService>();
+			services.AddScoped<ICharacterImageService, CharacterImageService>();
 			services.AddScoped<IBattleService, BattleService>();
 			services.AddScoped<IBattleCombatService, BattleCombatService>();
 			services.AddScoped<IBattleParticipantSheetService, BattleParticipantSheetService>();

@@ -27,13 +27,13 @@ export function CharacterFormPage() {
   })
 
   const { register, handleSubmit, reset, formState } = useForm<CharacterFormValues>({
-    defaultValues: { name: '', imageUrl: '', hp: 10, sta: 10, int: 1, str: 1, rea: 1, dex: 1, cra: 1, emp: 1, wil: 1 },
+    defaultValues: { name: '', hp: 10, sta: 10, int: 1, str: 1, rea: 1, dex: 1, cra: 1, emp: 1, wil: 1 },
   })
 
   useEffect(() => {
     if (existing.data) {
-      const { name, imageUrl, hp, sta, int, str, rea, dex, cra, emp, wil } = existing.data
-      reset({ name, imageUrl: imageUrl ?? '', hp, sta, int, str, rea, dex, cra, emp, wil })
+      const { name, hp, sta, int, str, rea, dex, cra, emp, wil } = existing.data
+      reset({ name, hp, sta, int, str, rea, dex, cra, emp, wil })
     }
   }, [existing.data, reset])
 
@@ -62,9 +62,6 @@ export function CharacterFormPage() {
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
           <Field label="Имя">
             <Input {...register('name', { required: true })} />
-          </Field>
-          <Field label="Ссылка на изображение (необязательно)">
-            <Input {...register('imageUrl')} placeholder="https://..." />
           </Field>
 
           <div>

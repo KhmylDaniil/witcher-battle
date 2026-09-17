@@ -19,8 +19,8 @@ namespace Wastelands.Service.Domain.Entities
 
 		public string? Description { get; private set; }
 
-		/// <summary>Ссылка на изображение существа — показывается в листе персонажа/существа во время боя.</summary>
-		public string? ImageUrl { get; private set; }
+		/// <summary>Ключ объекта в MinIO с изображением существа — показывается в листе персонажа/существа во время боя.</summary>
+		public string? ImageKey { get; private set; }
 
 		public int HP { get; private set; }
 
@@ -62,7 +62,6 @@ namespace Wastelands.Service.Domain.Entities
 			CreatureType creatureType,
 			string name,
 			string? description,
-			string? imageUrl,
 			int hp,
 			int sta,
 			int @int,
@@ -94,7 +93,6 @@ namespace Wastelands.Service.Domain.Entities
 			CreatureType = creatureType;
 			Name = name;
 			Description = description;
-			ImageUrl = imageUrl;
 			HP = hp;
 			Sta = sta;
 			Int = @int;
@@ -114,7 +112,6 @@ namespace Wastelands.Service.Domain.Entities
 			CreatureType creatureType,
 			string name,
 			string? description,
-			string? imageUrl,
 			int hp,
 			int sta,
 			int @int,
@@ -143,7 +140,6 @@ namespace Wastelands.Service.Domain.Entities
 			CreatureType = creatureType;
 			Name = name;
 			Description = description;
-			ImageUrl = imageUrl;
 			HP = hp;
 			Sta = sta;
 			Int = @int;
@@ -155,6 +151,11 @@ namespace Wastelands.Service.Domain.Entities
 			Will = will;
 			Speed = speed;
 			Luck = luck;
+		}
+
+		public void SetImage(string? imageKey)
+		{
+			ImageKey = imageKey;
 		}
 	}
 }

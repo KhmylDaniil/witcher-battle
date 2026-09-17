@@ -62,6 +62,10 @@
 		BattleNotInProgress = 619,
 		InvalidDamageRoll = 620,
 
+		// image errors 700...
+		UnsupportedImageType = 700,
+		ImageTooLarge = 701,
+
 		// Common error codes 1100...1199
 		InvalidArgument = 1101,
 		RequiredParameterCannotBeNull = 1103,

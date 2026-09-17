@@ -22,19 +22,22 @@ namespace Wastelands.Service.Application.Services
 		private readonly IGameRepository _gameRepository;
 		private readonly IUserGameRepository _userGameRepository;
 		private readonly IUserContext _userContext;
+		private readonly IImageStorage _imageStorage;
 
 		public CharacterService(
 			ICharacterRepository repository,
 			IGameRepository gameRepository,
 			IUserGameRepository userGameRepository,
 			IMapper mapper,
-			IUserContext userContext)
+			IUserContext userContext,
+			IImageStorage imageStorage)
 		{
 			_characterRepository = repository;
 			_gameRepository = gameRepository;
 			_userGameRepository = userGameRepository;
 			_mapper = mapper;
 			_userContext = userContext;
+			_imageStorage = imageStorage;
 		}
 
 		/// <summary>Чтение (в отличие от изменения) доступно ещё и мастеру игры персонажа — например, переход на лист персонажа со страницы боя.</summary>
@@ -107,7 +110,6 @@ namespace Wastelands.Service.Application.Services
 				userId: currentUserId,
 				gameId: request.GameId,
 				name: request.Name,
-				imageUrl: request.ImageUrl,
 				hp: request.HP,
 				sta: request.Sta,
 				@int: request.Int,
@@ -133,7 +135,6 @@ namespace Wastelands.Service.Application.Services
 			var character = await GetByIdAsync(request.Id);
 			character.UpdateCharacter(
 				name: request.Name,
-				imageUrl: request.ImageUrl,
 				hp: request.HP,
 				sta: request.Sta,
 				@int: request.Int,
@@ -153,6 +154,11 @@ namespace Wastelands.Service.Application.Services
 		{
 			var character = await GetByIdAsync(id);
 			await _characterRepository.DeleteAsync(character);
+
+			if (character.ImageKey is not null)
+			{
+				await _imageStorage.DeleteAsync(character.ImageKey);
+			}
 		}
 
 		public async Task AddSkillAsync(AddOrUpdateCharacterSkillRequest request)

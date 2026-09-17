@@ -12,9 +12,14 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  // FormData (загрузка файла) не должна получать Content-Type вручную — браузер сам проставляет
+  // его с корректным multipart-boundary, который иначе не воспроизвести.
+  const isFormData = init?.body instanceof FormData
+  const headers = isFormData ? { ...(init?.headers ?? {}) } : { 'Content-Type': 'application/json', ...(init?.headers ?? {}) }
+
   const res = await fetch(path, {
     credentials: 'same-origin',
-    headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
+    headers,
     ...init,
   })
 
@@ -49,4 +54,9 @@ export const api = {
   put: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: 'PUT', body: body === undefined ? undefined : JSON.stringify(body) }),
   delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+  upload: <T>(path: string, file: File) => {
+    const body = new FormData()
+    body.append('file', file)
+    return request<T>(path, { method: 'PUT', body })
+  },
 }

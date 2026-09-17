@@ -21,6 +21,9 @@ export const creatureTemplatesApi = {
     api.put<CreatureTemplate>(`/api/creature-templates/${id}`, payload),
   remove: (id: number) => api.delete<void>(`/api/creature-templates/${id}`),
 
+  uploadImage: (id: number, file: File) => api.upload<CreatureTemplate>(`/api/creature-templates/${id}/image`, file),
+  removeImage: (id: number) => api.delete<CreatureTemplate>(`/api/creature-templates/${id}/image`),
+
   updatePartArmor: (creatureTemplateId: number, partId: number, armor: number) =>
     api.put<CreatureTemplate>(`/api/creature-templates/${creatureTemplateId}/parts/${partId}/armor`, { armor }),
 

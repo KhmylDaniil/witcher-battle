@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, ConfirmButton, ErrorText, Field, Input, PageHeader, Select, Spinner, Textarea } from '../../components/ui'
@@ -29,7 +29,6 @@ function toFormValues(ct: {
   creatureType: CreatureTemplateFormValues['creatureType']
   name: string
   description: string | null
-  imageUrl: string | null
   hp: number
   sta: number
   int: number
@@ -47,7 +46,6 @@ function toFormValues(ct: {
     creatureType: ct.creatureType,
     name: ct.name,
     description: ct.description ?? '',
-    imageUrl: ct.imageUrl ?? '',
     hp: ct.hp,
     sta: ct.sta,
     int: ct.int,
@@ -137,6 +135,16 @@ export function CreatureTemplateDetailsPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['creature-templates', id] }),
   })
 
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const uploadImage = useMutation({
+    mutationFn: (file: File) => creatureTemplatesApi.uploadImage(id, file),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['creature-templates', id] }),
+  })
+  const removeImage = useMutation({
+    mutationFn: () => creatureTemplatesApi.removeImage(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['creature-templates', id] }),
+  })
+
   if (creatureTemplate.isLoading) return <Spinner />
   if (!creatureTemplate.data) return null
   const ct = creatureTemplate.data
@@ -178,6 +186,50 @@ export function CreatureTemplateDetailsPage() {
         }
       />
 
+      <Card>
+        <h2 className="mb-3 font-semibold">Изображение</h2>
+        <div className="flex items-center gap-4">
+          {ct.imageUrl && (
+            <img src={ct.imageUrl} alt="" className="h-24 w-24 rounded-md border border-neutral-200 object-cover dark:border-neutral-800" />
+          )}
+          <div className="flex flex-col items-start gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) uploadImage.mutate(file)
+                e.target.value = ''
+              }}
+            />
+            <Button
+              variant="secondary"
+              className="px-2 py-1 text-xs"
+              disabled={uploadImage.isPending}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {ct.imageUrl ? 'Заменить изображение' : 'Загрузить изображение'}
+            </Button>
+            {ct.imageUrl && (
+              <ConfirmButton link confirmMessage="Удалить изображение?" onConfirm={() => removeImage.mutate()} disabled={removeImage.isPending}>
+                Удалить изображение
+              </ConfirmButton>
+            )}
+          </div>
+        </div>
+        {(uploadImage.error ?? removeImage.error) && (
+          <div className="mt-2">
+            <ErrorText>
+              {(uploadImage.error ?? removeImage.error) instanceof ApiError
+                ? (uploadImage.error ?? removeImage.error as ApiError).message
+                : 'Не удалось обновить изображение'}
+            </ErrorText>
+          </div>
+        )}
+      </Card>
+
       {editingTemplate && templateValues ? (
         <Card>
           <form
@@ -200,13 +252,6 @@ export function CreatureTemplateDetailsPage() {
                 rows={2}
                 value={templateValues.description}
                 onChange={(e) => setTemplateValues({ ...templateValues, description: e.target.value })}
-              />
-            </Field>
-            <Field label="Ссылка на изображение (необязательно)">
-              <Input
-                value={templateValues.imageUrl ?? ''}
-                onChange={(e) => setTemplateValues({ ...templateValues, imageUrl: e.target.value })}
-                placeholder="https://..."
               />
             </Field>
             <Field label="Тип существа">

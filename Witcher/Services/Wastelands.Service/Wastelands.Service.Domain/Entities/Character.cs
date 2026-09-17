@@ -21,8 +21,8 @@ namespace Wastelands.Service.Domain.Entities
 
 		public string Name { get; private set; }
 
-		/// <summary>Ссылка на изображение персонажа — показывается в листе персонажа/существа во время боя.</summary>
-		public string? ImageUrl { get; private set; }
+		/// <summary>Ключ объекта в MinIO с изображением персонажа — показывается в листе персонажа/существа во время боя.</summary>
+		public string? ImageKey { get; private set; }
 
 		public int HP { get; private set; }
 
@@ -50,7 +50,7 @@ namespace Wastelands.Service.Domain.Entities
 		{
 		}
 
-		public Character(long userId, long gameId, string name, string? imageUrl, int hp, int sta, int @int, int str, int rea, int dex, int cra, int emp, int wil)
+		public Character(long userId, long gameId, string name, int hp, int sta, int @int, int str, int rea, int dex, int cra, int emp, int wil)
 		{
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(userId, nameof(userId));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(gameId, nameof(gameId));
@@ -68,7 +68,6 @@ namespace Wastelands.Service.Domain.Entities
 			UserId = userId;
 			GameId = gameId;
 			Name = name;
-			ImageUrl = imageUrl;
 			HP = hp;
 			Sta = sta;
 			Int = @int;
@@ -80,7 +79,7 @@ namespace Wastelands.Service.Domain.Entities
 			Wil = wil;
 		}
 
-		public void UpdateCharacter(string name, string? imageUrl, int hp, int sta, int @int, int str, int rea, int dex, int cra, int emp, int wil)
+		public void UpdateCharacter(string name, int hp, int sta, int @int, int str, int rea, int dex, int cra, int emp, int wil)
 		{
 			InvalidArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(hp, nameof(hp));
@@ -94,7 +93,6 @@ namespace Wastelands.Service.Domain.Entities
 			InvalidArgumentException.ThrowIfNotInRange(wil, MinStat, MaxStat, nameof(wil));
 
 			Name = name;
-			ImageUrl = imageUrl;
 			HP = hp;
 			Sta = sta;
 			Int = @int;
@@ -104,6 +102,11 @@ namespace Wastelands.Service.Domain.Entities
 			Cra = cra;
 			Emp = emp;
 			Wil = wil;
+		}
+
+		public void SetImage(string? imageKey)
+		{
+			ImageKey = imageKey;
 		}
 	}
 }

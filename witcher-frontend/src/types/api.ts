@@ -106,7 +106,6 @@ export interface Character {
 
 export interface CharacterFormValues {
   name: string
-  imageUrl?: string
   hp: number
   sta: number
   int: number
@@ -204,7 +203,6 @@ export interface CreatureTemplateFormValues {
   creatureType: CreatureType
   name: string
   description: string
-  imageUrl?: string
   hp: number
   sta: number
   int: number

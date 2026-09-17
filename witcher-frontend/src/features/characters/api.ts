@@ -11,6 +11,9 @@ export const charactersApi = {
   update: (id: number, payload: CharacterFormValues) => api.put<Character>(`/api/characters/${id}`, payload),
   remove: (id: number) => api.delete<void>(`/api/characters/${id}`),
 
+  uploadImage: (id: number, file: File) => api.upload<Character>(`/api/characters/${id}/image`, file),
+  removeImage: (id: number) => api.delete<Character>(`/api/characters/${id}/image`),
+
   upsertSkill: (characterId: number, skill: Skill, value: number) =>
     api.put<void>(`/api/characters/${characterId}/skills`, { skill, value }),
   deleteSkill: (characterId: number, skill: Skill) => api.delete<void>(`/api/characters/${characterId}/skills/${skill}`),

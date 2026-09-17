@@ -12,7 +12,8 @@ namespace Wastelands.Service.Application.Mapping
 			CreateMap<RegisterUserRequest, User>()
 				.ForMember(dst => dst.Password, opt => opt.Ignore());
 
-			CreateMap<Character, CharacterDto>();
+			CreateMap<Character, CharacterDto>()
+				.ForMember(dst => dst.ImageUrl, opt => opt.MapFrom(src => src.ImageKey == null ? null : $"/api/images/{src.ImageKey}"));
 
 			CreateMap<Game, GameDto>();
 			CreateMap<GameJoinRequest, GameJoinRequestDto>();
@@ -20,7 +21,8 @@ namespace Wastelands.Service.Application.Mapping
 			CreateMap<BodyTemplatePart, BodyTemplatePartDto>();
 			CreateMap<BodyTemplate, BodyTemplateDto>();
 			CreateMap<CreatureTemplatePart, CreatureTemplatePartDto>();
-			CreateMap<CreatureTemplate, CreatureTemplateDto>();
+			CreateMap<CreatureTemplate, CreatureTemplateDto>()
+				.ForMember(dst => dst.ImageUrl, opt => opt.MapFrom(src => src.ImageKey == null ? null : $"/api/images/{src.ImageKey}"));
 			CreateMap<Ability, AbilityDto>();
 			CreateMap<AbilityAppliedCondition, AbilityAppliedConditionDto>();
 			CreateMap<AbilityDefensiveSkill, AbilityDefensiveSkillDto>();
