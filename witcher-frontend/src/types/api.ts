@@ -272,6 +272,7 @@ export interface BattleCharacterEntry {
   id: number
   characterId: number
   characterName: string
+  characterUserId: number
   maxHP: number
   currentHP: number
   maxSta: number
@@ -280,13 +281,61 @@ export interface BattleCharacterEntry {
   appliedConditions: Condition[]
 }
 
+export type ParticipantKind = 'Creature' | 'Character'
+
+export type BattleAttackPhase = 'AwaitingChoices' | 'AwaitingDamageRoll' | 'SwingResolved'
+
+export interface CreaturePartOption {
+  id: number
+  name: string
+}
+
+export interface BattleAttack {
+  id: number
+  attackerKind: ParticipantKind
+  attackerId: number
+  attackerName: string
+  abilityId: number
+  abilityName: string
+  /** Справочное значение характеристика+навык атакующего — менять нельзя. */
+  attackerSkillValue: number
+  attacksAllowed: number
+  attacksUsed: number
+  defenderKind: ParticipantKind
+  defenderId: number
+  defenderName: string
+  /** Заполнено, только если защитник — существо. */
+  availableCreatureParts: CreaturePartOption[] | null
+  targetedCreaturePartId: number | null
+  attackRoll: number | null
+  attackerConfirmed: boolean
+  availableDefensiveSkills: Skill[]
+  defensiveSkill: Skill | null
+  defenseRoll: number | null
+  defenderConfirmed: boolean
+  phase: BattleAttackPhase
+  lastHitSucceeded: boolean | null
+  resolvedCreaturePartId: number | null
+  damageRoll: number | null
+}
+
+export interface BattleLogEntry {
+  id: number
+  message: string
+  createdAt: string
+}
+
 export interface Battle {
   id: number
   gameId: number
   name: string
   status: BattleStatus
+  currentRound: number
+  currentInitiative: number | null
   creatures: BattleCreature[]
   characters: BattleCharacterEntry[]
+  attack: BattleAttack | null
+  logEntries: BattleLogEntry[]
 }
 
 export interface BattleFormValues {

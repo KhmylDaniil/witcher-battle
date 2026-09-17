@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using Wastelands.EfDataAccess.Extensions;
 using Wastelands.Service.Infrastructure;
 using Wastelands.Service.MVC.Extensions;
+using Wastelands.Service.MVC.Hubs;
 using Wastelands.Service.MVC.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,6 +64,8 @@ builder.Services.ConfigureServices(builder.Configuration);
 
 builder.Services.AddCors(o => o.AddPolicy("AllowAll", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 app.Use(next => context =>
@@ -98,6 +101,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<BattleHub>("/api/hubs/battle");
 
 // React SPA (witcher-frontend/) — прод-сборка (`npm run build`) копируется в wwwroot/app, отсюда раздаётся
 // статикой (UseStaticFiles выше), а client-side роутинг (react-router) обслуживается этим фолбэком.

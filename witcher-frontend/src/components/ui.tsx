@@ -98,3 +98,19 @@ export function ErrorText({ children }: { children: ReactNode }) {
 export function Spinner() {
   return <div className="py-8 text-center text-sm text-neutral-500">Загрузка…</div>
 }
+
+/**
+ * Полноэкранный модальный оверлей без закрытия по клику вне/Escape — используется там, где
+ * пользователь обязан сделать выбор, прежде чем продолжить (например, разрешение атаки в бою).
+ */
+export function Modal({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div
+        className={`max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-neutral-200 bg-white p-4 shadow-lg dark:border-neutral-800 dark:bg-neutral-900 ${className}`}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}

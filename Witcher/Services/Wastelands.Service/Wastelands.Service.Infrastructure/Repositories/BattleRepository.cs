@@ -37,7 +37,9 @@ namespace Wastelands.Service.Infrastructure.Repositories
 		{
 			return query
 				.Include(x => x.Creatures)
-				.Include(x => x.Characters).ThenInclude(bc => bc.Character);
+				.Include(x => x.Characters).ThenInclude(bc => bc.Character)
+				.Include(x => x.Attack)
+				.Include(x => x.LogEntries);
 		}
 	}
 }

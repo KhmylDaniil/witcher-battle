@@ -8,6 +8,9 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public string CharacterName { get; set; }
 
+		/// <summary>Владелец персонажа — нужен фронтенду, чтобы понять, кто контролирует эту сторону боя.</summary>
+		public long CharacterUserId { get; set; }
+
 		public int MaxHP { get; set; }
 
 		public int CurrentHP { get; set; }

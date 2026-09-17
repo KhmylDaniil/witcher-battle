@@ -26,6 +26,14 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnName("Status")
 				.IsRequired();
 
+			builder.Property(x => x.CurrentRound)
+				.HasColumnName("CurrentRound")
+				.IsRequired();
+
+			builder.Property(x => x.CurrentInitiative)
+				.HasColumnName("CurrentInitiative")
+				.IsRequired(false);
+
 			builder.HasMany(x => x.Creatures)
 				.WithOne()
 				.HasForeignKey(x => x.BattleId)
@@ -33,6 +41,18 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasMany(x => x.Characters)
+				.WithOne()
+				.HasForeignKey(x => x.BattleId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasOne(x => x.Attack)
+				.WithOne()
+				.HasForeignKey<BattleAttack>(x => x.BattleId)
+				.HasPrincipalKey<Battle>(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.LogEntries)
 				.WithOne()
 				.HasForeignKey(x => x.BattleId)
 				.HasPrincipalKey(x => x.Id)

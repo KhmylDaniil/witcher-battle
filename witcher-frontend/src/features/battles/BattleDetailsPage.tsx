@@ -2,11 +2,14 @@ import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import { Button, Card, ErrorText, Field, Input, PageHeader, Select, Spinner } from '../../components/ui'
+import { useCurrentUser } from '../auth/useAuth'
 import { ApiError } from '../../lib/apiClient'
+import { useBattleUpdates } from '../../lib/battleHub'
 import { charactersApi } from '../characters/api'
 import { creatureTemplatesApi } from '../creatureTemplates/api'
 import { gamesApi } from '../games/api'
-import { CONDITIONS, type Condition } from '../../types/api'
+import { CONDITIONS, type Ability, type Condition, type ParticipantKind } from '../../types/api'
+import { AttackModal } from './AttackModal'
 import { battlesApi } from './api'
 
 type Participant = {
@@ -22,6 +25,8 @@ type Participant = {
   currentSta: number
   initiative: number | null
   appliedConditions: Condition[]
+  creatureTemplateId?: number
+  characterUserId?: number
 }
 
 export function BattleDetailsPage() {
@@ -32,13 +37,18 @@ export function BattleDetailsPage() {
 
   const game = useQuery({ queryKey: ['games', gameIdNum], queryFn: () => gamesApi.get(gameIdNum) })
   const isOwner = game.data?.membershipStatus === 'Owner'
+  const { data: currentUser } = useCurrentUser()
 
   const battle = useQuery({
     queryKey: ['battles', gameIdNum, id],
     queryFn: () => battlesApi.get(gameIdNum, id),
     retry: false,
+    // SignalR — основной механизм обновления; интервал — подстраховка на случай обрыва/пропуска
+    // хаб-события, поэтому достаточно редкий и не создаёт постоянную нагрузку.
+    refetchInterval: (query) => (query.state.data?.status === 'InProgress' ? 20_000 : false),
   })
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['battles', gameIdNum, id] })
+  useBattleUpdates(id, invalidate)
 
   const creatureTemplates = useQuery({
     queryKey: ['creature-templates', { gameId: gameIdNum }],
@@ -83,6 +93,41 @@ export function BattleDetailsPage() {
     onSuccess: invalidate,
   })
   const removeCharacter = useMutation({ mutationFn: (characterId: number) => battlesApi.removeCharacter(gameIdNum, id, characterId), onSuccess: invalidate })
+
+  // Способности активного по инициативе участника — нужны для панели выбора атаки, только если
+  // это мой ход и атака ещё не начата. Существо — способности живут в шаблоне; персонаж — в самом
+  // персонаже (доступен, только если это моя учётка).
+  const activeCreature = battle.data?.creatures.find((c) => c.initiative === battle.data?.currentInitiative) ?? null
+  const activeCharacterEntry = battle.data?.characters.find((c) => c.initiative === battle.data?.currentInitiative) ?? null
+  const isActiveCreatureController = !!activeCreature && isOwner
+  const isActiveCharacterController = !!activeCharacterEntry && activeCharacterEntry.characterUserId === currentUser?.userId
+  const noActiveAttack = !battle.data?.attack
+
+  const activeCreatureTemplate = useQuery({
+    queryKey: ['creature-templates', activeCreature?.creatureTemplateId],
+    queryFn: () => creatureTemplatesApi.get(activeCreature!.creatureTemplateId),
+    enabled: isActiveCreatureController && noActiveAttack,
+  })
+  const activeCharacterDetail = useQuery({
+    queryKey: ['characters', activeCharacterEntry?.characterId],
+    queryFn: () => charactersApi.get(activeCharacterEntry!.characterId),
+    enabled: isActiveCharacterController && noActiveAttack,
+  })
+
+  const [attackAbilityId, setAttackAbilityId] = useState<number | null>(null)
+  const [attackTarget, setAttackTarget] = useState('')
+  const startAttack = useMutation({
+    mutationFn: () => {
+      const [kind, refId] = attackTarget.split(':') as [ParticipantKind, string]
+      return battlesApi.startAttack(gameIdNum, id, { abilityId: attackAbilityId!, defenderKind: kind, defenderId: Number(refId) })
+    },
+    onSuccess: async () => {
+      await invalidate()
+      setAttackAbilityId(null)
+      setAttackTarget('')
+    },
+  })
+  const skipTurn = useMutation({ mutationFn: () => battlesApi.skipTurn(gameIdNum, id), onSuccess: invalidate })
 
   const [conditionDrafts, setConditionDrafts] = useState<Record<string, Condition>>({})
   const addCondition = useMutation({
@@ -130,6 +175,7 @@ export function BattleDetailsPage() {
       currentSta: c.currentSta,
       initiative: c.initiative,
       appliedConditions: c.appliedConditions,
+      creatureTemplateId: c.creatureTemplateId,
     })),
     ...b.characters.map((bc): Participant => ({
       kind: 'character',
@@ -142,6 +188,7 @@ export function BattleDetailsPage() {
       currentSta: bc.currentSta,
       initiative: bc.initiative,
       appliedConditions: bc.appliedConditions,
+      characterUserId: bc.characterUserId,
     })),
   ].sort((x, y) => {
     if (x.initiative != null && y.initiative != null) return x.initiative - y.initiative
@@ -152,6 +199,18 @@ export function BattleDetailsPage() {
 
   const addedCharacterIds = new Set(b.characters.map((bc) => bc.characterId))
   const availableCharacters = (gameCharacters.data ?? []).filter((c) => !addedCharacterIds.has(c.id))
+
+  // Активный по инициативе участник и проверка "я его контролирую" — существом всегда распоряжается
+  // мастер (isOwner), персонажем — его владелец (characterUserId совпадает с текущим пользователем).
+  const activeParticipant = participants.find((p) => p.initiative === b.currentInitiative) ?? null
+  const isActiveController = !!activeParticipant
+    && (activeParticipant.kind === 'creature' ? isOwner : activeParticipant.characterUserId === currentUser?.userId)
+
+  const attack = b.attack
+  const isAttackerController = !!attack
+    && (attack.attackerKind === 'Creature' ? isOwner : participants.some((p) => p.kind === 'character' && p.refId === attack.attackerId && p.characterUserId === currentUser?.userId))
+  const isDefenderController = !!attack
+    && (attack.defenderKind === 'Creature' ? isOwner : participants.some((p) => p.kind === 'character' && p.refId === attack.defenderId && p.characterUserId === currentUser?.userId))
 
   return (
     <div className="flex flex-col gap-4">
@@ -176,7 +235,9 @@ export function BattleDetailsPage() {
       )}
 
       <Card>
-        <p className="mb-3 text-sm text-neutral-500">{b.status === 'Draft' ? 'Подготовка к бою.' : 'Бой идёт.'}</p>
+        <p className="mb-3 text-sm text-neutral-500">
+          {b.status === 'Draft' ? 'Подготовка к бою.' : `Бой идёт — раунд ${b.currentRound}.`}
+        </p>
         <table className="w-full text-left text-sm">
           <thead className="text-xs text-neutral-400">
             <tr>
@@ -192,10 +253,15 @@ export function BattleDetailsPage() {
             {participants.map((p) => {
               const draftKey = `${p.kind}-${p.refId}`
               const isEditingHp = p.kind === 'creature' && editingCreatureId === p.refId
+              const isActive = b.status === 'InProgress' && p.initiative === b.currentInitiative
               return (
-                <tr key={draftKey} className="border-t border-neutral-100 dark:border-neutral-900">
+                <tr
+                  key={draftKey}
+                  className={`border-t border-neutral-100 dark:border-neutral-900 ${isActive ? 'bg-violet-50 dark:bg-violet-950' : ''}`}
+                >
                   <td className="py-2 pr-3">
                     {p.name} <span className="text-xs text-neutral-400">({p.kind === 'creature' ? 'существо' : 'персонаж'})</span>
+                    {isActive && <span className="ml-1 text-xs text-violet-600 dark:text-violet-400">● ход</span>}
                   </td>
                   <td className="py-2 pr-3">
                     {isEditingHp ? (
@@ -292,6 +358,77 @@ export function BattleDetailsPage() {
           </tbody>
         </table>
       </Card>
+
+      {b.status === 'InProgress' && !attack && isActiveController && activeParticipant && (
+        <Card>
+          <h2 className="mb-3 font-semibold">Ваш ход: {activeParticipant.name}</h2>
+          {(() => {
+            const abilities: Ability[] =
+              activeParticipant.kind === 'creature' ? (activeCreatureTemplate.data?.abilities ?? []) : (activeCharacterDetail.data?.abilities ?? [])
+            const targetOptions = participants.filter(
+              (p) => !(p.kind === activeParticipant.kind && p.refId === activeParticipant.refId),
+            )
+            return (
+              <>
+                <div className="mb-3 flex flex-wrap items-end gap-2">
+                  <Field label="Способность">
+                    <Select className="w-48" value={attackAbilityId ?? ''} onChange={(e) => setAttackAbilityId(e.target.value ? Number(e.target.value) : null)}>
+                      <option value="">— выберите способность —</option>
+                      {abilities.map((a) => (
+                        <option key={a.id} value={a.id}>
+                          {a.name}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
+                  <Field label="Цель">
+                    <Select className="w-48" value={attackTarget} onChange={(e) => setAttackTarget(e.target.value)}>
+                      <option value="">— выберите цель —</option>
+                      {targetOptions.map((t) => (
+                        <option key={`${t.kind}-${t.refId}`} value={`${t.kind === 'creature' ? 'Creature' : 'Character'}:${t.refId}`}>
+                          {t.name}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
+                  <Button disabled={!attackAbilityId || !attackTarget || startAttack.isPending} onClick={() => startAttack.mutate()}>
+                    Атаковать
+                  </Button>
+                  <Button variant="secondary" disabled={skipTurn.isPending} onClick={() => skipTurn.mutate()}>
+                    Пропустить ход
+                  </Button>
+                </div>
+                {startAttack.error && (
+                  <ErrorText>{startAttack.error instanceof ApiError ? startAttack.error.message : 'Не удалось начать атаку'}</ErrorText>
+                )}
+              </>
+            )
+          })()}
+        </Card>
+      )}
+
+      <Card>
+        <h2 className="mb-3 font-semibold">Лог боя</h2>
+        {b.logEntries.length === 0 && <p className="text-sm text-neutral-500">Пока пусто.</p>}
+        <ul className="flex flex-col-reverse gap-1 text-sm">
+          {b.logEntries.map((entry) => (
+            <li key={entry.id} className="border-t border-neutral-100 pt-1 first:border-t-0 first:pt-0 dark:border-neutral-900">
+              <span className="text-xs text-neutral-400">{new Date(entry.createdAt).toLocaleTimeString()}</span> {entry.message}
+            </li>
+          ))}
+        </ul>
+      </Card>
+
+      {attack && (isAttackerController || isDefenderController) && (
+        <AttackModal
+          gameId={gameIdNum}
+          battleId={id}
+          battle={b}
+          attack={attack}
+          isAttackerController={isAttackerController}
+          isDefenderController={isDefenderController}
+        />
+      )}
 
       {isOwner && b.status === 'Draft' && (
         <Card>

@@ -34,7 +34,8 @@ namespace Wastelands.Service.Infrastructure.Repositories
 
 		public async Task<Character?> GetByIdUnscopedAsync(long id)
 		{
-			return await _context.Set<Character>().FirstOrDefaultAsync(x => x.Id == id);
+			return await IncludeRelatedEntities(_context.Set<Character>())
+				.FirstOrDefaultAsync(x => x.Id == id);
 		}
 	}
 }

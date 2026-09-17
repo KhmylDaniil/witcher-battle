@@ -75,6 +75,13 @@ namespace Wastelands.Service.Domain.Entities
 			Initiative = value;
 		}
 
+		/// <summary>Применяет урон, полученный в результате атаки — CurrentHP не опускается ниже нуля.</summary>
+		public void ApplyDamage(int damage)
+		{
+			InvalidArgumentException.ThrowIfLessThanZero(damage, nameof(damage));
+			CurrentHP = Math.Max(0, CurrentHP - damage);
+		}
+
 		public void AddCondition(Condition condition)
 		{
 			if (!AppliedConditions.Contains(condition))

@@ -1,0 +1,260 @@
+import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Button, ErrorText, Field, Input, Modal, Select } from '../../components/ui'
+import { ApiError } from '../../lib/apiClient'
+import type { Battle, BattleAttack, ParticipantKind, Skill } from '../../types/api'
+import { battlesApi } from './api'
+
+interface TargetOption {
+  kind: ParticipantKind
+  id: number
+  name: string
+}
+
+function getTargetOptions(battle: Battle, exclude: { kind: ParticipantKind; id: number }): TargetOption[] {
+  return [
+    ...battle.creatures
+      .filter((c) => !(exclude.kind === 'Creature' && exclude.id === c.id))
+      .map((c): TargetOption => ({ kind: 'Creature', id: c.id, name: c.name })),
+    ...battle.characters
+      .filter((bc) => !(exclude.kind === 'Character' && exclude.id === bc.characterId))
+      .map((bc): TargetOption => ({ kind: 'Character', id: bc.characterId, name: bc.characterName })),
+  ]
+}
+
+export function AttackModal({
+  gameId,
+  battleId,
+  battle,
+  attack,
+  isAttackerController,
+  isDefenderController,
+}: {
+  gameId: number
+  battleId: number
+  battle: Battle
+  attack: BattleAttack
+  isAttackerController: boolean
+  isDefenderController: boolean
+}) {
+  const queryClient = useQueryClient()
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['battles', gameId, battleId] })
+
+  const [partId, setPartId] = useState('')
+  const [attackRoll, setAttackRoll] = useState('')
+  const [defensiveSkill, setDefensiveSkill] = useState<Skill>(attack.availableDefensiveSkills[0])
+  const [defenseRoll, setDefenseRoll] = useState('')
+  const [damageRoll, setDamageRoll] = useState('')
+  const [nextTarget, setNextTarget] = useState<string>(`${attack.defenderKind}:${attack.defenderId}`)
+
+  const confirmAttacker = useMutation({
+    mutationFn: async () => {
+      await battlesApi.setAttackerChoices(gameId, battleId, {
+        targetedCreaturePartId: partId ? Number(partId) : null,
+        attackRoll: attackRoll ? Number(attackRoll) : null,
+      })
+      await battlesApi.confirmAttacker(gameId, battleId)
+    },
+    onSuccess: invalidate,
+  })
+
+  const confirmDefender = useMutation({
+    mutationFn: async () => {
+      await battlesApi.setDefenderChoice(gameId, battleId, {
+        defensiveSkill,
+        defenseRoll: defenseRoll ? Number(defenseRoll) : null,
+      })
+      await battlesApi.confirmDefender(gameId, battleId)
+    },
+    onSuccess: invalidate,
+  })
+
+  const continueDamage = useMutation({
+    mutationFn: async () => {
+      await battlesApi.setDamageRoll(gameId, battleId, damageRoll ? Number(damageRoll) : null)
+      await battlesApi.continueDamage(gameId, battleId)
+    },
+    onSuccess: invalidate,
+  })
+
+  const nextSwing = useMutation({
+    mutationFn: () => {
+      const [kind, id] = nextTarget.split(':') as [ParticipantKind, string]
+      return battlesApi.nextSwing(gameId, battleId, { defenderKind: kind, defenderId: Number(id) })
+    },
+    onSuccess: invalidate,
+  })
+
+  const endActivation = useMutation({
+    mutationFn: () => battlesApi.endActivation(gameId, battleId),
+    onSuccess: invalidate,
+  })
+
+  const error = confirmAttacker.error ?? confirmDefender.error ?? continueDamage.error ?? nextSwing.error ?? endActivation.error
+  const isPending =
+    confirmAttacker.isPending || confirmDefender.isPending || continueDamage.isPending || nextSwing.isPending || endActivation.isPending
+
+  const targetOptions = getTargetOptions(battle, { kind: attack.attackerKind, id: attack.attackerId })
+
+  return (
+    <Modal>
+      <h2 className="mb-3 font-semibold">
+        {attack.attackerName} атакует {attack.defenderName} — {attack.abilityName}
+      </h2>
+
+      {(attack.phase === 'AwaitingChoices' || attack.phase === 'AwaitingDamageRoll') && (
+        <div className="flex flex-col gap-4">
+          {/* Секция атакующего */}
+          {isAttackerController && attack.phase === 'AwaitingChoices' ? (
+            attack.attackerConfirmed ? (
+              <p className="text-sm text-green-700 dark:text-green-400">✓ Атакующий подтвердил выбор</p>
+            ) : (
+              <div className="rounded-md border border-neutral-200 p-3 dark:border-neutral-800">
+                <p className="mb-2 text-sm text-neutral-500">
+                  {attack.attackerName}: {attack.abilityName} (характеристика+навык = {attack.attackerSkillValue})
+                </p>
+                {attack.availableCreatureParts && (
+                  <div className="mb-2">
+                    <Field label="Часть тела защитника">
+                      <Select value={partId} onChange={(e) => setPartId(e.target.value)}>
+                        <option value="">— случайно —</option>
+                        {attack.availableCreatureParts.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </Field>
+                  </div>
+                )}
+                <div className="mb-2">
+                  <Field label="Бросок атаки (необязательно)">
+                    <Input
+                      type="number"
+                      min={1}
+                      max={10}
+                      className="w-24"
+                      value={attackRoll}
+                      onChange={(e) => setAttackRoll(e.target.value)}
+                      placeholder="кубик"
+                    />
+                  </Field>
+                </div>
+                <Button disabled={isPending} onClick={() => confirmAttacker.mutate()}>
+                  Подтвердить
+                </Button>
+              </div>
+            )
+          ) : (
+            !isAttackerController &&
+            attack.phase === 'AwaitingChoices' && <p className="text-sm text-neutral-500">Ожидание выбора атакующего…</p>
+          )}
+
+          {/* Секция защитника */}
+          {isDefenderController && attack.phase === 'AwaitingChoices' ? (
+            attack.defenderConfirmed ? (
+              <p className="text-sm text-green-700 dark:text-green-400">✓ Защитник подтвердил выбор</p>
+            ) : (
+              <div className="rounded-md border border-neutral-200 p-3 dark:border-neutral-800">
+                <p className="mb-2 text-sm text-neutral-500">{attack.defenderName}: выбор защиты</p>
+                <div className="mb-2">
+                  <Field label="Защитный навык">
+                    <Select value={defensiveSkill} onChange={(e) => setDefensiveSkill(e.target.value as Skill)}>
+                      {attack.availableDefensiveSkills.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
+                </div>
+                <div className="mb-2">
+                  <Field label="Бросок защиты (необязательно)">
+                    <Input
+                      type="number"
+                      min={1}
+                      max={10}
+                      className="w-24"
+                      value={defenseRoll}
+                      onChange={(e) => setDefenseRoll(e.target.value)}
+                      placeholder="кубик"
+                    />
+                  </Field>
+                </div>
+                <Button disabled={isPending} onClick={() => confirmDefender.mutate()}>
+                  Подтвердить
+                </Button>
+              </div>
+            )
+          ) : (
+            !isDefenderController &&
+            attack.phase === 'AwaitingChoices' && <p className="text-sm text-neutral-500">Ожидание выбора защитника…</p>
+          )}
+
+          {/* Фаза урона */}
+          {attack.phase === 'AwaitingDamageRoll' &&
+            (isAttackerController ? (
+              <div className="rounded-md border border-neutral-200 p-3 dark:border-neutral-800">
+                <p className="mb-2 text-sm text-green-700 dark:text-green-400">Попадание! Бросок урона.</p>
+                <div className="mb-2">
+                  <Field label="Бросок урона (необязательно)">
+                    <Input
+                      type="number"
+                      min={1}
+                      className="w-24"
+                      value={damageRoll}
+                      onChange={(e) => setDamageRoll(e.target.value)}
+                      placeholder="кубики"
+                    />
+                  </Field>
+                </div>
+                <Button disabled={isPending} onClick={() => continueDamage.mutate()}>
+                  Продолжить
+                </Button>
+              </div>
+            ) : (
+              <p className="text-sm text-neutral-500">Атакующий бросает урон…</p>
+            ))}
+        </div>
+      )}
+
+      {attack.phase === 'SwingResolved' && (
+        <div className="flex flex-col gap-3">
+          <p className="text-sm">
+            Результат: {attack.lastHitSucceeded ? 'попадание' : 'промах'}. Подробности — в логе боя.
+          </p>
+          {isAttackerController && (
+            <div className="flex flex-col gap-2">
+              <p className="text-xs text-neutral-500">
+                Атак использовано: {attack.attacksUsed}/{attack.attacksAllowed}
+              </p>
+              {attack.attacksUsed < attack.attacksAllowed && (
+                <Field label="Цель следующей атаки">
+                  <Select value={nextTarget} onChange={(e) => setNextTarget(e.target.value)}>
+                    {targetOptions.map((t) => (
+                      <option key={`${t.kind}:${t.id}`} value={`${t.kind}:${t.id}`}>
+                        {t.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+              )}
+              <div className="flex gap-2">
+                {attack.attacksUsed < attack.attacksAllowed && (
+                  <Button disabled={isPending} onClick={() => nextSwing.mutate()}>
+                    Ещё одна атака
+                  </Button>
+                )}
+                <Button variant="secondary" disabled={isPending} onClick={() => endActivation.mutate()}>
+                  Закончить
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {error && <div className="mt-3"><ErrorText>{error instanceof ApiError ? error.message : 'Не удалось выполнить действие'}</ErrorText></div>}
+    </Modal>
+  )
+}

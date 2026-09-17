@@ -28,7 +28,13 @@ namespace Wastelands.Service.Application.Mapping
 			CreateMap<Battle, BattleDto>();
 			CreateMap<Creature, BattleCreatureDto>();
 			CreateMap<BattleCharacter, BattleCharacterDto>()
-				.ForMember(dst => dst.CharacterName, opt => opt.MapFrom(src => src.Character.Name));
+				.ForMember(dst => dst.CharacterName, opt => opt.MapFrom(src => src.Character.Name))
+				.ForMember(dst => dst.CharacterUserId, opt => opt.MapFrom(src => src.Character.UserId));
+			// Attacker/Ability/Defender имена, справочное значение навыка и списки доступных выборов —
+			// не поля сущности, а вычисляются сервисом (BattleService.EnrichAttackDtoAsync) после маппинга,
+			// т.к. требуют подгрузки CreatureTemplate/Character/Ability, которых у BattleAttack нет.
+			CreateMap<BattleAttack, BattleAttackDto>();
+			CreateMap<BattleLogEntry, BattleLogEntryDto>();
 		}
 	}
 }

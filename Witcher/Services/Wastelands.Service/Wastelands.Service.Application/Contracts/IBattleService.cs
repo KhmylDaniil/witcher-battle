@@ -34,5 +34,25 @@ namespace Wastelands.Service.Application.Contracts
 		Task<BattleDto> RemoveCharacterConditionAsync(long battleId, long characterId, Condition condition);
 
 		Task<BattleDto> StartBattleAsync(long battleId);
+
+		Task<BattleDto> StartAttackAsync(StartAttackRequest request);
+
+		Task<BattleDto> SetAttackerChoicesAsync(SetAttackerChoicesRequest request);
+
+		Task<BattleDto> ConfirmAttackerAsync(long battleId);
+
+		Task<BattleDto> SetDefenderChoiceAsync(SetDefenderChoiceRequest request);
+
+		Task<BattleDto> ConfirmDefenderAsync(long battleId);
+
+		Task<BattleDto> SetDamageRollAsync(SetDamageRollRequest request);
+
+		Task<BattleDto> ContinueDamageAsync(long battleId);
+
+		Task<BattleDto> NextSwingAsync(NextSwingRequest request);
+
+		Task<BattleDto> EndActivationAsync(long battleId);
+
+		Task<BattleDto> SkipTurnAsync(long battleId);
 	}
 }

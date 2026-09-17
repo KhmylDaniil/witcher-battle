@@ -48,6 +48,18 @@
 		BattleCharacterNotFound = 605,
 		CreatureTemplateBelongsToAnotherGame = 606,
 		CharacterBelongsToAnotherGame = 607,
+		NoActiveAttack = 608,
+		AttackAlreadyInProgress = 609,
+		NotYourTurn = 610,
+		CurrentUserNotAttackController = 611,
+		CurrentUserNotDefenderController = 612,
+		AbilityDoesNotBelongToAttacker = 613,
+		InvalidDefensiveSkillChoice = 614,
+		AttackerAlreadyConfirmed = 615,
+		DefenderAlreadyConfirmed = 616,
+		NoAttacksRemaining = 617,
+		AttackNotInExpectedPhase = 618,
+		BattleNotInProgress = 619,
 
 		// Common error codes 1100...1199
 		InvalidArgument = 1101,

@@ -6,6 +6,7 @@ using Wastelands.Service.Application.Mapping;
 using Wastelands.Service.Application.Options;
 using Wastelands.Service.Infrastructure.Repositories;
 using Wastelands.Service.Application.Services;
+using Wastelands.Service.MVC.Hubs;
 using Wastelands.Service.MVC.Services;
 
 namespace Wastelands.Service.MVC.Extensions
@@ -29,6 +30,7 @@ namespace Wastelands.Service.MVC.Extensions
 
 			services.AddScoped<IUserContext, UserContext>();
 			services.AddScoped<IGameAccessGuard, GameAccessGuard>();
+			services.AddScoped<IBattleNotifier, BattleNotifier>();
 
 			services.AddScoped<IPasswordService, PasswordService>();
 			services.AddScoped<IUserService, UserService>();

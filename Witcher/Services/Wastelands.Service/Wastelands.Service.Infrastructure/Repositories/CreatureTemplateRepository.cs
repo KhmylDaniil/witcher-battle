@@ -33,5 +33,11 @@ namespace Wastelands.Service.Infrastructure.Repositories
 				.Include(x => x.Abilities).ThenInclude(a => a.AppliedConditions)
 				.Include(x => x.Abilities).ThenInclude(a => a.DefensiveSkills);
 		}
+
+		public async Task<CreatureTemplate?> GetByIdUnscopedAsync(long id)
+		{
+			return await IncludeRelatedEntities(_dbContext.Set<CreatureTemplate>())
+				.FirstOrDefaultAsync(x => x.Id == id);
+		}
 	}
 }

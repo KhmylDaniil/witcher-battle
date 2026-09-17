@@ -4,6 +4,8 @@ import type {
   Battle,
   BattleFormValues,
   Condition,
+  ParticipantKind,
+  Skill,
   UpdateBattleCreatureFormValues,
 } from '../../types/api'
 
@@ -34,4 +36,33 @@ export const battlesApi = {
     api.delete<Battle>(`/api/games/${gameId}/battles/${battleId}/characters/${characterId}/conditions/${condition}`),
 
   start: (gameId: number, battleId: number) => api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/start`),
+
+  startAttack: (
+    gameId: number,
+    battleId: number,
+    payload: { abilityId: number; defenderKind: ParticipantKind; defenderId: number },
+  ) => api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks`, payload),
+  setAttackerChoices: (
+    gameId: number,
+    battleId: number,
+    payload: { targetedCreaturePartId: number | null; attackRoll: number | null },
+  ) => api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/attacker-choices`, payload),
+  confirmAttacker: (gameId: number, battleId: number) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/attacker-confirm`),
+  setDefenderChoice: (
+    gameId: number,
+    battleId: number,
+    payload: { defensiveSkill: Skill; defenseRoll: number | null },
+  ) => api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/defender-choice`, payload),
+  confirmDefender: (gameId: number, battleId: number) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/defender-confirm`),
+  setDamageRoll: (gameId: number, battleId: number, damageRoll: number | null) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/damage-roll`, { damageRoll }),
+  continueDamage: (gameId: number, battleId: number) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/continue`),
+  nextSwing: (gameId: number, battleId: number, payload: { defenderKind: ParticipantKind; defenderId: number }) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/next-swing`, payload),
+  endActivation: (gameId: number, battleId: number) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/end`),
+  skipTurn: (gameId: number, battleId: number) => api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/skip-turn`),
 }

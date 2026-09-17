@@ -15,7 +15,9 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
-      '/api': { target: backendDevUrl, changeOrigin: true, secure: false },
+      // ws: true — форвардит WebSocket-апгрейд для /api/hubs/battle (SignalR), маршрут уже под /api,
+      // так что отдельная запись прокси не нужна.
+      '/api': { target: backendDevUrl, changeOrigin: true, secure: false, ws: true },
     },
   },
 })

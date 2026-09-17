@@ -95,6 +95,61 @@ namespace Wastelands.Service.MVC.Controllers.Api
 		[HttpPost("{id:long}/start")]
 		public async Task<BattleDto> Start(long gameId, long id)
 			=> await _battleService.StartBattleAsync(id);
+
+		[HttpPost("{id:long}/attacks")]
+		public async Task<BattleDto> StartAttack(long gameId, long id, StartAttackRequest request)
+		{
+			request.BattleId = id;
+			return await _battleService.StartAttackAsync(request);
+		}
+
+		[HttpPost("{id:long}/attacks/current/attacker-choices")]
+		public async Task<BattleDto> SetAttackerChoices(long gameId, long id, SetAttackerChoicesRequest request)
+		{
+			request.BattleId = id;
+			return await _battleService.SetAttackerChoicesAsync(request);
+		}
+
+		[HttpPost("{id:long}/attacks/current/attacker-confirm")]
+		public async Task<BattleDto> ConfirmAttacker(long gameId, long id)
+			=> await _battleService.ConfirmAttackerAsync(id);
+
+		[HttpPost("{id:long}/attacks/current/defender-choice")]
+		public async Task<BattleDto> SetDefenderChoice(long gameId, long id, SetDefenderChoiceRequest request)
+		{
+			request.BattleId = id;
+			return await _battleService.SetDefenderChoiceAsync(request);
+		}
+
+		[HttpPost("{id:long}/attacks/current/defender-confirm")]
+		public async Task<BattleDto> ConfirmDefender(long gameId, long id)
+			=> await _battleService.ConfirmDefenderAsync(id);
+
+		[HttpPost("{id:long}/attacks/current/damage-roll")]
+		public async Task<BattleDto> SetDamageRoll(long gameId, long id, SetDamageRollRequest request)
+		{
+			request.BattleId = id;
+			return await _battleService.SetDamageRollAsync(request);
+		}
+
+		[HttpPost("{id:long}/attacks/current/continue")]
+		public async Task<BattleDto> ContinueDamage(long gameId, long id)
+			=> await _battleService.ContinueDamageAsync(id);
+
+		[HttpPost("{id:long}/attacks/current/next-swing")]
+		public async Task<BattleDto> NextSwing(long gameId, long id, NextSwingRequest request)
+		{
+			request.BattleId = id;
+			return await _battleService.NextSwingAsync(request);
+		}
+
+		[HttpPost("{id:long}/attacks/current/end")]
+		public async Task<BattleDto> EndActivation(long gameId, long id)
+			=> await _battleService.EndActivationAsync(id);
+
+		[HttpPost("{id:long}/skip-turn")]
+		public async Task<BattleDto> SkipTurn(long gameId, long id)
+			=> await _battleService.SkipTurnAsync(id);
 	}
 
 	public sealed class ConditionPayload
