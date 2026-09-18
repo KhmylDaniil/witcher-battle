@@ -3,6 +3,7 @@ import { LoginPage } from './features/auth/LoginPage'
 import { RegisterPage } from './features/auth/RegisterPage'
 import { BattleDetailsPage } from './features/battles/BattleDetailsPage'
 import { BodyTemplateDetailsPage } from './features/bodyTemplates/BodyTemplateDetailsPage'
+import { BodyTemplatesListPage } from './features/bodyTemplates/BodyTemplatesListPage'
 import { AbilityDetailsPage as CharacterAbilityDetailsPage } from './features/characters/AbilityDetailsPage'
 import { AbilityFormPage as CharacterAbilityFormPage } from './features/characters/AbilityFormPage'
 import { CharacterDetailsPage } from './features/characters/CharacterDetailsPage'
@@ -12,6 +13,7 @@ import { AbilityDetailsPage } from './features/creatureTemplates/AbilityDetailsP
 import { AbilityFormPage } from './features/creatureTemplates/AbilityFormPage'
 import { CreatureTemplateDetailsPage } from './features/creatureTemplates/CreatureTemplateDetailsPage'
 import { CreatureTemplateFormPage } from './features/creatureTemplates/CreatureTemplateFormPage'
+import { CreatureTemplatesListPage } from './features/creatureTemplates/CreatureTemplatesListPage'
 import { GameDetailsPage } from './features/games/GameDetailsPage'
 import { GamesListPage } from './features/games/GamesListPage'
 import { AppLayout } from './routes/AppLayout'
@@ -36,10 +38,12 @@ export default function App() {
             <Route path="/games/:gameId/characters/new" element={<CharacterFormPage />} />
             <Route path="/games/:gameId/characters/:characterId" element={<CharacterDetailsPage />} />
             <Route path="/games/:gameId/characters/:characterId/edit" element={<CharacterFormPage />} />
+            <Route path="/games/:gameId/creature-templates" element={<CreatureTemplatesListPage />} />
             <Route path="/games/:gameId/creature-templates/new" element={<CreatureTemplateFormPage />} />
             <Route path="/games/:gameId/creature-templates/:creatureTemplateId" element={<CreatureTemplateDetailsPage />} />
             <Route path="/games/:gameId/creature-templates/:creatureTemplateId/abilities/new" element={<AbilityFormPage />} />
             <Route path="/games/:gameId/creature-templates/:creatureTemplateId/abilities/:abilityId" element={<AbilityDetailsPage />} />
+            <Route path="/games/:gameId/body-templates" element={<BodyTemplatesListPage />} />
             <Route path="/games/:gameId/body-templates/:bodyTemplateId" element={<BodyTemplateDetailsPage />} />
             <Route path="/games/:gameId/battles/:battleId" element={<BattleDetailsPage />} />
           </Route>

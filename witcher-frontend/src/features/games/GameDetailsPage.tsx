@@ -4,8 +4,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, ConfirmButton, ErrorText, PageHeader, Pagination, Spinner } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
 import { BattlesCard } from '../battles/BattlesCard'
-import { CreatureTemplatesCard } from '../creatureTemplates/CreatureTemplatesCard'
-import { BodyTemplatesCard } from '../bodyTemplates/BodyTemplatesCard'
 import { charactersApi } from '../characters/api'
 import { gamesApi } from './api'
 
@@ -167,8 +165,23 @@ export function GameDetailsPage() {
         </Card>
       )}
 
-      {isOwner && <BodyTemplatesCard gameId={id} />}
-      {isOwner && <CreatureTemplatesCard gameId={id} />}
+      {isOwner && (
+        <Card>
+          <h2 className="mb-3 font-semibold">Инструменты мастера</h2>
+          <div className="flex flex-wrap gap-2">
+            <Link to={`/games/${id}/body-templates`}>
+              <Button variant="secondary" className="px-2 py-1 text-xs">
+                Шаблоны тела
+              </Button>
+            </Link>
+            <Link to={`/games/${id}/creature-templates`}>
+              <Button variant="secondary" className="px-2 py-1 text-xs">
+                Шаблоны существ
+              </Button>
+            </Link>
+          </div>
+        </Card>
+      )}
       {isMember && <BattlesCard gameId={id} isOwner={isOwner} />}
 
       <Card>

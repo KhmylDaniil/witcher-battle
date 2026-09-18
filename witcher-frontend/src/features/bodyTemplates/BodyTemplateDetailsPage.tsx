@@ -92,8 +92,8 @@ export function BodyTemplateDetailsPage() {
         title={bt.name}
         actions={
           <>
-            <Link to={`/games/${gameId}`}>
-              <Button variant="secondary">К игре</Button>
+            <Link to={`/games/${gameId}/body-templates`}>
+              <Button variant="secondary">К шаблонам тела</Button>
             </Link>
             <ConfirmButton
               confirmMessage={`Удалить шаблон тела "${bt.name}"? Связанные шаблоны существ тоже удалятся.`}

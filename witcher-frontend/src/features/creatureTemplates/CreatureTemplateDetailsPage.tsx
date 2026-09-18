@@ -161,8 +161,8 @@ export function CreatureTemplateDetailsPage() {
         title={`${ct.name} (${ct.creatureType})`}
         actions={
           <>
-            <Link to={`/games/${gameId}`}>
-              <Button variant="secondary">К игре</Button>
+            <Link to={`/games/${gameId}/creature-templates`}>
+              <Button variant="secondary">К шаблонам существ</Button>
             </Link>
             {!editingTemplate && (
               <Button

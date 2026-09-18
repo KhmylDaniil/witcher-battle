@@ -70,8 +70,8 @@ export function CreatureTemplateFormPage() {
       <PageHeader
         title="Новый шаблон существа"
         actions={
-          <Link to={`/games/${gameIdNum}`}>
-            <Button variant="secondary">К игре</Button>
+          <Link to={`/games/${gameIdNum}/creature-templates`}>
+            <Button variant="secondary">К шаблонам существ</Button>
           </Link>
         }
       />
