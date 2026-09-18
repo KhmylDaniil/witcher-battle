@@ -46,6 +46,8 @@ namespace Wastelands.Service.Domain.Entities
 
 		public List<Ability> Abilities { get; private set; } = [];
 
+		public List<Item> Items { get; private set; } = [];
+
 		private Character()
 		{
 		}

@@ -102,6 +102,7 @@ export interface Character {
   wil: number
   skills: Partial<Record<Skill, number>>
   abilities: Ability[]
+  items: Item[]
 }
 
 export interface CharacterFormValues {
@@ -216,6 +217,88 @@ export interface CreatureTemplateFormValues {
   luck: number
 }
 
+// ---- Item templates (ItemTemplatesApiController) — доступны только мастеру игры ----
+
+export const ITEM_TYPES = ['Weapon', 'Armor', 'Other'] as const
+export type ItemType = (typeof ITEM_TYPES)[number]
+
+export const WEAPON_KINDS = ['Melee', 'Ranged'] as const
+export type WeaponKind = (typeof WEAPON_KINDS)[number]
+
+export interface ItemTemplateAppliedCondition {
+  id: number
+  condition: Condition
+  applyChance: number
+}
+
+export interface ItemTemplate {
+  id: number
+  gameId: number
+  name: string
+  description: string | null
+  itemType: ItemType
+  weight: number
+  cost: number
+  /** Заполнены только когда itemType === 'Weapon'. */
+  attackSkill: Skill | null
+  attacksPerTurn: number | null
+  damageDiceCount: number | null
+  damageModifier: number | null
+  damageType: DamageType | null
+  weaponKind: WeaponKind | null
+  attackRange: number | null
+  handsRequired: number | null
+  durability: number | null
+  appliedConditions: ItemTemplateAppliedCondition[]
+}
+
+export interface ItemTemplateFormValues {
+  name: string
+  description: string
+  itemType: ItemType
+  weight: number
+  cost: number
+  attackSkill?: Skill
+  attacksPerTurn?: number
+  damageDiceCount?: number
+  damageModifier?: number
+  damageType?: DamageType
+  weaponKind?: WeaponKind
+  attackRange?: number
+  handsRequired?: number
+  durability?: number
+}
+
+// ---- Items (экземпляры предметов в инвентаре персонажа, CharactersApiController) ----
+
+export interface ItemAppliedCondition {
+  id: number
+  condition: Condition
+  applyChance: number
+}
+
+/** Снапшот-копия ItemTemplate в момент добавления в инвентарь — правки шаблона на неё не влияют. */
+export interface Item {
+  id: number
+  itemTemplateId: number
+  name: string
+  description: string | null
+  itemType: ItemType
+  weight: number
+  cost: number
+  attackSkill: Skill | null
+  attacksPerTurn: number | null
+  damageDiceCount: number | null
+  damageModifier: number | null
+  damageType: DamageType | null
+  weaponKind: WeaponKind | null
+  attackRange: number | null
+  handsRequired: number | null
+  durability: number | null
+  appliedConditions: ItemAppliedCondition[]
+  isEquipped: boolean
+}
+
 // ---- Damage types / modifiers ----
 
 export const DAMAGE_TYPES = ['Slashing', 'Piercing', 'Bludgeoning', 'Elemental', 'Fire', 'Silver'] as const
@@ -260,6 +343,8 @@ export interface Ability {
   damageType: DamageType
   appliedConditions: AbilityAppliedCondition[]
   defensiveSkills: AbilityDefensiveSkill[]
+  /** Сгенерирована экипировкой оружия — редактируется/удаляется только через снятие предмета. */
+  isFromEquippedWeapon: boolean
 }
 
 export interface AbilityFormValues {

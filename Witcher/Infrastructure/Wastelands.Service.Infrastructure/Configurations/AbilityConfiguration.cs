@@ -21,6 +21,10 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnName("CharacterId")
 				.IsRequired(false);
 
+			builder.Property(x => x.EquippedItemId)
+				.HasColumnName("EquippedItemId")
+				.IsRequired(false);
+
 			builder.Property(x => x.Name)
 				.HasColumnName("Name")
 				.HasColumnType("varchar(50)")

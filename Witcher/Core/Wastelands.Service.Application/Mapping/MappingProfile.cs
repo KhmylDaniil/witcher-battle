@@ -23,9 +23,15 @@ namespace Wastelands.Service.Application.Mapping
 			CreateMap<CreatureTemplatePart, CreatureTemplatePartDto>();
 			CreateMap<CreatureTemplate, CreatureTemplateDto>()
 				.ForMember(dst => dst.ImageUrl, opt => opt.MapFrom(src => src.ImageKey == null ? null : $"/api/images/{src.ImageKey}"));
-			CreateMap<Ability, AbilityDto>();
+			CreateMap<Ability, AbilityDto>()
+				.ForMember(dst => dst.IsFromEquippedWeapon, opt => opt.MapFrom(src => src.EquippedItemId != null));
 			CreateMap<AbilityAppliedCondition, AbilityAppliedConditionDto>();
 			CreateMap<AbilityDefensiveSkill, AbilityDefensiveSkillDto>();
+
+			CreateMap<ItemTemplateAppliedCondition, ItemTemplateAppliedConditionDto>();
+			CreateMap<ItemTemplate, ItemTemplateDto>();
+			CreateMap<ItemAppliedCondition, ItemAppliedConditionDto>();
+			CreateMap<Item, ItemDto>();
 
 			CreateMap<Battle, BattleDto>();
 			CreateMap<Creature, BattleCreatureDto>();

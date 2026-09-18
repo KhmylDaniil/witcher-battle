@@ -19,15 +19,18 @@ namespace Wastelands.API.Controllers.Api
 		private readonly ICharacterService _characterService;
 		private readonly ICharacterAbilityService _characterAbilityService;
 		private readonly ICharacterImageService _characterImageService;
+		private readonly ICharacterItemService _characterItemService;
 
 		public CharactersApiController(
 			ICharacterService characterService,
 			ICharacterAbilityService characterAbilityService,
-			ICharacterImageService characterImageService)
+			ICharacterImageService characterImageService,
+			ICharacterItemService characterItemService)
 		{
 			_characterService = characterService;
 			_characterAbilityService = characterAbilityService;
 			_characterImageService = characterImageService;
+			_characterItemService = characterItemService;
 		}
 
 		[HttpGet]
@@ -146,11 +149,32 @@ namespace Wastelands.API.Controllers.Api
 		[HttpDelete("{characterId:long}/abilities/{abilityId:long}/defensive-skills/{defensiveSkillId:long}")]
 		public async Task<CharacterDto> RemoveDefensiveSkill(long characterId, long abilityId, long defensiveSkillId)
 			=> await _characterAbilityService.RemoveAbilityDefensiveSkillAsync(characterId, abilityId, defensiveSkillId);
+
+		[HttpPost("{characterId:long}/items")]
+		public async Task<CharacterDto> AddItem(long characterId, [FromBody] AddItemPayload payload)
+			=> await _characterItemService.AddItemAsync(new AddItemRequest { CharacterId = characterId, ItemTemplateId = payload.ItemTemplateId });
+
+		[HttpDelete("{characterId:long}/items/{itemId:long}")]
+		public async Task<CharacterDto> RemoveItem(long characterId, long itemId)
+			=> await _characterItemService.RemoveItemAsync(characterId, itemId);
+
+		[HttpPut("{characterId:long}/items/{itemId:long}/equip")]
+		public async Task<CharacterDto> EquipItem(long characterId, long itemId)
+			=> await _characterItemService.EquipAsync(characterId, itemId);
+
+		[HttpPut("{characterId:long}/items/{itemId:long}/unequip")]
+		public async Task<CharacterDto> UnequipItem(long characterId, long itemId)
+			=> await _characterItemService.UnequipAsync(characterId, itemId);
 	}
 
 	public sealed class SkillPayload
 	{
 		public Skill Skill { get; set; }
 		public int Value { get; set; }
+	}
+
+	public sealed class AddItemPayload
+	{
+		public long ItemTemplateId { get; set; }
 	}
 }

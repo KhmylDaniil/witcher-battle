@@ -5,6 +5,8 @@ import { Button, Card, ConfirmButton, ErrorText, Input, PageHeader, Select, Spin
 import { ApiError } from '../../lib/apiClient'
 import { getAvailableOptions } from '../../lib/options'
 import { SKILLS_BY_STAT, type Skill } from '../../types/api'
+import { useCurrentUser } from '../auth/useAuth'
+import { itemTemplatesApi } from '../itemTemplates/api'
 import { charactersApi } from './api'
 
 const STATS = ['int', 'str', 'rea', 'dex', 'cra', 'emp', 'wil'] as const
@@ -17,6 +19,7 @@ export function CharacterDetailsPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
+  const { data: user } = useCurrentUser()
   const character = useQuery({ queryKey: ['characters', id], queryFn: () => charactersApi.get(id) })
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['characters', id] })
 
@@ -61,6 +64,38 @@ export function CharacterDetailsPage() {
   const [newSkill, setNewSkill] = useState<Skill>('Awareness')
   const [newValue, setNewValue] = useState(1)
 
+  const removeItem = useMutation({
+    mutationFn: (itemId: number) => charactersApi.removeItem(id, itemId),
+    onSuccess: invalidate,
+  })
+  const equipItem = useMutation({
+    mutationFn: (itemId: number) => charactersApi.equipItem(id, itemId),
+    onSuccess: invalidate,
+  })
+  const unequipItem = useMutation({
+    mutationFn: (itemId: number) => charactersApi.unequipItem(id, itemId),
+    onSuccess: invalidate,
+  })
+
+  // Владелец персонажа отличается от мастера, который тоже может открыть эту страницу (см.
+  // карточку "Персонажи игроков" на GameDetailsPage) — только владельцу доступны мутации
+  // характеристик/способностей/фото/удаление, только мастеру — добавление предметов в инвентарь.
+  // Архивного персонажа (gameId == null) мастер открыть не может — GM-доступ идёт через игру, поэтому
+  // тут владение проверяем без учёта gameId (иначе владелец потерял бы кнопку удаления архивного).
+  const isOwner = user?.userId === character.data?.userId
+  const gameId = character.data?.gameId ?? null
+
+  const itemTemplates = useQuery({
+    queryKey: ['item-templates', { gameId }, 'all'],
+    queryFn: () => itemTemplatesApi.list({ gameId: gameId! }, { pageSize: 500 }),
+    enabled: !isOwner && !!gameId,
+  })
+  const [selectedItemTemplateId, setSelectedItemTemplateId] = useState<number | null>(null)
+  const addItem = useMutation({
+    mutationFn: (itemTemplateId: number) => charactersApi.addItem(id, itemTemplateId),
+    onSuccess: invalidate,
+  })
+
   if (character.isLoading) return <Spinner />
   if (!character.data) return null
   const c = character.data
@@ -79,22 +114,26 @@ export function CharacterDetailsPage() {
                 <Link to={`/games/${c.gameId}`}>
                   <Button variant="secondary">К игре</Button>
                 </Link>
-                <Link to={`/games/${c.gameId}/characters/${c.id}/edit`}>
-                  <Button variant="secondary">Изменить</Button>
-                </Link>
+                {isOwner && (
+                  <Link to={`/games/${c.gameId}/characters/${c.id}/edit`}>
+                    <Button variant="secondary">Изменить</Button>
+                  </Link>
+                )}
               </>
             ) : (
               <Link to="/characters">
                 <Button variant="secondary">Мои персонажи</Button>
               </Link>
             )}
-            <ConfirmButton
-              confirmMessage={`Удалить персонажа "${c.name}"?`}
-              onConfirm={() => remove.mutate()}
-              disabled={remove.isPending}
-            >
-              Удалить
-            </ConfirmButton>
+            {isOwner && (
+              <ConfirmButton
+                confirmMessage={`Удалить персонажа "${c.name}"?`}
+                onConfirm={() => remove.mutate()}
+                disabled={remove.isPending}
+              >
+                Удалить
+              </ConfirmButton>
+            )}
           </>
         }
       />
@@ -114,7 +153,7 @@ export function CharacterDetailsPage() {
           {c.imageUrl && (
             <img src={c.imageUrl} alt="" className="h-24 w-24 rounded-md border border-neutral-200 object-cover dark:border-neutral-800" />
           )}
-          {c.gameId && (
+          {isOwner && c.gameId && (
             <div className="flex flex-col items-start gap-2">
               <input
                 ref={fileInputRef}
@@ -197,7 +236,7 @@ export function CharacterDetailsPage() {
                   )}
                 </td>
                 <td className="py-2">
-                  {!c.gameId ? null : editingSkill === skill ? (
+                  {!isOwner || !c.gameId ? null : editingSkill === skill ? (
                     <div className="flex gap-2">
                       <Button
                         className="px-2 py-1"
@@ -236,7 +275,7 @@ export function CharacterDetailsPage() {
           </tbody>
         </table>
 
-        {c.gameId && (
+        {isOwner && c.gameId && (
           <>
             <div className="mt-4 flex flex-wrap items-end gap-2">
               <Select
@@ -294,7 +333,7 @@ export function CharacterDetailsPage() {
       <Card>
         <div className="mb-3 flex items-center justify-between">
           <h2 className="font-semibold">Способности</h2>
-          {c.gameId && (
+          {isOwner && c.gameId && (
             <Link to={`/characters/${c.id}/abilities/new`}>
               <Button className="px-2 py-1 text-xs">Добавить способность</Button>
             </Link>
@@ -303,24 +342,113 @@ export function CharacterDetailsPage() {
 
         {c.abilities.length === 0 && <p className="text-sm text-neutral-500">Способностей пока нет.</p>}
         <div className="flex flex-col gap-2">
-          {c.abilities.map((a) => (
-            <div key={a.id} className="flex items-center justify-between gap-2 text-sm">
-              <Link to={`/characters/${c.id}/abilities/${a.id}`} className="hover:text-violet-600">
-                {a.name}{' '}
-                <span className="text-neutral-400">
-                  — {a.attacksPerTurn}× {a.damageDiceCount}д6+{a.damageModifier} {a.damageType} ({a.attackSkill})
+          {c.abilities.map((a) =>
+            a.isFromEquippedWeapon ? (
+              <div key={a.id} className="flex items-center justify-between gap-2 text-sm">
+                <span>
+                  {a.name}{' '}
+                  <span className="text-neutral-400">
+                    — {a.attacksPerTurn}× {a.damageDiceCount}д6+{a.damageModifier} {a.damageType} ({a.attackSkill})
+                  </span>
                 </span>
-              </Link>
-              {c.gameId && (
-                <ConfirmButton
-                  link
-                  confirmMessage={`Удалить способность "${a.name}"?`}
-                  onConfirm={() => removeAbility.mutate(a.id)}
-                  disabled={removeAbility.isPending}
-                >
-                  Удалить
-                </ConfirmButton>
-              )}
+                <span className="text-xs text-neutral-400">от оружия</span>
+              </div>
+            ) : (
+              <div key={a.id} className="flex items-center justify-between gap-2 text-sm">
+                <Link to={`/characters/${c.id}/abilities/${a.id}`} className="hover:text-violet-600">
+                  {a.name}{' '}
+                  <span className="text-neutral-400">
+                    — {a.attacksPerTurn}× {a.damageDiceCount}д6+{a.damageModifier} {a.damageType} ({a.attackSkill})
+                  </span>
+                </Link>
+                {isOwner && c.gameId && (
+                  <ConfirmButton
+                    link
+                    confirmMessage={`Удалить способность "${a.name}"?`}
+                    onConfirm={() => removeAbility.mutate(a.id)}
+                    disabled={removeAbility.isPending}
+                  >
+                    Удалить
+                  </ConfirmButton>
+                )}
+              </div>
+            ),
+          )}
+        </div>
+      </Card>
+
+      <Card>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-semibold">Инвентарь</h2>
+        </div>
+
+        {!isOwner && c.gameId && (
+          <div className="mb-4 flex flex-wrap items-end gap-2 rounded-md border border-neutral-200 p-3 dark:border-neutral-800">
+            <Select
+              value={selectedItemTemplateId ?? ''}
+              onChange={(e) => setSelectedItemTemplateId(e.target.value ? Number(e.target.value) : null)}
+            >
+              <option value="">— выберите шаблон —</option>
+              {itemTemplates.data?.items.map((it) => (
+                <option key={it.id} value={it.id}>
+                  {it.name} ({it.itemType})
+                </option>
+              ))}
+            </Select>
+            <Button
+              className="px-2 py-1 text-xs"
+              disabled={!selectedItemTemplateId || addItem.isPending}
+              onClick={() => selectedItemTemplateId && addItem.mutate(selectedItemTemplateId)}
+            >
+              Добавить предмет
+            </Button>
+          </div>
+        )}
+        {addItem.error && (
+          <div className="mb-3">
+            <ErrorText>{addItem.error instanceof ApiError ? addItem.error.message : 'Не удалось добавить предмет'}</ErrorText>
+          </div>
+        )}
+
+        {c.items.length === 0 && <p className="text-sm text-neutral-500">Инвентарь пуст.</p>}
+        <div className="flex flex-col gap-2">
+          {c.items.map((i) => (
+            <div key={i.id} className="flex items-center justify-between gap-2 text-sm">
+              <span>
+                {i.name} <span className="text-neutral-400">({i.itemType}, вес {i.weight})</span>
+                {i.itemType === 'Weapon' && (
+                  <span className="text-neutral-400">
+                    {' '}
+                    — {i.attacksPerTurn}× {i.damageDiceCount}д6+{i.damageModifier} {i.damageType} ({i.attackSkill})
+                  </span>
+                )}
+                {i.isEquipped && (
+                  <span className="ml-2 rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-700 dark:bg-violet-950 dark:text-violet-300">
+                    Экипировано
+                  </span>
+                )}
+              </span>
+              <div className="flex items-center gap-3">
+                {isOwner && c.gameId && (
+                  <button
+                    className="text-violet-600 hover:underline"
+                    disabled={equipItem.isPending || unequipItem.isPending}
+                    onClick={() => (i.isEquipped ? unequipItem.mutate(i.id) : equipItem.mutate(i.id))}
+                  >
+                    {i.isEquipped ? 'Снять' : 'Экипировать'}
+                  </button>
+                )}
+                {c.gameId && (
+                  <ConfirmButton
+                    link
+                    confirmMessage={`Удалить предмет "${i.name}" из инвентаря?`}
+                    onConfirm={() => removeItem.mutate(i.id)}
+                    disabled={removeItem.isPending}
+                  >
+                    Удалить
+                  </ConfirmButton>
+                )}
+              </div>
             </div>
           ))}
         </div>

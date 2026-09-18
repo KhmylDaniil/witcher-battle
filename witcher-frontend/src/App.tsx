@@ -15,6 +15,9 @@ import { CreatureTemplateDetailsPage } from './features/creatureTemplates/Creatu
 import { CreatureTemplateFormPage } from './features/creatureTemplates/CreatureTemplateFormPage'
 import { CreatureTemplatesListPage } from './features/creatureTemplates/CreatureTemplatesListPage'
 import { GameDetailsPage } from './features/games/GameDetailsPage'
+import { ItemTemplateDetailsPage } from './features/itemTemplates/ItemTemplateDetailsPage'
+import { ItemTemplateFormPage } from './features/itemTemplates/ItemTemplateFormPage'
+import { ItemTemplatesListPage } from './features/itemTemplates/ItemTemplatesListPage'
 import { GamesListPage } from './features/games/GamesListPage'
 import { AppLayout } from './routes/AppLayout'
 import { ProtectedRoute } from './routes/ProtectedRoute'
@@ -45,6 +48,9 @@ export default function App() {
             <Route path="/games/:gameId/creature-templates/:creatureTemplateId/abilities/:abilityId" element={<AbilityDetailsPage />} />
             <Route path="/games/:gameId/body-templates" element={<BodyTemplatesListPage />} />
             <Route path="/games/:gameId/body-templates/:bodyTemplateId" element={<BodyTemplateDetailsPage />} />
+            <Route path="/games/:gameId/item-templates" element={<ItemTemplatesListPage />} />
+            <Route path="/games/:gameId/item-templates/new" element={<ItemTemplateFormPage />} />
+            <Route path="/games/:gameId/item-templates/:itemTemplateId" element={<ItemTemplateDetailsPage />} />
             <Route path="/games/:gameId/battles/:battleId" element={<BattleDetailsPage />} />
           </Route>
         </Route>

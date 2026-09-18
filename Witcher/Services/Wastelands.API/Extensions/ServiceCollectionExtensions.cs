@@ -28,6 +28,7 @@ namespace Wastelands.API.Extensions
 			services.AddScoped<IGameJoinRequestRepository, GameJoinRequestRepository>();
 			services.AddScoped<IBodyTemplateRepository, BodyTemplateRepository>();
 			services.AddScoped<ICreatureTemplateRepository, CreatureTemplateRepository>();
+			services.AddScoped<IItemTemplateRepository, ItemTemplateRepository>();
 			services.AddScoped<IBattleRepository, BattleRepository>();
 
 			services.AddScoped<IUserContext, UserContext>();
@@ -42,12 +43,14 @@ namespace Wastelands.API.Extensions
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<ICharacterService, CharacterService>();
 			services.AddScoped<ICharacterAbilityService, CharacterAbilityService>();
+			services.AddScoped<ICharacterItemService, CharacterItemService>();
 			services.AddScoped<IGameService, GameService>();
 			services.AddScoped<IGameJoinRequestService, GameJoinRequestService>();
 			services.AddScoped<IBodyTemplateService, BodyTemplateService>();
 			services.AddScoped<ICreatureTemplateService, CreatureTemplateService>();
 			services.AddScoped<ICreatureTemplateAbilityService, CreatureTemplateAbilityService>();
 			services.AddScoped<ICreatureTemplateImageService, CreatureTemplateImageService>();
+			services.AddScoped<IItemTemplateService, ItemTemplateService>();
 			services.AddScoped<ICharacterImageService, CharacterImageService>();
 			services.AddScoped<IBattleService, BattleService>();
 			services.AddScoped<IBattleCombatService, BattleCombatService>();

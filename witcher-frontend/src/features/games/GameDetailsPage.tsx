@@ -60,6 +60,12 @@ export function GameDetailsPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['games', id, 'members'] }),
   })
 
+  const gameCharacters = useQuery({
+    queryKey: ['games', id, 'characters'],
+    queryFn: () => charactersApi.gameCharacters(id),
+    enabled: isOwner,
+  })
+
   const removeGame = useMutation({
     mutationFn: () => gamesApi.remove(id),
     onSuccess: () => navigate('/games'),
@@ -179,6 +185,28 @@ export function GameDetailsPage() {
                 Шаблоны существ
               </Button>
             </Link>
+            <Link to={`/games/${id}/item-templates`}>
+              <Button variant="secondary" className="px-2 py-1 text-xs">
+                Шаблоны предметов
+              </Button>
+            </Link>
+          </div>
+        </Card>
+      )}
+
+      {isOwner && (
+        <Card>
+          <h2 className="mb-3 font-semibold">Персонажи игроков</h2>
+          {gameCharacters.isLoading && <Spinner />}
+          {gameCharacters.data && gameCharacters.data.length === 0 && (
+            <p className="text-sm text-neutral-500">У игроков пока нет персонажей.</p>
+          )}
+          <div className="flex flex-col gap-2">
+            {gameCharacters.data?.map((c) => (
+              <Link key={c.id} to={`/games/${id}/characters/${c.id}`} className="text-sm hover:text-violet-600">
+                {c.name}
+              </Link>
+            ))}
           </div>
         </Card>
       )}

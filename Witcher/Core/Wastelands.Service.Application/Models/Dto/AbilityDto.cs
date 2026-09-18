@@ -19,5 +19,8 @@ namespace Wastelands.Service.Application.Models.Dto
 		public List<AbilityAppliedConditionDto> AppliedConditions { get; set; } = [];
 
 		public List<AbilityDefensiveSkillDto> DefensiveSkills { get; set; } = [];
+
+		/// <summary>Сгенерирована экипировкой оружия — редактируется/удаляется только через снятие предмета.</summary>
+		public bool IsFromEquippedWeapon { get; set; }
 	}
 }

@@ -81,6 +81,12 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasForeignKey(x => x.CharacterId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.Items)
+				.WithOne()
+				.HasForeignKey(x => x.CharacterId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
 		}
 	}
 }

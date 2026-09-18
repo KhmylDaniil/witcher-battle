@@ -29,6 +29,17 @@ namespace Wastelands.Service.Domain.Entities
 			ApplyChance = applyChance;
 		}
 
+		// AbilityId проставляет EF Core по связи Ability.AppliedConditions — используется только
+		// Ability.ForEquippedWeapon, где Ability ещё не сохранена (Id == 0) и настоящий abilityId
+		// заранее неизвестен. Тот же приём, что CreatureTemplatePart(BodyTemplatePart) для CreatureTemplate.Parts.
+		internal AbilityAppliedCondition(Condition condition, int applyChance)
+		{
+			InvalidArgumentException.ThrowIfNotInRange(applyChance, MinApplyChance, MaxApplyChance, nameof(applyChance));
+
+			Condition = condition;
+			ApplyChance = applyChance;
+		}
+
 		public void ChangeCondition(Condition condition, int applyChance)
 		{
 			InvalidArgumentException.ThrowIfNotInRange(applyChance, MinApplyChance, MaxApplyChance, nameof(applyChance));

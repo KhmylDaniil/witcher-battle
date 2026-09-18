@@ -15,6 +15,14 @@ namespace Wastelands.Service.Domain.Entities
 
 		public long? CharacterId { get; private set; }
 
+		/// <summary>
+		/// Заполнено только для способностей, сгенерированных экипировкой оружия (см.
+		/// Ability.ForEquippedWeapon) — по этому полю снятие оружия находит и удаляет ровно те
+		/// способности, что оно породило. Обычная колонка, без FK/cascade — соответствие
+		/// поддерживается явным кодом в CharacterItemService, а не EF-каскадом.
+		/// </summary>
+		public long? EquippedItemId { get; private set; }
+
 		public string Name { get; private set; }
 
 		public Skill AttackSkill { get; private set; }
@@ -87,6 +95,39 @@ namespace Wastelands.Service.Domain.Entities
 			{
 				CharacterId = characterId,
 			};
+		}
+
+		/// <summary>
+		/// Способность, сгенерированная экипировкой оружия (см. CharacterItemService.EquipAsync) —
+		/// name/appliedConditions приходят от ItemTemplate/Item, а не вводятся пользователем вручную,
+		/// поэтому в отличие от ForCharacter сразу принимает и накладываемые состояния.
+		/// </summary>
+		public static Ability ForEquippedWeapon(
+			long characterId,
+			long equippedItemId,
+			string name,
+			Skill attackSkill,
+			int attacksPerTurn,
+			int damageDiceCount,
+			int damageModifier,
+			DamageType damageType,
+			IEnumerable<(Condition Condition, int ApplyChance)> appliedConditions)
+		{
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(characterId, nameof(characterId));
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(equippedItemId, nameof(equippedItemId));
+
+			var ability = new Ability(name, attackSkill, attacksPerTurn, damageDiceCount, damageModifier, damageType)
+			{
+				CharacterId = characterId,
+				EquippedItemId = equippedItemId,
+			};
+
+			foreach (var (condition, applyChance) in appliedConditions)
+			{
+				ability.AppliedConditions.Add(new AbilityAppliedCondition(condition, applyChance));
+			}
+
+			return ability;
 		}
 
 		public void ChangeAbility(

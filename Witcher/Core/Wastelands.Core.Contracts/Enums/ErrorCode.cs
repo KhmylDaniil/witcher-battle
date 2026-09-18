@@ -22,6 +22,7 @@
 		AbilityDefensiveSkillNotFound = 503,
 		AbilityDefensiveSkillAlreadyExisted = 504,
 		CreatureTemplateSkillAlreadyExisted = 505,
+		AbilityManagedByEquippedItem = 506,
 
 		// game errors
 		GameNotFound = 300,
@@ -65,6 +66,16 @@
 		// image errors 700...
 		UnsupportedImageType = 700,
 		ImageTooLarge = 701,
+
+		// item/inventory errors 800...
+		ItemTemplateNotFound = 800,
+		ItemNotFound = 801,
+		ItemTemplateBelongsToAnotherGame = 802,
+		ItemTemplateConditionNotFound = 803,
+		ItemTemplateConditionAlreadyExisted = 804,
+		ItemTemplateNotWeapon = 805,
+		ItemAlreadyEquipped = 806,
+		ItemNotEquipped = 807,
 
 		// Common error codes 1100...1199
 		InvalidArgument = 1101,

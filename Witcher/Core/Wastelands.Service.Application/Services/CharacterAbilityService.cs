@@ -40,6 +40,7 @@ namespace Wastelands.Service.Application.Services
 		{
 			var character = await GetByIdAsync(request.CharacterId);
 			var ability = AbilityHelpers.GetAbility(character.Abilities, request.AbilityId);
+			ThrowIfManagedByEquippedItem(ability);
 
 			ability.ChangeAbility(
 				request.Name, request.AttackSkill, request.AttacksPerTurn,
@@ -54,6 +55,7 @@ namespace Wastelands.Service.Application.Services
 		{
 			var character = await GetByIdAsync(characterId);
 			var ability = AbilityHelpers.GetAbility(character.Abilities, abilityId);
+			ThrowIfManagedByEquippedItem(ability);
 
 			character.Abilities.Remove(ability);
 			await _characterRepository.UpdateAsync(character);
@@ -137,6 +139,16 @@ namespace Wastelands.Service.Application.Services
 			await _characterRepository.UpdateAsync(character);
 
 			return _mapper.Map<CharacterDto>(character);
+		}
+
+		private static void ThrowIfManagedByEquippedItem(Ability ability)
+		{
+			if (ability.EquippedItemId is not null)
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.AbilityManagedByEquippedItem,
+					"Эта способность управляется экипированным предметом — снимите предмет, чтобы её убрать.");
+			}
 		}
 
 		private async Task<Character> GetByIdAsync(long id)

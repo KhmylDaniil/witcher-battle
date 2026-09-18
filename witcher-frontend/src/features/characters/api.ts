@@ -36,4 +36,13 @@ export const charactersApi = {
     api.post<Character>(`/api/characters/${characterId}/abilities/${abilityId}/defensive-skills`, { skill }),
   removeDefensiveSkill: (characterId: number, abilityId: number, defensiveSkillId: number) =>
     api.delete<Character>(`/api/characters/${characterId}/abilities/${abilityId}/defensive-skills/${defensiveSkillId}`),
+
+  /** Мастер добавляет игроку экземпляр предмета на основе шаблона. */
+  addItem: (characterId: number, itemTemplateId: number) =>
+    api.post<Character>(`/api/characters/${characterId}/items`, { itemTemplateId }),
+  /** Мастер или владелец персонажа. */
+  removeItem: (characterId: number, itemId: number) => api.delete<Character>(`/api/characters/${characterId}/items/${itemId}`),
+  /** Только владелец персонажа. */
+  equipItem: (characterId: number, itemId: number) => api.put<Character>(`/api/characters/${characterId}/items/${itemId}/equip`),
+  unequipItem: (characterId: number, itemId: number) => api.put<Character>(`/api/characters/${characterId}/items/${itemId}/unequip`),
 }

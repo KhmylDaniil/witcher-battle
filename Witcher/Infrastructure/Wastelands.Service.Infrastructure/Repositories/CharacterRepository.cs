@@ -24,7 +24,8 @@ namespace Wastelands.Service.Infrastructure.Repositories
 		{
 			return query
 				.Include(x => x.Abilities).ThenInclude(a => a.AppliedConditions)
-				.Include(x => x.Abilities).ThenInclude(a => a.DefensiveSkills);
+				.Include(x => x.Abilities).ThenInclude(a => a.DefensiveSkills)
+				.Include(x => x.Items).ThenInclude(i => i.AppliedConditions);
 		}
 
 		public async Task<List<Character>> GetCharactersByGameIdAsync(long gameId)
