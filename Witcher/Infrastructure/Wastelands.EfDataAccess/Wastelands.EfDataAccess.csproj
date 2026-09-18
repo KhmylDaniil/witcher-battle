@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Wastelands.Core.EfDataAccess\Wastelands.Core.DataAccess.csproj" />
+    <ProjectReference Include="..\..\Core\Wastelands.Core.EfDataAccess\Wastelands.Core.EfDataAccess.csproj" />
   </ItemGroup>
 
 </Project>
