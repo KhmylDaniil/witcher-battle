@@ -52,6 +52,16 @@ export function GameDetailsPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['games', id, 'join-requests'] }),
   })
 
+  const members = useQuery({
+    queryKey: ['games', id, 'members'],
+    queryFn: () => gamesApi.members(id),
+    enabled: isOwner,
+  })
+  const removeMember = useMutation({
+    mutationFn: (userId: number) => gamesApi.removeMember(id, userId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['games', id, 'members'] }),
+  })
+
   const removeGame = useMutation({
     mutationFn: () => gamesApi.remove(id),
     onSuccess: () => navigate('/games'),
@@ -126,6 +136,34 @@ export function GameDetailsPage() {
               </div>
             ))}
           </div>
+        </Card>
+      )}
+
+      {isOwner && (
+        <Card>
+          <h2 className="mb-3 font-semibold">Участники</h2>
+          {members.isLoading && <Spinner />}
+          {members.data && members.data.length === 0 && <p className="text-sm text-neutral-500">Участников пока нет.</p>}
+          <div className="flex flex-col gap-2">
+            {members.data?.map((userId) => (
+              <div key={userId} className="flex items-center justify-between gap-2 text-sm">
+                <span>Пользователь #{userId}</span>
+                <ConfirmButton
+                  link
+                  confirmMessage={`Исключить пользователя #${userId} из игры?`}
+                  onConfirm={() => removeMember.mutate(userId)}
+                  disabled={removeMember.isPending}
+                >
+                  Исключить
+                </ConfirmButton>
+              </div>
+            ))}
+          </div>
+          {removeMember.error && (
+            <div className="mt-2">
+              <ErrorText>{removeMember.error instanceof ApiError ? removeMember.error.message : 'Не удалось исключить участника'}</ErrorText>
+            </div>
+          )}
         </Card>
       )}
 

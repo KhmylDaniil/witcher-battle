@@ -126,6 +126,32 @@ namespace Wastelands.Service.Application.Services
 			await _gameRepository.DeleteAsync(game);
 		}
 
+		public async Task<List<long>> GetMemberUserIdsAsync(long gameId)
+		{
+			var game = await GetByIdAsync(gameId);
+			_gameAccessGuard.EnsureOwner(game);
+
+			var memberships = await _userGameRepository.GetListByFilterAsync(new UserGameFilter { GameId = gameId });
+			return memberships.Select(x => x.UserId).ToList();
+		}
+
+		public async Task RemoveMemberAsync(long gameId, long userId)
+		{
+			var game = await GetByIdAsync(gameId);
+			_gameAccessGuard.EnsureOwner(game);
+
+			var membership = await _userGameRepository.GetSingleByFilterAsync(new UserGameFilter { GameId = gameId, UserId = userId });
+
+			NotFoundException.ThrowIfNull(
+				membership,
+				ErrorCode.UserNotGameMember,
+				nameof(UserGame),
+				nameof(UserGame.UserId),
+				userId.ToString());
+
+			await _userGameRepository.DeleteAsync(membership);
+		}
+
 		private async Task<Game> GetByIdAsync(long id)
 		{
 			var game = await _gameRepository.GetByIdAsync(id);

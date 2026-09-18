@@ -15,4 +15,7 @@ export const gamesApi = {
   acceptRequest: (gameId: number, requestId: number) => api.post<void>(`/api/games/${gameId}/join-requests/${requestId}/accept`),
   declineRequest: (gameId: number, requestId: number) => api.post<void>(`/api/games/${gameId}/join-requests/${requestId}/decline`),
   myRequests: () => api.get<GameJoinRequest[]>('/api/join-requests/mine'),
+
+  members: (gameId: number) => api.get<number[]>(`/api/games/${gameId}/members`),
+  removeMember: (gameId: number, userId: number) => api.delete<void>(`/api/games/${gameId}/members/${userId}`),
 }

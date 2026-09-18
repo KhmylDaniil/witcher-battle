@@ -46,5 +46,16 @@ namespace Wastelands.Service.MVC.Controllers.Api
 			await _gameService.DeleteGameAsync(id);
 			return NoContent();
 		}
+
+		[HttpGet("{id:long}/members")]
+		public async Task<List<long>> Members(long id)
+			=> await _gameService.GetMemberUserIdsAsync(id);
+
+		[HttpDelete("{id:long}/members/{userId:long}")]
+		public async Task<IActionResult> RemoveMember(long id, long userId)
+		{
+			await _gameService.RemoveMemberAsync(id, userId);
+			return NoContent();
+		}
 	}
 }
