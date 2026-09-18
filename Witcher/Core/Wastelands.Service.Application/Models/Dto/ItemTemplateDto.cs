@@ -18,7 +18,7 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public Skill? AttackSkill { get; set; }
 
-		public int? AttacksPerTurn { get; set; }
+		public bool? IsMultiAttack { get; set; }
 
 		public int? DamageDiceCount { get; set; }
 

@@ -47,8 +47,8 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnName("AttackSkill")
 				.IsRequired(false);
 
-			builder.Property(x => x.AttacksPerTurn)
-				.HasColumnName("AttacksPerTurn")
+			builder.Property(x => x.IsMultiAttack)
+				.HasColumnName("IsMultiAttack")
 				.IsRequired(false);
 
 			builder.Property(x => x.DamageDiceCount)

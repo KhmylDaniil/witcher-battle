@@ -241,7 +241,8 @@ export interface ItemTemplate {
   cost: number
   /** Заполнены только когда itemType === 'Weapon'. */
   attackSkill: Skill | null
-  attacksPerTurn: number | null
+  /** Возможна ли мультиатака (быстрая/сильная атака при экипировке). */
+  isMultiAttack: boolean | null
   damageDiceCount: number | null
   damageModifier: number | null
   damageType: DamageType | null
@@ -259,7 +260,7 @@ export interface ItemTemplateFormValues {
   weight: number
   cost: number
   attackSkill?: Skill
-  attacksPerTurn?: number
+  isMultiAttack?: boolean
   damageDiceCount?: number
   damageModifier?: number
   damageType?: DamageType
@@ -287,7 +288,7 @@ export interface Item {
   weight: number
   cost: number
   attackSkill: Skill | null
-  attacksPerTurn: number | null
+  isMultiAttack: boolean | null
   damageDiceCount: number | null
   damageModifier: number | null
   damageType: DamageType | null

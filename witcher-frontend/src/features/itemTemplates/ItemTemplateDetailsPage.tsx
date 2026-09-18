@@ -95,7 +95,7 @@ export function ItemTemplateDetailsPage() {
                     weight: it.weight,
                     cost: it.cost,
                     attackSkill: it.attackSkill ?? undefined,
-                    attacksPerTurn: it.attacksPerTurn ?? undefined,
+                    isMultiAttack: it.isMultiAttack ?? undefined,
                     damageDiceCount: it.damageDiceCount ?? undefined,
                     damageModifier: it.damageModifier ?? undefined,
                     damageType: it.damageType ?? undefined,
@@ -163,14 +163,6 @@ export function ItemTemplateDetailsPage() {
                       ))}
                     </Select>
                   </Field>
-                  <Field label="Атак в ход">
-                    <Input
-                      type="number"
-                      min={1}
-                      value={values.attacksPerTurn}
-                      onChange={(e) => setValues({ ...values, attacksPerTurn: Number(e.target.value) })}
-                    />
-                  </Field>
                   <Field label="Кубиков д6 урона">
                     <Input
                       type="number"
@@ -236,6 +228,15 @@ export function ItemTemplateDetailsPage() {
                     />
                   </Field>
                 </div>
+                <label className="mt-3 flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4"
+                    checked={values.isMultiAttack ?? false}
+                    onChange={(e) => setValues({ ...values, isMultiAttack: e.target.checked })}
+                  />
+                  Возможна мультиатака
+                </label>
               </div>
             )}
 
@@ -275,7 +276,7 @@ export function ItemTemplateDetailsPage() {
                   <span className="text-neutral-400">Навык атаки</span> <span className="font-medium">{it.attackSkill}</span>
                 </div>
                 <div>
-                  <span className="text-neutral-400">Атак в ход</span> <span className="font-medium">{it.attacksPerTurn}</span>
+                  <span className="text-neutral-400">Мультиатака</span> <span className="font-medium">{it.isMultiAttack ? 'Да' : 'Нет'}</span>
                 </div>
                 <div>
                   <span className="text-neutral-400">Урон</span>{' '}

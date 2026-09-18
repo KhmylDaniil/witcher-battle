@@ -99,15 +99,15 @@ namespace Wastelands.Service.Application.Services
 		}
 
 		/// <summary>
-		/// Оружие без мультиатаки (AttacksPerTurn == 1 на предмете) даёт одну способность с именем
-		/// оружия; с мультиатакой (AttacksPerTurn &gt; 1) — «Быструю атаку» (скорость 2, урон как в
-		/// предмете) и «Сильную атаку» (скорость 1, урон ×2 кубиками, модификатор -3).
+		/// Оружие без мультиатаки (IsMultiAttack == false на предмете) даёт одну способность с именем
+		/// оружия и скоростью 1; с мультиатакой (IsMultiAttack == true) — «Быструю атаку» (скорость 2,
+		/// урон как в предмете) и «Сильную атаку» (скорость 1, урон ×2 кубиками, модификатор -3).
 		/// </summary>
 		private static void GenerateWeaponAbilities(Character character, Item item)
 		{
 			var appliedConditions = item.AppliedConditions.Select(c => (c.Condition, c.ApplyChance)).ToList();
 
-			if (item.AttacksPerTurn!.Value > 1)
+			if (item.IsMultiAttack == true)
 			{
 				character.Abilities.Add(Ability.ForEquippedWeapon(
 					character.Id, item.Id, $"Быстрая атака ({item.Name})", item.AttackSkill!.Value, attacksPerTurn: 2,

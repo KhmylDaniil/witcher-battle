@@ -6,6 +6,7 @@ import { ApiError } from '../../lib/apiClient'
 import { getAvailableOptions } from '../../lib/options'
 import { SKILLS_BY_STAT, type Skill } from '../../types/api'
 import { useCurrentUser } from '../auth/useAuth'
+import { gamesApi } from '../games/api'
 import { itemTemplatesApi } from '../itemTemplates/api'
 import { charactersApi } from './api'
 
@@ -85,10 +86,17 @@ export function CharacterDetailsPage() {
   const isOwner = user?.userId === character.data?.userId
   const gameId = character.data?.gameId ?? null
 
+  // isGameMaster — отдельно от isOwner: мастер может быть ещё и владельцем своего же персонажа
+  // (играет в своей игре), и тогда обе роли верны одновременно — добавление предмета должно быть
+  // доступно ему в любом случае, поэтому это не "not owner", а прямая проверка авторства игры,
+  // совпадающая с CharacterItemService.GetForGmMutationAsync на бэкенде.
+  const game = useQuery({ queryKey: ['games', gameId], queryFn: () => gamesApi.get(gameId!), enabled: !!gameId })
+  const isGameMaster = !!gameId && game.data?.createdByUserId === user?.userId
+
   const itemTemplates = useQuery({
     queryKey: ['item-templates', { gameId }, 'all'],
     queryFn: () => itemTemplatesApi.list({ gameId: gameId! }, { pageSize: 500 }),
-    enabled: !isOwner && !!gameId,
+    enabled: isGameMaster,
   })
   const [selectedItemTemplateId, setSelectedItemTemplateId] = useState<number | null>(null)
   const addItem = useMutation({
@@ -382,7 +390,7 @@ export function CharacterDetailsPage() {
           <h2 className="font-semibold">Инвентарь</h2>
         </div>
 
-        {!isOwner && c.gameId && (
+        {isGameMaster && (
           <div className="mb-4 flex flex-wrap items-end gap-2 rounded-md border border-neutral-200 p-3 dark:border-neutral-800">
             <Select
               value={selectedItemTemplateId ?? ''}
@@ -419,7 +427,8 @@ export function CharacterDetailsPage() {
                 {i.itemType === 'Weapon' && (
                   <span className="text-neutral-400">
                     {' '}
-                    — {i.attacksPerTurn}× {i.damageDiceCount}д6+{i.damageModifier} {i.damageType} ({i.attackSkill})
+                    — {i.damageDiceCount}д6+{i.damageModifier} {i.damageType} ({i.attackSkill}
+                    {i.isMultiAttack ? ', мультиатака' : ''})
                   </span>
                 )}
                 {i.isEquipped && (

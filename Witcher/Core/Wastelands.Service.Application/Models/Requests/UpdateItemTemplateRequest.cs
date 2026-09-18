@@ -19,7 +19,7 @@ namespace Wastelands.Service.Application.Models.Requests
 		// Заполняются только когда ItemType == Weapon — см. UpdateItemTemplateRequestValidator.
 		public Skill? AttackSkill { get; set; }
 
-		public int? AttacksPerTurn { get; set; }
+		public bool? IsMultiAttack { get; set; }
 
 		public int? DamageDiceCount { get; set; }
 

@@ -26,7 +26,8 @@ namespace Wastelands.Service.Domain.Entities
 
 		public Skill? AttackSkill { get; private set; }
 
-		public int? AttacksPerTurn { get; private set; }
+		/// <summary>Возможна ли мультиатака (быстрая/сильная атака при экипировке) — см. CharacterItemService.EquipAsync.</summary>
+		public bool? IsMultiAttack { get; private set; }
 
 		public int? DamageDiceCount { get; private set; }
 
@@ -70,7 +71,7 @@ namespace Wastelands.Service.Domain.Entities
 			double weight,
 			int cost,
 			Skill attackSkill,
-			int attacksPerTurn,
+			bool isMultiAttack,
 			int damageDiceCount,
 			int damageModifier,
 			DamageType damageType,
@@ -81,7 +82,7 @@ namespace Wastelands.Service.Domain.Entities
 		{
 			var template = new ItemTemplate(gameId, name, description, ItemType.Weapon, weight, cost);
 			template.SetWeaponFields(
-				attackSkill, attacksPerTurn, damageDiceCount, damageModifier, damageType, weaponKind, attackRange, handsRequired, durability);
+				attackSkill, isMultiAttack, damageDiceCount, damageModifier, damageType, weaponKind, attackRange, handsRequired, durability);
 
 			return template;
 		}
@@ -95,7 +96,7 @@ namespace Wastelands.Service.Domain.Entities
 			double weight,
 			int cost,
 			Skill attackSkill,
-			int attacksPerTurn,
+			bool isMultiAttack,
 			int damageDiceCount,
 			int damageModifier,
 			DamageType damageType,
@@ -106,7 +107,7 @@ namespace Wastelands.Service.Domain.Entities
 		{
 			ChangeBaseFields(name, description, weight, cost);
 			SetWeaponFields(
-				attackSkill, attacksPerTurn, damageDiceCount, damageModifier, damageType, weaponKind, attackRange, handsRequired, durability);
+				attackSkill, isMultiAttack, damageDiceCount, damageModifier, damageType, weaponKind, attackRange, handsRequired, durability);
 		}
 
 		public void ChangeNonWeapon(string name, string? description, double weight, int cost)
@@ -126,7 +127,7 @@ namespace Wastelands.Service.Domain.Entities
 
 		private void SetWeaponFields(
 			Skill attackSkill,
-			int attacksPerTurn,
+			bool isMultiAttack,
 			int damageDiceCount,
 			int damageModifier,
 			DamageType damageType,
@@ -135,14 +136,13 @@ namespace Wastelands.Service.Domain.Entities
 			int handsRequired,
 			int durability)
 		{
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(attacksPerTurn, nameof(attacksPerTurn));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(damageDiceCount, nameof(damageDiceCount));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(attackRange, nameof(attackRange));
 			InvalidArgumentException.ThrowIfNotInRange(handsRequired, 1, 2, nameof(handsRequired));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(durability, nameof(durability));
 
 			AttackSkill = attackSkill;
-			AttacksPerTurn = attacksPerTurn;
+			IsMultiAttack = isMultiAttack;
 			DamageDiceCount = damageDiceCount;
 			DamageModifier = damageModifier;
 			DamageType = damageType;

@@ -28,7 +28,7 @@ namespace Wastelands.Service.Domain.Entities
 
 		public Skill? AttackSkill { get; private set; }
 
-		public int? AttacksPerTurn { get; private set; }
+		public bool? IsMultiAttack { get; private set; }
 
 		public int? DamageDiceCount { get; private set; }
 
@@ -65,7 +65,7 @@ namespace Wastelands.Service.Domain.Entities
 			Weight = template.Weight;
 			Cost = template.Cost;
 			AttackSkill = template.AttackSkill;
-			AttacksPerTurn = template.AttacksPerTurn;
+			IsMultiAttack = template.IsMultiAttack;
 			DamageDiceCount = template.DamageDiceCount;
 			DamageModifier = template.DamageModifier;
 			DamageType = template.DamageType;

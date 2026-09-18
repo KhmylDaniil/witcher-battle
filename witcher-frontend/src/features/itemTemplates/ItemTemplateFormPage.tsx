@@ -20,7 +20,7 @@ export function ItemTemplateFormPage() {
       weight: 1,
       cost: 0,
       attackSkill: 'Melee',
-      attacksPerTurn: 1,
+      isMultiAttack: false,
       damageDiceCount: 1,
       damageModifier: 0,
       damageType: 'Slashing',
@@ -93,9 +93,6 @@ export function ItemTemplateFormPage() {
                     ))}
                   </Select>
                 </Field>
-                <Field label="Атак в ход">
-                  <Input type="number" min={1} {...register('attacksPerTurn', { required: true, valueAsNumber: true, min: 1 })} />
-                </Field>
                 <Field label="Кубиков д6 урона">
                   <Input type="number" min={1} {...register('damageDiceCount', { required: true, valueAsNumber: true, min: 1 })} />
                 </Field>
@@ -130,6 +127,10 @@ export function ItemTemplateFormPage() {
                   <Input type="number" min={1} {...register('durability', { required: true, valueAsNumber: true, min: 1 })} />
                 </Field>
               </div>
+              <label className="mt-3 flex items-center gap-2 text-sm">
+                <input type="checkbox" className="h-4 w-4" {...register('isMultiAttack')} />
+                Возможна мультиатака
+              </label>
             </div>
           )}
 

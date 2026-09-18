@@ -22,7 +22,7 @@ namespace Wastelands.API.Validations
 			When(x => x.ItemType == ItemType.Weapon, () =>
 			{
 				RuleFor(x => x.AttackSkill).NotNull().WithMessage(ExceptionMessages.FieldCantBeEmpty);
-				RuleFor(x => x.AttacksPerTurn).NotNull().GreaterThan(0).WithMessage(ExceptionMessages.ValueMustBePositive);
+				RuleFor(x => x.IsMultiAttack).NotNull().WithMessage(ExceptionMessages.FieldCantBeEmpty);
 				RuleFor(x => x.DamageDiceCount).NotNull().GreaterThan(0).WithMessage(ExceptionMessages.ValueMustBePositive);
 				RuleFor(x => x.DamageModifier).NotNull().WithMessage(ExceptionMessages.FieldCantBeEmpty);
 				RuleFor(x => x.DamageType).NotNull().WithMessage(ExceptionMessages.FieldCantBeEmpty);
