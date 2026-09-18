@@ -19,5 +19,8 @@ namespace Wastelands.Service.Application.Models
 
 		/// <summary>Заполнено только для существ — нужна для чтения/износа брони конкретного экземпляра в этом бою.</summary>
 		public Creature? Creature { get; init; }
+
+		/// <summary>Заполнено только для персонажей — нужен для чтения/износа экипированной брони (Character.Items).</summary>
+		public Character? Character { get; init; }
 	}
 }

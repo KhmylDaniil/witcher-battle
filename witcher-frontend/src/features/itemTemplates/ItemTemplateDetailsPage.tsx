@@ -3,12 +3,19 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, ConfirmButton, ErrorText, Field, Input, PageHeader, Select, Spinner, Textarea } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
+import { getAvailableOptions } from '../../lib/options'
 import {
   CONDITIONS,
+  DAMAGE_TYPE_MODIFIERS,
   DAMAGE_TYPES,
+  HUMAN_BODY_PARTS,
+  HUMAN_BODY_PART_LABELS,
   SKILLS,
   WEAPON_KINDS,
   type Condition,
+  type DamageType,
+  type DamageTypeModifierKind,
+  type HumanBodyPart,
   type ItemTemplateFormValues,
 } from '../../types/api'
 import { itemTemplatesApi } from './api'
@@ -70,10 +77,49 @@ export function ItemTemplateDetailsPage() {
     },
   })
 
+  const [editingArmorPartId, setEditingArmorPartId] = useState<number | null>(null)
+  const [editArmorPart, setEditArmorPart] = useState<{ armorValue: number; maxDurability: number }>({ armorValue: 1, maxDurability: 5 })
+  const updateArmorPart = useMutation({
+    mutationFn: (armorPartId: number) => itemTemplatesApi.updateArmorPart(id, armorPartId, editArmorPart.armorValue, editArmorPart.maxDurability),
+    onSuccess: () => {
+      invalidate()
+      setEditingArmorPartId(null)
+    },
+  })
+  const removeArmorPart = useMutation({
+    mutationFn: (armorPartId: number) => itemTemplatesApi.removeArmorPart(id, armorPartId),
+    onSuccess: invalidate,
+  })
+  const [newArmorPart, setNewArmorPart] = useState<{ part: HumanBodyPart; armorValue: number; maxDurability: number }>({
+    part: 'Torso',
+    armorValue: 1,
+    maxDurability: 5,
+  })
+  const addArmorPart = useMutation({
+    mutationFn: () => itemTemplatesApi.addArmorPart(id, newArmorPart.part, newArmorPart.armorValue, newArmorPart.maxDurability),
+    onSuccess: invalidate,
+  })
+
+  const [newDamageType, setNewDamageType] = useState<DamageType>('Slashing')
+  const [newModifier, setNewModifier] = useState<DamageTypeModifierKind>('Vulnerability')
+  const setDamageTypeModifier = useMutation({
+    mutationFn: () => itemTemplatesApi.setDamageTypeModifier(id, newDamageType, newModifier),
+    onSuccess: invalidate,
+  })
+  const removeDamageTypeModifier = useMutation({
+    mutationFn: (damageType: DamageType) => itemTemplatesApi.removeDamageTypeModifier(id, damageType),
+    onSuccess: invalidate,
+  })
+
   if (itemTemplate.isLoading) return <Spinner />
   if (!itemTemplate.data) return null
   const it = itemTemplate.data
   const isWeapon = it.itemType === 'Weapon'
+  const isArmor = it.itemType === 'Armor'
+  const usedParts = new Set(it.armorParts.map((p) => p.part))
+  const availableParts = getAvailableOptions(HUMAN_BODY_PARTS, usedParts)
+  const usedDamageTypes = new Set(Object.keys(it.damageTypeModifiers) as DamageType[])
+  const availableDamageTypes = getAvailableOptions(DAMAGE_TYPES, usedDamageTypes)
 
   return (
     <div className="flex flex-col gap-4">
@@ -426,6 +472,176 @@ export function ItemTemplateDetailsPage() {
             </tbody>
           </table>
         </Card>
+      )}
+
+      {isArmor && (
+        <>
+          <Card>
+            <h2 className="mb-3 font-semibold">Покрытие частей тела</h2>
+            {it.armorParts.length === 0 && <p className="mb-3 text-sm text-neutral-500">Части тела пока не добавлены.</p>}
+            <table className="w-full max-w-md text-left text-sm">
+              <tbody>
+                {it.armorParts.map((p) => (
+                  <tr key={p.id} className="border-b border-neutral-100 dark:border-neutral-900">
+                    {editingArmorPartId === p.id ? (
+                      <td colSpan={4} className="py-2">
+                        <div className="flex flex-wrap items-end gap-2">
+                          <Field label="Значение брони">
+                            <Input
+                              type="number"
+                              min={0}
+                              className="w-24"
+                              value={editArmorPart.armorValue}
+                              onChange={(e) => setEditArmorPart({ ...editArmorPart, armorValue: Number(e.target.value) })}
+                            />
+                          </Field>
+                          <Field label="Макс. прочность">
+                            <Input
+                              type="number"
+                              min={1}
+                              className="w-24"
+                              value={editArmorPart.maxDurability}
+                              onChange={(e) => setEditArmorPart({ ...editArmorPart, maxDurability: Number(e.target.value) })}
+                            />
+                          </Field>
+                          <Button className="px-2 py-1" disabled={updateArmorPart.isPending} onClick={() => updateArmorPart.mutate(p.id)}>
+                            OK
+                          </Button>
+                          <Button variant="secondary" className="px-2 py-1" onClick={() => setEditingArmorPartId(null)}>
+                            Отмена
+                          </Button>
+                        </div>
+                      </td>
+                    ) : (
+                      <>
+                        <td className="py-2 pr-3">{HUMAN_BODY_PART_LABELS[p.part]}</td>
+                        <td className="py-2 pr-3">Броня: {p.armorValue}</td>
+                        <td className="py-2 pr-3">Прочность: {p.maxDurability}</td>
+                        <td className="py-2">
+                          <div className="flex gap-3">
+                            <button
+                              className="text-violet-600 hover:underline"
+                              onClick={() => {
+                                setEditingArmorPartId(p.id)
+                                setEditArmorPart({ armorValue: p.armorValue, maxDurability: p.maxDurability })
+                              }}
+                            >
+                              Изменить
+                            </button>
+                            <button
+                              className="text-red-600 hover:underline"
+                              disabled={removeArmorPart.isPending}
+                              onClick={() => removeArmorPart.mutate(p.id)}
+                            >
+                              Удалить
+                            </button>
+                          </div>
+                        </td>
+                      </>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {availableParts.length > 0 && (
+              <div className="mt-4 flex flex-wrap items-end gap-2">
+                <Field label="Часть тела">
+                  <Select value={newArmorPart.part} onChange={(e) => setNewArmorPart({ ...newArmorPart, part: e.target.value as HumanBodyPart })}>
+                    {availableParts.map((p) => (
+                      <option key={p} value={p}>
+                        {HUMAN_BODY_PART_LABELS[p]}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+                <Field label="Значение брони">
+                  <Input
+                    type="number"
+                    min={0}
+                    className="w-24"
+                    value={newArmorPart.armorValue}
+                    onChange={(e) => setNewArmorPart({ ...newArmorPart, armorValue: Number(e.target.value) })}
+                  />
+                </Field>
+                <Field label="Макс. прочность">
+                  <Input
+                    type="number"
+                    min={1}
+                    className="w-24"
+                    value={newArmorPart.maxDurability}
+                    onChange={(e) => setNewArmorPart({ ...newArmorPart, maxDurability: Number(e.target.value) })}
+                  />
+                </Field>
+                <Button disabled={addArmorPart.isPending} onClick={() => addArmorPart.mutate()}>
+                  Добавить часть
+                </Button>
+              </div>
+            )}
+
+            {addArmorPart.error && (
+              <div className="mt-2">
+                <ErrorText>{addArmorPart.error instanceof ApiError ? addArmorPart.error.message : 'Не удалось добавить часть тела'}</ErrorText>
+              </div>
+            )}
+          </Card>
+
+          <Card>
+            <h2 className="mb-3 font-semibold">Модификаторы типа урона</h2>
+            {Object.keys(it.damageTypeModifiers).length === 0 && (
+              <p className="mb-3 text-sm text-neutral-500">Модификаторов пока нет.</p>
+            )}
+            <table className="w-full max-w-md text-left text-sm">
+              <tbody>
+                {(Object.entries(it.damageTypeModifiers) as [DamageType, DamageTypeModifierKind][]).map(([damageType, modifier]) => (
+                  <tr key={damageType} className="border-b border-neutral-100 dark:border-neutral-900">
+                    <td className="py-2 pr-3">{damageType}</td>
+                    <td className="py-2 pr-3">{modifier}</td>
+                    <td className="py-2">
+                      <button
+                        className="text-red-600 hover:underline"
+                        disabled={removeDamageTypeModifier.isPending}
+                        onClick={() => removeDamageTypeModifier.mutate(damageType)}
+                      >
+                        Удалить
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {availableDamageTypes.length > 0 && (
+              <div className="mt-4 flex flex-wrap items-end gap-2">
+                <Select value={newDamageType} onChange={(e) => setNewDamageType(e.target.value as DamageType)}>
+                  {availableDamageTypes.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </Select>
+                <Select value={newModifier} onChange={(e) => setNewModifier(e.target.value as DamageTypeModifierKind)}>
+                  {DAMAGE_TYPE_MODIFIERS.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </Select>
+                <Button disabled={setDamageTypeModifier.isPending} onClick={() => setDamageTypeModifier.mutate()}>
+                  Добавить модификатор
+                </Button>
+              </div>
+            )}
+
+            {setDamageTypeModifier.error && (
+              <div className="mt-2">
+                <ErrorText>
+                  {setDamageTypeModifier.error instanceof ApiError ? setDamageTypeModifier.error.message : 'Не удалось сохранить модификатор'}
+                </ErrorText>
+              </div>
+            )}
+          </Card>
+        </>
       )}
     </div>
   )

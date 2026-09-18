@@ -18,6 +18,7 @@ namespace Wastelands.Service.Application.Services
 	public class BattleCombatService : IBattleCombatService
 	{
 		private readonly IBattleRepository _battleRepository;
+		private readonly ICharacterRepository _characterRepository;
 		private readonly IBattleParticipantAuthorizer _authorizer;
 		private readonly IBattleCombatContextProvider _contextProvider;
 		private readonly IBattleHitResolver _hitResolver;
@@ -26,6 +27,7 @@ namespace Wastelands.Service.Application.Services
 
 		public BattleCombatService(
 			IBattleRepository battleRepository,
+			ICharacterRepository characterRepository,
 			IBattleParticipantAuthorizer authorizer,
 			IBattleCombatContextProvider contextProvider,
 			IBattleHitResolver hitResolver,
@@ -33,6 +35,7 @@ namespace Wastelands.Service.Application.Services
 			IBattleDtoMapper dtoMapper)
 		{
 			_battleRepository = battleRepository;
+			_characterRepository = characterRepository;
 			_authorizer = authorizer;
 			_contextProvider = contextProvider;
 			_hitResolver = hitResolver;
@@ -154,9 +157,7 @@ namespace Wastelands.Service.Application.Services
 
 			var attackerContext = await _contextProvider.GetContextAsync(battle, attack.AttackerKind, attack.AttackerId);
 			var ability = attackerContext.Abilities.First(a => a.Id == attack.AbilityId);
-			var defenderContext = attack.DefenderKind == ParticipantKind.Creature
-				? await _contextProvider.GetContextAsync(battle, attack.DefenderKind, attack.DefenderId)
-				: null;
+			var defenderContext = await _contextProvider.GetContextAsync(battle, attack.DefenderKind, attack.DefenderId);
 
 			var damage = BattleCombatCalculator.CalculateDamage(attackerContext, defenderContext, attack.DefenderKind, ability, attack);
 
@@ -165,6 +166,13 @@ namespace Wastelands.Service.Application.Services
 				? BattleCombatCalculator.RollAppliedConditions(ability)
 				: [];
 			BattleParticipants.ApplyDamage(battle, attack, attack.DefenderKind, attack.DefenderId, damage, appliedConditions);
+
+			// Износ конкретного экземпляра брони живёт на Character, а не на Battle — сохраняем отдельно.
+			if (damage.WornArmorItemId is { } wornItemId)
+			{
+				defenderContext.Character!.Items.First(i => i.Id == wornItemId).WearArmor(attack.ResolvedHumanBodyPart!.Value);
+				await _characterRepository.UpdateAsync(defenderContext.Character);
+			}
 
 			var attackerName = BattleParticipants.GetName(battle, attack.AttackerKind, attack.AttackerId);
 			var defenderName = BattleParticipants.GetName(battle, attack.DefenderKind, attack.DefenderId);

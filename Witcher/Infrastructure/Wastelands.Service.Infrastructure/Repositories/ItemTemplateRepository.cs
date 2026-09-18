@@ -28,7 +28,7 @@ namespace Wastelands.Service.Infrastructure.Repositories
 
 		protected override IQueryable<ItemTemplate> IncludeRelatedEntities(IQueryable<ItemTemplate> query)
 		{
-			return query.Include(x => x.AppliedConditions);
+			return query.Include(x => x.AppliedConditions).Include(x => x.ArmorParts);
 		}
 	}
 }

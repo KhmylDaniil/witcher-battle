@@ -76,6 +76,14 @@
 		ItemTemplateNotWeapon = 805,
 		ItemAlreadyEquipped = 806,
 		ItemNotEquipped = 807,
+		ItemTemplateNotArmor = 808,
+		ItemTemplateArmorPartAlreadyExisted = 809,
+		ItemTemplateArmorPartNotFound = 810,
+		ItemNotWeapon = 811,
+		ItemNotArmor = 812,
+		ItemArmorPartNotFound = 813,
+		ArmorPartAlreadyCoveredByAnotherItem = 814,
+		ItemNotRepairable = 815,
 
 		// Common error codes 1100...1199
 		InvalidArgument = 1101,

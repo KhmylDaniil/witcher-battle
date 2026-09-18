@@ -64,6 +64,13 @@ namespace Wastelands.Service.Domain.Entities
 		/// </summary>
 		public long? ResolvedCreaturePartId { get; private set; }
 
+		/// <summary>
+		/// Часть тела, в которую попала атака, если защитник — персонаж (у персонажей фиксированная
+		/// анатомия, см. HumanBodyPartCatalog, а не редактируемый шаблон, поэтому не long-ссылка, как у
+		/// существ, а сам enum). Всегда выбирается случайно — прицельная атака персонажу не поддерживается.
+		/// </summary>
+		public HumanBodyPart? ResolvedHumanBodyPart { get; private set; }
+
 		/// <summary>Ручной ввод суммы броска урона. Null — при разрешении урона бросает сервер.</summary>
 		public int? DamageRoll { get; private set; }
 
@@ -164,7 +171,14 @@ namespace Wastelands.Service.Domain.Entities
 		/// фиксирует фактически использованные значения бросков (свои — если введены вручную,
 		/// иначе — брошенные сервером) и итоги встречного броска, чтобы лог боя мог их показать.
 		/// </summary>
-		public void MarkHitResolved(bool succeeded, long? resolvedCreaturePartId, int attackRollUsed, int attackTotal, int defenseRollUsed, int defenseTotal)
+		public void MarkHitResolved(
+			bool succeeded,
+			long? resolvedCreaturePartId,
+			HumanBodyPart? resolvedHumanBodyPart,
+			int attackRollUsed,
+			int attackTotal,
+			int defenseRollUsed,
+			int defenseTotal)
 		{
 			EnsureAwaitingChoices();
 			if (!AttackerConfirmed || !DefenderConfirmed)
@@ -178,6 +192,7 @@ namespace Wastelands.Service.Domain.Entities
 			DefenseTotal = defenseTotal;
 			LastHitSucceeded = succeeded;
 			ResolvedCreaturePartId = resolvedCreaturePartId;
+			ResolvedHumanBodyPart = resolvedHumanBodyPart;
 			Phase = succeeded ? BattleAttackPhase.AwaitingDamageRoll : BattleAttackPhase.SwingResolved;
 			if (!succeeded)
 			{
@@ -233,6 +248,7 @@ namespace Wastelands.Service.Domain.Entities
 			Phase = BattleAttackPhase.AwaitingChoices;
 			LastHitSucceeded = null;
 			ResolvedCreaturePartId = null;
+			ResolvedHumanBodyPart = null;
 			DamageRoll = null;
 		}
 

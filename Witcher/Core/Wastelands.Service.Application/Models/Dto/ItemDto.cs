@@ -36,6 +36,10 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public List<ItemAppliedConditionDto> AppliedConditions { get; set; } = [];
 
+		public List<ItemArmorPartDto> ArmorParts { get; set; } = [];
+
+		public Dictionary<DamageType, DamageTypeModifier> DamageTypeModifiers { get; set; } = [];
+
 		public bool IsEquipped { get; set; }
 	}
 }

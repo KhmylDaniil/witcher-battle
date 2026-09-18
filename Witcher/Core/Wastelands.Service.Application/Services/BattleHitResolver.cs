@@ -25,7 +25,8 @@ namespace Wastelands.Service.Application.Services
 			var defenderContext = await _contextProvider.GetContextAsync(battle, attack.DefenderKind, attack.DefenderId);
 
 			var hit = BattleCombatCalculator.ResolveHit(attackerContext, defenderContext, ability, attack);
-			attack.MarkHitResolved(hit.Succeeded, hit.ResolvedCreaturePartId, hit.AttackRoll, hit.AttackTotal, hit.DefenseRoll, hit.DefenseTotal);
+			attack.MarkHitResolved(
+				hit.Succeeded, hit.ResolvedCreaturePartId, hit.ResolvedHumanBodyPart, hit.AttackRoll, hit.AttackTotal, hit.DefenseRoll, hit.DefenseTotal);
 
 			if (!hit.Succeeded)
 			{

@@ -29,8 +29,10 @@ namespace Wastelands.Service.Application.Mapping
 			CreateMap<AbilityDefensiveSkill, AbilityDefensiveSkillDto>();
 
 			CreateMap<ItemTemplateAppliedCondition, ItemTemplateAppliedConditionDto>();
+			CreateMap<ItemTemplateArmorPart, ItemTemplateArmorPartDto>();
 			CreateMap<ItemTemplate, ItemTemplateDto>();
 			CreateMap<ItemAppliedCondition, ItemAppliedConditionDto>();
+			CreateMap<ItemArmorPart, ItemArmorPartDto>();
 			CreateMap<Item, ItemDto>();
 
 			CreateMap<Battle, BattleDto>();

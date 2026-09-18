@@ -45,6 +45,7 @@ namespace Wastelands.Service.Application.Services
 			{
 				Abilities = character.Abilities,
 				GetSkillValue = skill => SkillHelpers.GetCharacterSkillValue(character, skill),
+				Character = character,
 			};
 		}
 	}

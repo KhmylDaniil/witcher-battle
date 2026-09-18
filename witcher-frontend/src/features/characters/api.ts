@@ -1,5 +1,14 @@
 import { api, buildQuery } from '../../lib/apiClient'
-import type { AbilityFormValues, Character, CharacterFormValues, Condition, PagedResult, PagingParams, Skill } from '../../types/api'
+import type {
+  AbilityFormValues,
+  Character,
+  CharacterFormValues,
+  Condition,
+  HumanBodyPart,
+  PagedResult,
+  PagingParams,
+  Skill,
+} from '../../types/api'
 
 export const charactersApi = {
   list: (filters: { name?: string; gameId?: number } = {}, paging: PagingParams = {}) =>
@@ -45,4 +54,7 @@ export const charactersApi = {
   /** Только владелец персонажа. */
   equipItem: (characterId: number, itemId: number) => api.put<Character>(`/api/characters/${characterId}/items/${itemId}/equip`),
   unequipItem: (characterId: number, itemId: number) => api.put<Character>(`/api/characters/${characterId}/items/${itemId}/unequip`),
+  /** Мастер меняет прочность экземпляра оружия/брони (ремонт). Для брони part обязателен. */
+  repairItem: (characterId: number, itemId: number, durability: number, part?: HumanBodyPart) =>
+    api.put<Character>(`/api/characters/${characterId}/items/${itemId}/repair`, { part, durability }),
 }

@@ -1,3 +1,4 @@
+using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
 using Wastelands.Core.EfDataAccess.Entities;
 using Wastelands.Service.Domain.Enums;
@@ -44,6 +45,11 @@ namespace Wastelands.Service.Domain.Entities
 		public int? Durability { get; private set; }
 
 		public List<ItemTemplateAppliedCondition> AppliedConditions { get; private set; } = [];
+
+		/// <summary>Заполнены только когда ItemType == Armor.</summary>
+		public List<ItemTemplateArmorPart> ArmorParts { get; private set; } = [];
+
+		public Dictionary<DamageType, DamageTypeModifier> DamageTypeModifiers { get; private set; } = [];
 
 		private ItemTemplate()
 		{
@@ -150,6 +156,19 @@ namespace Wastelands.Service.Domain.Entities
 			AttackRange = attackRange;
 			HandsRequired = handsRequired;
 			Durability = durability;
+		}
+
+		public ItemTemplateArmorPart AddArmorPart(HumanBodyPart part, int armorValue, int maxDurability)
+		{
+			if (ArmorParts.Any(p => p.Part == part))
+			{
+				throw new InvalidArgumentException(ErrorCode.ItemTemplateArmorPartAlreadyExisted, "Эта часть тела уже покрыта в шаблоне брони.");
+			}
+
+			var armorPart = new ItemTemplateArmorPart(Id, part, armorValue, maxDurability);
+			ArmorParts.Add(armorPart);
+
+			return armorPart;
 		}
 	}
 }

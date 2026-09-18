@@ -73,11 +73,43 @@ namespace Wastelands.Service.Application.Services
 			var character = await GetForOwnerMutationAsync(characterId);
 			var item = GetItem(character, itemId);
 
+			if (item.ItemType == ItemType.Armor)
+			{
+				EnsureNoArmorOverlap(character, item);
+			}
+
 			item.Equip();
 
 			if (item.ItemType == ItemType.Weapon)
 			{
 				GenerateWeaponAbilities(character, item);
+			}
+
+			await _characterRepository.UpdateAsync(character);
+
+			return _mapper.Map<CharacterDto>(character);
+		}
+
+		public async Task<CharacterDto> RepairAsync(RepairItemRequest request)
+		{
+			var character = await GetForGmMutationAsync(request.CharacterId);
+			var item = GetItem(character, request.ItemId);
+
+			switch (item.ItemType)
+			{
+				case ItemType.Weapon:
+					item.RepairWeapon(request.Durability);
+					break;
+				case ItemType.Armor:
+					if (request.Part is not { } part)
+					{
+						throw new InvalidArgumentException(ErrorCode.RequiredParameterCannotBeNull, "Для ремонта брони нужно указать часть тела.");
+					}
+
+					item.RepairArmorPart(part, request.Durability);
+					break;
+				default:
+					throw new InvalidArgumentException(ErrorCode.ItemNotRepairable, "Этот предмет нельзя ремонтировать.");
 			}
 
 			await _characterRepository.UpdateAsync(character);
@@ -122,6 +154,20 @@ namespace Wastelands.Service.Application.Services
 				character.Abilities.Add(Ability.ForEquippedWeapon(
 					character.Id, item.Id, item.Name, item.AttackSkill!.Value, attacksPerTurn: 1,
 					item.DamageDiceCount!.Value, item.DamageModifier!.Value, item.DamageType!.Value, appliedConditions));
+			}
+		}
+
+		/// <summary>Броня не может перекрываться — на одной части тела персонажа одновременно может быть надета только одна броня.</summary>
+		private static void EnsureNoArmorOverlap(Character character, Item item)
+		{
+			var coveredParts = item.ArmorParts.Select(p => p.Part).ToHashSet();
+			var conflict = character.Items.Any(other =>
+				other.Id != item.Id && other.IsEquipped && other.ItemType == ItemType.Armor && other.ArmorParts.Any(p => coveredParts.Contains(p.Part)));
+
+			if (conflict)
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.ArmorPartAlreadyCoveredByAnotherItem, "На этой части тела уже экипирована другая броня.");
 			}
 		}
 

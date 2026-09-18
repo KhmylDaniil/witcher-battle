@@ -122,12 +122,84 @@ namespace Wastelands.Service.Application.Services
 			return _mapper.Map<ItemTemplateDto>(itemTemplate);
 		}
 
+		public async Task<ItemTemplateDto> AddArmorPartAsync(AddItemTemplateArmorPartRequest request)
+		{
+			var itemTemplate = await GetByIdAsync(request.ItemTemplateId);
+			EnsureArmor(itemTemplate);
+
+			itemTemplate.AddArmorPart(request.Part, request.ArmorValue, request.MaxDurability);
+			await _itemTemplateRepository.UpdateAsync(itemTemplate);
+
+			return _mapper.Map<ItemTemplateDto>(itemTemplate);
+		}
+
+		public async Task<ItemTemplateDto> UpdateArmorPartAsync(UpdateItemTemplateArmorPartRequest request)
+		{
+			var itemTemplate = await GetByIdAsync(request.ItemTemplateId);
+			var armorPart = GetArmorPart(itemTemplate, request.ArmorPartId);
+
+			armorPart.Change(request.ArmorValue, request.MaxDurability);
+			await _itemTemplateRepository.UpdateAsync(itemTemplate);
+
+			return _mapper.Map<ItemTemplateDto>(itemTemplate);
+		}
+
+		public async Task<ItemTemplateDto> RemoveArmorPartAsync(long itemTemplateId, long armorPartId)
+		{
+			var itemTemplate = await GetByIdAsync(itemTemplateId);
+			var armorPart = GetArmorPart(itemTemplate, armorPartId);
+
+			itemTemplate.ArmorParts.Remove(armorPart);
+			await _itemTemplateRepository.UpdateAsync(itemTemplate);
+
+			return _mapper.Map<ItemTemplateDto>(itemTemplate);
+		}
+
+		public async Task<ItemTemplateDto> SetDamageTypeModifierAsync(SetItemTemplateDamageTypeModifierRequest request)
+		{
+			var itemTemplate = await GetByIdAsync(request.ItemTemplateId);
+			EnsureArmor(itemTemplate);
+
+			itemTemplate.DamageTypeModifiers[request.DamageType] = request.Modifier;
+			await _itemTemplateRepository.UpdateAsync(itemTemplate);
+
+			return _mapper.Map<ItemTemplateDto>(itemTemplate);
+		}
+
+		public async Task<ItemTemplateDto> RemoveDamageTypeModifierAsync(long itemTemplateId, DamageType damageType)
+		{
+			var itemTemplate = await GetByIdAsync(itemTemplateId);
+
+			itemTemplate.DamageTypeModifiers.Remove(damageType);
+			await _itemTemplateRepository.UpdateAsync(itemTemplate);
+
+			return _mapper.Map<ItemTemplateDto>(itemTemplate);
+		}
+
 		private static void EnsureWeapon(ItemTemplate itemTemplate)
 		{
 			if (itemTemplate.ItemType != ItemType.Weapon)
 			{
 				throw new InvalidArgumentException(ErrorCode.ItemTemplateNotWeapon, "Накладываемые состояния можно добавлять только шаблонам оружия.");
 			}
+		}
+
+		private static void EnsureArmor(ItemTemplate itemTemplate)
+		{
+			if (itemTemplate.ItemType != ItemType.Armor)
+			{
+				throw new InvalidArgumentException(ErrorCode.ItemTemplateNotArmor, "Это доступно только шаблонам брони.");
+			}
+		}
+
+		private static ItemTemplateArmorPart GetArmorPart(ItemTemplate itemTemplate, long armorPartId)
+		{
+			var armorPart = itemTemplate.ArmorParts.FirstOrDefault(x => x.Id == armorPartId);
+
+			NotFoundException.ThrowIfNull(
+				armorPart, ErrorCode.ItemTemplateArmorPartNotFound, nameof(ItemTemplateArmorPart), nameof(ItemTemplateArmorPart.Id), armorPartId.ToString());
+
+			return armorPart;
 		}
 
 		private static ItemTemplateAppliedCondition GetCondition(ItemTemplate itemTemplate, long conditionId)

@@ -46,6 +46,11 @@ namespace Wastelands.Service.Domain.Entities
 
 		public List<ItemAppliedCondition> AppliedConditions { get; private set; } = [];
 
+		/// <summary>Заполнены только когда ItemType == Armor — снапшот ItemTemplate.ArmorParts.</summary>
+		public List<ItemArmorPart> ArmorParts { get; private set; } = [];
+
+		public Dictionary<DamageType, DamageTypeModifier> DamageTypeModifiers { get; private set; } = [];
+
 		public bool IsEquipped { get; private set; }
 
 		private Item()
@@ -74,6 +79,8 @@ namespace Wastelands.Service.Domain.Entities
 			HandsRequired = template.HandsRequired;
 			Durability = template.Durability;
 			AppliedConditions = template.AppliedConditions.Select(c => new ItemAppliedCondition(c.Condition, c.ApplyChance)).ToList();
+			ArmorParts = template.ArmorParts.Select(p => new ItemArmorPart(p.Part, p.ArmorValue, p.MaxDurability)).ToList();
+			DamageTypeModifiers = new Dictionary<DamageType, DamageTypeModifier>(template.DamageTypeModifiers);
 		}
 
 		public void Equip()
@@ -94,6 +101,43 @@ namespace Wastelands.Service.Domain.Entities
 			}
 
 			IsEquipped = false;
+		}
+
+		public void RepairWeapon(int durability)
+		{
+			if (ItemType != ItemType.Weapon)
+			{
+				throw new InvalidArgumentException(ErrorCode.ItemNotWeapon, "Это не оружие.");
+			}
+
+			InvalidArgumentException.ThrowIfLessThanZero(durability, nameof(durability));
+			Durability = durability;
+		}
+
+		public void RepairArmorPart(HumanBodyPart part, int durability)
+		{
+			var armorPart = GetArmorPart(part);
+			armorPart.Repair(durability);
+		}
+
+		/// <summary>Износ от попадания в часть тела, покрытую этой бронёй — см. BattleCombatService.ContinueDamageAsync.</summary>
+		public void WearArmor(HumanBodyPart part)
+		{
+			var armorPart = GetArmorPart(part);
+			armorPart.Wear();
+		}
+
+		private ItemArmorPart GetArmorPart(HumanBodyPart part)
+		{
+			if (ItemType != ItemType.Armor)
+			{
+				throw new InvalidArgumentException(ErrorCode.ItemNotArmor, "Это не броня.");
+			}
+
+			var armorPart = ArmorParts.FirstOrDefault(p => p.Part == part);
+			NotFoundException.ThrowIfNull(armorPart, ErrorCode.ItemArmorPartNotFound, nameof(ItemArmorPart), nameof(ItemArmorPart.Part), part.ToString());
+
+			return armorPart;
 		}
 	}
 }

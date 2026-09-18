@@ -165,6 +165,16 @@ namespace Wastelands.API.Controllers.Api
 		[HttpPut("{characterId:long}/items/{itemId:long}/unequip")]
 		public async Task<CharacterDto> UnequipItem(long characterId, long itemId)
 			=> await _characterItemService.UnequipAsync(characterId, itemId);
+
+		[HttpPut("{characterId:long}/items/{itemId:long}/repair")]
+		public async Task<CharacterDto> RepairItem(long characterId, long itemId, [FromBody] RepairItemPayload payload)
+			=> await _characterItemService.RepairAsync(new RepairItemRequest
+			{
+				CharacterId = characterId,
+				ItemId = itemId,
+				Part = payload.Part,
+				Durability = payload.Durability,
+			});
 	}
 
 	public sealed class SkillPayload
@@ -176,5 +186,11 @@ namespace Wastelands.API.Controllers.Api
 	public sealed class AddItemPayload
 	{
 		public long ItemTemplateId { get; set; }
+	}
+
+	public sealed class RepairItemPayload
+	{
+		public HumanBodyPart? Part { get; set; }
+		public int Durability { get; set; }
 	}
 }

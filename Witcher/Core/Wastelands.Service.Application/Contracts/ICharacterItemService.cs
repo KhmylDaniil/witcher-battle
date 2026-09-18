@@ -17,5 +17,8 @@ namespace Wastelands.Service.Application.Contracts
 		Task<CharacterDto> EquipAsync(long characterId, long itemId);
 
 		Task<CharacterDto> UnequipAsync(long characterId, long itemId);
+
+		/// <summary>Изменение прочности экземпляра оружия/брони (ремонт) — только мастер игры персонажа.</summary>
+		Task<CharacterDto> RepairAsync(RepairItemRequest request);
 	}
 }

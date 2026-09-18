@@ -35,5 +35,9 @@ namespace Wastelands.Service.Application.Models.Dto
 		public int? Durability { get; set; }
 
 		public List<ItemTemplateAppliedConditionDto> AppliedConditions { get; set; } = [];
+
+		public List<ItemTemplateArmorPartDto> ArmorParts { get; set; } = [];
+
+		public Dictionary<DamageType, DamageTypeModifier> DamageTypeModifiers { get; set; } = [];
 	}
 }

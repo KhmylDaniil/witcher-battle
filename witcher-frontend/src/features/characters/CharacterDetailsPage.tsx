@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, ConfirmButton, ErrorText, Input, PageHeader, Select, Spinner } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
 import { getAvailableOptions } from '../../lib/options'
-import { SKILLS_BY_STAT, type Skill } from '../../types/api'
+import { HUMAN_BODY_PART_LABELS, SKILLS_BY_STAT, type HumanBodyPart, type Skill } from '../../types/api'
 import { useCurrentUser } from '../auth/useAuth'
 import { gamesApi } from '../games/api'
 import { itemTemplatesApi } from '../itemTemplates/api'
@@ -76,6 +76,17 @@ export function CharacterDetailsPage() {
   const unequipItem = useMutation({
     mutationFn: (itemId: number) => charactersApi.unequipItem(id, itemId),
     onSuccess: invalidate,
+  })
+
+  const [repairingKey, setRepairingKey] = useState<string | null>(null)
+  const [repairValue, setRepairValue] = useState(0)
+  const repairItem = useMutation({
+    mutationFn: ({ itemId, durability, part }: { itemId: number; durability: number; part?: HumanBodyPart }) =>
+      charactersApi.repairItem(id, itemId, durability, part),
+    onSuccess: () => {
+      invalidate()
+      setRepairingKey(null)
+    },
   })
 
   // Владелец персонажа отличается от мастера, который тоже может открыть эту страницу (см.
@@ -421,47 +432,144 @@ export function CharacterDetailsPage() {
         {c.items.length === 0 && <p className="text-sm text-neutral-500">Инвентарь пуст.</p>}
         <div className="flex flex-col gap-2">
           {c.items.map((i) => (
-            <div key={i.id} className="flex items-center justify-between gap-2 text-sm">
-              <span>
-                {i.name} <span className="text-neutral-400">({i.itemType}, вес {i.weight})</span>
-                {i.itemType === 'Weapon' && (
-                  <span className="text-neutral-400">
-                    {' '}
-                    — {i.damageDiceCount}д6+{i.damageModifier} {i.damageType} ({i.attackSkill}
-                    {i.isMultiAttack ? ', мультиатака' : ''})
-                  </span>
-                )}
-                {i.isEquipped && (
-                  <span className="ml-2 rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-700 dark:bg-violet-950 dark:text-violet-300">
-                    Экипировано
-                  </span>
-                )}
-              </span>
-              <div className="flex items-center gap-3">
-                {isOwner && c.gameId && (
-                  <button
-                    className="text-violet-600 hover:underline"
-                    disabled={equipItem.isPending || unequipItem.isPending}
-                    onClick={() => (i.isEquipped ? unequipItem.mutate(i.id) : equipItem.mutate(i.id))}
-                  >
-                    {i.isEquipped ? 'Снять' : 'Экипировать'}
-                  </button>
-                )}
-                {c.gameId && (
-                  <ConfirmButton
-                    link
-                    confirmMessage={`Удалить предмет "${i.name}" из инвентаря?`}
-                    onConfirm={() => removeItem.mutate(i.id)}
-                    disabled={removeItem.isPending}
-                  >
-                    Удалить
-                  </ConfirmButton>
-                )}
+            <div key={i.id} className="flex flex-col gap-1 border-b border-neutral-100 pb-2 text-sm last:border-0 dark:border-neutral-900">
+              <div className="flex items-center justify-between gap-2">
+                <span>
+                  {i.name} <span className="text-neutral-400">({i.itemType}, вес {i.weight})</span>
+                  {i.itemType === 'Weapon' && (
+                    <span className="text-neutral-400">
+                      {' '}
+                      — {i.damageDiceCount}д6+{i.damageModifier} {i.damageType} ({i.attackSkill}
+                      {i.isMultiAttack ? ', мультиатака' : ''})
+                    </span>
+                  )}
+                  {i.isEquipped && (
+                    <span className="ml-2 rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-700 dark:bg-violet-950 dark:text-violet-300">
+                      Экипировано
+                    </span>
+                  )}
+                </span>
+                <div className="flex items-center gap-3">
+                  {isOwner && c.gameId && (
+                    <button
+                      className="text-violet-600 hover:underline"
+                      disabled={equipItem.isPending || unequipItem.isPending}
+                      onClick={() => (i.isEquipped ? unequipItem.mutate(i.id) : equipItem.mutate(i.id))}
+                    >
+                      {i.isEquipped ? 'Снять' : 'Экипировать'}
+                    </button>
+                  )}
+                  {c.gameId && (
+                    <ConfirmButton
+                      link
+                      confirmMessage={`Удалить предмет "${i.name}" из инвентаря?`}
+                      onConfirm={() => removeItem.mutate(i.id)}
+                      disabled={removeItem.isPending}
+                    >
+                      Удалить
+                    </ConfirmButton>
+                  )}
+                </div>
               </div>
+
+              {i.itemType === 'Weapon' && (
+                <div className="flex items-center gap-2 text-xs text-neutral-500">
+                  <span>Прочность: {i.durability}</span>
+                  {isGameMaster && c.gameId && (
+                    <RepairControl
+                      open={repairingKey === `weapon-${i.id}`}
+                      value={repairValue}
+                      max={undefined}
+                      pending={repairItem.isPending}
+                      onOpen={() => {
+                        setRepairingKey(`weapon-${i.id}`)
+                        setRepairValue(i.durability ?? 0)
+                      }}
+                      onCancel={() => setRepairingKey(null)}
+                      onChange={setRepairValue}
+                      onConfirm={() => repairItem.mutate({ itemId: i.id, durability: repairValue })}
+                    />
+                  )}
+                </div>
+              )}
+
+              {i.itemType === 'Armor' && i.armorParts.length > 0 && (
+                <div className="flex flex-col gap-1 text-xs text-neutral-500">
+                  {i.armorParts.map((p) => (
+                    <div key={p.id} className="flex items-center gap-2">
+                      <span>
+                        {HUMAN_BODY_PART_LABELS[p.part]}: броня {p.armorValue}, прочность {p.currentDurability}/{p.maxDurability}
+                      </span>
+                      {isGameMaster && c.gameId && (
+                        <RepairControl
+                          open={repairingKey === `armor-${i.id}-${p.part}`}
+                          value={repairValue}
+                          max={p.maxDurability}
+                          pending={repairItem.isPending}
+                          onOpen={() => {
+                            setRepairingKey(`armor-${i.id}-${p.part}`)
+                            setRepairValue(p.currentDurability)
+                          }}
+                          onCancel={() => setRepairingKey(null)}
+                          onChange={setRepairValue}
+                          onConfirm={() => repairItem.mutate({ itemId: i.id, durability: repairValue, part: p.part })}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
+        {repairItem.error && (
+          <div className="mt-2">
+            <ErrorText>{repairItem.error instanceof ApiError ? repairItem.error.message : 'Не удалось отремонтировать предмет'}</ErrorText>
+          </div>
+        )}
       </Card>
     </div>
+  )
+}
+
+/** Инлайн-редактор прочности одного экземпляра оружия/брони — доступен только мастеру (см. CharacterItemService.RepairAsync). */
+function RepairControl(props: {
+  open: boolean
+  value: number
+  max?: number
+  pending: boolean
+  onOpen: () => void
+  onCancel: () => void
+  onChange: (value: number) => void
+  onConfirm: () => void
+}) {
+  const { open, value, max, pending, onOpen, onCancel, onChange, onConfirm } = props
+
+  if (!open) {
+    return (
+      <button className="text-violet-600 hover:underline" onClick={onOpen}>
+        Ремонт
+      </button>
+    )
+  }
+
+  return (
+    <span className="flex items-center gap-1">
+      <Input
+        type="number"
+        min={0}
+        max={max}
+        className="w-16 px-1 py-0.5 text-xs"
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        autoFocus
+      />
+      <Button className="px-2 py-0.5 text-xs" disabled={pending} onClick={onConfirm}>
+        OK
+      </Button>
+      <Button variant="secondary" className="px-2 py-0.5 text-xs" onClick={onCancel}>
+        Отмена
+      </Button>
+    </span>
   )
 }

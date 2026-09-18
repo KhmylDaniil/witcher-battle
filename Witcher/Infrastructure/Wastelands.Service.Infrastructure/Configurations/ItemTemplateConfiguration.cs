@@ -75,7 +75,19 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnName("Durability")
 				.IsRequired(false);
 
+			builder.Property(x => x.DamageTypeModifiers)
+				.HasColumnType("jsonb")
+				.HasColumnName("DamageTypeModifiers")
+				.HasComment("DamageTypeModifiers")
+				.IsRequired();
+
 			builder.HasMany(x => x.AppliedConditions)
+				.WithOne()
+				.HasForeignKey(x => x.ItemTemplateId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(x => x.ArmorParts)
 				.WithOne()
 				.HasForeignKey(x => x.ItemTemplateId)
 				.HasPrincipalKey(x => x.Id)

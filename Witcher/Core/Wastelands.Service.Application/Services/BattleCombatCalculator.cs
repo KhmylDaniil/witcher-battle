@@ -1,19 +1,38 @@
 using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
 using Wastelands.Service.Application.Models;
+using Wastelands.Service.Domain.Drafts;
 using Wastelands.Service.Domain.Entities;
 using Wastelands.Service.Domain.Enums;
 
 namespace Wastelands.Service.Application.Services
 {
 	/// <summary>Итог встречного броска — для MarkHitResolved и для подробного лога боя.</summary>
-	internal readonly record struct HitResult(bool Succeeded, long? ResolvedCreaturePartId, int AttackRoll, int AttackTotal, int DefenseRoll, int DefenseTotal);
+	internal readonly record struct HitResult(
+		bool Succeeded,
+		long? ResolvedCreaturePartId,
+		HumanBodyPart? ResolvedHumanBodyPart,
+		int AttackRoll,
+		int AttackTotal,
+		int DefenseRoll,
+		int DefenseTotal);
 
 	/// <summary>
-	/// Итог расчёта урона. ArmorBeforeHit/ArmorAfterHit/ArmorAbsorbed заполнены, только если защитник —
-	/// существо и попадание пришлось в часть тела (PartName не null); у персонажа брони нет.
+	/// Итог расчёта урона. PartName заполнено при попадании в часть тела — у существа всегда (если
+	/// удар прошёл), у персонажа тоже всегда (фиксированная анатомия — см. HumanBodyPartCatalog).
+	/// ArmorBeforeHit/ArmorAfterHit/ArmorAbsorbed — 0, если часть ничем не защищена (нет шаблонной
+	/// брони у существа / нет экипированной брони на этой части у персонажа). WornArmorItemId
+	/// заполнено, только если урон пришёлся по части, покрытой экипированной бронёй персонажа —
+	/// используется, чтобы отдельно изнашивать именно этот экземпляр (см. BattleCombatService).
 	/// </summary>
-	internal readonly record struct DamageResult(int FinalDamage, string? PartName, int RawDamage, int ArmorBeforeHit, int ArmorAbsorbed, int ArmorAfterHit);
+	internal readonly record struct DamageResult(
+		int FinalDamage,
+		string? PartName,
+		int RawDamage,
+		int ArmorBeforeHit,
+		int ArmorAbsorbed,
+		int ArmorAfterHit,
+		long? WornArmorItemId = null);
 
 	/// <summary>
 	/// Чистая боевая математика (попадание, урон) — без загрузки данных и без сохранения. Вынесена
@@ -48,6 +67,7 @@ namespace Wastelands.Service.Application.Services
 			BattleAttack attack)
 		{
 			long? resolvedPartId = null;
+			HumanBodyPart? resolvedHumanBodyPart = null;
 			var hitPenalty = 0;
 
 			if (attack.DefenderKind == ParticipantKind.Creature)
@@ -65,6 +85,11 @@ namespace Wastelands.Service.Application.Services
 					resolvedPartId = part.Id;
 				}
 			}
+			else
+			{
+				// Прицельная атака персонажу не поддерживается — часть тела всегда случайна.
+				resolvedHumanBodyPart = HumanBodyPartCatalog.ResolveByRoll(RollDie(10));
+			}
 
 			var attackRollUsed = attack.AttackRoll ?? RollDie(10);
 			var attackTotal = attackerContext.GetSkillValue(ability.AttackSkill) + hitPenalty + attackRollUsed;
@@ -73,35 +98,42 @@ namespace Wastelands.Service.Application.Services
 			var defenseTotal = defenderContext.GetSkillValue(attack.DefensiveSkill!.Value) + defenseRollUsed;
 
 			var succeeded = attackTotal > defenseTotal;
-			return new HitResult(succeeded, succeeded ? resolvedPartId : null, attackRollUsed, attackTotal, defenseRollUsed, defenseTotal);
+			return new HitResult(
+				succeeded,
+				succeeded ? resolvedPartId : null,
+				succeeded ? resolvedHumanBodyPart : null,
+				attackRollUsed,
+				attackTotal,
+				defenseRollUsed,
+				defenseTotal);
 		}
 
 		/// <summary>
-		/// Бросок урона способности + модификатор; для существа — сначала броня части (шаблонная минус
-		/// уже накопленный в этом бою износ) поглощает часть урона, затем к оставшемуся применяется
-		/// модификатор части тела, и последним — модификатор типа урона (Vulnerability×2/Resistance÷2/
-		/// Immunity×0). Для персонажа — без частей тела, без брони и без модификатора типа урона (у
-		/// персонажа нет DamageTypeModifiers; см. ключевые решения плана боя).
+		/// Бросок урона способности + модификатор, затем поглощение бронёй пробитой части, модификатор
+		/// части тела и последним — модификатор типа урона (Vulnerability×2/Resistance÷2/Immunity×0).
+		/// У существа броня и модификаторы — на шаблоне (CalculateCreatureDamage); у персонажа — на
+		/// экипированном предмете, покрывающем пробитую часть, если он есть (CalculateCharacterDamage).
 		/// </summary>
 		public static DamageResult CalculateDamage(
 			ParticipantCombatContext attackerContext,
-			ParticipantCombatContext? defenderContext,
+			ParticipantCombatContext defenderContext,
 			ParticipantKind defenderKind,
 			Ability ability,
 			BattleAttack attack)
 		{
 			var damageRoll = attack.DamageRoll ?? Enumerable.Range(0, ability.DamageDiceCount).Sum(_ => RollDie(6));
 			double raw = damageRoll + ability.DamageModifier;
-
-			if (defenderKind != ParticipantKind.Creature)
-			{
-				var dmg = Math.Max(0, (int)Math.Round(raw));
-				return new DamageResult(dmg, null, dmg, 0, 0, 0);
-			}
-
-			var part = defenderContext!.Template!.Parts.First(p => p.Id == attack.ResolvedCreaturePartId);
-
 			var rawDamage = Math.Max(0, (int)Math.Round(raw));
+
+			return defenderKind == ParticipantKind.Creature
+				? CalculateCreatureDamage(defenderContext, ability, attack, rawDamage)
+				: CalculateCharacterDamage(defenderContext, ability, attack, rawDamage);
+		}
+
+		private static DamageResult CalculateCreatureDamage(ParticipantCombatContext defenderContext, Ability ability, BattleAttack attack, int rawDamage)
+		{
+			var part = defenderContext.Template!.Parts.First(p => p.Id == attack.ResolvedCreaturePartId);
+
 			var armorReduction = defenderContext.Creature!.GetArmorReduction(part.Id);
 			var armorBeforeHit = Math.Max(0, part.Armor - armorReduction);
 			var armorAfterHit = Math.Max(0, part.Armor - (armorReduction + 1));
@@ -109,21 +141,58 @@ namespace Wastelands.Service.Application.Services
 			var damageAfterArmor = Math.Max(0, rawDamage - armorBeforeHit);
 
 			double afterPartModifier = damageAfterArmor * part.DamageModifier;
-
-			if (defenderContext.Template.DamageTypeModifiers.TryGetValue(ability.DamageType, out var modifier))
-			{
-				afterPartModifier = modifier switch
-				{
-					DamageTypeModifier.Vulnerability => afterPartModifier * 2,
-					DamageTypeModifier.Resistance => afterPartModifier / 2,
-					DamageTypeModifier.Immunity => 0,
-					_ => afterPartModifier,
-				};
-			}
+			afterPartModifier = ApplyDamageTypeModifier(afterPartModifier, defenderContext.Template.DamageTypeModifiers, ability.DamageType);
 
 			var finalDamage = Math.Max(0, (int)Math.Round(afterPartModifier));
 
 			return new DamageResult(finalDamage, part.Name, rawDamage, armorBeforeHit, armorAbsorbed, armorAfterHit);
+		}
+
+		/// <summary>
+		/// Броня персонажа приходит не из шаблона (как у существ), а из экипированного предмета,
+		/// покрывающего пробитую часть тела (не более одного — оверлап запрещён при экипировке, см.
+		/// CharacterItemService.EquipAsync). Пока прочность этой брони на части > 0, действуют её
+		/// модификаторы типа урона; само значение брони при этом не уменьшается — снашивается
+		/// только прочность (см. Item.WearArmor, вызывается BattleCombatService после этого расчёта).
+		/// </summary>
+		private static DamageResult CalculateCharacterDamage(ParticipantCombatContext defenderContext, Ability ability, BattleAttack attack, int rawDamage)
+		{
+			var humanPart = attack.ResolvedHumanBodyPart!.Value;
+			var partInfo = HumanBodyPartCatalog.Get(humanPart);
+
+			var armorItem = defenderContext.Character!.Items.FirstOrDefault(i =>
+				i.IsEquipped && i.ItemType == ItemType.Armor && i.ArmorParts.Any(p => p.Part == humanPart));
+			var armorPart = armorItem?.ArmorParts.First(p => p.Part == humanPart);
+			var armorValue = armorPart?.ArmorValue ?? 0;
+
+			var armorAbsorbed = Math.Min(rawDamage, armorValue);
+			var damageAfterArmor = Math.Max(0, rawDamage - armorValue);
+
+			double afterPartModifier = damageAfterArmor * partInfo.DamageModifier;
+			if (armorPart is { CurrentDurability: > 0 })
+			{
+				afterPartModifier = ApplyDamageTypeModifier(afterPartModifier, armorItem!.DamageTypeModifiers, ability.DamageType);
+			}
+
+			var finalDamage = Math.Max(0, (int)Math.Round(afterPartModifier));
+
+			return new DamageResult(finalDamage, partInfo.Name, rawDamage, armorValue, armorAbsorbed, armorValue, armorItem?.Id);
+		}
+
+		private static double ApplyDamageTypeModifier(double damage, Dictionary<DamageType, DamageTypeModifier> modifiers, DamageType damageType)
+		{
+			if (!modifiers.TryGetValue(damageType, out var modifier))
+			{
+				return damage;
+			}
+
+			return modifier switch
+			{
+				DamageTypeModifier.Vulnerability => damage * 2,
+				DamageTypeModifier.Resistance => damage / 2,
+				DamageTypeModifier.Immunity => 0,
+				_ => damage,
+			};
 		}
 
 		/// <summary>Каждое состояние способности накладывается независимо, с вероятностью, равной его ApplyChance (%).</summary>

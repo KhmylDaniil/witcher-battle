@@ -2,6 +2,7 @@ using Wastelands.Core.Contracts.Models;
 using Wastelands.Service.Application.Models.Dto;
 using Wastelands.Service.Application.Models.Filters;
 using Wastelands.Service.Application.Models.Requests;
+using Wastelands.Service.Domain.Enums;
 
 namespace Wastelands.Service.Application.Contracts
 {
@@ -23,5 +24,15 @@ namespace Wastelands.Service.Application.Contracts
 		Task<ItemTemplateDto> UpdateConditionAsync(UpdateItemTemplateConditionRequest request);
 
 		Task<ItemTemplateDto> RemoveConditionAsync(long itemTemplateId, long conditionId);
+
+		Task<ItemTemplateDto> AddArmorPartAsync(AddItemTemplateArmorPartRequest request);
+
+		Task<ItemTemplateDto> UpdateArmorPartAsync(UpdateItemTemplateArmorPartRequest request);
+
+		Task<ItemTemplateDto> RemoveArmorPartAsync(long itemTemplateId, long armorPartId);
+
+		Task<ItemTemplateDto> SetDamageTypeModifierAsync(SetItemTemplateDamageTypeModifierRequest request);
+
+		Task<ItemTemplateDto> RemoveDamageTypeModifierAsync(long itemTemplateId, DamageType damageType);
 	}
 }

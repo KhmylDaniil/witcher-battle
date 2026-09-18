@@ -225,10 +225,30 @@ export type ItemType = (typeof ITEM_TYPES)[number]
 export const WEAPON_KINDS = ['Melee', 'Ranged'] as const
 export type WeaponKind = (typeof WEAPON_KINDS)[number]
 
+export const HUMAN_BODY_PARTS = ['Head', 'Torso', 'RightArm', 'LeftArm', 'RightLeg', 'LeftLeg'] as const
+export type HumanBodyPart = (typeof HUMAN_BODY_PARTS)[number]
+
+export const HUMAN_BODY_PART_LABELS: Record<HumanBodyPart, string> = {
+  Head: 'Голова',
+  Torso: 'Торс',
+  RightArm: 'Правая рука',
+  LeftArm: 'Левая рука',
+  RightLeg: 'Правая нога',
+  LeftLeg: 'Левая нога',
+}
+
 export interface ItemTemplateAppliedCondition {
   id: number
   condition: Condition
   applyChance: number
+}
+
+/** Покрытие шаблона брони — часть тела + значение брони + максимальная прочность на ней. */
+export interface ItemTemplateArmorPart {
+  id: number
+  part: HumanBodyPart
+  armorValue: number
+  maxDurability: number
 }
 
 export interface ItemTemplate {
@@ -251,6 +271,9 @@ export interface ItemTemplate {
   handsRequired: number | null
   durability: number | null
   appliedConditions: ItemTemplateAppliedCondition[]
+  /** Заполнены только когда itemType === 'Armor'. */
+  armorParts: ItemTemplateArmorPart[]
+  damageTypeModifiers: Partial<Record<DamageType, DamageTypeModifierKind>>
 }
 
 export interface ItemTemplateFormValues {
@@ -278,6 +301,15 @@ export interface ItemAppliedCondition {
   applyChance: number
 }
 
+/** Покрытие экземпляра брони — снапшот ItemTemplateArmorPart плюс собственная текущая прочность. */
+export interface ItemArmorPart {
+  id: number
+  part: HumanBodyPart
+  armorValue: number
+  maxDurability: number
+  currentDurability: number
+}
+
 /** Снапшот-копия ItemTemplate в момент добавления в инвентарь — правки шаблона на неё не влияют. */
 export interface Item {
   id: number
@@ -297,6 +329,8 @@ export interface Item {
   handsRequired: number | null
   durability: number | null
   appliedConditions: ItemAppliedCondition[]
+  armorParts: ItemArmorPart[]
+  damageTypeModifiers: Partial<Record<DamageType, DamageTypeModifierKind>>
   isEquipped: boolean
 }
 
