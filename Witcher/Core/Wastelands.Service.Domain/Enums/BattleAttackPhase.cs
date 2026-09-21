@@ -5,5 +5,6 @@ namespace Wastelands.Service.Domain.Enums
 		AwaitingChoices = 0,
 		AwaitingDamageRoll = 1,
 		SwingResolved = 2,
+		AwaitingStunSave = 3,
 	}
 }

@@ -140,6 +140,24 @@ namespace Wastelands.API.Controllers.Api
 		public async Task<BattleDto> ContinueDamage(long gameId, long id)
 			=> await _battleCombatService.ContinueDamageAsync(id);
 
+		[HttpPost("{id:long}/attacks/current/stun-save-roll")]
+		public async Task<BattleDto> SetStunSaveRoll(long gameId, long id, SetStunSaveRollRequest request)
+		{
+			request.BattleId = id;
+			return await _battleCombatService.SetStunSaveRollAsync(request);
+		}
+
+		[HttpPost("{id:long}/attacks/current/stun-save-resolve")]
+		public async Task<BattleDto> ResolveStunSave(long gameId, long id)
+			=> await _battleCombatService.ResolveStunSaveAsync(id);
+
+		[HttpPost("{id:long}/stun-save")]
+		public async Task<BattleDto> RollOwnStunSave(long gameId, long id, RollOwnStunSaveRequest request)
+		{
+			request.BattleId = id;
+			return await _battleCombatService.RollOwnStunSaveAsync(request);
+		}
+
 		[HttpPost("{id:long}/attacks/current/next-swing")]
 		public async Task<BattleDto> NextSwing(long gameId, long id, NextSwingRequest request)
 		{

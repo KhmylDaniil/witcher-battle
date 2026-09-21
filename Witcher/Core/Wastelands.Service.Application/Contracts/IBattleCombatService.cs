@@ -25,6 +25,15 @@ namespace Wastelands.Service.Application.Contracts
 
 		Task<BattleDto> ContinueDamageAsync(long battleId);
 
+		/// <summary>Ручной ввод д10 для stun save защитника, когда этой атакой прошла попытка наложить Оглушение.</summary>
+		Task<BattleDto> SetStunSaveRollAsync(SetStunSaveRollRequest request);
+
+		/// <summary>Разрешает stun save защитника — определяет, наложено ли Оглушение этой атакой.</summary>
+		Task<BattleDto> ResolveStunSaveAsync(long battleId);
+
+		/// <summary>Stun save в свой ход для уже оглушённого участника — единственное доступное ему действие, всегда заканчивает ход.</summary>
+		Task<BattleDto> RollOwnStunSaveAsync(RollOwnStunSaveRequest request);
+
 		Task<BattleDto> NextSwingAsync(NextSwingRequest request);
 
 		Task<BattleDto> EndActivationAsync(long battleId);

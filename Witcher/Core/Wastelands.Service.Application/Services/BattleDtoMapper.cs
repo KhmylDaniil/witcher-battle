@@ -47,6 +47,7 @@ namespace Wastelands.Service.Application.Services
 
 			var defenderContext = await _contextProvider.GetContextAsync(battle, dto.DefenderKind, dto.DefenderId);
 			dto.DefensiveSkillValues = dto.AvailableDefensiveSkills.ToDictionary(s => s, defenderContext.GetSkillValue);
+			dto.DefenderIsStunned = BattleParticipants.HasCondition(battle, dto.DefenderKind, dto.DefenderId, Condition.Stun);
 
 			if (dto.DefenderKind == ParticipantKind.Creature)
 			{

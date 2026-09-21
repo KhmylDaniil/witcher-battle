@@ -77,6 +77,16 @@ namespace Wastelands.Service.Domain.Entities
 		/// <summary>Ручной ввод суммы броска урона. Null — при разрешении урона бросает сервер.</summary>
 		public int? DamageRoll { get; private set; }
 
+		/// <summary>
+		/// Ручной ввод чистого д10 для stun save защитника — заполняется только когда этой атакой
+		/// прошла попытка наложить Condition.Stun (см. BattleCombatService.ContinueDamageAsync). Null,
+		/// пока не задан — при разрешении сервер бросает сам.
+		/// </summary>
+		public int? StunSaveRoll { get; private set; }
+
+		/// <summary>true — Оглушение наложено (StunSaveRoll >= Stun защитника), false — не наложено.</summary>
+		public bool? StunSaveSucceeded { get; private set; }
+
 		private BattleAttack()
 		{
 		}
@@ -164,7 +174,11 @@ namespace Wastelands.Service.Domain.Entities
 			DefenseRoll = defenseRoll;
 		}
 
-		public void ConfirmDefender()
+		/// <summary>
+		/// Оглушённый защитник не выбирает защитный навык — его защита фиксированно равна 10 (см.
+		/// BattleCombatCalculator.ResolveHit), поэтому проверка на выбранный навык для него снимается.
+		/// </summary>
+		public void ConfirmDefender(bool defenderIsStunned = false)
 		{
 			EnsureAwaitingChoices();
 			if (DefenderConfirmed)
@@ -172,7 +186,7 @@ namespace Wastelands.Service.Domain.Entities
 				throw new InvalidArgumentException(ErrorCode.DefenderAlreadyConfirmed, "Защитник уже подтвердил свой выбор.");
 			}
 
-			if (DefensiveSkill is null)
+			if (DefensiveSkill is null && !defenderIsStunned)
 			{
 				throw new InvalidArgumentException(ErrorCode.InvalidDefensiveSkillChoice, "Защитник должен выбрать защитный навык.");
 			}
@@ -224,15 +238,44 @@ namespace Wastelands.Service.Domain.Entities
 			DamageRoll = roll;
 		}
 
-		public void MarkDamageResolved()
+		/// <summary>
+		/// requiresStunSave — true, если этим попаданием прошла попытка наложить Condition.Stun (роль
+		/// ApplyChance-проверки уже сыграна в BattleCombatCalculator.RollAppliedConditions) — тогда
+		/// выпад не считается разрешённым, пока защитник не пройдёт stun save (см. SetStunSaveRoll/
+		/// ResolveStunSave ниже), а не сразу переходит в SwingResolved.
+		/// </summary>
+		public void MarkDamageResolved(bool requiresStunSave)
 		{
 			if (Phase != BattleAttackPhase.AwaitingDamageRoll)
 			{
 				throw new InvalidArgumentException(ErrorCode.AttackNotInExpectedPhase, "Сейчас не ожидается расчёт урона.");
 			}
 
-			Phase = BattleAttackPhase.SwingResolved;
+			Phase = requiresStunSave ? BattleAttackPhase.AwaitingStunSave : BattleAttackPhase.SwingResolved;
 			AttacksUsed++;
+		}
+
+		/// <summary>Бросок д10 в этой системе может "взрываться" — см. комментарий у SetAttackRoll.</summary>
+		public void SetStunSaveRoll(int? roll)
+		{
+			if (Phase != BattleAttackPhase.AwaitingStunSave)
+			{
+				throw new InvalidArgumentException(ErrorCode.AttackNotInExpectedPhase, "Сейчас не ожидается проверка Оглушения.");
+			}
+
+			StunSaveRoll = roll;
+		}
+
+		public void ResolveStunSave(int rollUsed, bool succeeded)
+		{
+			if (Phase != BattleAttackPhase.AwaitingStunSave)
+			{
+				throw new InvalidArgumentException(ErrorCode.AttackNotInExpectedPhase, "Сейчас не ожидается проверка Оглушения.");
+			}
+
+			StunSaveRoll = rollUsed;
+			StunSaveSucceeded = succeeded;
+			Phase = BattleAttackPhase.SwingResolved;
 		}
 
 		public void PrepareNextSwing(ParticipantKind defenderKind, long defenderId)
@@ -265,6 +308,8 @@ namespace Wastelands.Service.Domain.Entities
 			ResolvedCreaturePartId = null;
 			ResolvedHumanBodyPart = null;
 			DamageRoll = null;
+			StunSaveRoll = null;
+			StunSaveSucceeded = null;
 		}
 
 		private void EnsureAwaitingChoices()

@@ -46,6 +46,7 @@ export function AttackModal({
   const [defensiveSkill, setDefensiveSkill] = useState<Skill>(attack.availableDefensiveSkills[0])
   const [defenseRoll, setDefenseRoll] = useState('')
   const [damageRoll, setDamageRoll] = useState('')
+  const [stunSaveRollInput, setStunSaveRollInput] = useState('')
   const [nextTarget, setNextTarget] = useState<string>(`${attack.defenderKind}:${attack.defenderId}`)
 
   const confirmAttacker = useMutation({
@@ -62,10 +63,13 @@ export function AttackModal({
 
   const confirmDefender = useMutation({
     mutationFn: async () => {
-      await battlesApi.setDefenderChoice(gameId, battleId, {
-        defensiveSkill,
-        defenseRoll: defenseRoll ? Number(defenseRoll) : null,
-      })
+      // Оглушённый защитник не выбирает навык — его защита фиксирована на 10 (см. attack.defenderIsStunned).
+      if (!attack.defenderIsStunned) {
+        await battlesApi.setDefenderChoice(gameId, battleId, {
+          defensiveSkill,
+          defenseRoll: defenseRoll ? Number(defenseRoll) : null,
+        })
+      }
       await battlesApi.confirmDefender(gameId, battleId)
     },
     onSuccess: invalidate,
@@ -75,6 +79,14 @@ export function AttackModal({
     mutationFn: async () => {
       await battlesApi.setDamageRoll(gameId, battleId, damageRoll ? Number(damageRoll) : null)
       await battlesApi.continueDamage(gameId, battleId)
+    },
+    onSuccess: invalidate,
+  })
+
+  const submitStunSave = useMutation({
+    mutationFn: async () => {
+      await battlesApi.setStunSaveRoll(gameId, battleId, stunSaveRollInput ? Number(stunSaveRollInput) : null)
+      await battlesApi.resolveStunSave(gameId, battleId)
     },
     onSuccess: invalidate,
   })
@@ -92,9 +104,15 @@ export function AttackModal({
     onSuccess: invalidate,
   })
 
-  const error = confirmAttacker.error ?? confirmDefender.error ?? continueDamage.error ?? nextSwing.error ?? endActivation.error
+  const error =
+    confirmAttacker.error ?? confirmDefender.error ?? continueDamage.error ?? submitStunSave.error ?? nextSwing.error ?? endActivation.error
   const isPending =
-    confirmAttacker.isPending || confirmDefender.isPending || continueDamage.isPending || nextSwing.isPending || endActivation.isPending
+    confirmAttacker.isPending
+    || confirmDefender.isPending
+    || continueDamage.isPending
+    || submitStunSave.isPending
+    || nextSwing.isPending
+    || endActivation.isPending
 
   const targetOptions = getTargetOptions(battle, { kind: attack.attackerKind, id: attack.attackerId })
 
@@ -168,6 +186,15 @@ export function AttackModal({
           {isDefenderController && attack.phase === 'AwaitingChoices' ? (
             attack.defenderConfirmed ? (
               <p className="text-sm text-green-700 dark:text-green-400">✓ Защитник подтвердил выбор</p>
+            ) : attack.defenderIsStunned ? (
+              <div className="rounded-md border border-neutral-200 p-3 dark:border-neutral-800">
+                <p className="mb-2 text-sm text-amber-600 dark:text-amber-400">
+                  {attack.defenderName} оглушён и не бросает защиту — итог фиксирован на 10.
+                </p>
+                <Button disabled={isPending} onClick={() => confirmDefender.mutate()}>
+                  Подтвердить
+                </Button>
+              </div>
             ) : (
               <div className="rounded-md border border-neutral-200 p-3 dark:border-neutral-800">
                 <p className="mb-2 text-sm text-neutral-500">{attack.defenderName}: выбор защиты</p>
@@ -233,11 +260,44 @@ export function AttackModal({
         </div>
       )}
 
+      {attack.phase === 'AwaitingStunSave' && (
+        <div className="flex flex-col gap-3">
+          <p className="text-sm text-amber-600 dark:text-amber-400">
+            Попадание! Возможна попытка наложить Оглушение — {attack.defenderName} проходит stun save.
+          </p>
+          {isDefenderController ? (
+            <div className="rounded-md border border-neutral-200 p-3 dark:border-neutral-800">
+              <div className="mb-2">
+                <Field label="Чистый бросок д10 (stun save; необязательно — иначе бросит сервер)">
+                  <Input
+                    type="number"
+                    className="w-24"
+                    value={stunSaveRollInput}
+                    onChange={(e) => setStunSaveRollInput(e.target.value)}
+                    placeholder="кубик"
+                  />
+                </Field>
+              </div>
+              <Button disabled={isPending} onClick={() => submitStunSave.mutate()}>
+                Бросить
+              </Button>
+            </div>
+          ) : (
+            <p className="text-sm text-neutral-500">Защитник проходит проверку Оглушения…</p>
+          )}
+        </div>
+      )}
+
       {attack.phase === 'SwingResolved' && (
         <div className="flex flex-col gap-3">
           <p className="text-sm">
             Результат: {attack.lastHitSucceeded ? 'попадание' : 'промах'}. Подробности — в логе боя.
           </p>
+          {attack.stunSaveSucceeded !== null && (
+            <p className="text-sm">
+              Проверка Оглушения: бросок {attack.stunSaveRoll} — {attack.stunSaveSucceeded ? 'Оглушение наложено.' : 'Оглушение не наложено.'}
+            </p>
+          )}
           {isAttackerController && (
             <div className="flex flex-col gap-2">
               <p className="text-xs text-neutral-500">

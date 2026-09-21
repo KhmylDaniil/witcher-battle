@@ -142,6 +142,15 @@ export function BattleDetailsPage() {
   })
   const skipTurn = useMutation({ mutationFn: () => battlesApi.skipTurn(gameIdNum, id), onSuccess: invalidate })
 
+  const [ownStunSaveRoll, setOwnStunSaveRoll] = useState('')
+  const rollOwnStunSave = useMutation({
+    mutationFn: () => battlesApi.rollOwnStunSave(gameIdNum, id, ownStunSaveRoll ? Number(ownStunSaveRoll) : null),
+    onSuccess: async () => {
+      await invalidate()
+      setOwnStunSaveRoll('')
+    },
+  })
+
   const [sheetTarget, setSheetTarget] = useState<{ kind: 'creature' | 'character'; refId: number } | null>(null)
 
   const [conditionDrafts, setConditionDrafts] = useState<Record<string, Condition>>({})
@@ -421,48 +430,73 @@ export function BattleDetailsPage() {
       {b.status === 'InProgress' && !attack && isActiveController && activeParticipant && (
         <Card>
           <h2 className="mb-3 font-semibold">Ваш ход: {activeParticipant.name}</h2>
-          {(() => {
-            const abilities: Ability[] =
-              activeParticipant.kind === 'creature' ? (activeCreatureTemplate.data?.abilities ?? []) : (activeCharacterDetail.data?.abilities ?? [])
-            const targetOptions = participants.filter(
-              (p) => !(p.kind === activeParticipant.kind && p.refId === activeParticipant.refId),
-            )
-            return (
-              <>
-                <div className="mb-3 flex flex-wrap items-end gap-2">
-                  <Field label="Способность">
-                    <Select className="w-48" value={attackAbilityId ?? ''} onChange={(e) => setAttackAbilityId(e.target.value ? Number(e.target.value) : null)}>
-                      <option value="">— выберите способность —</option>
-                      {abilities.map((a) => (
-                        <option key={a.id} value={a.id}>
-                          {a.name}
-                        </option>
-                      ))}
-                    </Select>
-                  </Field>
-                  <Field label="Цель">
-                    <Select className="w-48" value={attackTarget} onChange={(e) => setAttackTarget(e.target.value)}>
-                      <option value="">— выберите цель —</option>
-                      {targetOptions.map((t) => (
-                        <option key={`${t.kind}-${t.refId}`} value={`${t.kind === 'creature' ? 'Creature' : 'Character'}:${t.refId}`}>
-                          {t.name}
-                        </option>
-                      ))}
-                    </Select>
-                  </Field>
-                  <Button disabled={!attackAbilityId || !attackTarget || startAttack.isPending} onClick={() => startAttack.mutate()}>
-                    Атаковать
-                  </Button>
-                  <Button variant="secondary" disabled={skipTurn.isPending} onClick={() => skipTurn.mutate()}>
-                    Пропустить ход
-                  </Button>
-                </div>
-                {startAttack.error && (
-                  <ErrorText>{startAttack.error instanceof ApiError ? startAttack.error.message : 'Не удалось начать атаку'}</ErrorText>
-                )}
-              </>
-            )
-          })()}
+          {activeParticipant.appliedConditions.includes('Stun') ? (
+            <>
+              <p className="mb-2 text-sm text-amber-600 dark:text-amber-400">
+                {activeParticipant.name} оглушён и может только пройти проверку Оглушения — ход завершится сразу после броска.
+              </p>
+              <div className="mb-3 flex flex-wrap items-end gap-2">
+                <Field label="Чистый бросок д10 (stun save; необязательно — иначе бросит сервер)">
+                  <Input
+                    type="number"
+                    className="w-24"
+                    value={ownStunSaveRoll}
+                    onChange={(e) => setOwnStunSaveRoll(e.target.value)}
+                    placeholder="кубик"
+                  />
+                </Field>
+                <Button disabled={rollOwnStunSave.isPending} onClick={() => rollOwnStunSave.mutate()}>
+                  Бросить
+                </Button>
+              </div>
+              {rollOwnStunSave.error && (
+                <ErrorText>{rollOwnStunSave.error instanceof ApiError ? rollOwnStunSave.error.message : 'Не удалось пройти проверку Оглушения'}</ErrorText>
+              )}
+            </>
+          ) : (
+            (() => {
+              const abilities: Ability[] =
+                activeParticipant.kind === 'creature' ? (activeCreatureTemplate.data?.abilities ?? []) : (activeCharacterDetail.data?.abilities ?? [])
+              const targetOptions = participants.filter(
+                (p) => !(p.kind === activeParticipant.kind && p.refId === activeParticipant.refId),
+              )
+              return (
+                <>
+                  <div className="mb-3 flex flex-wrap items-end gap-2">
+                    <Field label="Способность">
+                      <Select className="w-48" value={attackAbilityId ?? ''} onChange={(e) => setAttackAbilityId(e.target.value ? Number(e.target.value) : null)}>
+                        <option value="">— выберите способность —</option>
+                        {abilities.map((a) => (
+                          <option key={a.id} value={a.id}>
+                            {a.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </Field>
+                    <Field label="Цель">
+                      <Select className="w-48" value={attackTarget} onChange={(e) => setAttackTarget(e.target.value)}>
+                        <option value="">— выберите цель —</option>
+                        {targetOptions.map((t) => (
+                          <option key={`${t.kind}-${t.refId}`} value={`${t.kind === 'creature' ? 'Creature' : 'Character'}:${t.refId}`}>
+                            {t.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </Field>
+                    <Button disabled={!attackAbilityId || !attackTarget || startAttack.isPending} onClick={() => startAttack.mutate()}>
+                      Атаковать
+                    </Button>
+                    <Button variant="secondary" disabled={skipTurn.isPending} onClick={() => skipTurn.mutate()}>
+                      Пропустить ход
+                    </Button>
+                  </div>
+                  {startAttack.error && (
+                    <ErrorText>{startAttack.error instanceof ApiError ? startAttack.error.message : 'Не удалось начать атаку'}</ErrorText>
+                  )}
+                </>
+              )
+            })()
+          )}
         </Card>
       )}
 

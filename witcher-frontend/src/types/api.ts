@@ -435,7 +435,7 @@ export interface BattleCharacterEntry {
 
 export type ParticipantKind = 'Creature' | 'Character'
 
-export type BattleAttackPhase = 'AwaitingChoices' | 'AwaitingDamageRoll' | 'SwingResolved'
+export type BattleAttackPhase = 'AwaitingChoices' | 'AwaitingDamageRoll' | 'SwingResolved' | 'AwaitingStunSave'
 
 export interface CreaturePartOption {
   id: number
@@ -471,10 +471,16 @@ export interface BattleAttack {
   defensiveSkill: Skill | null
   defenseRoll: number | null
   defenderConfirmed: boolean
+  /** Оглушённый защитник не выбирает навык/не бросает защиту — защита фиксирована на 10, шаг выбора нужно скрыть. */
+  defenderIsStunned: boolean
   phase: BattleAttackPhase
   lastHitSucceeded: boolean | null
   resolvedCreaturePartId: number | null
   damageRoll: number | null
+  /** Заполнено, когда phase === 'AwaitingStunSave' или проверка уже пройдена. */
+  stunSaveRoll: number | null
+  /** true — Оглушение наложено этой атакой, false — не наложено, null — проверка ещё не пройдена. */
+  stunSaveSucceeded: boolean | null
 }
 
 export interface BattleLogEntry {

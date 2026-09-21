@@ -53,6 +53,9 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public bool DefenderConfirmed { get; set; }
 
+		/// <summary>Оглушённый защитник не выбирает навык/не бросает защиту — фронт должен скрыть этот шаг и сразу предложить подтвердить.</summary>
+		public bool DefenderIsStunned { get; set; }
+
 		public BattleAttackPhase Phase { get; set; }
 
 		public bool? LastHitSucceeded { get; set; }
@@ -60,5 +63,11 @@ namespace Wastelands.Service.Application.Models.Dto
 		public long? ResolvedCreaturePartId { get; set; }
 
 		public int? DamageRoll { get; set; }
+
+		/// <summary>Заполнено, только когда Phase == AwaitingStunSave или уже пройдена — ручной ввод д10 для stun save защитника.</summary>
+		public int? StunSaveRoll { get; set; }
+
+		/// <summary>true — Оглушение наложено этой атакой, false — не наложено. Null, пока проверка не пройдена.</summary>
+		public bool? StunSaveSucceeded { get; set; }
 	}
 }

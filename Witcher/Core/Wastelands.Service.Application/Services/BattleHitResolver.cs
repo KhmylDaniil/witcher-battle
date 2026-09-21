@@ -24,7 +24,8 @@ namespace Wastelands.Service.Application.Services
 			var ability = attackerContext.Abilities.First(a => a.Id == attack.AbilityId);
 			var defenderContext = await _contextProvider.GetContextAsync(battle, attack.DefenderKind, attack.DefenderId);
 
-			var hit = BattleCombatCalculator.ResolveHit(attackerContext, defenderContext, ability, attack);
+			var defenderIsStunned = BattleParticipants.HasCondition(battle, attack.DefenderKind, attack.DefenderId, Condition.Stun);
+			var hit = BattleCombatCalculator.ResolveHit(attackerContext, defenderContext, ability, attack, defenderIsStunned);
 			attack.MarkHitResolved(
 				hit.Succeeded, hit.ResolvedCreaturePartId, hit.ResolvedHumanBodyPart, hit.AttackRoll, hit.AttackTotal, hit.DefenseRoll, hit.DefenseTotal);
 

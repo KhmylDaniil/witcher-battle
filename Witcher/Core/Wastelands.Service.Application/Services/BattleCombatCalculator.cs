@@ -61,12 +61,14 @@ namespace Wastelands.Service.Application.Services
 		/// защитника это вычитает HitPenalty этой части из итога атаки — плата за прицеливание),
 		/// либо, если не выбрана, случайная (у существа — по d10 в диапазон MinToHit..MaxToHit, у
 		/// персонажа — по HumanBodyPartCatalog.ResolveByRoll).
+		/// Оглушённый защитник не бросает защиту вовсе — его итог фиксирован на 10 (см. defenderIsStunned).
 		/// </summary>
 		public static HitResult ResolveHit(
 			ParticipantCombatContext attackerContext,
 			ParticipantCombatContext defenderContext,
 			Ability ability,
-			BattleAttack attack)
+			BattleAttack attack,
+			bool defenderIsStunned = false)
 		{
 			long? resolvedPartId = null;
 			HumanBodyPart? resolvedHumanBodyPart = null;
@@ -103,8 +105,18 @@ namespace Wastelands.Service.Application.Services
 			var attackRollUsed = attack.AttackRoll ?? RollDie(10);
 			var attackTotal = attackerContext.GetSkillValue(ability.AttackSkill) - hitPenalty + attackRollUsed + ability.AttackModifier;
 
-			var defenseRollUsed = attack.DefenseRoll ?? RollDie(10);
-			var defenseTotal = defenderContext.GetSkillValue(attack.DefensiveSkill!.Value) + defenseRollUsed;
+			int defenseRollUsed;
+			int defenseTotal;
+			if (defenderIsStunned)
+			{
+				defenseRollUsed = 0;
+				defenseTotal = 10;
+			}
+			else
+			{
+				defenseRollUsed = attack.DefenseRoll ?? RollDie(10);
+				defenseTotal = defenderContext.GetSkillValue(attack.DefensiveSkill!.Value) + defenseRollUsed;
+			}
 
 			var succeeded = attackTotal > defenseTotal;
 			return new HitResult(

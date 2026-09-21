@@ -63,6 +63,12 @@ export const battlesApi = {
     api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/damage-roll`, { damageRoll }),
   continueDamage: (gameId: number, battleId: number) =>
     api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/continue`),
+  setStunSaveRoll: (gameId: number, battleId: number, roll: number | null) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/stun-save-roll`, { roll }),
+  resolveStunSave: (gameId: number, battleId: number) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/stun-save-resolve`),
+  rollOwnStunSave: (gameId: number, battleId: number, roll: number | null) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/stun-save`, { roll }),
   nextSwing: (gameId: number, battleId: number, payload: { defenderKind: ParticipantKind; defenderId: number }) =>
     api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/next-swing`, payload),
   endActivation: (gameId: number, battleId: number) =>

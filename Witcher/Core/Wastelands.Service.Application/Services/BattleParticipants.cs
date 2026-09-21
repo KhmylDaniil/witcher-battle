@@ -115,7 +115,42 @@ namespace Wastelands.Service.Application.Services
 			}
 		}
 
-		/// <summary>Применяет итог урона к защитнику (существо — ещё и износ брони) и накладывает состояния, прошедшие проверку.</summary>
+		public static bool HasCondition(Battle battle, ParticipantKind kind, long participantId, Condition condition)
+		{
+			return kind == ParticipantKind.Creature
+				? GetCreature(battle, participantId).AppliedConditions.Contains(condition)
+				: GetBattleCharacter(battle, participantId).AppliedConditions.Contains(condition);
+		}
+
+		public static void AddCondition(Battle battle, ParticipantKind kind, long participantId, Condition condition)
+		{
+			if (kind == ParticipantKind.Creature)
+			{
+				GetCreature(battle, participantId).AddCondition(condition);
+			}
+			else
+			{
+				GetBattleCharacter(battle, participantId).AddCondition(condition);
+			}
+		}
+
+		public static void RemoveCondition(Battle battle, ParticipantKind kind, long participantId, Condition condition)
+		{
+			if (kind == ParticipantKind.Creature)
+			{
+				GetCreature(battle, participantId).RemoveCondition(condition);
+			}
+			else
+			{
+				GetBattleCharacter(battle, participantId).RemoveCondition(condition);
+			}
+		}
+
+		/// <summary>
+		/// Применяет итог урона к защитнику (существо — ещё и износ брони) и накладывает состояния,
+		/// прошедшие проверку (Condition.Stun сюда не попадает — она проходит через отдельный stun save,
+		/// см. BattleCombatService.ContinueDamageAsync). Получение урона снимает уже наложенное Оглушение.
+		/// </summary>
 		public static void ApplyDamage(
 			Battle battle,
 			BattleAttack attack,
@@ -124,6 +159,11 @@ namespace Wastelands.Service.Application.Services
 			DamageResult damage,
 			IReadOnlyList<Condition> appliedConditions)
 		{
+			if (damage.FinalDamage >= 1 && HasCondition(battle, defenderKind, defenderId, Condition.Stun))
+			{
+				RemoveCondition(battle, defenderKind, defenderId, Condition.Stun);
+			}
+
 			if (defenderKind == ParticipantKind.Creature)
 			{
 				var creature = GetCreature(battle, defenderId);
@@ -132,21 +172,16 @@ namespace Wastelands.Service.Application.Services
 				{
 					creature.WearArmor(attack.ResolvedCreaturePartId!.Value);
 				}
-
-				foreach (var condition in appliedConditions)
-				{
-					creature.AddCondition(condition);
-				}
 			}
 			else
 			{
 				var character = GetBattleCharacter(battle, defenderId);
 				character.ApplyDamage(damage.FinalDamage);
+			}
 
-				foreach (var condition in appliedConditions)
-				{
-					character.AddCondition(condition);
-				}
+			foreach (var condition in appliedConditions)
+			{
+				AddCondition(battle, defenderKind, defenderId, condition);
 			}
 		}
 	}

@@ -64,6 +64,8 @@
 		BattleNotInProgress = 619,
 		InvalidDamageRoll = 620,
 		InvalidTargetedBodyPart = 621,
+		ParticipantIsStunned = 622,
+		ParticipantNotStunned = 623,
 
 		// image errors 700...
 		UnsupportedImageType = 700,
