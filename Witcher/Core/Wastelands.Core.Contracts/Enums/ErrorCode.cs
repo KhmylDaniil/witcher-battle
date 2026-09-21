@@ -66,6 +66,7 @@
 		InvalidTargetedBodyPart = 621,
 		ParticipantIsStunned = 622,
 		ParticipantNotStunned = 623,
+		NotEnoughStaminaForBonusAction = 624,
 
 		// image errors 700...
 		UnsupportedImageType = 700,

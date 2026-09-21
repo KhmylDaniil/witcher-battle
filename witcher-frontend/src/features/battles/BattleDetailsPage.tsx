@@ -28,6 +28,8 @@ type Participant = {
   appliedConditions: Condition[]
   creatureTemplateId?: number
   characterUserId?: number
+  /** Только для персонажей — уже потратил основное действие в этот ход, доступно доп. действие или конец хода. */
+  hasActedThisTurn?: boolean
   /** Только для существ — износ брони по частям тела в этом бою (для расчёта текущей брони в карточке). */
   armorReductionByPartId?: Partial<Record<number, number>>
 }
@@ -214,6 +216,7 @@ export function BattleDetailsPage() {
       initiative: bc.initiative,
       appliedConditions: bc.appliedConditions,
       characterUserId: bc.characterUserId,
+      hasActedThisTurn: bc.hasActedThisTurn,
     })),
   ].sort((x, y) => {
     if (x.initiative != null && y.initiative != null) return x.initiative - y.initiative
@@ -460,8 +463,19 @@ export function BattleDetailsPage() {
               const targetOptions = participants.filter(
                 (p) => !(p.kind === activeParticipant.kind && p.refId === activeParticipant.refId),
               )
+              // Персонаж (не существо) после основного действия может взять ещё одно за 3 выносливости,
+              // с модификатором -3 (см. BattleCombatService.StartAttackAsync) — тот же выбор способности/
+              // цели, только другая подпись кнопок и предупреждение о цене/штрафе.
+              const isBonusActionWindow = activeParticipant.kind === 'character' && activeParticipant.hasActedThisTurn === true
+              const notEnoughStaForBonusAction = isBonusActionWindow && activeParticipant.currentSta < 3
               return (
                 <>
+                  {isBonusActionWindow && (
+                    <p className="mb-2 text-sm text-amber-600 dark:text-amber-400">
+                      Основное действие уже потрачено. Можно взять дополнительное действие за 3 выносливости
+                      (модификатор −3, в т.ч. на оба удара мультиатаки) либо закончить ход.
+                    </p>
+                  )}
                   <div className="mb-3 flex flex-wrap items-end gap-2">
                     <Field label="Способность">
                       <Select className="w-48" value={attackAbilityId ?? ''} onChange={(e) => setAttackAbilityId(e.target.value ? Number(e.target.value) : null)}>
@@ -483,13 +497,19 @@ export function BattleDetailsPage() {
                         ))}
                       </Select>
                     </Field>
-                    <Button disabled={!attackAbilityId || !attackTarget || startAttack.isPending} onClick={() => startAttack.mutate()}>
-                      Атаковать
+                    <Button
+                      disabled={!attackAbilityId || !attackTarget || startAttack.isPending || notEnoughStaForBonusAction}
+                      onClick={() => startAttack.mutate()}
+                    >
+                      {isBonusActionWindow ? 'Доп. действие (3 STA, −3)' : 'Атаковать'}
                     </Button>
                     <Button variant="secondary" disabled={skipTurn.isPending} onClick={() => skipTurn.mutate()}>
-                      Пропустить ход
+                      {isBonusActionWindow ? 'Закончить ход' : 'Пропустить ход'}
                     </Button>
                   </div>
+                  {notEnoughStaForBonusAction && (
+                    <p className="mb-2 text-sm text-neutral-500">Недостаточно выносливости для дополнительного действия.</p>
+                  )}
                   {startAttack.error && (
                     <ErrorText>{startAttack.error instanceof ApiError ? startAttack.error.message : 'Не удалось начать атаку'}</ErrorText>
                   )}

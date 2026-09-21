@@ -33,6 +33,14 @@ namespace Wastelands.Service.Domain.Entities
 		/// <summary>Критические ранения этого персонажа — по слоту (часть тела + тип урона), см. Creature.CriticalWounds.</summary>
 		public Dictionary<string, Condition> CriticalWounds { get; private set; } = [];
 
+		/// <summary>
+		/// true — этот персонаж уже потратил в текущий свой ход основное (бесплатное) действие и может
+		/// либо взять дополнительное за BattleAttack.BonusActionStaminaCost выносливости, либо закончить
+		/// ход (см. BattleCombatService.EndActivationAsync/StartAttackAsync). Сбрасывается на false в
+		/// начале каждого следующего хода — см. Battle.AdvanceTurn.
+		/// </summary>
+		public bool HasActedThisTurn { get; private set; }
+
 		/// <summary>EF-навигация — нужна для отображения имени персонажа в списке боя.</summary>
 		public Character Character { get; set; }
 
@@ -74,6 +82,25 @@ namespace Wastelands.Service.Domain.Entities
 		{
 			InvalidArgumentException.ThrowIfLessThanZero(damage, nameof(damage));
 			CurrentHP = Math.Max(0, CurrentHP - damage);
+		}
+
+		/// <summary>Списывает выносливость на дополнительное действие — CurrentSta не опускается ниже нуля.</summary>
+		public void SpendStamina(int amount)
+		{
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(amount, nameof(amount));
+			CurrentSta = Math.Max(0, CurrentSta - amount);
+		}
+
+		/// <summary>Основное действие хода потрачено — открывает окно дополнительного действия (см. HasActedThisTurn).</summary>
+		public void MarkActedThisTurn()
+		{
+			HasActedThisTurn = true;
+		}
+
+		/// <summary>Новый ход — сбрасывает окно дополнительного действия. Вызывается из Battle.AdvanceTurn.</summary>
+		internal void ResetTurnState()
+		{
+			HasActedThisTurn = false;
 		}
 
 		public void AddCondition(Condition condition)

@@ -61,8 +61,29 @@ namespace Wastelands.Service.Application.Services
 				throw new InvalidArgumentException(ErrorCode.AbilityDoesNotBelongToAttacker, "У атакующего нет такой способности.");
 			}
 
+			// Только у персонажа: если он уже потратил в этот ход основное действие (см. EndActivationAsync),
+			// эта атака — дополнительное действие за плату выносливостью со штрафом к атаке (только
+			// существа этой возможности лишены — у них одно действие за ход, без исключений).
+			var isBonusAction = false;
+			if (attackerKind == ParticipantKind.Character)
+			{
+				var battleCharacter = BattleParticipants.GetBattleCharacter(battle, attackerId);
+				if (battleCharacter.HasActedThisTurn)
+				{
+					if (battleCharacter.CurrentSta < BattleAttack.BonusActionStaminaCost)
+					{
+						throw new InvalidArgumentException(
+							ErrorCode.NotEnoughStaminaForBonusAction,
+							$"Недостаточно выносливости для дополнительного действия (нужно {BattleAttack.BonusActionStaminaCost}).");
+					}
+
+					battleCharacter.SpendStamina(BattleAttack.BonusActionStaminaCost);
+					isBonusAction = true;
+				}
+			}
+
 			var attack = new BattleAttack(
-				battle.Id, attackerKind, attackerId, ability.Id, ability.AttacksPerTurn, request.DefenderKind, request.DefenderId);
+				battle.Id, attackerKind, attackerId, ability.Id, ability.AttacksPerTurn, request.DefenderKind, request.DefenderId, isBonusAction);
 			battle.StartAttack(attack);
 
 			return await SaveAndNotifyAsync(battle);
@@ -332,7 +353,19 @@ namespace Wastelands.Service.Application.Services
 			}
 
 			battle.ClearAttack();
-			battle.AdvanceTurn();
+
+			// Персонаж после основного (бесплатного) действия может взять ещё одно за выносливость (см.
+			// StartAttackAsync) — поэтому ход передаётся дальше только после дополнительного действия
+			// или отказа от него (SkipTurnAsync). У существ такой возможности нет — их ход всегда
+			// заканчивается сразу.
+			if (attack.AttackerKind == ParticipantKind.Character && !attack.IsBonusAction)
+			{
+				BattleParticipants.GetBattleCharacter(battle, attack.AttackerId).MarkActedThisTurn();
+			}
+			else
+			{
+				battle.AdvanceTurn();
+			}
 
 			return await SaveAndNotifyAsync(battle);
 		}

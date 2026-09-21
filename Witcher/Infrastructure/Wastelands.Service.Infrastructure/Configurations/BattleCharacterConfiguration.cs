@@ -38,6 +38,11 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasComment("AppliedConditions")
 				.IsRequired();
 
+			builder.Property(x => x.HasActedThisTurn)
+				.HasColumnName("HasActedThisTurn")
+				.HasComment("Основное действие текущего хода уже потрачено — открыто окно дополнительного действия")
+				.IsRequired();
+
 			builder.Property(x => x.CriticalWounds)
 				.HasColumnType("jsonb")
 				.HasColumnName("CriticalWounds")

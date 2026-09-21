@@ -22,5 +22,8 @@ namespace Wastelands.Service.Application.Models.Dto
 		public int? Initiative { get; set; }
 
 		public List<Condition> AppliedConditions { get; set; } = [];
+
+		/// <summary>true — этот персонаж уже потратил в свой текущий ход основное действие и может взять дополнительное (см. BattleAttack.BonusActionStaminaCost) или закончить ход.</summary>
+		public bool HasActedThisTurn { get; set; }
 	}
 }

@@ -69,5 +69,8 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		/// <summary>true — Оглушение наложено этой атакой, false — не наложено. Null, пока проверка не пройдена.</summary>
 		public bool? StunSaveSucceeded { get; set; }
+
+		/// <summary>true — это дополнительное действие персонажа за выносливость, со штрафом к атаке (см. BattleAttack.IsBonusAction).</summary>
+		public bool IsBonusAction { get; set; }
 	}
 }

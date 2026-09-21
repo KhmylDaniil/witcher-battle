@@ -14,6 +14,12 @@ namespace Wastelands.Service.Domain.Entities
 	/// </summary>
 	public class BattleAttack : Entity
 	{
+		/// <summary>Стоимость дополнительного действия персонажа за ход (см. IsBonusAction) в выносливости.</summary>
+		public const int BonusActionStaminaCost = 3;
+
+		/// <summary>Штраф к атаке дополнительного действия персонажа (см. IsBonusAction).</summary>
+		public const int BonusActionAttackPenalty = 3;
+
 		public long BattleId { get; private set; }
 
 		public ParticipantKind AttackerKind { get; private set; }
@@ -87,6 +93,15 @@ namespace Wastelands.Service.Domain.Entities
 		/// <summary>true — Оглушение наложено (StunSaveRoll >= Stun защитника), false — не наложено.</summary>
 		public bool? StunSaveSucceeded { get; private set; }
 
+		/// <summary>
+		/// true — это дополнительное действие персонажа за BonusActionStaminaCost выносливости, взятое
+		/// после уже потраченного в этот ход основного действия (см. BattleCombatService.StartAttackAsync/
+		/// EndActivationAsync). К атаке применяется штраф BonusActionAttackPenalty — на каждый выпад,
+		/// включая оба удара мультиатаки, т.к. значение не сбрасывается в PrepareNextSwing. У существ
+		/// дополнительных действий нет — для них всегда false.
+		/// </summary>
+		public bool IsBonusAction { get; private set; }
+
 		private BattleAttack()
 		{
 		}
@@ -98,7 +113,8 @@ namespace Wastelands.Service.Domain.Entities
 			long abilityId,
 			int attacksAllowed,
 			ParticipantKind defenderKind,
-			long defenderId)
+			long defenderId,
+			bool isBonusAction)
 		{
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(battleId, nameof(battleId));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(attackerId, nameof(attackerId));
@@ -113,6 +129,7 @@ namespace Wastelands.Service.Domain.Entities
 			AttacksAllowed = attacksAllowed;
 			DefenderKind = defenderKind;
 			DefenderId = defenderId;
+			IsBonusAction = isBonusAction;
 			Phase = BattleAttackPhase.AwaitingChoices;
 		}
 

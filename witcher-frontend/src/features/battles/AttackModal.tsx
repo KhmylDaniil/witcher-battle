@@ -121,6 +121,11 @@ export function AttackModal({
       <h2 className="mb-3 font-semibold">
         {attack.attackerName} атакует {attack.defenderName} — {attack.abilityName}
       </h2>
+      {attack.isBonusAction && (
+        <p className="mb-3 text-sm text-amber-600 dark:text-amber-400">
+          Дополнительное действие: потрачено 3 выносливости, к атаке применён модификатор −3.
+        </p>
+      )}
 
       {(attack.phase === 'AwaitingChoices' || attack.phase === 'AwaitingDamageRoll') && (
         <div className="flex flex-col gap-4">

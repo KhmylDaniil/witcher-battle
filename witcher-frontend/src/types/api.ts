@@ -453,6 +453,8 @@ export interface BattleCharacterEntry {
   currentSta: number
   initiative: number | null
   appliedConditions: Condition[]
+  /** Уже потратил основное действие в этот ход — доступно доп. действие за 3 выносливости или конец хода. */
+  hasActedThisTurn: boolean
 }
 
 export type ParticipantKind = 'Creature' | 'Character'
@@ -503,6 +505,8 @@ export interface BattleAttack {
   stunSaveRoll: number | null
   /** true — Оглушение наложено этой атакой, false — не наложено, null — проверка ещё не пройдена. */
   stunSaveSucceeded: boolean | null
+  /** true — дополнительное действие персонажа за выносливость, со штрафом -3 к атаке. */
+  isBonusAction: boolean
 }
 
 export interface BattleLogEntry {

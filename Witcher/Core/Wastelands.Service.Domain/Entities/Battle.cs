@@ -73,6 +73,13 @@ namespace Wastelands.Service.Domain.Entities
 			{
 				CurrentInitiative++;
 			}
+
+			// Окно дополнительного действия (см. BattleCharacter.HasActedThisTurn) действует только до
+			// конца текущего хода того же персонажа — при любой передаче хода оно закрывается.
+			foreach (var character in Characters)
+			{
+				character.ResetTurnState();
+			}
 		}
 
 		public void AddLogEntry(string message)

@@ -65,6 +65,8 @@ namespace Wastelands.Service.Application.Services
 		/// либо, если не выбрана, случайная (у существа — по d10 в диапазон MinToHit..MaxToHit, у
 		/// персонажа — по HumanBodyPartCatalog.ResolveByRoll).
 		/// Оглушённый защитник не бросает защиту вовсе — его итог фиксирован на 10 (см. defenderIsStunned).
+		/// Дополнительное действие персонажа (attack.IsBonusAction) вычитает из атаки ещё
+		/// BonusActionAttackPenalty — на каждый выпад активации, включая оба удара мультиатаки.
 		/// </summary>
 		public static HitResult ResolveHit(
 			ParticipantCombatContext attackerContext,
@@ -106,7 +108,8 @@ namespace Wastelands.Service.Application.Services
 			}
 
 			var attackRollUsed = attack.AttackRoll ?? RollDie(10);
-			var attackTotal = attackerContext.GetSkillValue(ability.AttackSkill) - hitPenalty + attackRollUsed + ability.AttackModifier;
+			var bonusActionPenalty = attack.IsBonusAction ? BattleAttack.BonusActionAttackPenalty : 0;
+			var attackTotal = attackerContext.GetSkillValue(ability.AttackSkill) - hitPenalty - bonusActionPenalty + attackRollUsed + ability.AttackModifier;
 
 			int defenseRollUsed;
 			int defenseTotal;
