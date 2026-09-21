@@ -26,5 +26,15 @@ namespace Wastelands.Service.Domain.Drafts
 
 		/// <summary>Часть тела по броску d10, аналогично распределению MinToHit..MaxToHit у BodyTemplatePart.</summary>
 		public static HumanBodyPart ResolveByRoll(int roll) => Parts.First(kv => roll >= kv.Value.MinToHit && roll <= kv.Value.MaxToHit).Key;
+
+		/// <summary>Группа частей тела для критических ранений (см. CriticalWoundCatalog) — левая/правая рука и нога делят одну группу.</summary>
+		public static BodyPartType GetBodyPartType(HumanBodyPart part) => part switch
+		{
+			HumanBodyPart.Head => BodyPartType.Head,
+			HumanBodyPart.Torso => BodyPartType.Torso,
+			HumanBodyPart.RightArm or HumanBodyPart.LeftArm => BodyPartType.Arm,
+			HumanBodyPart.RightLeg or HumanBodyPart.LeftLeg => BodyPartType.Leg,
+			_ => throw new ArgumentOutOfRangeException(nameof(part)),
+		};
 	}
 }

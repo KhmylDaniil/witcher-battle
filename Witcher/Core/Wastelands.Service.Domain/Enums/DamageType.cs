@@ -5,8 +5,6 @@ namespace Wastelands.Service.Domain.Enums
 		Slashing,
 		Piercing,
 		Bludgeoning,
-		Elemental,
 		Fire,
-		Silver,
 	}
 }

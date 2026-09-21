@@ -146,6 +146,18 @@ namespace Wastelands.Service.Application.Services
 			}
 		}
 
+		public static void ApplyCriticalWound(Battle battle, ParticipantKind kind, long participantId, string slotKey, Condition wound)
+		{
+			if (kind == ParticipantKind.Creature)
+			{
+				GetCreature(battle, participantId).ApplyCriticalWound(slotKey, wound);
+			}
+			else
+			{
+				GetBattleCharacter(battle, participantId).ApplyCriticalWound(slotKey, wound);
+			}
+		}
+
 		/// <summary>
 		/// Применяет итог урона к защитнику (существо — ещё и износ брони) и накладывает состояния,
 		/// прошедшие проверку (Condition.Stun сюда не попадает — она проходит через отдельный stun save,

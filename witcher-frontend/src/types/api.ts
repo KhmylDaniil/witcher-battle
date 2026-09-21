@@ -342,7 +342,7 @@ export interface Item {
 
 // ---- Damage types / modifiers ----
 
-export const DAMAGE_TYPES = ['Slashing', 'Piercing', 'Bludgeoning', 'Elemental', 'Fire', 'Silver'] as const
+export const DAMAGE_TYPES = ['Slashing', 'Piercing', 'Bludgeoning', 'Fire'] as const
 export type DamageType = (typeof DAMAGE_TYPES)[number]
 
 export const DAMAGE_TYPE_MODIFIERS = ['Vulnerability', 'Resistance', 'Immunity'] as const
@@ -358,6 +358,28 @@ export const CONDITIONS = [
   'ComplexLeg', 'ComplexArm', 'ComplexWing', 'ComplexTail', 'ComplexHead1', 'ComplexHead2', 'ComplexTorso1', 'ComplexTorso2',
   'DifficultLeg', 'DifficultArm', 'DifficultWing', 'DifficultTail', 'DifficultHead1', 'DifficultHead2', 'DifficultTorso1', 'DifficultTorso2',
   'DeadlyLeg', 'DeadlyArm', 'DeadlyWing', 'DeadlyTail', 'DeadlyHead1', 'DeadlyHead2', 'DeadlyTorso1', 'DeadlyTorso2',
+
+  // Критические ранения (новая система) — Simple/Medium/Difficult x часть тела x тип урона.
+  'SimpleHeadPiercing', 'SimpleHeadSlashing', 'SimpleHeadBludgeoning', 'SimpleHeadFire',
+  'SimpleTorsoPiercing', 'SimpleTorsoSlashing', 'SimpleTorsoBludgeoning', 'SimpleTorsoFire',
+  'SimpleArmPiercing', 'SimpleArmSlashing', 'SimpleArmBludgeoning', 'SimpleArmFire',
+  'SimpleLegPiercing', 'SimpleLegSlashing', 'SimpleLegBludgeoning', 'SimpleLegFire',
+  'SimpleWingPiercing', 'SimpleWingSlashing', 'SimpleWingBludgeoning', 'SimpleWingFire',
+  'SimpleTailPiercing', 'SimpleTailSlashing', 'SimpleTailBludgeoning', 'SimpleTailFire',
+
+  'MediumHeadPiercing', 'MediumHeadSlashing', 'MediumHeadBludgeoning', 'MediumHeadFire',
+  'MediumTorsoPiercing', 'MediumTorsoSlashing', 'MediumTorsoBludgeoning', 'MediumTorsoFire',
+  'MediumArmPiercing', 'MediumArmSlashing', 'MediumArmBludgeoning', 'MediumArmFire',
+  'MediumLegPiercing', 'MediumLegSlashing', 'MediumLegBludgeoning', 'MediumLegFire',
+  'MediumWingPiercing', 'MediumWingSlashing', 'MediumWingBludgeoning', 'MediumWingFire',
+  'MediumTailPiercing', 'MediumTailSlashing', 'MediumTailBludgeoning', 'MediumTailFire',
+
+  'DifficultHeadPiercing', 'DifficultHeadSlashing', 'DifficultHeadBludgeoning', 'DifficultHeadFire',
+  'DifficultTorsoPiercing', 'DifficultTorsoSlashing', 'DifficultTorsoBludgeoning', 'DifficultTorsoFire',
+  'DifficultArmPiercing', 'DifficultArmSlashing', 'DifficultArmBludgeoning', 'DifficultArmFire',
+  'DifficultLegPiercing', 'DifficultLegSlashing', 'DifficultLegBludgeoning', 'DifficultLegFire',
+  'DifficultWingPiercing', 'DifficultWingSlashing', 'DifficultWingBludgeoning', 'DifficultWingFire',
+  'DifficultTailPiercing', 'DifficultTailSlashing', 'DifficultTailBludgeoning', 'DifficultTailFire',
 ] as const
 export type Condition = (typeof CONDITIONS)[number]
 

@@ -1,6 +1,7 @@
 using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
 using Wastelands.Core.EfDataAccess.Entities;
+using Wastelands.Service.Domain.Drafts;
 using Wastelands.Service.Domain.Enums;
 
 namespace Wastelands.Service.Domain.Entities
@@ -28,6 +29,9 @@ namespace Wastelands.Service.Domain.Entities
 		public int? Initiative { get; private set; }
 
 		public List<Condition> AppliedConditions { get; private set; } = [];
+
+		/// <summary>Критические ранения этого персонажа — по слоту (часть тела + тип урона), см. Creature.CriticalWounds.</summary>
+		public Dictionary<string, Condition> CriticalWounds { get; private set; } = [];
 
 		/// <summary>EF-навигация — нужна для отображения имени персонажа в списке боя.</summary>
 		public Character Character { get; set; }
@@ -77,6 +81,25 @@ namespace Wastelands.Service.Domain.Entities
 		public void RemoveCondition(Condition condition)
 		{
 			AppliedConditions.Remove(condition);
+		}
+
+		/// <summary>См. Creature.ApplyCriticalWound — то же поведение, для персонажа.</summary>
+		public void ApplyCriticalWound(string slotKey, Condition wound)
+		{
+			var hadPrevious = CriticalWounds.TryGetValue(slotKey, out var previous);
+			if (hadPrevious && CriticalWoundCatalog.IsAtLeastAsSevere(previous, wound))
+			{
+				return;
+			}
+
+			CriticalWounds[slotKey] = wound;
+
+			if (hadPrevious && previous != wound && !CriticalWounds.Values.Contains(previous))
+			{
+				AppliedConditions.Remove(previous);
+			}
+
+			AddCondition(wound);
 		}
 	}
 }

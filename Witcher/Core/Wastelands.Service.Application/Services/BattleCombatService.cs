@@ -185,9 +185,22 @@ namespace Wastelands.Service.Application.Services
 			var rolledConditions = damage.FinalDamage >= 1
 				? BattleCombatCalculator.RollAppliedConditions(ability)
 				: [];
-			var requiresStunSave = rolledConditions.Contains(Condition.Stun);
 			var appliedConditions = rolledConditions.Where(c => c != Condition.Stun).ToList();
-			BattleParticipants.ApplyDamage(battle, attack, attack.DefenderKind, attack.DefenderId, damage, appliedConditions);
+
+			// Критический эффект — тоже только если удар нанёс хоть какой-то урон. Как и провалившийся по
+			// ApplyChance Stun, критическая проверка Оглушения (см. ниже) идёт через тот же stun save, не
+			// накладывается автоматически.
+			var crit = damage.FinalDamage >= 1
+				? BattleCombatCalculator.TryResolveCriticalHit(attack, defenderContext, ability.DamageType)
+				: null;
+			var damageWithCrit = crit is { } c ? damage with { FinalDamage = damage.FinalDamage + c.BonusDamage } : damage;
+			var requiresStunSave = rolledConditions.Contains(Condition.Stun) || crit is not null;
+
+			BattleParticipants.ApplyDamage(battle, attack, attack.DefenderKind, attack.DefenderId, damageWithCrit, appliedConditions);
+			if (crit is { } appliedCrit)
+			{
+				BattleParticipants.ApplyCriticalWound(battle, attack.DefenderKind, attack.DefenderId, appliedCrit.SlotKey, appliedCrit.Wound);
+			}
 
 			// Износ конкретного экземпляра брони живёт на Character, а не на Battle — сохраняем отдельно.
 			if (damage.WornArmorItemId is { } wornItemId)
@@ -198,7 +211,7 @@ namespace Wastelands.Service.Application.Services
 
 			var attackerName = BattleParticipants.GetName(battle, attack.AttackerKind, attack.AttackerId);
 			var defenderName = BattleParticipants.GetName(battle, attack.DefenderKind, attack.DefenderId);
-			battle.AddLogEntry(BattleCombatLogFormatter.FormatHit(attackerName, ability.Name, defenderName, attack, damage, appliedConditions));
+			battle.AddLogEntry(BattleCombatLogFormatter.FormatHit(attackerName, ability.Name, defenderName, attack, damageWithCrit, appliedConditions, crit));
 
 			attack.MarkDamageResolved(requiresStunSave);
 

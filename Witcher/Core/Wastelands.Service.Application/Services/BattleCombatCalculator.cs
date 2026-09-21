@@ -34,6 +34,9 @@ namespace Wastelands.Service.Application.Services
 		int ArmorAfterHit,
 		long? WornArmorItemId = null);
 
+	/// <summary>Итог проверки на критический эффект — см. BattleCombatCalculator.TryResolveCriticalHit.</summary>
+	internal readonly record struct CriticalHitResult(CriticalWoundSeverity Severity, Condition Wound, string SlotKey, int BonusDamage);
+
 	/// <summary>
 	/// Чистая боевая математика (попадание, урон) — без загрузки данных и без сохранения. Вынесена
 	/// из BattleCombatService, чтобы там остался только оркестрация (авторизация/загрузка/лог/сохранение).
@@ -216,6 +219,39 @@ namespace Wastelands.Service.Application.Services
 				DamageTypeModifier.Immunity => 0,
 				_ => damage,
 			};
+		}
+
+		/// <summary>
+		/// Критический эффект: если бросок атаки превысил бросок защиты на 7/10/13 и более — Simple/
+		/// Medium/Difficult ранение (см. CriticalWoundCatalog) той части тела, в которую пришёлся удар,
+		/// и того типа урона, которым он нанесён. Null, если превышение меньше 7 (то есть, критического
+		/// эффекта нет вовсе) — вызывающий код уже гарантирует, что удар нанёс хоть 1 урон.
+		/// </summary>
+		public static CriticalHitResult? TryResolveCriticalHit(BattleAttack attack, ParticipantCombatContext defenderContext, DamageType damageType)
+		{
+			var excess = attack.AttackTotal - attack.DefenseTotal;
+			if (CriticalWoundCatalog.GetSeverity(excess) is not { } severity)
+			{
+				return null;
+			}
+
+			BodyPartType bodyPartType;
+			string slotKey;
+			if (attack.DefenderKind == ParticipantKind.Creature)
+			{
+				var part = defenderContext.Template!.Parts.First(p => p.Id == attack.ResolvedCreaturePartId);
+				bodyPartType = part.BodyPartType;
+				slotKey = CriticalWoundCatalog.SlotKey(part.Id, damageType);
+			}
+			else
+			{
+				var humanPart = attack.ResolvedHumanBodyPart!.Value;
+				bodyPartType = HumanBodyPartCatalog.GetBodyPartType(humanPart);
+				slotKey = CriticalWoundCatalog.SlotKey(humanPart, damageType);
+			}
+
+			var wound = CriticalWoundCatalog.GetWound(severity, bodyPartType, damageType);
+			return new CriticalHitResult(severity, wound, slotKey, CriticalWoundCatalog.GetBonusDamage(severity));
 		}
 
 		/// <summary>Каждое состояние способности накладывается независимо, с вероятностью, равной его ApplyChance (%).</summary>

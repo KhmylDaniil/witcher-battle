@@ -1,3 +1,4 @@
+using Wastelands.Service.Domain.Drafts;
 using Wastelands.Service.Domain.Entities;
 using Wastelands.Service.Domain.Enums;
 
@@ -18,18 +19,22 @@ namespace Wastelands.Service.Application.Services
 			string defenderName,
 			BattleAttack attack,
 			DamageResult damage,
-			IReadOnlyList<Condition> appliedConditions)
+			IReadOnlyList<Condition> appliedConditions,
+			CriticalHitResult? crit = null)
 		{
 			var rolls = FormatRolls(attack.AttackRoll!.Value, attack.AttackTotal, attack.DefenseRoll!.Value, attack.DefenseTotal);
 			var conditionsSuffix = appliedConditions.Count > 0
 				? $" Наложены состояния: {string.Join(", ", appliedConditions)}."
 				: "";
+			var critSuffix = crit is { } c
+				? $" Критическое повреждение ({c.Severity}): {CriticalWoundCatalog.GetFlavorName(c.Wound)} [{c.Wound}], доп. урон {c.BonusDamage}."
+				: "";
 
 			return damage.PartName is null
-				? $"{attackerName} ({abilityName}) атакует {defenderName}: {rolls} — попадание, урон {damage.FinalDamage}.{conditionsSuffix}"
+				? $"{attackerName} ({abilityName}) атакует {defenderName}: {rolls} — попадание, урон {damage.FinalDamage}.{conditionsSuffix}{critSuffix}"
 				: $"{attackerName} ({abilityName}) атакует {defenderName} ({damage.PartName}): {rolls} — попадание. "
 					+ $"Урон до брони {damage.RawDamage}, броня поглотила {damage.ArmorAbsorbed} (было {damage.ArmorBeforeHit}, после удара {damage.ArmorAfterHit}), "
-					+ $"итоговый урон {damage.FinalDamage}.{conditionsSuffix}";
+					+ $"итоговый урон {damage.FinalDamage}.{conditionsSuffix}{critSuffix}";
 		}
 
 		private static string FormatRolls(int attackRoll, int attackTotal, int defenseRoll, int defenseTotal) =>

@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Wastelands.EfDataAccess.Configurations;
 using Wastelands.Service.Domain.Entities;
+using Wastelands.Service.Domain.Enums;
 
 namespace Wastelands.Service.Infrastructure.Configurations
 {
@@ -35,6 +37,18 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnName("AppliedConditions")
 				.HasComment("AppliedConditions")
 				.IsRequired();
+
+			builder.Property(x => x.CriticalWounds)
+				.HasColumnType("jsonb")
+				.HasColumnName("CriticalWounds")
+				.HasComment("Критические ранения по слотам (часть тела + тип урона), см. CriticalWoundCatalog")
+				.HasDefaultValueSql("'{}'")
+				.ValueGeneratedNever()
+				.IsRequired()
+				.Metadata.SetValueComparer(new ValueComparer<Dictionary<string, Condition>>(
+					(a, b) => (a ?? new Dictionary<string, Condition>()).SequenceEqual(b ?? new Dictionary<string, Condition>()),
+					d => d.Aggregate(0, (hash, kv) => HashCode.Combine(hash, kv.Key, kv.Value)),
+					d => new Dictionary<string, Condition>(d)));
 
 			// Не cascade: удаление BattleCharacter не должно удалять Character, а Character удаляется
 			// независимо (уже SetNull-обезопашен от игры и выпиливается из боёв вместе с самим Battle).

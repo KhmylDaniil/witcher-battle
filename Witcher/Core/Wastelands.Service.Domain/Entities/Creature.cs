@@ -1,6 +1,7 @@
 using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
 using Wastelands.Core.EfDataAccess.Entities;
+using Wastelands.Service.Domain.Drafts;
 using Wastelands.Service.Domain.Enums;
 
 namespace Wastelands.Service.Domain.Entities
@@ -46,6 +47,13 @@ namespace Wastelands.Service.Domain.Entities
 		/// считается как (шаблонная броня − износ), с полом в 0; см. BattleCombatCalculator.
 		/// </summary>
 		public Dictionary<long, int> ArmorReductionByPartId { get; private set; } = [];
+
+		/// <summary>
+		/// Критические ранения этого существа — по слоту (часть тела + тип урона, см.
+		/// CriticalWoundCatalog.SlotKey), а не по типу части тела: у существа с несколькими частями
+		/// одного BodyPartType (например, несколько Leg) каждая часть — свой независимый слот.
+		/// </summary>
+		public Dictionary<string, Condition> CriticalWounds { get; private set; } = [];
 
 		private Creature()
 		{
@@ -116,6 +124,30 @@ namespace Wastelands.Service.Domain.Entities
 		public void RemoveCondition(Condition condition)
 		{
 			AppliedConditions.Remove(condition);
+		}
+
+		/// <summary>
+		/// Накладывает критическое ранение в конкретный слот (часть тела + тип урона). Если в этом
+		/// слоте уже есть ранение не легче нового — новое не применяется (повторное ранение того же
+		/// слота только усугубляет, не облегчает). Итоговое ранение слота также появляется бейджем в
+		/// AppliedConditions — прежняя метка убирается оттуда, только если её не удерживает другой слот.
+		/// </summary>
+		public void ApplyCriticalWound(string slotKey, Condition wound)
+		{
+			var hadPrevious = CriticalWounds.TryGetValue(slotKey, out var previous);
+			if (hadPrevious && CriticalWoundCatalog.IsAtLeastAsSevere(previous, wound))
+			{
+				return;
+			}
+
+			CriticalWounds[slotKey] = wound;
+
+			if (hadPrevious && previous != wound && !CriticalWounds.Values.Contains(previous))
+			{
+				AppliedConditions.Remove(previous);
+			}
+
+			AddCondition(wound);
 		}
 	}
 }
