@@ -42,7 +42,12 @@ export function ItemTemplateFormPage() {
     },
   })
 
-  const onSubmit = handleSubmit((values) => save.mutate(values))
+  const onSubmit = handleSubmit((values) =>
+    save.mutate({
+      ...values,
+      attackModifier: Number.isNaN(Number(values.attackModifier)) ? 0 : Number(values.attackModifier),
+    }),
+  )
 
   return (
     <div className="flex flex-col gap-4">
@@ -98,7 +103,7 @@ export function ItemTemplateFormPage() {
                   <Input type="number" min={1} {...register('damageDiceCount', { required: true, valueAsNumber: true, min: 1 })} />
                 </Field>
                 <Field label="Модификатор атаки">
-                  <Input type="number" {...register('attackModifier', { required: true, valueAsNumber: true })} />
+                  <Input type="number" placeholder="0" {...register('attackModifier', { valueAsNumber: true })} />
                 </Field>
                 <Field label="Модификатор урона">
                   <Input type="number" {...register('damageModifier', { required: true, valueAsNumber: true })} />

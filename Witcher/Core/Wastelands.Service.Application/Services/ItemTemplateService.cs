@@ -49,7 +49,7 @@ namespace Wastelands.Service.Application.Services
 				? ItemTemplate.CreateWeapon(
 					game.Id, request.Name, request.Description, request.Weight, request.Cost,
 					request.AttackSkill!.Value, request.IsMultiAttack!.Value, request.DamageDiceCount!.Value,
-					request.AttackModifier!.Value, request.DamageModifier!.Value, request.DamageType!.Value, request.WeaponKind!.Value,
+					request.AttackModifier ?? 0, request.DamageModifier!.Value, request.DamageType!.Value, request.WeaponKind!.Value,
 					request.AttackRange!.Value, request.HandsRequired!.Value, request.Durability!.Value)
 				: ItemTemplate.CreateNonWeapon(game.Id, request.Name, request.Description, request.ItemType, request.Weight, request.Cost);
 
@@ -67,7 +67,7 @@ namespace Wastelands.Service.Application.Services
 				itemTemplate.ChangeWeapon(
 					request.Name, request.Description, request.Weight, request.Cost,
 					request.AttackSkill!.Value, request.IsMultiAttack!.Value, request.DamageDiceCount!.Value,
-					request.AttackModifier!.Value, request.DamageModifier!.Value, request.DamageType!.Value, request.WeaponKind!.Value,
+					request.AttackModifier ?? 0, request.DamageModifier!.Value, request.DamageType!.Value, request.WeaponKind!.Value,
 					request.AttackRange!.Value, request.HandsRequired!.Value, request.Durability!.Value);
 			}
 			else

@@ -24,7 +24,6 @@ namespace Wastelands.API.Validations
 				RuleFor(x => x.AttackSkill).NotNull().WithMessage(ExceptionMessages.FieldCantBeEmpty);
 				RuleFor(x => x.IsMultiAttack).NotNull().WithMessage(ExceptionMessages.FieldCantBeEmpty);
 				RuleFor(x => x.DamageDiceCount).NotNull().GreaterThan(0).WithMessage(ExceptionMessages.ValueMustBePositive);
-				RuleFor(x => x.AttackModifier).NotNull().WithMessage(ExceptionMessages.FieldCantBeEmpty);
 				RuleFor(x => x.DamageModifier).NotNull().WithMessage(ExceptionMessages.FieldCantBeEmpty);
 				RuleFor(x => x.DamageType).NotNull().WithMessage(ExceptionMessages.FieldCantBeEmpty);
 				RuleFor(x => x.WeaponKind).NotNull().WithMessage(ExceptionMessages.FieldCantBeEmpty);

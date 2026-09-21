@@ -38,7 +38,7 @@ export function AbilityFormPage() {
       ...values,
       attacksPerTurn: Number(values.attacksPerTurn),
       damageDiceCount: Number(values.damageDiceCount),
-      attackModifier: Number(values.attackModifier),
+      attackModifier: Number.isNaN(Number(values.attackModifier)) ? 0 : Number(values.attackModifier),
       damageModifier: Number(values.damageModifier),
     }),
   )
@@ -76,7 +76,7 @@ export function AbilityFormPage() {
               <Input type="number" min={1} {...register('damageDiceCount', { required: true, valueAsNumber: true, min: 1 })} />
             </Field>
             <Field label="Модификатор атаки">
-              <Input type="number" {...register('attackModifier', { required: true, valueAsNumber: true })} />
+              <Input type="number" placeholder="0" {...register('attackModifier', { valueAsNumber: true })} />
             </Field>
             <Field label="Модификатор урона">
               <Input type="number" {...register('damageModifier', { required: true, valueAsNumber: true })} />
