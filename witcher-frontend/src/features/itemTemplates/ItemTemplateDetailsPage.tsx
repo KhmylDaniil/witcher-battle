@@ -95,14 +95,14 @@ export function ItemTemplateDetailsPage() {
     armor: 1,
   })
   const addArmorPart = useMutation({
-    mutationFn: () => itemTemplatesApi.addArmorPart(id, newArmorPart.part, newArmorPart.armor),
+    mutationFn: () => itemTemplatesApi.addArmorPart(id, selectedNewPart, newArmorPart.armor),
     onSuccess: invalidate,
   })
 
   const [newDamageType, setNewDamageType] = useState<DamageType>('Slashing')
   const [newModifier, setNewModifier] = useState<DamageTypeModifierKind>('Vulnerability')
   const setDamageTypeModifier = useMutation({
-    mutationFn: () => itemTemplatesApi.setDamageTypeModifier(id, newDamageType, newModifier),
+    mutationFn: () => itemTemplatesApi.setDamageTypeModifier(id, selectedNewDamageType, newModifier),
     onSuccess: invalidate,
   })
   const removeDamageTypeModifier = useMutation({
@@ -117,8 +117,15 @@ export function ItemTemplateDetailsPage() {
   const isArmor = it.itemType === 'Armor'
   const usedParts = new Set(it.armorParts.map((p) => p.part))
   const availableParts = getAvailableOptions(HUMAN_BODY_PARTS, usedParts)
+  // После добавления части newArmorPart.part может перестать быть доступным (та же часть уже
+  // покрыта) — тогда <select> визуально показывает первый оставшийся вариант, а в состоянии
+  // остаётся старый, из-за чего отправляется не та часть тела. Подстраховываемся здесь же, а не
+  // только через onSuccess, чтобы и отображение, и отправка всегда были в одной части тела.
+  const selectedNewPart = availableParts.includes(newArmorPart.part) ? newArmorPart.part : (availableParts[0] ?? newArmorPart.part)
+
   const usedDamageTypes = new Set(Object.keys(it.damageTypeModifiers) as DamageType[])
   const availableDamageTypes = getAvailableOptions(DAMAGE_TYPES, usedDamageTypes)
+  const selectedNewDamageType = availableDamageTypes.includes(newDamageType) ? newDamageType : (availableDamageTypes[0] ?? newDamageType)
 
   return (
     <div className="flex flex-col gap-4">
@@ -536,7 +543,7 @@ export function ItemTemplateDetailsPage() {
             {availableParts.length > 0 && (
               <div className="mt-4 flex flex-wrap items-end gap-2">
                 <Field label="Часть тела">
-                  <Select value={newArmorPart.part} onChange={(e) => setNewArmorPart({ ...newArmorPart, part: e.target.value as HumanBodyPart })}>
+                  <Select value={selectedNewPart} onChange={(e) => setNewArmorPart({ ...newArmorPart, part: e.target.value as HumanBodyPart })}>
                     {availableParts.map((p) => (
                       <option key={p} value={p}>
                         {HUMAN_BODY_PART_LABELS[p]}
@@ -593,7 +600,7 @@ export function ItemTemplateDetailsPage() {
 
             {availableDamageTypes.length > 0 && (
               <div className="mt-4 flex flex-wrap items-end gap-2">
-                <Select value={newDamageType} onChange={(e) => setNewDamageType(e.target.value as DamageType)}>
+                <Select value={selectedNewDamageType} onChange={(e) => setNewDamageType(e.target.value as DamageType)}>
                   {availableDamageTypes.map((t) => (
                     <option key={t} value={t}>
                       {t}
