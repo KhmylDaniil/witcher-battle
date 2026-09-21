@@ -146,6 +146,36 @@ namespace Wastelands.Service.Application.Services
 			}
 		}
 
+		/// <summary>
+		/// Убирает из боя существ, чей CurrentHP упал до нуля — персонажей это не касается, они не
+		/// удаляются автоматически. Существо, сейчас участвующее в незавершённой атаке (атакующий или
+		/// защитник), не трогаем до её конца — иначе EnrichAttackAsync/GetContextAsync сломаются на
+		/// уже не существующем участнике; такое существо будет убрано следующим же сохранением после
+		/// того, как атака закончится или сменит цель (EndActivationAsync/NextSwingAsync).
+		/// </summary>
+		public static void RemoveDeadCreatures(Battle battle)
+		{
+			var protectedIds = new HashSet<long>();
+			if (battle.Attack is { } attack)
+			{
+				if (attack.AttackerKind == ParticipantKind.Creature)
+				{
+					protectedIds.Add(attack.AttackerId);
+				}
+
+				if (attack.DefenderKind == ParticipantKind.Creature)
+				{
+					protectedIds.Add(attack.DefenderId);
+				}
+			}
+
+			foreach (var creature in battle.Creatures.Where(c => c.CurrentHP <= 0 && !protectedIds.Contains(c.Id)).ToList())
+			{
+				battle.AddLogEntry($"{creature.Name} погибает и выбывает из боя.");
+				battle.RemoveCreature(creature);
+			}
+		}
+
 		public static void ApplyCriticalWound(Battle battle, ParticipantKind kind, long participantId, string slotKey, Condition wound)
 		{
 			if (kind == ParticipantKind.Creature)

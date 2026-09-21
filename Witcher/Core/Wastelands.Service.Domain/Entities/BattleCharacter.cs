@@ -63,6 +63,12 @@ namespace Wastelands.Service.Domain.Entities
 			Initiative = value;
 		}
 
+		/// <summary>Переиндексация после Battle.RemoveCreature — в отличие от SetInitiative, перезаписывает уже выставленное значение.</summary>
+		internal void ReassignInitiative(int value)
+		{
+			Initiative = value;
+		}
+
 		/// <summary>Применяет урон, полученный в результате атаки — CurrentHP не опускается ниже нуля.</summary>
 		public void ApplyDamage(int damage)
 		{

@@ -88,6 +88,12 @@ namespace Wastelands.Service.Domain.Entities
 			CurrentSta = currentSta;
 		}
 
+		/// <summary>Переиндексация после Battle.RemoveCreature — в отличие от SetInitiative, перезаписывает уже выставленное значение.</summary>
+		internal void ReassignInitiative(int value)
+		{
+			Initiative = value;
+		}
+
 		public void SetInitiative(int value)
 		{
 			if (Initiative.HasValue)

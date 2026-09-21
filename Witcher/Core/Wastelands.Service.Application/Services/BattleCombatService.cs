@@ -366,6 +366,7 @@ namespace Wastelands.Service.Application.Services
 
 		private async Task<BattleDto> SaveAndNotifyAsync(Battle battle)
 		{
+			BattleParticipants.RemoveDeadCreatures(battle);
 			await _battleRepository.UpdateAsync(battle);
 			await _battleNotifier.NotifyBattleUpdatedAsync(battle.Id);
 			return await _dtoMapper.MapAsync(battle);
