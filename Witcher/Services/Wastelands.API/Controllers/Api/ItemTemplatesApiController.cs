@@ -70,8 +70,7 @@ namespace Wastelands.API.Controllers.Api
 			{
 				ItemTemplateId = itemTemplateId,
 				Part = payload.Part,
-				ArmorValue = payload.ArmorValue,
-				MaxDurability = payload.MaxDurability,
+				Armor = payload.Armor,
 			});
 
 		[HttpPut("{itemTemplateId:long}/armor-parts/{armorPartId:long}")]
@@ -80,8 +79,7 @@ namespace Wastelands.API.Controllers.Api
 			{
 				ItemTemplateId = itemTemplateId,
 				ArmorPartId = armorPartId,
-				ArmorValue = payload.ArmorValue,
-				MaxDurability = payload.MaxDurability,
+				Armor = payload.Armor,
 			});
 
 		[HttpDelete("{itemTemplateId:long}/armor-parts/{armorPartId:long}")]
@@ -106,8 +104,6 @@ namespace Wastelands.API.Controllers.Api
 	{
 		public HumanBodyPart Part { get; set; }
 
-		public int ArmorValue { get; set; }
-
-		public int MaxDurability { get; set; }
+		public int Armor { get; set; }
 	}
 }

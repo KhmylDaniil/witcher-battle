@@ -79,7 +79,7 @@ namespace Wastelands.Service.Domain.Entities
 			HandsRequired = template.HandsRequired;
 			Durability = template.Durability;
 			AppliedConditions = template.AppliedConditions.Select(c => new ItemAppliedCondition(c.Condition, c.ApplyChance)).ToList();
-			ArmorParts = template.ArmorParts.Select(p => new ItemArmorPart(p.Part, p.ArmorValue, p.MaxDurability)).ToList();
+			ArmorParts = template.ArmorParts.Select(p => new ItemArmorPart(p.Part, p.Armor)).ToList();
 			DamageTypeModifiers = new Dictionary<DamageType, DamageTypeModifier>(template.DamageTypeModifiers);
 		}
 

@@ -4,40 +4,38 @@ using Wastelands.Service.Domain.Enums;
 
 namespace Wastelands.Service.Domain.Entities
 {
-	/// <summary>Покрытие шаблона брони: значение брони и максимальная прочность для одной части тела.</summary>
+	/// <summary>
+	/// Покрытие шаблона брони — одна часть тела и одно значение брони. Прочность экземпляра брони на
+	/// этой части (см. ItemArmorPart) стартует равной этому же значению — отдельного параметра
+	/// "максимальная прочность" нет, он всегда равен значению брони.
+	/// </summary>
 	public class ItemTemplateArmorPart : Entity
 	{
 		public long ItemTemplateId { get; private set; }
 
 		public HumanBodyPart Part { get; private set; }
 
-		public int ArmorValue { get; private set; }
-
-		public int MaxDurability { get; private set; }
+		public int Armor { get; private set; }
 
 		private ItemTemplateArmorPart()
 		{
 		}
 
-		public ItemTemplateArmorPart(long itemTemplateId, HumanBodyPart part, int armorValue, int maxDurability)
+		public ItemTemplateArmorPart(long itemTemplateId, HumanBodyPart part, int armor)
 		{
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(itemTemplateId, nameof(itemTemplateId));
-			InvalidArgumentException.ThrowIfLessThanZero(armorValue, nameof(armorValue));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(maxDurability, nameof(maxDurability));
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(armor, nameof(armor));
 
 			ItemTemplateId = itemTemplateId;
 			Part = part;
-			ArmorValue = armorValue;
-			MaxDurability = maxDurability;
+			Armor = armor;
 		}
 
-		public void Change(int armorValue, int maxDurability)
+		public void Change(int armor)
 		{
-			InvalidArgumentException.ThrowIfLessThanZero(armorValue, nameof(armorValue));
-			InvalidArgumentException.ThrowIfLessOrEqualToZero(maxDurability, nameof(maxDurability));
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(armor, nameof(armor));
 
-			ArmorValue = armorValue;
-			MaxDurability = maxDurability;
+			Armor = armor;
 		}
 	}
 }

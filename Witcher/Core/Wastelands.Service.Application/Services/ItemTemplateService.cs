@@ -127,7 +127,7 @@ namespace Wastelands.Service.Application.Services
 			var itemTemplate = await GetByIdAsync(request.ItemTemplateId);
 			EnsureArmor(itemTemplate);
 
-			itemTemplate.AddArmorPart(request.Part, request.ArmorValue, request.MaxDurability);
+			itemTemplate.AddArmorPart(request.Part, request.Armor);
 			await _itemTemplateRepository.UpdateAsync(itemTemplate);
 
 			return _mapper.Map<ItemTemplateDto>(itemTemplate);
@@ -138,7 +138,7 @@ namespace Wastelands.Service.Application.Services
 			var itemTemplate = await GetByIdAsync(request.ItemTemplateId);
 			var armorPart = GetArmorPart(itemTemplate, request.ArmorPartId);
 
-			armorPart.Change(request.ArmorValue, request.MaxDurability);
+			armorPart.Change(request.Armor);
 			await _itemTemplateRepository.UpdateAsync(itemTemplate);
 
 			return _mapper.Map<ItemTemplateDto>(itemTemplate);

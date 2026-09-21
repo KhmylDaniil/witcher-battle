@@ -26,10 +26,10 @@ export const itemTemplatesApi = {
   removeCondition: (itemTemplateId: number, conditionId: number) =>
     api.delete<ItemTemplate>(`/api/item-templates/${itemTemplateId}/applied-conditions/${conditionId}`),
 
-  addArmorPart: (itemTemplateId: number, part: HumanBodyPart, armorValue: number, maxDurability: number) =>
-    api.post<ItemTemplate>(`/api/item-templates/${itemTemplateId}/armor-parts`, { part, armorValue, maxDurability }),
-  updateArmorPart: (itemTemplateId: number, armorPartId: number, armorValue: number, maxDurability: number) =>
-    api.put<ItemTemplate>(`/api/item-templates/${itemTemplateId}/armor-parts/${armorPartId}`, { armorValue, maxDurability }),
+  addArmorPart: (itemTemplateId: number, part: HumanBodyPart, armor: number) =>
+    api.post<ItemTemplate>(`/api/item-templates/${itemTemplateId}/armor-parts`, { part, armor }),
+  updateArmorPart: (itemTemplateId: number, armorPartId: number, armor: number) =>
+    api.put<ItemTemplate>(`/api/item-templates/${itemTemplateId}/armor-parts/${armorPartId}`, { armor }),
   removeArmorPart: (itemTemplateId: number, armorPartId: number) =>
     api.delete<ItemTemplate>(`/api/item-templates/${itemTemplateId}/armor-parts/${armorPartId}`),
 

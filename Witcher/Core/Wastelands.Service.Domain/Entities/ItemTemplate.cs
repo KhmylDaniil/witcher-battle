@@ -158,14 +158,14 @@ namespace Wastelands.Service.Domain.Entities
 			Durability = durability;
 		}
 
-		public ItemTemplateArmorPart AddArmorPart(HumanBodyPart part, int armorValue, int maxDurability)
+		public ItemTemplateArmorPart AddArmorPart(HumanBodyPart part, int armor)
 		{
 			if (ArmorParts.Any(p => p.Part == part))
 			{
 				throw new InvalidArgumentException(ErrorCode.ItemTemplateArmorPartAlreadyExisted, "Эта часть тела уже покрыта в шаблоне брони.");
 			}
 
-			var armorPart = new ItemTemplateArmorPart(Id, part, armorValue, maxDurability);
+			var armorPart = new ItemTemplateArmorPart(Id, part, armor);
 			ArmorParts.Add(armorPart);
 
 			return armorPart;

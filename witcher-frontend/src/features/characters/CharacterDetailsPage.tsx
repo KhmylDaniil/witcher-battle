@@ -498,13 +498,13 @@ export function CharacterDetailsPage() {
                   {i.armorParts.map((p) => (
                     <div key={p.id} className="flex items-center gap-2">
                       <span>
-                        {HUMAN_BODY_PART_LABELS[p.part]}: броня {p.armorValue}, прочность {p.currentDurability}/{p.maxDurability}
+                        {HUMAN_BODY_PART_LABELS[p.part]}: броня {p.currentDurability}/{p.armor}
                       </span>
                       {isGameMaster && c.gameId && (
                         <RepairControl
                           open={repairingKey === `armor-${i.id}-${p.part}`}
                           value={repairValue}
-                          max={p.maxDurability}
+                          max={p.armor}
                           pending={repairItem.isPending}
                           onOpen={() => {
                             setRepairingKey(`armor-${i.id}-${p.part}`)

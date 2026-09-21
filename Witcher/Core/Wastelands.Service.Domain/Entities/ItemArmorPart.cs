@@ -6,7 +6,9 @@ namespace Wastelands.Service.Domain.Entities
 {
 	/// <summary>
 	/// Покрытие экземпляра брони — снапшот ItemTemplateArmorPart в момент добавления в инвентарь, плюс
-	/// собственная текущая прочность этой части (изнашивается в бою, чинится мастером — см. Item.WearArmor/RepairArmorPart).
+	/// собственная текущая прочность этой части (изнашивается в бою, чинится мастером — см.
+	/// Item.WearArmor/RepairArmorPart). Прочность — это и есть эффективное значение брони: чем больше
+	/// часть изношена, тем меньше урона она поглощает (см. BattleCombatCalculator).
 	/// </summary>
 	public class ItemArmorPart : Entity
 	{
@@ -14,9 +16,8 @@ namespace Wastelands.Service.Domain.Entities
 
 		public HumanBodyPart Part { get; private set; }
 
-		public int ArmorValue { get; private set; }
-
-		public int MaxDurability { get; private set; }
+		/// <summary>Значение брони на этой части — оно же стартовая и максимальная прочность.</summary>
+		public int Armor { get; private set; }
 
 		public int CurrentDurability { get; private set; }
 
@@ -25,12 +26,11 @@ namespace Wastelands.Service.Domain.Entities
 		}
 
 		// ItemId проставляет EF Core по связи Item.ArmorParts — тот же приём, что и у ItemAppliedCondition.
-		internal ItemArmorPart(HumanBodyPart part, int armorValue, int maxDurability)
+		internal ItemArmorPart(HumanBodyPart part, int armor)
 		{
 			Part = part;
-			ArmorValue = armorValue;
-			MaxDurability = maxDurability;
-			CurrentDurability = maxDurability;
+			Armor = armor;
+			CurrentDurability = armor;
 		}
 
 		/// <summary>Износ от одного попадания в эту часть — на 1 очко прочности, независимо от того, поглотила ли броня урон.</summary>
@@ -41,7 +41,7 @@ namespace Wastelands.Service.Domain.Entities
 
 		public void Repair(int durability)
 		{
-			InvalidArgumentException.ThrowIfNotInRange(durability, 0, MaxDurability, nameof(durability));
+			InvalidArgumentException.ThrowIfNotInRange(durability, 0, Armor, nameof(durability));
 			CurrentDurability = durability;
 		}
 	}

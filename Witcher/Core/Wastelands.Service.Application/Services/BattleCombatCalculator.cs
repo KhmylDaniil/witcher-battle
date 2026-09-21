@@ -151,9 +151,10 @@ namespace Wastelands.Service.Application.Services
 		/// <summary>
 		/// Броня персонажа приходит не из шаблона (как у существ), а из экипированного предмета,
 		/// покрывающего пробитую часть тела (не более одного — оверлап запрещён при экипировке, см.
-		/// CharacterItemService.EquipAsync). Пока прочность этой брони на части > 0, действуют её
-		/// модификаторы типа урона; само значение брони при этом не уменьшается — снашивается
-		/// только прочность (см. Item.WearArmor, вызывается BattleCombatService после этого расчёта).
+		/// CharacterItemService.EquipAsync). Прочность части — это и есть её текущее значение брони:
+		/// поглощает урон, изнашивается на 1 после каждого попадания (Item.WearArmor, вызывается
+		/// BattleCombatService после этого расчёта), и пока не изношена до нуля — действуют
+		/// модификаторы типа урона брони.
 		/// </summary>
 		private static DamageResult CalculateCharacterDamage(ParticipantCombatContext defenderContext, Ability ability, BattleAttack attack, int rawDamage)
 		{
@@ -163,20 +164,21 @@ namespace Wastelands.Service.Application.Services
 			var armorItem = defenderContext.Character!.Items.FirstOrDefault(i =>
 				i.IsEquipped && i.ItemType == ItemType.Armor && i.ArmorParts.Any(p => p.Part == humanPart));
 			var armorPart = armorItem?.ArmorParts.First(p => p.Part == humanPart);
-			var armorValue = armorPart?.ArmorValue ?? 0;
 
-			var armorAbsorbed = Math.Min(rawDamage, armorValue);
-			var damageAfterArmor = Math.Max(0, rawDamage - armorValue);
+			var armorBeforeHit = armorPart?.CurrentDurability ?? 0;
+			var armorAfterHit = Math.Max(0, armorBeforeHit - 1);
+			var armorAbsorbed = Math.Min(rawDamage, armorBeforeHit);
+			var damageAfterArmor = Math.Max(0, rawDamage - armorBeforeHit);
 
 			double afterPartModifier = damageAfterArmor * partInfo.DamageModifier;
-			if (armorPart is { CurrentDurability: > 0 })
+			if (armorBeforeHit > 0)
 			{
 				afterPartModifier = ApplyDamageTypeModifier(afterPartModifier, armorItem!.DamageTypeModifiers, ability.DamageType);
 			}
 
 			var finalDamage = Math.Max(0, (int)Math.Round(afterPartModifier));
 
-			return new DamageResult(finalDamage, partInfo.Name, rawDamage, armorValue, armorAbsorbed, armorValue, armorItem?.Id);
+			return new DamageResult(finalDamage, partInfo.Name, rawDamage, armorBeforeHit, armorAbsorbed, armorAfterHit, armorItem?.Id);
 		}
 
 		private static double ApplyDamageTypeModifier(double damage, Dictionary<DamageType, DamageTypeModifier> modifiers, DamageType damageType)

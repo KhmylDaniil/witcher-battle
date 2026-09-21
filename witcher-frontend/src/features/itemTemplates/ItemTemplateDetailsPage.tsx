@@ -78,9 +78,9 @@ export function ItemTemplateDetailsPage() {
   })
 
   const [editingArmorPartId, setEditingArmorPartId] = useState<number | null>(null)
-  const [editArmorPart, setEditArmorPart] = useState<{ armorValue: number; maxDurability: number }>({ armorValue: 1, maxDurability: 5 })
+  const [editArmorPart, setEditArmorPart] = useState<{ armor: number }>({ armor: 1 })
   const updateArmorPart = useMutation({
-    mutationFn: (armorPartId: number) => itemTemplatesApi.updateArmorPart(id, armorPartId, editArmorPart.armorValue, editArmorPart.maxDurability),
+    mutationFn: (armorPartId: number) => itemTemplatesApi.updateArmorPart(id, armorPartId, editArmorPart.armor),
     onSuccess: () => {
       invalidate()
       setEditingArmorPartId(null)
@@ -90,13 +90,12 @@ export function ItemTemplateDetailsPage() {
     mutationFn: (armorPartId: number) => itemTemplatesApi.removeArmorPart(id, armorPartId),
     onSuccess: invalidate,
   })
-  const [newArmorPart, setNewArmorPart] = useState<{ part: HumanBodyPart; armorValue: number; maxDurability: number }>({
+  const [newArmorPart, setNewArmorPart] = useState<{ part: HumanBodyPart; armor: number }>({
     part: 'Torso',
-    armorValue: 1,
-    maxDurability: 5,
+    armor: 1,
   })
   const addArmorPart = useMutation({
-    mutationFn: () => itemTemplatesApi.addArmorPart(id, newArmorPart.part, newArmorPart.armorValue, newArmorPart.maxDurability),
+    mutationFn: () => itemTemplatesApi.addArmorPart(id, newArmorPart.part, newArmorPart.armor),
     onSuccess: invalidate,
   })
 
@@ -484,24 +483,15 @@ export function ItemTemplateDetailsPage() {
                 {it.armorParts.map((p) => (
                   <tr key={p.id} className="border-b border-neutral-100 dark:border-neutral-900">
                     {editingArmorPartId === p.id ? (
-                      <td colSpan={4} className="py-2">
+                      <td colSpan={3} className="py-2">
                         <div className="flex flex-wrap items-end gap-2">
-                          <Field label="Значение брони">
-                            <Input
-                              type="number"
-                              min={0}
-                              className="w-24"
-                              value={editArmorPart.armorValue}
-                              onChange={(e) => setEditArmorPart({ ...editArmorPart, armorValue: Number(e.target.value) })}
-                            />
-                          </Field>
-                          <Field label="Макс. прочность">
+                          <Field label="Броня">
                             <Input
                               type="number"
                               min={1}
                               className="w-24"
-                              value={editArmorPart.maxDurability}
-                              onChange={(e) => setEditArmorPart({ ...editArmorPart, maxDurability: Number(e.target.value) })}
+                              value={editArmorPart.armor}
+                              onChange={(e) => setEditArmorPart({ ...editArmorPart, armor: Number(e.target.value) })}
                             />
                           </Field>
                           <Button className="px-2 py-1" disabled={updateArmorPart.isPending} onClick={() => updateArmorPart.mutate(p.id)}>
@@ -515,15 +505,14 @@ export function ItemTemplateDetailsPage() {
                     ) : (
                       <>
                         <td className="py-2 pr-3">{HUMAN_BODY_PART_LABELS[p.part]}</td>
-                        <td className="py-2 pr-3">Броня: {p.armorValue}</td>
-                        <td className="py-2 pr-3">Прочность: {p.maxDurability}</td>
+                        <td className="py-2 pr-3">Броня: {p.armor}</td>
                         <td className="py-2">
                           <div className="flex gap-3">
                             <button
                               className="text-violet-600 hover:underline"
                               onClick={() => {
                                 setEditingArmorPartId(p.id)
-                                setEditArmorPart({ armorValue: p.armorValue, maxDurability: p.maxDurability })
+                                setEditArmorPart({ armor: p.armor })
                               }}
                             >
                               Изменить
@@ -555,22 +544,13 @@ export function ItemTemplateDetailsPage() {
                     ))}
                   </Select>
                 </Field>
-                <Field label="Значение брони">
-                  <Input
-                    type="number"
-                    min={0}
-                    className="w-24"
-                    value={newArmorPart.armorValue}
-                    onChange={(e) => setNewArmorPart({ ...newArmorPart, armorValue: Number(e.target.value) })}
-                  />
-                </Field>
-                <Field label="Макс. прочность">
+                <Field label="Броня">
                   <Input
                     type="number"
                     min={1}
                     className="w-24"
-                    value={newArmorPart.maxDurability}
-                    onChange={(e) => setNewArmorPart({ ...newArmorPart, maxDurability: Number(e.target.value) })}
+                    value={newArmorPart.armor}
+                    onChange={(e) => setNewArmorPart({ ...newArmorPart, armor: Number(e.target.value) })}
                   />
                 </Field>
                 <Button disabled={addArmorPart.isPending} onClick={() => addArmorPart.mutate()}>

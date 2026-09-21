@@ -6,8 +6,6 @@ namespace Wastelands.Service.Application.Models.Requests
 
 		public long ArmorPartId { get; set; }
 
-		public int ArmorValue { get; set; }
-
-		public int MaxDurability { get; set; }
+		public int Armor { get; set; }
 	}
 }

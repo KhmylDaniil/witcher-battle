@@ -21,12 +21,8 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnName("Part")
 				.IsRequired();
 
-			builder.Property(x => x.ArmorValue)
-				.HasColumnName("ArmorValue")
-				.IsRequired();
-
-			builder.Property(x => x.MaxDurability)
-				.HasColumnName("MaxDurability")
+			builder.Property(x => x.Armor)
+				.HasColumnName("Armor")
 				.IsRequired();
 
 			builder.Property(x => x.CurrentDurability)

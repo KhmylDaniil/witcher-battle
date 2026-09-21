@@ -243,12 +243,11 @@ export interface ItemTemplateAppliedCondition {
   applyChance: number
 }
 
-/** Покрытие шаблона брони — часть тела + значение брони + максимальная прочность на ней. */
+/** Покрытие шаблона брони — часть тела + значение брони (оно же стартовая/максимальная прочность). */
 export interface ItemTemplateArmorPart {
   id: number
   part: HumanBodyPart
-  armorValue: number
-  maxDurability: number
+  armor: number
 }
 
 export interface ItemTemplate {
@@ -305,8 +304,7 @@ export interface ItemAppliedCondition {
 export interface ItemArmorPart {
   id: number
   part: HumanBodyPart
-  armorValue: number
-  maxDurability: number
+  armor: number
   currentDurability: number
 }
 
