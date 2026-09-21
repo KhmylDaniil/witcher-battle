@@ -21,7 +21,7 @@ namespace Wastelands.Service.Domain.Entities
 
 		public ItemType ItemType { get; private set; }
 
-		public double Weight { get; private set; }
+		public int Weight { get; private set; }
 
 		public int Cost { get; private set; }
 
@@ -55,7 +55,7 @@ namespace Wastelands.Service.Domain.Entities
 		{
 		}
 
-		private ItemTemplate(long gameId, string name, string? description, ItemType itemType, double weight, int cost)
+		private ItemTemplate(long gameId, string name, string? description, ItemType itemType, int weight, int cost)
 		{
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(gameId, nameof(gameId));
 			InvalidArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
@@ -74,7 +74,7 @@ namespace Wastelands.Service.Domain.Entities
 			long gameId,
 			string name,
 			string? description,
-			double weight,
+			int weight,
 			int cost,
 			Skill attackSkill,
 			bool isMultiAttack,
@@ -93,13 +93,13 @@ namespace Wastelands.Service.Domain.Entities
 			return template;
 		}
 
-		public static ItemTemplate CreateNonWeapon(long gameId, string name, string? description, ItemType itemType, double weight, int cost)
+		public static ItemTemplate CreateNonWeapon(long gameId, string name, string? description, ItemType itemType, int weight, int cost)
 			=> new(gameId, name, description, itemType, weight, cost);
 
 		public void ChangeWeapon(
 			string name,
 			string? description,
-			double weight,
+			int weight,
 			int cost,
 			Skill attackSkill,
 			bool isMultiAttack,
@@ -116,10 +116,10 @@ namespace Wastelands.Service.Domain.Entities
 				attackSkill, isMultiAttack, damageDiceCount, damageModifier, damageType, weaponKind, attackRange, handsRequired, durability);
 		}
 
-		public void ChangeNonWeapon(string name, string? description, double weight, int cost)
+		public void ChangeNonWeapon(string name, string? description, int weight, int cost)
 			=> ChangeBaseFields(name, description, weight, cost);
 
-		private void ChangeBaseFields(string name, string? description, double weight, int cost)
+		private void ChangeBaseFields(string name, string? description, int weight, int cost)
 		{
 			InvalidArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
 			InvalidArgumentException.ThrowIfLessThanZero(weight, nameof(weight));

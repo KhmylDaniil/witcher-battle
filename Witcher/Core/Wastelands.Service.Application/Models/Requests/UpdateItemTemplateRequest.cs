@@ -12,7 +12,7 @@ namespace Wastelands.Service.Application.Models.Requests
 
 		public ItemType ItemType { get; set; }
 
-		public double Weight { get; set; }
+		public int Weight { get; set; }
 
 		public int Cost { get; set; }
 

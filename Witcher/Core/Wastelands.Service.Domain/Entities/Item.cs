@@ -22,7 +22,7 @@ namespace Wastelands.Service.Domain.Entities
 
 		public ItemType ItemType { get; private set; }
 
-		public double Weight { get; private set; }
+		public int Weight { get; private set; }
 
 		public int Cost { get; private set; }
 

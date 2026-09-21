@@ -73,7 +73,7 @@ export function ItemTemplateFormPage() {
               </Select>
             </Field>
             <Field label="Вес">
-              <Input type="number" step="0.1" min={0} {...register('weight', { required: true, valueAsNumber: true, min: 0 })} />
+              <Input type="number" min={0} {...register('weight', { required: true, valueAsNumber: true, min: 0 })} />
             </Field>
             <Field label="Стоимость">
               <Input type="number" min={0} {...register('cost', { required: true, valueAsNumber: true, min: 0 })} />

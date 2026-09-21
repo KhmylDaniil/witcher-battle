@@ -186,13 +186,7 @@ export function ItemTemplateDetailsPage() {
             </Field>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               <Field label="Вес">
-                <Input
-                  type="number"
-                  step="0.1"
-                  min={0}
-                  value={values.weight}
-                  onChange={(e) => setValues({ ...values, weight: Number(e.target.value) })}
-                />
+                <Input type="number" min={0} value={values.weight} onChange={(e) => setValues({ ...values, weight: Number(e.target.value) })} />
               </Field>
               <Field label="Стоимость">
                 <Input type="number" min={0} value={values.cost} onChange={(e) => setValues({ ...values, cost: Number(e.target.value) })} />
