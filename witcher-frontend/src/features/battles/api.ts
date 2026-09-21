@@ -6,6 +6,7 @@ import type {
   Character,
   Condition,
   CreatureTemplate,
+  HumanBodyPart,
   ParticipantKind,
   Skill,
   UpdateBattleCreatureFormValues,
@@ -47,7 +48,7 @@ export const battlesApi = {
   setAttackerChoices: (
     gameId: number,
     battleId: number,
-    payload: { targetedCreaturePartId: number | null; attackRoll: number | null },
+    payload: { targetedCreaturePartId: number | null; targetedHumanBodyPart: HumanBodyPart | null; attackRoll: number | null },
   ) => api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/attacker-choices`, payload),
   confirmAttacker: (gameId: number, battleId: number) =>
     api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/attacker-confirm`),

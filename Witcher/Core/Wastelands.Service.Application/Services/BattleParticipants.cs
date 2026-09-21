@@ -106,6 +106,15 @@ namespace Wastelands.Service.Application.Services
 			}
 		}
 
+		/// <summary>Целиться в часть тела по HumanBodyPart можно, только если защитник — персонаж (у существ — свои части, см. выше).</summary>
+		public static void EnsureTargetedHumanBodyPartValid(ParticipantKind defenderKind)
+		{
+			if (defenderKind != ParticipantKind.Character)
+			{
+				throw new InvalidArgumentException(ErrorCode.InvalidTargetedBodyPart, "У защищающегося существа нет фиксированной анатомии персонажа.");
+			}
+		}
+
 		/// <summary>Применяет итог урона к защитнику (существо — ещё и износ брони) и накладывает состояния, прошедшие проверку.</summary>
 		public static void ApplyDamage(
 			Battle battle,

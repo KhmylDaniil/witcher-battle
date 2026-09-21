@@ -449,6 +449,8 @@ export interface BattleAttack {
   /** Заполнено, только если защитник — существо. */
   availableCreatureParts: CreaturePartOption[] | null
   targetedCreaturePartId: number | null
+  /** Заполнено, только если защитник — персонаж; варианты — фиксированный HUMAN_BODY_PARTS. */
+  targetedHumanBodyPart: HumanBodyPart | null
   attackRoll: number | null
   attackerConfirmed: boolean
   availableDefensiveSkills: Skill[]

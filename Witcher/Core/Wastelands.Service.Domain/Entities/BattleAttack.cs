@@ -67,9 +67,12 @@ namespace Wastelands.Service.Domain.Entities
 		/// <summary>
 		/// Часть тела, в которую попала атака, если защитник — персонаж (у персонажей фиксированная
 		/// анатомия, см. HumanBodyPartCatalog, а не редактируемый шаблон, поэтому не long-ссылка, как у
-		/// существ, а сам enum). Всегда выбирается случайно — прицельная атака персонажу не поддерживается.
+		/// существ, а сам enum).
 		/// </summary>
 		public HumanBodyPart? ResolvedHumanBodyPart { get; private set; }
+
+		/// <summary>Часть тела персонажа-защитника, выбранная атакующим. Null — при разрешении атаки выбирается случайно.</summary>
+		public HumanBodyPart? TargetedHumanBodyPart { get; private set; }
 
 		/// <summary>Ручной ввод суммы броска урона. Null — при разрешении урона бросает сервер.</summary>
 		public int? DamageRoll { get; private set; }
@@ -112,6 +115,17 @@ namespace Wastelands.Service.Domain.Entities
 			}
 
 			TargetedCreaturePartId = creaturePartId;
+		}
+
+		public void SetTargetHumanBodyPart(HumanBodyPart? part)
+		{
+			EnsureAwaitingChoices();
+			if (AttackerConfirmed)
+			{
+				throw new InvalidArgumentException(ErrorCode.AttackerAlreadyConfirmed, "Атакующий уже подтвердил свой выбор.");
+			}
+
+			TargetedHumanBodyPart = part;
 		}
 
 		// Бросок d10 в этой системе может "взрываться" (на 10 — бросить ещё и прибавить, на 1 — бросить
@@ -238,6 +252,7 @@ namespace Wastelands.Service.Domain.Entities
 			DefenderKind = defenderKind;
 			DefenderId = defenderId;
 			TargetedCreaturePartId = null;
+			TargetedHumanBodyPart = null;
 			AttackRoll = null;
 			AttackTotal = 0;
 			AttackerConfirmed = false;

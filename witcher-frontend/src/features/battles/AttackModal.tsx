@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Button, ErrorText, Field, Input, Modal, Select } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
-import type { Battle, BattleAttack, ParticipantKind, Skill } from '../../types/api'
+import { HUMAN_BODY_PARTS, HUMAN_BODY_PART_LABELS, type Battle, type BattleAttack, type HumanBodyPart, type ParticipantKind, type Skill } from '../../types/api'
 import { battlesApi } from './api'
 
 interface TargetOption {
@@ -41,6 +41,7 @@ export function AttackModal({
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['battles', gameId, battleId] })
 
   const [partId, setPartId] = useState('')
+  const [humanBodyPart, setHumanBodyPart] = useState('')
   const [attackRoll, setAttackRoll] = useState('')
   const [defensiveSkill, setDefensiveSkill] = useState<Skill>(attack.availableDefensiveSkills[0])
   const [defenseRoll, setDefenseRoll] = useState('')
@@ -51,6 +52,7 @@ export function AttackModal({
     mutationFn: async () => {
       await battlesApi.setAttackerChoices(gameId, battleId, {
         targetedCreaturePartId: partId ? Number(partId) : null,
+        targetedHumanBodyPart: humanBodyPart ? (humanBodyPart as HumanBodyPart) : null,
         attackRoll: attackRoll ? Number(attackRoll) : null,
       })
       await battlesApi.confirmAttacker(gameId, battleId)
@@ -121,6 +123,20 @@ export function AttackModal({
                         {attack.availableCreatureParts.map((p) => (
                           <option key={p.id} value={p.id}>
                             {p.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </Field>
+                  </div>
+                )}
+                {attack.defenderKind === 'Character' && (
+                  <div className="mb-2">
+                    <Field label="Часть тела защитника (прицельная атака штрафует к попаданию)">
+                      <Select value={humanBodyPart} onChange={(e) => setHumanBodyPart(e.target.value)}>
+                        <option value="">— случайно —</option>
+                        {HUMAN_BODY_PARTS.map((p) => (
+                          <option key={p} value={p}>
+                            {HUMAN_BODY_PART_LABELS[p]}
                           </option>
                         ))}
                       </Select>

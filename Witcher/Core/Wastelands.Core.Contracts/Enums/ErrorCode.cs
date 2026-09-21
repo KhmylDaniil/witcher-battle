@@ -62,6 +62,7 @@
 		AttackNotInExpectedPhase = 618,
 		BattleNotInProgress = 619,
 		InvalidDamageRoll = 620,
+		InvalidTargetedBodyPart = 621,
 
 		// image errors 700...
 		UnsupportedImageType = 700,

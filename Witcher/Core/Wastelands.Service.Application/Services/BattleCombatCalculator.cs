@@ -57,8 +57,10 @@ namespace Wastelands.Service.Application.Services
 
 		/// <summary>
 		/// Встречный бросок: (характеристика+навык атаки [+модификатор части тела]) + d10, против
-		/// (характеристика+навык защиты) + d10. Часть тела — выбранная атакующим, либо (если не выбрана
-		/// и защитник — существо) случайная по d10 в диапазон MinToHit..MaxToHit.
+		/// (характеристика+навык защиты) + d10. Часть тела — выбранная атакующим (у обоих типов
+		/// защитника это добавляет HitPenalty этой части к сложности атаки — плата за прицеливание),
+		/// либо, если не выбрана, случайная (у существа — по d10 в диапазон MinToHit..MaxToHit, у
+		/// персонажа — по HumanBodyPartCatalog.ResolveByRoll).
 		/// </summary>
 		public static HitResult ResolveHit(
 			ParticipantCombatContext attackerContext,
@@ -87,8 +89,15 @@ namespace Wastelands.Service.Application.Services
 			}
 			else
 			{
-				// Прицельная атака персонажу не поддерживается — часть тела всегда случайна.
-				resolvedHumanBodyPart = HumanBodyPartCatalog.ResolveByRoll(RollDie(10));
+				if (attack.TargetedHumanBodyPart is { } chosenHumanPart)
+				{
+					resolvedHumanBodyPart = chosenHumanPart;
+					hitPenalty = HumanBodyPartCatalog.Get(chosenHumanPart).HitPenalty;
+				}
+				else
+				{
+					resolvedHumanBodyPart = HumanBodyPartCatalog.ResolveByRoll(RollDie(10));
+				}
 			}
 
 			var attackRollUsed = attack.AttackRoll ?? RollDie(10);

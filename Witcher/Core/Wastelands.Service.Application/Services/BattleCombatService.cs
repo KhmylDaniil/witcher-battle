@@ -79,7 +79,13 @@ namespace Wastelands.Service.Application.Services
 				BattleParticipants.EnsureTargetedPartValid(defenderContext, attack.DefenderKind, partId);
 			}
 
+			if (request.TargetedHumanBodyPart is not null)
+			{
+				BattleParticipants.EnsureTargetedHumanBodyPartValid(attack.DefenderKind);
+			}
+
 			attack.SetTargetPart(request.TargetedCreaturePartId);
+			attack.SetTargetHumanBodyPart(request.TargetedHumanBodyPart);
 			attack.SetAttackRoll(request.AttackRoll);
 
 			return await SaveAndNotifyAsync(battle);

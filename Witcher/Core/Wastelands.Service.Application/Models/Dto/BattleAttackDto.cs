@@ -35,6 +35,9 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public long? TargetedCreaturePartId { get; set; }
 
+		/// <summary>Заполнено, только если защитник — персонаж (фиксированный набор — см. HUMAN_BODY_PARTS на фронте).</summary>
+		public HumanBodyPart? TargetedHumanBodyPart { get; set; }
+
 		public int? AttackRoll { get; set; }
 
 		public bool AttackerConfirmed { get; set; }
