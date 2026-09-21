@@ -92,6 +92,7 @@ export interface Character {
   name: string
   imageUrl: string | null
   hp: number
+  currentHP: number
   sta: number
   int: number
   str: number
@@ -100,6 +101,10 @@ export interface Character {
   cra: number
   emp: number
   wil: number
+  /** (Str+Wil)/2 с округлением вниз — вычисляется на сервере, не редактируется напрямую. */
+  recovery: number
+  /** (Str+Wil)/2 с округлением вниз — вычисляется на сервере, не редактируется напрямую. */
+  stun: number
   skills: Partial<Record<Skill, number>>
   abilities: Ability[]
   items: Item[]
@@ -407,6 +412,8 @@ export interface BattleCreature {
   currentHP: number
   maxSta: number
   currentSta: number
+  recovery: number
+  stun: number
   initiative: number | null
   appliedConditions: Condition[]
   /** Износ брони по частям тела в этом бою (partId -> сколько очков брони потеряно). */

@@ -64,6 +64,10 @@ namespace Wastelands.API.Controllers.Api
 			return NoContent();
 		}
 
+		[HttpPut("{id:long}/rest")]
+		public async Task<CharacterDto> Rest(long id)
+			=> await _characterService.RestAsync(id);
+
 		[HttpPut("{id:long}/image")]
 		[RequestSizeLimit(5_000_000)]
 		public async Task<CharacterDto> UploadImage(long id, IFormFile file)

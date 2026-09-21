@@ -31,6 +31,10 @@ namespace Wastelands.Service.Infrastructure.Configurations
 			.HasColumnName("HP")
 			.IsRequired();
 
+			builder.Property(x => x.CurrentHP)
+			.HasColumnName("CurrentHP")
+			.IsRequired();
+
 			builder.Property(x => x.Sta)
 			.HasColumnName("Sta")
 			.IsRequired();
@@ -68,6 +72,16 @@ namespace Wastelands.Service.Infrastructure.Configurations
 			builder.Property(r => r.Wil)
 			.HasColumnName("Wil")
 			.HasComment("Willpower")
+			.IsRequired();
+
+			builder.Property(x => x.Recovery)
+			.HasColumnName("Recovery")
+			.HasComment("(Str+Wil)/2, вычисляется на сервере")
+			.IsRequired();
+
+			builder.Property(x => x.Stun)
+			.HasColumnName("Stun")
+			.HasComment("(Str+Wil)/2, вычисляется на сервере")
 			.IsRequired();
 
 			builder.Property(x => x.Skills)

@@ -7,7 +7,9 @@ namespace Wastelands.Service.Domain.Entities
 {
 	/// <summary>
 	/// Персонаж игрока, вошедший в конкретный бой — HP/Sta скопированы из <see cref="Character"/>
-	/// на момент входа в бой, дальнейшее изменение листа персонажа задним числом на бой не влияет.
+	/// на момент входа в бой (CurrentHP — из накопленного вне боя Character.CurrentHP, а не всегда с
+	/// полного HP), дальнейшее изменение листа персонажа задним числом на бой не влияет. При удалении
+	/// боя CurrentHP синхронизируется обратно на персонажа — см. BattleService.DeleteBattleAsync.
 	/// </summary>
 	public class BattleCharacter : Entity
 	{
@@ -42,7 +44,7 @@ namespace Wastelands.Service.Domain.Entities
 			BattleId = battleId;
 			CharacterId = character.Id;
 			MaxHP = character.HP;
-			CurrentHP = character.HP;
+			CurrentHP = character.CurrentHP;
 			MaxSta = character.Sta;
 			CurrentSta = character.Sta;
 		}

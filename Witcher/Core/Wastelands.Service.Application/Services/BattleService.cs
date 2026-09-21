@@ -70,9 +70,25 @@ namespace Wastelands.Service.Application.Services
 			return await _dtoMapper.MapAsync(battle);
 		}
 
+		/// <summary>
+		/// Удаление боя — единственный момент, когда участие персонажа в начавшемся бою завершается
+		/// (RemoveCharacterAsync разрешён только для черновика — см. ThrowIfNotDraft), поэтому здесь же
+		/// синхронизируем накопленное в бою CurrentHP обратно на персонажей-участников.
+		/// </summary>
 		public async Task DeleteBattleAsync(long id)
 		{
 			var battle = await GetByIdForGmAsync(id);
+
+			foreach (var battleCharacter in battle.Characters)
+			{
+				var character = await _characterRepository.GetByIdUnscopedAsync(battleCharacter.CharacterId);
+				if (character is not null)
+				{
+					character.SyncCurrentHpFromBattle(battleCharacter.CurrentHP);
+					await _characterRepository.UpdateAsync(character);
+				}
+			}
+
 			await _battleRepository.DeleteAsync(battle);
 		}
 

@@ -19,6 +19,8 @@ export const charactersApi = {
   create: (gameId: number, payload: CharacterFormValues) => api.post<Character>('/api/characters', { ...payload, gameId }),
   update: (id: number, payload: CharacterFormValues) => api.put<Character>(`/api/characters/${id}`, payload),
   remove: (id: number) => api.delete<void>(`/api/characters/${id}`),
+  /** Отдых вне боя — восстанавливает HP на величину Recovery. */
+  rest: (id: number) => api.put<Character>(`/api/characters/${id}/rest`),
 
   uploadImage: (id: number, file: File) => api.upload<Character>(`/api/characters/${id}/image`, file),
   removeImage: (id: number) => api.delete<Character>(`/api/characters/${id}/image`),

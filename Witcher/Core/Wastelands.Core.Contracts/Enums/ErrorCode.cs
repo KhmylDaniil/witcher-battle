@@ -14,6 +14,7 @@
 		// character errors
 		CharacterNotFound = 200,
 		CharacterSkillAlreadyExisted = 201,
+		CharacterCurrentlyInBattle = 202,
 
 		// ability errors
 		AbilityNotFound = 500,

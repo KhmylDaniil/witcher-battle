@@ -18,6 +18,10 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public int CurrentSta { get; set; }
 
+		public int Recovery { get; set; }
+
+		public int Stun { get; set; }
+
 		public int? Initiative { get; set; }
 
 		public List<Condition> AppliedConditions { get; set; } = [];

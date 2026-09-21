@@ -19,6 +19,9 @@ namespace Wastelands.Service.Application.Contracts
 
 		Task<CharacterDto> UpdateCharacterAsync(UpdateCharacterRequest request);
 
+		/// <summary>Отдых вне боя — восстанавливает HP персонажа на величину Recovery.</summary>
+		Task<CharacterDto> RestAsync(long id);
+
 		Task AddSkillAsync(AddOrUpdateCharacterSkillRequest request);
 
 		Task UpdateSkillAsync(AddOrUpdateCharacterSkillRequest request);

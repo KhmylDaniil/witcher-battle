@@ -21,6 +21,7 @@ namespace Wastelands.Service.Application.Services
 		private readonly ICharacterRepository _characterRepository;
 		private readonly IGameRepository _gameRepository;
 		private readonly IUserGameRepository _userGameRepository;
+		private readonly IBattleRepository _battleRepository;
 		private readonly IUserContext _userContext;
 		private readonly IImageStorage _imageStorage;
 
@@ -28,6 +29,7 @@ namespace Wastelands.Service.Application.Services
 			ICharacterRepository repository,
 			IGameRepository gameRepository,
 			IUserGameRepository userGameRepository,
+			IBattleRepository battleRepository,
 			IMapper mapper,
 			IUserContext userContext,
 			IImageStorage imageStorage)
@@ -35,6 +37,7 @@ namespace Wastelands.Service.Application.Services
 			_characterRepository = repository;
 			_gameRepository = gameRepository;
 			_userGameRepository = userGameRepository;
+			_battleRepository = battleRepository;
 			_mapper = mapper;
 			_userContext = userContext;
 			_imageStorage = imageStorage;
@@ -123,6 +126,23 @@ namespace Wastelands.Service.Application.Services
 			await _characterRepository.CreateAsync(entity);
 
 			return _mapper.Map<CharacterDto>(entity);
+		}
+
+		public async Task<CharacterDto> RestAsync(long id)
+		{
+			var character = await GetByIdAsync(id);
+
+			var inBattle = await _battleRepository.AnyAsync(
+				b => b.Status == BattleStatus.InProgress && b.Characters.Any(bc => bc.CharacterId == id));
+			if (inBattle)
+			{
+				throw new InvalidArgumentException(ErrorCode.CharacterCurrentlyInBattle, "Персонаж не может отдыхать, пока участвует в бою.");
+			}
+
+			character.Rest();
+			await _characterRepository.UpdateAsync(character);
+
+			return _mapper.Map<CharacterDto>(character);
 		}
 
 		public async Task<CharacterDto> UpdateCharacterAsync(UpdateCharacterRequest request)

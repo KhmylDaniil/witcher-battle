@@ -26,6 +26,8 @@ namespace Wastelands.Service.Domain.Entities
 
 		public int HP { get; private set; }
 
+		public int CurrentHP { get; private set; }
+
 		public int Sta { get; private set; }
 
 		public int Int {  get; private set; }
@@ -41,6 +43,16 @@ namespace Wastelands.Service.Domain.Entities
 		public int Emp { get; private set; }
 
 		public int Wil { get; private set; }
+
+		/// <summary>
+		/// (Str+Wil)/2 с округлением вниз — не вводится с фронтенда, а пересчитывается при каждом
+		/// создании/изменении персонажа. Отдельное поле от Stun, хотя формула сейчас совпадает — они
+		/// могут разойтись в будущем.
+		/// </summary>
+		public int Recovery { get; private set; }
+
+		/// <summary>(Str+Wil)/2 с округлением вниз — см. Recovery.</summary>
+		public int Stun { get; private set; }
 
 		public Dictionary<Skill, int> Skills { get; private set; } = [];
 
@@ -71,6 +83,7 @@ namespace Wastelands.Service.Domain.Entities
 			GameId = gameId;
 			Name = name;
 			HP = hp;
+			CurrentHP = hp;
 			Sta = sta;
 			Int = @int;
 			Str = str;
@@ -79,6 +92,8 @@ namespace Wastelands.Service.Domain.Entities
 			Cra = cra;
 			Emp = emp;
 			Wil = wil;
+			Recovery = (str + wil) / 2;
+			Stun = (str + wil) / 2;
 		}
 
 		public void UpdateCharacter(string name, int hp, int sta, int @int, int str, int rea, int dex, int cra, int emp, int wil)
@@ -96,6 +111,7 @@ namespace Wastelands.Service.Domain.Entities
 
 			Name = name;
 			HP = hp;
+			CurrentHP = Math.Min(CurrentHP, hp);
 			Sta = sta;
 			Int = @int;
 			Str = str;
@@ -104,11 +120,29 @@ namespace Wastelands.Service.Domain.Entities
 			Cra = cra;
 			Emp = emp;
 			Wil = wil;
+			Recovery = (str + wil) / 2;
+			Stun = (str + wil) / 2;
 		}
 
 		public void SetImage(string? imageKey)
 		{
 			ImageKey = imageKey;
+		}
+
+		/// <summary>Отдых вне боя — восстанавливает HP на величину Recovery, не выше максимума.</summary>
+		public void Rest()
+		{
+			CurrentHP = Math.Min(HP, CurrentHP + Recovery);
+		}
+
+		/// <summary>
+		/// Синхронизация текущего HP из боя обратно на персонажа — вызывается при удалении боя, в
+		/// котором он участвовал (см. BattleService.DeleteBattleAsync), т.к. это единственный момент,
+		/// когда участие персонажа в начавшемся бою завершается.
+		/// </summary>
+		public void SyncCurrentHpFromBattle(int currentHp)
+		{
+			CurrentHP = Math.Clamp(currentHp, 0, HP);
 		}
 	}
 }

@@ -14,6 +14,8 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public int HP { get; set; }
 
+		public int CurrentHP { get; set; }
+
 		public int Sta { get; set; }
 
 		public int Int { get; set; }
@@ -29,6 +31,10 @@ namespace Wastelands.Service.Application.Models.Dto
 		public int Emp { get; set; }
 
 		public int Wil { get; set; }
+
+		public int Recovery { get; set; }
+
+		public int Stun { get; set; }
 
 		public Dictionary<Skill, int> Skills { get; set; }
 

@@ -36,6 +36,8 @@ namespace Wastelands.Service.Infrastructure.Configurations
 			builder.Property(x => x.MaxSta).HasColumnName("MaxSta").IsRequired();
 			builder.Property(x => x.CurrentSta).HasColumnName("CurrentSta").IsRequired();
 			builder.Property(x => x.Ref).HasColumnName("Ref").IsRequired();
+			builder.Property(x => x.Recovery).HasColumnName("Recovery").HasComment("(Body+Will шаблона)/2, вычисляется на сервере").IsRequired();
+			builder.Property(x => x.Stun).HasColumnName("Stun").HasComment("(Body+Will шаблона)/2, вычисляется на сервере").IsRequired();
 
 			builder.Property(x => x.Initiative)
 				.HasColumnName("Initiative")

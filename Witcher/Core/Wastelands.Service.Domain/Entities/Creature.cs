@@ -30,6 +30,12 @@ namespace Wastelands.Service.Domain.Entities
 
 		public int Ref { get; private set; }
 
+		/// <summary>(Body+Will шаблона)/2 с округлением вниз — не вводится с фронтенда, см. Character.Recovery.</summary>
+		public int Recovery { get; private set; }
+
+		/// <summary>(Body+Will шаблона)/2 с округлением вниз — см. Recovery.</summary>
+		public int Stun { get; private set; }
+
 		public int? Initiative { get; private set; }
 
 		public List<Condition> AppliedConditions { get; private set; } = [];
@@ -59,6 +65,8 @@ namespace Wastelands.Service.Domain.Entities
 			MaxSta = template.Sta;
 			CurrentSta = template.Sta;
 			Ref = template.Ref;
+			Recovery = (template.Body + template.Will) / 2;
+			Stun = (template.Body + template.Will) / 2;
 		}
 
 		public void UpdateState(string name, int currentHp, int currentSta)

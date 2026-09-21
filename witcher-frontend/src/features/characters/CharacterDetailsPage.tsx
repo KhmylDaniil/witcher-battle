@@ -32,6 +32,11 @@ export function CharacterDetailsPage() {
     },
   })
 
+  const rest = useMutation({
+    mutationFn: () => charactersApi.rest(id),
+    onSuccess: invalidate,
+  })
+
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null)
   const [editValue, setEditValue] = useState(1)
   const upsertSkill = useMutation({
@@ -213,13 +218,29 @@ export function CharacterDetailsPage() {
       </Card>
 
       <Card>
-        <h2 className="mb-2 font-semibold">Характеристики</h2>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="font-semibold">Характеристики</h2>
+          {isOwner && c.gameId && (
+            <Button className="px-2 py-1 text-xs" disabled={rest.isPending || c.currentHP >= c.hp} onClick={() => rest.mutate()}>
+              Отдых
+            </Button>
+          )}
+        </div>
         <div className="mb-3 grid grid-cols-4 gap-3 text-sm sm:grid-cols-7">
           <div>
-            <span className="text-neutral-400">HP</span> <span className="font-medium">{c.hp}</span>
+            <span className="text-neutral-400">HP</span>{' '}
+            <span className="font-medium">
+              {c.currentHP}/{c.hp}
+            </span>
           </div>
           <div>
             <span className="text-neutral-400">STA</span> <span className="font-medium">{c.sta}</span>
+          </div>
+          <div>
+            <span className="text-neutral-400">Отдых</span> <span className="font-medium">{c.recovery}</span>
+          </div>
+          <div>
+            <span className="text-neutral-400">Устойчивость</span> <span className="font-medium">{c.stun}</span>
           </div>
         </div>
         <div className="grid grid-cols-4 gap-3 text-sm sm:grid-cols-7">
@@ -229,6 +250,11 @@ export function CharacterDetailsPage() {
             </div>
           ))}
         </div>
+        {rest.error && (
+          <div className="mt-2">
+            <ErrorText>{rest.error instanceof ApiError ? rest.error.message : 'Не удалось отдохнуть'}</ErrorText>
+          </div>
+        )}
       </Card>
 
       <Card>
