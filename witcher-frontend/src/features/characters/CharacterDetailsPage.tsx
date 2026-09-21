@@ -522,6 +522,15 @@ export function CharacterDetailsPage() {
             </div>
           ))}
         </div>
+        {(equipItem.error || unequipItem.error) && (
+          <div className="mt-2">
+            <ErrorText>
+              {(equipItem.error ?? unequipItem.error) instanceof ApiError
+                ? (equipItem.error ?? unequipItem.error as ApiError).message
+                : 'Не удалось изменить экипировку'}
+            </ErrorText>
+          </div>
+        )}
         {repairItem.error && (
           <div className="mt-2">
             <ErrorText>{repairItem.error instanceof ApiError ? repairItem.error.message : 'Не удалось отремонтировать предмет'}</ErrorText>
