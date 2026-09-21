@@ -56,9 +56,9 @@ namespace Wastelands.Service.Application.Services
 		}
 
 		/// <summary>
-		/// Встречный бросок: (характеристика+навык атаки [+модификатор части тела]) + d10, против
+		/// Встречный бросок: (характеристика+навык атаки [-модификатор части тела]) + d10, против
 		/// (характеристика+навык защиты) + d10. Часть тела — выбранная атакующим (у обоих типов
-		/// защитника это добавляет HitPenalty этой части к сложности атаки — плата за прицеливание),
+		/// защитника это вычитает HitPenalty этой части из итога атаки — плата за прицеливание),
 		/// либо, если не выбрана, случайная (у существа — по d10 в диапазон MinToHit..MaxToHit, у
 		/// персонажа — по HumanBodyPartCatalog.ResolveByRoll).
 		/// </summary>
@@ -101,7 +101,7 @@ namespace Wastelands.Service.Application.Services
 			}
 
 			var attackRollUsed = attack.AttackRoll ?? RollDie(10);
-			var attackTotal = attackerContext.GetSkillValue(ability.AttackSkill) + hitPenalty + attackRollUsed + ability.AttackModifier;
+			var attackTotal = attackerContext.GetSkillValue(ability.AttackSkill) - hitPenalty + attackRollUsed + ability.AttackModifier;
 
 			var defenseRollUsed = attack.DefenseRoll ?? RollDie(10);
 			var defenseTotal = defenderContext.GetSkillValue(attack.DefensiveSkill!.Value) + defenseRollUsed;
