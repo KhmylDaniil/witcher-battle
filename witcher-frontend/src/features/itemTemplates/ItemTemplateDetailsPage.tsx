@@ -149,6 +149,7 @@ export function ItemTemplateDetailsPage() {
                     attackSkill: it.attackSkill ?? undefined,
                     isMultiAttack: it.isMultiAttack ?? undefined,
                     damageDiceCount: it.damageDiceCount ?? undefined,
+                    attackModifier: it.attackModifier ?? undefined,
                     damageModifier: it.damageModifier ?? undefined,
                     damageType: it.damageType ?? undefined,
                     weaponKind: it.weaponKind ?? undefined,
@@ -215,6 +216,13 @@ export function ItemTemplateDetailsPage() {
                       min={1}
                       value={values.damageDiceCount}
                       onChange={(e) => setValues({ ...values, damageDiceCount: Number(e.target.value) })}
+                    />
+                  </Field>
+                  <Field label="Модификатор атаки">
+                    <Input
+                      type="number"
+                      value={values.attackModifier}
+                      onChange={(e) => setValues({ ...values, attackModifier: Number(e.target.value) })}
                     />
                   </Field>
                   <Field label="Модификатор урона">
@@ -323,6 +331,9 @@ export function ItemTemplateDetailsPage() {
                 </div>
                 <div>
                   <span className="text-neutral-400">Мультиатака</span> <span className="font-medium">{it.isMultiAttack ? 'Да' : 'Нет'}</span>
+                </div>
+                <div>
+                  <span className="text-neutral-400">Модификатор атаки</span> <span className="font-medium">{it.attackModifier}</span>
                 </div>
                 <div>
                   <span className="text-neutral-400">Урон</span>{' '}

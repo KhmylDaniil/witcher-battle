@@ -104,6 +104,7 @@ export function AbilityDetailsPage() {
                     attackSkill: ability.attackSkill,
                     attacksPerTurn: ability.attacksPerTurn,
                     damageDiceCount: ability.damageDiceCount,
+                    attackModifier: ability.attackModifier,
                     damageModifier: ability.damageModifier,
                     damageType: ability.damageType,
                   })
@@ -170,6 +171,13 @@ export function AbilityDetailsPage() {
                   onChange={(e) => setAbilityValues({ ...abilityValues, damageDiceCount: Number(e.target.value) })}
                 />
               </Field>
+              <Field label="Модификатор атаки">
+                <Input
+                  type="number"
+                  value={abilityValues.attackModifier}
+                  onChange={(e) => setAbilityValues({ ...abilityValues, attackModifier: Number(e.target.value) })}
+                />
+              </Field>
               <Field label="Модификатор урона">
                 <Input
                   type="number"
@@ -214,6 +222,9 @@ export function AbilityDetailsPage() {
             </div>
             <div>
               <span className="text-neutral-400">Атак в ход</span> <span className="font-medium">{ability.attacksPerTurn}</span>
+            </div>
+            <div>
+              <span className="text-neutral-400">Модификатор атаки</span> <span className="font-medium">{ability.attackModifier}</span>
             </div>
             <div>
               <span className="text-neutral-400">Урон</span>{' '}

@@ -32,6 +32,8 @@ namespace Wastelands.Service.Domain.Entities
 
 		public int? DamageDiceCount { get; private set; }
 
+		public int? AttackModifier { get; private set; }
+
 		public int? DamageModifier { get; private set; }
 
 		public DamageType? DamageType { get; private set; }
@@ -79,6 +81,7 @@ namespace Wastelands.Service.Domain.Entities
 			Skill attackSkill,
 			bool isMultiAttack,
 			int damageDiceCount,
+			int attackModifier,
 			int damageModifier,
 			DamageType damageType,
 			WeaponKind weaponKind,
@@ -88,7 +91,7 @@ namespace Wastelands.Service.Domain.Entities
 		{
 			var template = new ItemTemplate(gameId, name, description, ItemType.Weapon, weight, cost);
 			template.SetWeaponFields(
-				attackSkill, isMultiAttack, damageDiceCount, damageModifier, damageType, weaponKind, attackRange, handsRequired, durability);
+				attackSkill, isMultiAttack, damageDiceCount, attackModifier, damageModifier, damageType, weaponKind, attackRange, handsRequired, durability);
 
 			return template;
 		}
@@ -104,6 +107,7 @@ namespace Wastelands.Service.Domain.Entities
 			Skill attackSkill,
 			bool isMultiAttack,
 			int damageDiceCount,
+			int attackModifier,
 			int damageModifier,
 			DamageType damageType,
 			WeaponKind weaponKind,
@@ -113,7 +117,7 @@ namespace Wastelands.Service.Domain.Entities
 		{
 			ChangeBaseFields(name, description, weight, cost);
 			SetWeaponFields(
-				attackSkill, isMultiAttack, damageDiceCount, damageModifier, damageType, weaponKind, attackRange, handsRequired, durability);
+				attackSkill, isMultiAttack, damageDiceCount, attackModifier, damageModifier, damageType, weaponKind, attackRange, handsRequired, durability);
 		}
 
 		public void ChangeNonWeapon(string name, string? description, int weight, int cost)
@@ -135,6 +139,7 @@ namespace Wastelands.Service.Domain.Entities
 			Skill attackSkill,
 			bool isMultiAttack,
 			int damageDiceCount,
+			int attackModifier,
 			int damageModifier,
 			DamageType damageType,
 			WeaponKind weaponKind,
@@ -150,6 +155,7 @@ namespace Wastelands.Service.Domain.Entities
 			AttackSkill = attackSkill;
 			IsMultiAttack = isMultiAttack;
 			DamageDiceCount = damageDiceCount;
+			AttackModifier = attackModifier;
 			DamageModifier = damageModifier;
 			DamageType = damageType;
 			WeaponKind = weaponKind;

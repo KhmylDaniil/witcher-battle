@@ -263,6 +263,7 @@ export interface ItemTemplate {
   /** Возможна ли мультиатака (быстрая/сильная атака при экипировке). */
   isMultiAttack: boolean | null
   damageDiceCount: number | null
+  attackModifier: number | null
   damageModifier: number | null
   damageType: DamageType | null
   weaponKind: WeaponKind | null
@@ -284,6 +285,7 @@ export interface ItemTemplateFormValues {
   attackSkill?: Skill
   isMultiAttack?: boolean
   damageDiceCount?: number
+  attackModifier?: number
   damageModifier?: number
   damageType?: DamageType
   weaponKind?: WeaponKind
@@ -320,6 +322,7 @@ export interface Item {
   attackSkill: Skill | null
   isMultiAttack: boolean | null
   damageDiceCount: number | null
+  attackModifier: number | null
   damageModifier: number | null
   damageType: DamageType | null
   weaponKind: WeaponKind | null
@@ -372,6 +375,7 @@ export interface Ability {
   attackSkill: Skill
   attacksPerTurn: number
   damageDiceCount: number
+  attackModifier: number
   damageModifier: number
   damageType: DamageType
   appliedConditions: AbilityAppliedCondition[]
@@ -385,6 +389,7 @@ export interface AbilityFormValues {
   attackSkill: Skill
   attacksPerTurn: number
   damageDiceCount: number
+  attackModifier: number
   damageModifier: number
   damageType: DamageType
 }

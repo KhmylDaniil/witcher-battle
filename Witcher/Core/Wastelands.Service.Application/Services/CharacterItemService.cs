@@ -132,8 +132,9 @@ namespace Wastelands.Service.Application.Services
 
 		/// <summary>
 		/// Оружие без мультиатаки (IsMultiAttack == false на предмете) даёт одну способность с именем
-		/// оружия и скоростью 1; с мультиатакой (IsMultiAttack == true) — «Быструю атаку» (скорость 2,
-		/// урон как в предмете) и «Сильную атаку» (скорость 1, урон ×2 кубиками, модификатор -3).
+		/// оружия и скоростью 1, атаку/урон копирует как в предмете; с мультиатакой (IsMultiAttack ==
+		/// true) — «Быструю атаку» (скорость 2, атака/урон как в предмете) и «Сильную атаку» (скорость
+		/// 1, урон ×2 кубиками и модификатором урона, штраф -3 к модификатору атаки).
 		/// </summary>
 		private static void GenerateWeaponAbilities(Character character, Item item)
 		{
@@ -143,17 +144,17 @@ namespace Wastelands.Service.Application.Services
 			{
 				character.Abilities.Add(Ability.ForEquippedWeapon(
 					character.Id, item.Id, $"Быстрая атака ({item.Name})", item.AttackSkill!.Value, attacksPerTurn: 2,
-					item.DamageDiceCount!.Value, item.DamageModifier!.Value, item.DamageType!.Value, appliedConditions));
+					item.DamageDiceCount!.Value, item.AttackModifier!.Value, item.DamageModifier!.Value, item.DamageType!.Value, appliedConditions));
 
 				character.Abilities.Add(Ability.ForEquippedWeapon(
 					character.Id, item.Id, $"Сильная атака ({item.Name})", item.AttackSkill!.Value, attacksPerTurn: 1,
-					item.DamageDiceCount!.Value * 2, item.DamageModifier!.Value - 3, item.DamageType!.Value, appliedConditions));
+					item.DamageDiceCount!.Value * 2, item.AttackModifier!.Value - 3, item.DamageModifier!.Value * 2, item.DamageType!.Value, appliedConditions));
 			}
 			else
 			{
 				character.Abilities.Add(Ability.ForEquippedWeapon(
 					character.Id, item.Id, item.Name, item.AttackSkill!.Value, attacksPerTurn: 1,
-					item.DamageDiceCount!.Value, item.DamageModifier!.Value, item.DamageType!.Value, appliedConditions));
+					item.DamageDiceCount!.Value, item.AttackModifier!.Value, item.DamageModifier!.Value, item.DamageType!.Value, appliedConditions));
 			}
 		}
 

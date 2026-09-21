@@ -12,6 +12,8 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public int DamageDiceCount { get; set; }
 
+		public int AttackModifier { get; set; }
+
 		public int DamageModifier { get; set; }
 
 		public DamageType DamageType { get; set; }

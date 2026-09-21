@@ -51,6 +51,10 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnName("DamageDiceCount")
 				.IsRequired(false);
 
+			builder.Property(x => x.AttackModifier)
+				.HasColumnName("AttackModifier")
+				.IsRequired(false);
+
 			builder.Property(x => x.DamageModifier)
 				.HasColumnName("DamageModifier")
 				.IsRequired(false);

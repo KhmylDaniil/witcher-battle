@@ -18,6 +18,7 @@ export function AbilityFormPage() {
       attackSkill: 'Melee',
       attacksPerTurn: 1,
       damageDiceCount: 1,
+      attackModifier: 0,
       damageModifier: 0,
       damageType: 'Slashing',
     },
@@ -33,7 +34,13 @@ export function AbilityFormPage() {
   })
 
   const onSubmit = handleSubmit((values) =>
-    save.mutate({ ...values, attacksPerTurn: Number(values.attacksPerTurn), damageDiceCount: Number(values.damageDiceCount), damageModifier: Number(values.damageModifier) }),
+    save.mutate({
+      ...values,
+      attacksPerTurn: Number(values.attacksPerTurn),
+      damageDiceCount: Number(values.damageDiceCount),
+      attackModifier: Number(values.attackModifier),
+      damageModifier: Number(values.damageModifier),
+    }),
   )
 
   return (
@@ -67,6 +74,9 @@ export function AbilityFormPage() {
             </Field>
             <Field label="Кубиков д6 урона">
               <Input type="number" min={1} {...register('damageDiceCount', { required: true, valueAsNumber: true, min: 1 })} />
+            </Field>
+            <Field label="Модификатор атаки">
+              <Input type="number" {...register('attackModifier', { required: true, valueAsNumber: true })} />
             </Field>
             <Field label="Модификатор урона">
               <Input type="number" {...register('damageModifier', { required: true, valueAsNumber: true })} />

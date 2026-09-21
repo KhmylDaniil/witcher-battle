@@ -28,7 +28,7 @@ namespace Wastelands.Service.Application.Services
 
 			var ability = Ability.ForCharacter(
 				character.Id, request.Name, request.AttackSkill, request.AttacksPerTurn,
-				request.DamageDiceCount, request.DamageModifier, request.DamageType);
+				request.DamageDiceCount, request.AttackModifier, request.DamageModifier, request.DamageType);
 
 			character.Abilities.Add(ability);
 			await _characterRepository.UpdateAsync(character);
@@ -44,7 +44,7 @@ namespace Wastelands.Service.Application.Services
 
 			ability.ChangeAbility(
 				request.Name, request.AttackSkill, request.AttacksPerTurn,
-				request.DamageDiceCount, request.DamageModifier, request.DamageType);
+				request.DamageDiceCount, request.AttackModifier, request.DamageModifier, request.DamageType);
 
 			await _characterRepository.UpdateAsync(character);
 

@@ -22,6 +22,7 @@ export function ItemTemplateFormPage() {
       attackSkill: 'Melee',
       isMultiAttack: false,
       damageDiceCount: 1,
+      attackModifier: 0,
       damageModifier: 0,
       damageType: 'Slashing',
       weaponKind: 'Melee',
@@ -95,6 +96,9 @@ export function ItemTemplateFormPage() {
                 </Field>
                 <Field label="Кубиков д6 урона">
                   <Input type="number" min={1} {...register('damageDiceCount', { required: true, valueAsNumber: true, min: 1 })} />
+                </Field>
+                <Field label="Модификатор атаки">
+                  <Input type="number" {...register('attackModifier', { required: true, valueAsNumber: true })} />
                 </Field>
                 <Field label="Модификатор урона">
                   <Input type="number" {...register('damageModifier', { required: true, valueAsNumber: true })} />

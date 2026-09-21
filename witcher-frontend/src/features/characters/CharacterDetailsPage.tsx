@@ -367,7 +367,8 @@ export function CharacterDetailsPage() {
                 <span>
                   {a.name}{' '}
                   <span className="text-neutral-400">
-                    — {a.attacksPerTurn}× {a.damageDiceCount}д6+{a.damageModifier} {a.damageType} ({a.attackSkill})
+                    — {a.attacksPerTurn}× атака{a.attackModifier >= 0 ? '+' : ''}
+                    {a.attackModifier}, {a.damageDiceCount}д6+{a.damageModifier} {a.damageType} ({a.attackSkill})
                   </span>
                 </span>
                 <span className="text-xs text-neutral-400">от оружия</span>
@@ -377,7 +378,8 @@ export function CharacterDetailsPage() {
                 <Link to={`/characters/${c.id}/abilities/${a.id}`} className="hover:text-violet-600">
                   {a.name}{' '}
                   <span className="text-neutral-400">
-                    — {a.attacksPerTurn}× {a.damageDiceCount}д6+{a.damageModifier} {a.damageType} ({a.attackSkill})
+                    — {a.attacksPerTurn}× атака{a.attackModifier >= 0 ? '+' : ''}
+                    {a.attackModifier}, {a.damageDiceCount}д6+{a.damageModifier} {a.damageType} ({a.attackSkill})
                   </span>
                 </Link>
                 {isOwner && c.gameId && (
@@ -439,7 +441,8 @@ export function CharacterDetailsPage() {
                   {i.itemType === 'Weapon' && (
                     <span className="text-neutral-400">
                       {' '}
-                      — {i.damageDiceCount}д6+{i.damageModifier} {i.damageType} ({i.attackSkill}
+                      — атака{(i.attackModifier ?? 0) >= 0 ? '+' : ''}
+                      {i.attackModifier}, {i.damageDiceCount}д6+{i.damageModifier} {i.damageType} ({i.attackSkill}
                       {i.isMultiAttack ? ', мультиатака' : ''})
                     </span>
                   )}

@@ -28,7 +28,7 @@ namespace Wastelands.Service.Application.Services
 
 			var ability = Ability.ForCreatureTemplate(
 				creatureTemplate.Id, request.Name, request.AttackSkill, request.AttacksPerTurn,
-				request.DamageDiceCount, request.DamageModifier, request.DamageType);
+				request.DamageDiceCount, request.AttackModifier, request.DamageModifier, request.DamageType);
 
 			creatureTemplate.Abilities.Add(ability);
 			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
@@ -43,7 +43,7 @@ namespace Wastelands.Service.Application.Services
 
 			ability.ChangeAbility(
 				request.Name, request.AttackSkill, request.AttacksPerTurn,
-				request.DamageDiceCount, request.DamageModifier, request.DamageType);
+				request.DamageDiceCount, request.AttackModifier, request.DamageModifier, request.DamageType);
 
 			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
 

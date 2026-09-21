@@ -32,6 +32,8 @@ namespace Wastelands.Service.Domain.Entities
 
 		public int? DamageDiceCount { get; private set; }
 
+		public int? AttackModifier { get; private set; }
+
 		public int? DamageModifier { get; private set; }
 
 		public DamageType? DamageType { get; private set; }
@@ -72,6 +74,7 @@ namespace Wastelands.Service.Domain.Entities
 			AttackSkill = template.AttackSkill;
 			IsMultiAttack = template.IsMultiAttack;
 			DamageDiceCount = template.DamageDiceCount;
+			AttackModifier = template.AttackModifier;
 			DamageModifier = template.DamageModifier;
 			DamageType = template.DamageType;
 			WeaponKind = template.WeaponKind;

@@ -23,6 +23,8 @@ namespace Wastelands.Service.Application.Models.Requests
 
 		public int? DamageDiceCount { get; set; }
 
+		public int? AttackModifier { get; set; }
+
 		public int? DamageModifier { get; set; }
 
 		public DamageType? DamageType { get; set; }

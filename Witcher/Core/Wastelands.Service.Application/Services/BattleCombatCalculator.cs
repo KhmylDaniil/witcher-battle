@@ -101,7 +101,7 @@ namespace Wastelands.Service.Application.Services
 			}
 
 			var attackRollUsed = attack.AttackRoll ?? RollDie(10);
-			var attackTotal = attackerContext.GetSkillValue(ability.AttackSkill) + hitPenalty + attackRollUsed;
+			var attackTotal = attackerContext.GetSkillValue(ability.AttackSkill) + hitPenalty + attackRollUsed + ability.AttackModifier;
 
 			var defenseRollUsed = attack.DefenseRoll ?? RollDie(10);
 			var defenseTotal = defenderContext.GetSkillValue(attack.DefensiveSkill!.Value) + defenseRollUsed;

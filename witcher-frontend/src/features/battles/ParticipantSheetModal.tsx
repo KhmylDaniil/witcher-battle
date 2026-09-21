@@ -14,7 +14,8 @@ const CHARACTER_STAT_KEYS = ['int', 'str', 'rea', 'dex', 'cra', 'emp', 'wil'] as
 
 function formatAbility(a: Ability): string {
   const modifier = a.damageModifier >= 0 ? `+${a.damageModifier}` : `${a.damageModifier}`
-  return `${a.name} — ${a.attacksPerTurn}× ${a.damageDiceCount}д6${modifier} ${a.damageType} (${a.attackSkill})`
+  const attackModifier = a.attackModifier >= 0 ? `+${a.attackModifier}` : `${a.attackModifier}`
+  return `${a.name} — ${a.attacksPerTurn}× атака${attackModifier}, ${a.damageDiceCount}д6${modifier} ${a.damageType} (${a.attackSkill})`
 }
 
 export function ParticipantSheetModal({

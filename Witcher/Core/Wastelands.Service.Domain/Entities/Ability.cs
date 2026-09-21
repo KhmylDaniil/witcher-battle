@@ -31,6 +31,11 @@ namespace Wastelands.Service.Domain.Entities
 
 		public int DamageDiceCount { get; private set; }
 
+		/// <summary>
+		/// Добавляется к суммарному броску на попадание (см. BattleCombatCalculator.ResolveHit).
+		/// </summary>
+		public int AttackModifier { get; private set; }
+
 		public int DamageModifier { get; private set; }
 
 		public DamageType DamageType { get; private set; }
@@ -48,6 +53,7 @@ namespace Wastelands.Service.Domain.Entities
 			Skill attackSkill,
 			int attacksPerTurn,
 			int damageDiceCount,
+			int attackModifier,
 			int damageModifier,
 			DamageType damageType)
 		{
@@ -59,6 +65,7 @@ namespace Wastelands.Service.Domain.Entities
 			AttackSkill = attackSkill;
 			AttacksPerTurn = attacksPerTurn;
 			DamageDiceCount = damageDiceCount;
+			AttackModifier = attackModifier;
 			DamageModifier = damageModifier;
 			DamageType = damageType;
 		}
@@ -69,12 +76,13 @@ namespace Wastelands.Service.Domain.Entities
 			Skill attackSkill,
 			int attacksPerTurn,
 			int damageDiceCount,
+			int attackModifier,
 			int damageModifier,
 			DamageType damageType)
 		{
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(creatureTemplateId, nameof(creatureTemplateId));
 
-			return new Ability(name, attackSkill, attacksPerTurn, damageDiceCount, damageModifier, damageType)
+			return new Ability(name, attackSkill, attacksPerTurn, damageDiceCount, attackModifier, damageModifier, damageType)
 			{
 				CreatureTemplateId = creatureTemplateId,
 			};
@@ -86,12 +94,13 @@ namespace Wastelands.Service.Domain.Entities
 			Skill attackSkill,
 			int attacksPerTurn,
 			int damageDiceCount,
+			int attackModifier,
 			int damageModifier,
 			DamageType damageType)
 		{
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(characterId, nameof(characterId));
 
-			return new Ability(name, attackSkill, attacksPerTurn, damageDiceCount, damageModifier, damageType)
+			return new Ability(name, attackSkill, attacksPerTurn, damageDiceCount, attackModifier, damageModifier, damageType)
 			{
 				CharacterId = characterId,
 			};
@@ -109,6 +118,7 @@ namespace Wastelands.Service.Domain.Entities
 			Skill attackSkill,
 			int attacksPerTurn,
 			int damageDiceCount,
+			int attackModifier,
 			int damageModifier,
 			DamageType damageType,
 			IEnumerable<(Condition Condition, int ApplyChance)> appliedConditions)
@@ -116,7 +126,7 @@ namespace Wastelands.Service.Domain.Entities
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(characterId, nameof(characterId));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(equippedItemId, nameof(equippedItemId));
 
-			var ability = new Ability(name, attackSkill, attacksPerTurn, damageDiceCount, damageModifier, damageType)
+			var ability = new Ability(name, attackSkill, attacksPerTurn, damageDiceCount, attackModifier, damageModifier, damageType)
 			{
 				CharacterId = characterId,
 				EquippedItemId = equippedItemId,
@@ -135,6 +145,7 @@ namespace Wastelands.Service.Domain.Entities
 			Skill attackSkill,
 			int attacksPerTurn,
 			int damageDiceCount,
+			int attackModifier,
 			int damageModifier,
 			DamageType damageType)
 		{
@@ -146,6 +157,7 @@ namespace Wastelands.Service.Domain.Entities
 			AttackSkill = attackSkill;
 			AttacksPerTurn = attacksPerTurn;
 			DamageDiceCount = damageDiceCount;
+			AttackModifier = attackModifier;
 			DamageModifier = damageModifier;
 			DamageType = damageType;
 		}
