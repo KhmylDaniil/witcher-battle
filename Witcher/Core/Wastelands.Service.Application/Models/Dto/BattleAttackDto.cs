@@ -51,6 +51,18 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public int? DefenseRoll { get; set; }
 
+		/// <summary>Доступно ли защитнику парирование вместо обычного защитного навыка — есть ли экипированное оружие ближнего боя.</summary>
+		public bool CanParry { get; set; }
+
+		/// <summary>Навык, которым будет парировать защитник (навык атаки его оружия ближнего боя) — заполнено, только если CanParry.</summary>
+		public Skill? ParrySkill { get; set; }
+
+		/// <summary>Справочное значение характеристика+навык парирования до вычета ParryRules.RollPenalty — заполнено, только если CanParry.</summary>
+		public int? ParrySkillValue { get; set; }
+
+		/// <summary>true — защитник выбрал парирование (см. BattleAttack.IsParry).</summary>
+		public bool IsParry { get; set; }
+
 		public bool DefenderConfirmed { get; set; }
 
 		/// <summary>Оглушённый защитник не выбирает навык/не бросает защиту — фронт должен скрыть этот шаг и сразу предложить подтвердить.</summary>

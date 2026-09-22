@@ -36,7 +36,17 @@ namespace Wastelands.Service.Application.Services
 			{
 				var attackerName = BattleParticipants.GetName(battle, attack.AttackerKind, attack.AttackerId);
 				var defenderName = BattleParticipants.GetName(battle, attack.DefenderKind, attack.DefenderId);
-				battle.AddLogEntry(BattleCombatLogFormatter.FormatMiss(attackerName, ability.Name, defenderName, hit));
+
+				if (attack.IsParry)
+				{
+					// Успешное парирование — не промах: атака отражена, урона нет, атакующий ошеломлён.
+					BattleParticipants.AddCondition(battle, attack.AttackerKind, attack.AttackerId, Condition.Staggered);
+					battle.AddLogEntry(BattleCombatLogFormatter.FormatParry(attackerName, ability.Name, defenderName, hit));
+				}
+				else
+				{
+					battle.AddLogEntry(BattleCombatLogFormatter.FormatMiss(attackerName, ability.Name, defenderName, hit));
+				}
 			}
 		}
 

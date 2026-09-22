@@ -155,13 +155,28 @@ namespace Wastelands.Service.Application.Services
 			var attack = BattleParticipants.GetActiveAttack(battle);
 			await _authorizer.EnsureControllerAsync(battle, attack.DefenderKind, attack.DefenderId, ErrorCode.CurrentUserNotDefenderController);
 
-			var availableSkills = await _hitResolver.GetAvailableDefensiveSkillsAsync(battle, attack);
-			if (!availableSkills.Contains(request.DefensiveSkill))
+			if (request.IsParry)
 			{
-				throw new InvalidArgumentException(ErrorCode.InvalidDefensiveSkillChoice, "Недопустимый защитный навык для этой способности.");
-			}
+				var defenderContext = await _contextProvider.GetContextAsync(battle, attack.DefenderKind, attack.DefenderId);
+				var parrySkill = BattleParticipants.GetEquippedMeleeWeaponSkill(attack.DefenderKind, defenderContext);
+				if (parrySkill is null)
+				{
+					throw new InvalidArgumentException(
+						ErrorCode.ParryNotAvailable, "Парирование недоступно — нет экипированного оружия ближнего боя.");
+				}
 
-			attack.SetDefenderChoice(request.DefensiveSkill, request.DefenseRoll);
+				attack.SetDefenderChoice(parrySkill.Value, request.DefenseRoll, isParry: true);
+			}
+			else
+			{
+				var availableSkills = await _hitResolver.GetAvailableDefensiveSkillsAsync(battle, attack);
+				if (!availableSkills.Contains(request.DefensiveSkill))
+				{
+					throw new InvalidArgumentException(ErrorCode.InvalidDefensiveSkillChoice, "Недопустимый защитный навык для этой способности.");
+				}
+
+				attack.SetDefenderChoice(request.DefensiveSkill, request.DefenseRoll);
+			}
 
 			return await SaveAndNotifyAsync(battle);
 		}

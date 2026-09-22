@@ -96,6 +96,13 @@ namespace Wastelands.Service.Domain.Entities
 		/// </summary>
 		public bool IsBonusAction { get; private set; }
 
+		/// <summary>
+		/// true — защитник выбрал парирование вместо обычного защитного навыка (см. ParryRules,
+		/// BattleParticipants.GetEquippedMeleeWeaponSkill). DefensiveSkill в этом случае — навык
+		/// атаки экипированного оружия ближнего боя защитника, а не выбор из Ability.DefensiveSkills.
+		/// </summary>
+		public bool IsParry { get; private set; }
+
 		private BattleAttack()
 		{
 		}
@@ -173,7 +180,7 @@ namespace Wastelands.Service.Domain.Entities
 			AttackerConfirmed = true;
 		}
 
-		public void SetDefenderChoice(Skill defensiveSkill, int? defenseRoll)
+		public void SetDefenderChoice(Skill defensiveSkill, int? defenseRoll, bool isParry = false)
 		{
 			EnsureAwaitingChoices();
 			if (DefenderConfirmed)
@@ -183,6 +190,7 @@ namespace Wastelands.Service.Domain.Entities
 
 			DefensiveSkill = defensiveSkill;
 			DefenseRoll = defenseRoll;
+			IsParry = isParry;
 		}
 
 		/// <summary>
@@ -314,6 +322,7 @@ namespace Wastelands.Service.Domain.Entities
 			DefenseRoll = null;
 			DefenseTotal = 0;
 			DefenderConfirmed = false;
+			IsParry = false;
 			Phase = BattleAttackPhase.AwaitingChoices;
 			LastHitSucceeded = null;
 			ResolvedCreaturePartId = null;

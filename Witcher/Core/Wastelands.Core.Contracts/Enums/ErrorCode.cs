@@ -70,6 +70,7 @@
 		ConditionRemovalRuleNotFound = 625,
 		ConditionNotPresentOnTarget = 626,
 		ConditionRemovalTargetInvalid = 627,
+		ParryNotAvailable = 628,
 
 		// image errors 700...
 		UnsupportedImageType = 700,

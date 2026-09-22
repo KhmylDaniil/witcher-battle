@@ -517,6 +517,14 @@ export interface BattleAttack {
   defensiveSkillValues: Partial<Record<Skill, number>>
   defensiveSkill: Skill | null
   defenseRoll: number | null
+  /** Есть ли у защитника экипированное оружие ближнего боя — доступно ли парирование вместо обычного защитного навыка. */
+  canParry: boolean
+  /** Навык, которым защитник будет парировать (навык атаки его оружия), — заполнено, только если canParry. */
+  parrySkill: Skill | null
+  /** Справочное значение навыка парирования до вычета штрафа -3 — заполнено, только если canParry. */
+  parrySkillValue: number | null
+  /** true — защитник выбрал парирование вместо обычного защитного навыка. */
+  isParry: boolean
   defenderConfirmed: boolean
   /** Оглушённый защитник не выбирает навык/не бросает защиту — защита фиксирована на 10, шаг выбора нужно скрыть. */
   defenderIsStunned: boolean

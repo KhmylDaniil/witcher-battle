@@ -45,6 +45,7 @@ export function AttackModal({
   const [attackRoll, setAttackRoll] = useState('')
   const [defensiveSkill, setDefensiveSkill] = useState<Skill>(attack.availableDefensiveSkills[0])
   const [defenseRoll, setDefenseRoll] = useState('')
+  const [isParry, setIsParry] = useState(false)
   const [damageRoll, setDamageRoll] = useState('')
   const [stunSaveRollInput, setStunSaveRollInput] = useState('')
   const [nextTarget, setNextTarget] = useState<string>(`${attack.defenderKind}:${attack.defenderId}`)
@@ -66,8 +67,9 @@ export function AttackModal({
       // Оглушённый защитник не выбирает навык — его защита фиксирована на 10 (см. attack.defenderIsStunned).
       if (!attack.defenderIsStunned) {
         await battlesApi.setDefenderChoice(gameId, battleId, {
-          defensiveSkill,
+          defensiveSkill: isParry ? (attack.parrySkill ?? defensiveSkill) : defensiveSkill,
           defenseRoll: defenseRoll ? Number(defenseRoll) : null,
+          isParry,
         })
       }
       await battlesApi.confirmDefender(gameId, battleId)
@@ -203,17 +205,26 @@ export function AttackModal({
             ) : (
               <div className="rounded-md border border-neutral-200 p-3 dark:border-neutral-800">
                 <p className="mb-2 text-sm text-neutral-500">{attack.defenderName}: выбор защиты</p>
-                <div className="mb-2">
-                  <Field label="Защитный навык">
-                    <Select value={defensiveSkill} onChange={(e) => setDefensiveSkill(e.target.value as Skill)}>
-                      {attack.availableDefensiveSkills.map((s) => (
-                        <option key={s} value={s}>
-                          {s} (база {attack.defensiveSkillValues[s] ?? '—'})
-                        </option>
-                      ))}
-                    </Select>
-                  </Field>
-                </div>
+                {attack.canParry && (
+                  <label className="mb-2 flex items-center gap-2 text-sm">
+                    <input type="checkbox" checked={isParry} onChange={(e) => setIsParry(e.target.checked)} />
+                    Парировать оружием ({attack.parrySkill}, база {attack.parrySkillValue}, штраф −3) — при успехе атака
+                    отражена без урона, атакующий получает Ошеломление
+                  </label>
+                )}
+                {!isParry && (
+                  <div className="mb-2">
+                    <Field label="Защитный навык">
+                      <Select value={defensiveSkill} onChange={(e) => setDefensiveSkill(e.target.value as Skill)}>
+                        {attack.availableDefensiveSkills.map((s) => (
+                          <option key={s} value={s}>
+                            {s} (база {attack.defensiveSkillValues[s] ?? '—'})
+                          </option>
+                        ))}
+                      </Select>
+                    </Field>
+                  </div>
+                )}
                 <div className="mb-2">
                   <Field label="Бросок защиты (необязательно; d10 может «взрываться» — не ограничен 1–10)">
                     <Input
@@ -296,7 +307,7 @@ export function AttackModal({
       {attack.phase === 'SwingResolved' && (
         <div className="flex flex-col gap-3">
           <p className="text-sm">
-            Результат: {attack.lastHitSucceeded ? 'попадание' : 'промах'}. Подробности — в логе боя.
+            Результат: {attack.lastHitSucceeded ? 'попадание' : attack.isParry ? 'парировано' : 'промах'}. Подробности — в логе боя.
           </p>
           {attack.stunSaveSucceeded !== null && (
             <p className="text-sm">

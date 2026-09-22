@@ -67,8 +67,13 @@ namespace Wastelands.Service.Application.Services
 		/// Оглушённый защитник не бросает защиту вовсе — его итог фиксирован на 10 (см. defenderIsStunned).
 		/// Дополнительное действие персонажа (attack.IsBonusAction) вычитает из атаки ещё
 		/// BonusActionRules.RollPenalty — на каждый выпад активации, включая оба удара мультиатаки.
-		/// attackerConditionModifier/defenderConditionModifier — штраф от Ошеломления/Ослепления
+		/// attackerConditionModifier/defenderConditionModifier — штраф от Ошеломления/Ослепления/Падения
 		/// каждой стороны (см. BattleParticipants.GetAttackDefenseModifier), уже отрицательный.
+		/// Парирование (attack.IsParry) — вместо обычного защитного навыка защитник бросает навыком
+		/// атаки своего оружия ближнего боя, вычитая из итога ещё ParryRules.RollPenalty; succeeded
+		/// остаётся той же формулой (attackTotal > defenseTotal), поэтому равенство или превышение
+		/// защиты уже означает успешное парирование — обработка этого случая (лог, Ошеломление
+		/// атакующему) на вызывающей стороне, см. BattleHitResolver.ResolveIfBothConfirmedAsync.
 		/// </summary>
 		public static HitResult ResolveHit(
 			ParticipantCombatContext attackerContext,
@@ -125,8 +130,9 @@ namespace Wastelands.Service.Application.Services
 			}
 			else
 			{
+				var parryPenalty = attack.IsParry ? ParryRules.RollPenalty : 0;
 				defenseRollUsed = attack.DefenseRoll ?? RollDie(10);
-				defenseTotal = defenderContext.GetSkillValue(attack.DefensiveSkill!.Value) + defenderConditionModifier + defenseRollUsed;
+				defenseTotal = defenderContext.GetSkillValue(attack.DefensiveSkill!.Value) - parryPenalty + defenderConditionModifier + defenseRollUsed;
 			}
 
 			var succeeded = attackTotal > defenseTotal;

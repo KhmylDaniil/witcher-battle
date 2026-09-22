@@ -55,7 +55,7 @@ export const battlesApi = {
   setDefenderChoice: (
     gameId: number,
     battleId: number,
-    payload: { defensiveSkill: Skill; defenseRoll: number | null },
+    payload: { defensiveSkill: Skill; defenseRoll: number | null; isParry?: boolean },
   ) => api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/defender-choice`, payload),
   confirmDefender: (gameId: number, battleId: number) =>
     api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/defender-confirm`),

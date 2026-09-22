@@ -13,6 +13,11 @@ namespace Wastelands.Service.Application.Services
 		public static string FormatMiss(string attackerName, string abilityName, string defenderName, HitResult hit) =>
 			$"{attackerName} ({abilityName}) атакует {defenderName}: {FormatRolls(hit.AttackRoll, hit.AttackTotal, hit.DefenseRoll, hit.DefenseTotal)} — промах.";
 
+		/// <summary>Успешное парирование — не промах: явно отмечаем, что атака отражена оружием, а не просто не попала.</summary>
+		public static string FormatParry(string attackerName, string abilityName, string defenderName, HitResult hit) =>
+			$"{attackerName} ({abilityName}) атакует {defenderName}: {FormatRolls(hit.AttackRoll, hit.AttackTotal, hit.DefenseRoll, hit.DefenseTotal)} — "
+				+ $"{defenderName} парирует атаку! {attackerName} ошеломлён.";
+
 		public static string FormatHit(
 			string attackerName,
 			string abilityName,

@@ -49,6 +49,11 @@ namespace Wastelands.Service.Application.Services
 			dto.DefensiveSkillValues = dto.AvailableDefensiveSkills.ToDictionary(s => s, defenderContext.GetSkillValue);
 			dto.DefenderIsStunned = BattleParticipants.HasCondition(battle, dto.DefenderKind, dto.DefenderId, Condition.Stun);
 
+			var parrySkill = BattleParticipants.GetEquippedMeleeWeaponSkill(dto.DefenderKind, defenderContext);
+			dto.CanParry = parrySkill is not null;
+			dto.ParrySkill = parrySkill;
+			dto.ParrySkillValue = parrySkill is { } skill ? defenderContext.GetSkillValue(skill) : null;
+
 			if (dto.DefenderKind == ParticipantKind.Creature)
 			{
 				dto.AvailableCreatureParts = defenderContext.Template!.Parts

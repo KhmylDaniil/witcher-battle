@@ -217,6 +217,24 @@ namespace Wastelands.Service.Application.Services
 			return 0;
 		}
 
+		/// <summary>
+		/// Навык атаки экипированного оружия ближнего боя защитника — этим навыком, со штрафом
+		/// ParryRules.RollPenalty, можно парировать вместо обычного защитного навыка (см.
+		/// BattleCombatService.SetDefenderChoiceAsync). Null — защитник существо (у существ нет
+		/// предметов) или у него нет экипированного оружия ближнего боя.
+		/// </summary>
+		public static Skill? GetEquippedMeleeWeaponSkill(ParticipantKind kind, ParticipantCombatContext context)
+		{
+			if (kind != ParticipantKind.Character)
+			{
+				return null;
+			}
+
+			var weapon = context.Character!.Items.FirstOrDefault(
+				i => i.IsEquipped && i.ItemType == ItemType.Weapon && i.WeaponKind == WeaponKind.Melee);
+			return weapon?.AttackSkill;
+		}
+
 		public static void ApplyCriticalWound(Battle battle, ParticipantKind kind, long participantId, string slotKey, Condition wound)
 		{
 			if (kind == ParticipantKind.Creature)
