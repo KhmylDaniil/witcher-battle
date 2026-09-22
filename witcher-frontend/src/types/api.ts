@@ -351,13 +351,7 @@ export type DamageTypeModifierKind = (typeof DAMAGE_TYPE_MODIFIERS)[number]
 // ---- Conditions (эффекты, накладываемые атакующими способностями) ----
 
 export const CONDITIONS = [
-  'Bleed', 'BleedingWound', 'Poison', 'Fire', 'Freeze', 'Stun', 'Staggered', 'Intoxication',
-  'Hallutination', 'Nausea', 'Sufflocation', 'Blinded', 'Dying',
-
-  'SimpleLeg', 'SimpleArm', 'SimpleWing', 'SimpleTail', 'SimpleHead1', 'SimpleHead2', 'SimpleTorso1', 'SimpleTorso2',
-  'ComplexLeg', 'ComplexArm', 'ComplexWing', 'ComplexTail', 'ComplexHead1', 'ComplexHead2', 'ComplexTorso1', 'ComplexTorso2',
-  'DifficultLeg', 'DifficultArm', 'DifficultWing', 'DifficultTail', 'DifficultHead1', 'DifficultHead2', 'DifficultTorso1', 'DifficultTorso2',
-  'DeadlyLeg', 'DeadlyArm', 'DeadlyWing', 'DeadlyTail', 'DeadlyHead1', 'DeadlyHead2', 'DeadlyTorso1', 'DeadlyTorso2',
+  'Bleed', 'Poison', 'Fire', 'Stun', 'Staggered', 'Sufflocation', 'Blinded', 'Dying',
 
   // Критические ранения (новая система) — Simple/Medium/Difficult x часть тела x тип урона.
   'SimpleHeadPiercing', 'SimpleHeadSlashing', 'SimpleHeadBludgeoning', 'SimpleHeadFire',
@@ -382,6 +376,27 @@ export const CONDITIONS = [
   'DifficultTailPiercing', 'DifficultTailSlashing', 'DifficultTailBludgeoning', 'DifficultTailFire',
 ] as const
 export type Condition = (typeof CONDITIONS)[number]
+
+/**
+ * Зеркало backend ConditionRemovalCatalog — какими навыками и с какой сложностью можно снять
+ * состояние броском (Bleed/Poison), и можно ли выбрать в качестве цели кого-то другого.
+ * Состояния без записи здесь (Fire, Sufflocation, Staggered/Blinded, Dying, крит. ранения) через
+ * этот бросок не снимаются — Fire снимается обычным действием без броска, Sufflocation только
+ * мастером вручную, Staggered/Blinded спадают сами.
+ */
+export interface ConditionRemovalRule {
+  skill: Skill
+  difficulty: number
+  selfOnly: boolean
+}
+
+export const CONDITION_REMOVAL_RULES: Partial<Record<Condition, ConditionRemovalRule[]>> = {
+  Poison: [
+    { skill: 'Endurance', difficulty: 15, selfOnly: true },
+    { skill: 'FirstAid', difficulty: 14, selfOnly: false },
+  ],
+  Bleed: [{ skill: 'FirstAid', difficulty: 14, selfOnly: false }],
+}
 
 // ---- Abilities (атакующие способности шаблона существа) ----
 

@@ -39,5 +39,8 @@ namespace Wastelands.Service.Application.Contracts
 		Task<BattleDto> EndActivationAsync(long battleId);
 
 		Task<BattleDto> SkipTurnAsync(long battleId);
+
+		/// <summary>Попытка снять состояние (Кровотечение/Отравление) броском навыка — отдельное действие хода, не атака.</summary>
+		Task<BattleDto> AttemptRemoveConditionAsync(AttemptRemoveConditionRequest request);
 	}
 }

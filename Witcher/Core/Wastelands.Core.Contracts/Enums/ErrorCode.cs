@@ -67,6 +67,9 @@
 		ParticipantIsStunned = 622,
 		ParticipantNotStunned = 623,
 		NotEnoughStaminaForBonusAction = 624,
+		ConditionRemovalRuleNotFound = 625,
+		ConditionNotPresentOnTarget = 626,
+		ConditionRemovalTargetInvalid = 627,
 
 		// image errors 700...
 		UnsupportedImageType = 700,

@@ -74,6 +74,11 @@ export const battlesApi = {
   endActivation: (gameId: number, battleId: number) =>
     api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/attacks/current/end`),
   skipTurn: (gameId: number, battleId: number) => api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/skip-turn`),
+  attemptRemoveCondition: (
+    gameId: number,
+    battleId: number,
+    payload: { condition: Condition; skill: Skill; targetKind: ParticipantKind; targetId: number; roll: number | null },
+  ) => api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/remove-condition`, payload),
 
   creatureSheet: (gameId: number, battleId: number, creatureId: number) =>
     api.get<CreatureTemplate>(`/api/games/${gameId}/battles/${battleId}/creatures/${creatureId}/sheet`),

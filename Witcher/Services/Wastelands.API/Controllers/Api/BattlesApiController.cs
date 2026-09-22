@@ -173,6 +173,13 @@ namespace Wastelands.API.Controllers.Api
 		public async Task<BattleDto> SkipTurn(long gameId, long id)
 			=> await _battleCombatService.SkipTurnAsync(id);
 
+		[HttpPost("{id:long}/remove-condition")]
+		public async Task<BattleDto> AttemptRemoveCondition(long gameId, long id, AttemptRemoveConditionRequest request)
+		{
+			request.BattleId = id;
+			return await _battleCombatService.AttemptRemoveConditionAsync(request);
+		}
+
 		[HttpGet("{id:long}/creatures/{creatureId:long}/sheet")]
 		public async Task<CreatureTemplateDto> GetCreatureSheet(long gameId, long id, long creatureId)
 			=> await _sheetService.GetCreatureSheetAsync(id, creatureId);

@@ -25,6 +25,7 @@ namespace Wastelands.Service.Application.Services
 		private readonly IGameAccessGuard _gameAccessGuard;
 		private readonly IBattleNotifier _battleNotifier;
 		private readonly IBattleDtoMapper _dtoMapper;
+		private readonly IBattleTurnProcessor _turnProcessor;
 
 		public BattleService(
 			IBattleRepository battleRepository,
@@ -32,7 +33,8 @@ namespace Wastelands.Service.Application.Services
 			ICharacterRepository characterRepository,
 			IGameAccessGuard gameAccessGuard,
 			IBattleNotifier battleNotifier,
-			IBattleDtoMapper dtoMapper)
+			IBattleDtoMapper dtoMapper,
+			IBattleTurnProcessor turnProcessor)
 		{
 			_battleRepository = battleRepository;
 			_creatureTemplateRepository = creatureTemplateRepository;
@@ -40,6 +42,7 @@ namespace Wastelands.Service.Application.Services
 			_gameAccessGuard = gameAccessGuard;
 			_battleNotifier = battleNotifier;
 			_dtoMapper = dtoMapper;
+			_turnProcessor = turnProcessor;
 		}
 
 		public async Task<BattleDto> GetBattleByIdAsync(long id)
@@ -218,6 +221,7 @@ namespace Wastelands.Service.Application.Services
 
 			BattleInitiativeRoller.RollInitiative(battle);
 			battle.MarkStarted();
+			await _turnProcessor.OnBattleStartedAsync(battle);
 
 			return await SaveAndNotifyAsync(battle);
 		}

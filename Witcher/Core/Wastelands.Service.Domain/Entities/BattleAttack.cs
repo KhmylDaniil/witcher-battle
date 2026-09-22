@@ -14,12 +14,6 @@ namespace Wastelands.Service.Domain.Entities
 	/// </summary>
 	public class BattleAttack : Entity
 	{
-		/// <summary>Стоимость дополнительного действия персонажа за ход (см. IsBonusAction) в выносливости.</summary>
-		public const int BonusActionStaminaCost = 3;
-
-		/// <summary>Штраф к атаке дополнительного действия персонажа (см. IsBonusAction).</summary>
-		public const int BonusActionAttackPenalty = 3;
-
 		public long BattleId { get; private set; }
 
 		public ParticipantKind AttackerKind { get; private set; }
@@ -94,9 +88,9 @@ namespace Wastelands.Service.Domain.Entities
 		public bool? StunSaveSucceeded { get; private set; }
 
 		/// <summary>
-		/// true — это дополнительное действие персонажа за BonusActionStaminaCost выносливости, взятое
-		/// после уже потраченного в этот ход основного действия (см. BattleCombatService.StartAttackAsync/
-		/// EndActivationAsync). К атаке применяется штраф BonusActionAttackPenalty — на каждый выпад,
+		/// true — это дополнительное действие персонажа за BonusActionRules.StaminaCost выносливости,
+		/// взятое после уже потраченного в этот ход основного действия (см. BattleCombatService.StartAttackAsync/
+		/// EndActivationAsync). К атаке применяется штраф BonusActionRules.RollPenalty — на каждый выпад,
 		/// включая оба удара мультиатаки, т.к. значение не сбрасывается в PrepareNextSwing. У существ
 		/// дополнительных действий нет — для них всегда false.
 		/// </summary>

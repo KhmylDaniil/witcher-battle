@@ -2,6 +2,7 @@ using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
 using Wastelands.Service.Application.Contracts;
 using Wastelands.Service.Application.Contracts.Repositories;
+using Wastelands.Service.Domain.Drafts;
 using Wastelands.Service.Domain.Entities;
 using Wastelands.Service.Domain.Enums;
 using Wastelands.Service.Application.Models.Dto;
@@ -24,6 +25,7 @@ namespace Wastelands.Service.Application.Services
 		private readonly IBattleHitResolver _hitResolver;
 		private readonly IBattleNotifier _battleNotifier;
 		private readonly IBattleDtoMapper _dtoMapper;
+		private readonly IBattleTurnProcessor _turnProcessor;
 
 		public BattleCombatService(
 			IBattleRepository battleRepository,
@@ -32,7 +34,8 @@ namespace Wastelands.Service.Application.Services
 			IBattleCombatContextProvider contextProvider,
 			IBattleHitResolver hitResolver,
 			IBattleNotifier battleNotifier,
-			IBattleDtoMapper dtoMapper)
+			IBattleDtoMapper dtoMapper,
+			IBattleTurnProcessor turnProcessor)
 		{
 			_battleRepository = battleRepository;
 			_characterRepository = characterRepository;
@@ -41,6 +44,7 @@ namespace Wastelands.Service.Application.Services
 			_hitResolver = hitResolver;
 			_battleNotifier = battleNotifier;
 			_dtoMapper = dtoMapper;
+			_turnProcessor = turnProcessor;
 		}
 
 		public async Task<BattleDto> StartAttackAsync(StartAttackRequest request)
@@ -61,26 +65,7 @@ namespace Wastelands.Service.Application.Services
 				throw new InvalidArgumentException(ErrorCode.AbilityDoesNotBelongToAttacker, "У атакующего нет такой способности.");
 			}
 
-			// Только у персонажа: если он уже потратил в этот ход основное действие (см. EndActivationAsync),
-			// эта атака — дополнительное действие за плату выносливостью со штрафом к атаке (только
-			// существа этой возможности лишены — у них одно действие за ход, без исключений).
-			var isBonusAction = false;
-			if (attackerKind == ParticipantKind.Character)
-			{
-				var battleCharacter = BattleParticipants.GetBattleCharacter(battle, attackerId);
-				if (battleCharacter.HasActedThisTurn)
-				{
-					if (battleCharacter.CurrentSta < BattleAttack.BonusActionStaminaCost)
-					{
-						throw new InvalidArgumentException(
-							ErrorCode.NotEnoughStaminaForBonusAction,
-							$"Недостаточно выносливости для дополнительного действия (нужно {BattleAttack.BonusActionStaminaCost}).");
-					}
-
-					battleCharacter.SpendStamina(BattleAttack.BonusActionStaminaCost);
-					isBonusAction = true;
-				}
-			}
+			var isBonusAction = TryChargeBonusAction(battle, attackerKind, attackerId);
 
 			var attack = new BattleAttack(
 				battle.Id, attackerKind, attackerId, ability.Id, ability.AttacksPerTurn, request.DefenderKind, request.DefenderId, isBonusAction);
@@ -132,6 +117,36 @@ namespace Wastelands.Service.Application.Services
 				throw new InvalidArgumentException(
 					ErrorCode.ParticipantIsStunned, "Участник оглушён и может в свой ход только пройти проверку Оглушения.");
 			}
+		}
+
+		/// <summary>
+		/// Если участник — персонаж, уже действовавший в этот ход, списывает стамину за дополнительное
+		/// действие (BonusActionRules) и возвращает true (действие берётся как доп.). Существа доп.
+		/// действий не имеют. Если персонаж ещё не действовал в этот ход — это его обычное (первое)
+		/// действие, стамина не списывается, возвращается false.
+		/// </summary>
+		private static bool TryChargeBonusAction(Battle battle, ParticipantKind attackerKind, long attackerId)
+		{
+			if (attackerKind != ParticipantKind.Character)
+			{
+				return false;
+			}
+
+			var battleCharacter = BattleParticipants.GetBattleCharacter(battle, attackerId);
+			if (!battleCharacter.HasActedThisTurn)
+			{
+				return false;
+			}
+
+			if (battleCharacter.CurrentSta < BonusActionRules.StaminaCost)
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.NotEnoughStaminaForBonusAction,
+					$"Недостаточно выносливости для дополнительного действия (нужно {BonusActionRules.StaminaCost}).");
+			}
+
+			battleCharacter.SpendStamina(BonusActionRules.StaminaCost);
+			return true;
 		}
 
 		public async Task<BattleDto> SetDefenderChoiceAsync(SetDefenderChoiceRequest request)
@@ -324,7 +339,7 @@ namespace Wastelands.Service.Application.Services
 				$"{name} проходит проверку Оглушения: бросок {rollUsed} против Устойчивости {stunValue} — "
 					+ (staysStunned ? "остаётся оглушён." : "приходит в себя."));
 
-			battle.AdvanceTurn();
+			await _turnProcessor.AdvanceTurnAsync(battle);
 
 			return await SaveAndNotifyAsync(battle);
 		}
@@ -364,7 +379,7 @@ namespace Wastelands.Service.Application.Services
 			}
 			else
 			{
-				battle.AdvanceTurn();
+				await _turnProcessor.AdvanceTurnAsync(battle);
 			}
 
 			return await SaveAndNotifyAsync(battle);
@@ -384,7 +399,76 @@ namespace Wastelands.Service.Application.Services
 			await _authorizer.EnsureControllerAsync(battle, activeKind, activeId, ErrorCode.NotYourTurn);
 			EnsureNotStunned(battle, activeKind, activeId);
 
-			battle.AdvanceTurn();
+			await _turnProcessor.AdvanceTurnAsync(battle);
+
+			return await SaveAndNotifyAsync(battle);
+		}
+
+		/// <summary>
+		/// Попытка снять состояние (Кровотечение/Отравление) броском навыка — отдельное действие хода, не
+		/// атака. Для персонажа это обычное или дополнительное действие (та же стамина/штраф −3, что и у
+		/// дополнительной атаки — см. TryChargeBonusAction); для существа любая такая попытка считается
+		/// действием и сразу заканчивает ход. Self-only правило (Endurance против Отравления) разрешает
+		/// целиться только в себя — иначе (FirstAid) можно выбрать любую цель, включая себя.
+		/// </summary>
+		public async Task<BattleDto> AttemptRemoveConditionAsync(AttemptRemoveConditionRequest request)
+		{
+			var battle = await GetByIdAsync(request.BattleId);
+			BattleParticipants.EnsureInProgress(battle);
+
+			if (battle.Attack is not null)
+			{
+				throw new InvalidArgumentException(ErrorCode.AttackAlreadyInProgress, "Нельзя снимать состояние во время незавершённой атаки.");
+			}
+
+			var (activeKind, activeId) = BattleParticipants.GetActive(battle);
+			await _authorizer.EnsureControllerAsync(battle, activeKind, activeId, ErrorCode.NotYourTurn);
+			EnsureNotStunned(battle, activeKind, activeId);
+
+			var rule = ConditionRemovalCatalog.FindRule(request.Condition, request.Skill);
+			if (rule is null)
+			{
+				throw new InvalidArgumentException(ErrorCode.ConditionRemovalRuleNotFound, "Этим навыком нельзя снять это состояние.");
+			}
+
+			if (rule.SelfOnly && (request.TargetKind != activeKind || request.TargetId != activeId))
+			{
+				throw new InvalidArgumentException(ErrorCode.ConditionRemovalTargetInvalid, "Этим навыком можно снять состояние только с себя.");
+			}
+
+			BattleParticipants.EnsureExists(battle, request.TargetKind, request.TargetId);
+			if (!BattleParticipants.HasCondition(battle, request.TargetKind, request.TargetId, request.Condition))
+			{
+				throw new InvalidArgumentException(ErrorCode.ConditionNotPresentOnTarget, "У цели нет этого состояния.");
+			}
+
+			var isBonusAction = TryChargeBonusAction(battle, activeKind, activeId);
+
+			var rollUsed = request.Roll ?? BattleCombatCalculator.RollDie(10);
+			var activeContext = await _contextProvider.GetContextAsync(battle, activeKind, activeId);
+			var penalty = isBonusAction ? BonusActionRules.RollPenalty : 0;
+			var total = activeContext.GetSkillValue(request.Skill) + rollUsed - penalty;
+			var succeeded = total >= rule.Difficulty;
+
+			if (succeeded)
+			{
+				BattleParticipants.RemoveCondition(battle, request.TargetKind, request.TargetId, request.Condition);
+			}
+
+			var activeName = BattleParticipants.GetName(battle, activeKind, activeId);
+			var targetName = BattleParticipants.GetName(battle, request.TargetKind, request.TargetId);
+			battle.AddLogEntry(
+				$"{activeName} пытается снять состояние {request.Condition} с {targetName} ({request.Skill} {total} против сложности {rule.Difficulty}) — "
+					+ (succeeded ? "успех, состояние снято." : "провал."));
+
+			if (activeKind == ParticipantKind.Character && !isBonusAction)
+			{
+				BattleParticipants.GetBattleCharacter(battle, activeId).MarkActedThisTurn();
+			}
+			else
+			{
+				await _turnProcessor.AdvanceTurnAsync(battle);
+			}
 
 			return await SaveAndNotifyAsync(battle);
 		}

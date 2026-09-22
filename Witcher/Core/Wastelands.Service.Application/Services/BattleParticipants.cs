@@ -176,6 +176,38 @@ namespace Wastelands.Service.Application.Services
 			}
 		}
 
+		/// <summary>Суммарный штраф к броску атаки/защиты от Ошеломления (-2) и Ослепления (-3) — складываются, если есть оба.</summary>
+		public static int GetAttackDefenseModifier(Battle battle, ParticipantKind kind, long participantId)
+		{
+			var modifier = 0;
+			if (HasCondition(battle, kind, participantId, Condition.Staggered))
+			{
+				modifier -= 2;
+			}
+
+			if (HasCondition(battle, kind, participantId, Condition.Blinded))
+			{
+				modifier -= 3;
+			}
+
+			return modifier;
+		}
+
+		/// <summary>
+		/// Штраф к конкретному навыку от состояний (сейчас — только Ослепление: -5 к Awareness). На
+		/// данный момент Awareness нигде в бросках не используется, поэтому этот модификатор пока ни на
+		/// что не влияет — задел на будущее (проверки восприятия, определение локации попадания и т.п.).
+		/// </summary>
+		public static int GetConditionSkillModifier(Battle battle, ParticipantKind kind, long participantId, Skill skill)
+		{
+			if (skill == Skill.Awareness && HasCondition(battle, kind, participantId, Condition.Blinded))
+			{
+				return -5;
+			}
+
+			return 0;
+		}
+
 		public static void ApplyCriticalWound(Battle battle, ParticipantKind kind, long participantId, string slotKey, Condition wound)
 		{
 			if (kind == ParticipantKind.Creature)
@@ -224,6 +256,48 @@ namespace Wastelands.Service.Application.Services
 			foreach (var condition in appliedConditions)
 			{
 				AddCondition(battle, defenderKind, defenderId, condition);
+			}
+
+			CheckCharacterDying(battle, defenderKind, defenderId);
+		}
+
+		/// <summary>
+		/// Периодический урон вне рамок атаки (Bleed/Poison/Fire/Sufflocation в начале хода — см.
+		/// BattleTurnProcessor) — та же логика снятия Оглушения при получении урона, что и в ApplyDamage,
+		/// но без брони/состояний атаки, которых у периодического урона просто нет.
+		/// </summary>
+		public static void ApplyPeriodicDamage(Battle battle, ParticipantKind kind, long participantId, int amount)
+		{
+			if (amount >= 1 && HasCondition(battle, kind, participantId, Condition.Stun))
+			{
+				RemoveCondition(battle, kind, participantId, Condition.Stun);
+			}
+
+			if (kind == ParticipantKind.Creature)
+			{
+				GetCreature(battle, participantId).ApplyDamage(amount);
+			}
+			else
+			{
+				GetBattleCharacter(battle, participantId).ApplyDamage(amount);
+			}
+
+			CheckCharacterDying(battle, kind, participantId);
+		}
+
+		/// <summary>Персонаж (не существо — те при 0 HP удаляются, см. RemoveDeadCreatures) на 0 HP помечается Dying, пока не помечен.</summary>
+		private static void CheckCharacterDying(Battle battle, ParticipantKind kind, long participantId)
+		{
+			if (kind != ParticipantKind.Character)
+			{
+				return;
+			}
+
+			var battleCharacter = GetBattleCharacter(battle, participantId);
+			if (battleCharacter.CurrentHP <= 0 && !battleCharacter.AppliedConditions.Contains(Condition.Dying))
+			{
+				battleCharacter.AddCondition(Condition.Dying);
+				battle.AddLogEntry($"{battleCharacter.Character.Name} при смерти.");
 			}
 		}
 	}

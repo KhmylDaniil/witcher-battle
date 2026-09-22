@@ -8,7 +8,7 @@ import { useBattleUpdates } from '../../lib/battleHub'
 import { charactersApi } from '../characters/api'
 import { creatureTemplatesApi } from '../creatureTemplates/api'
 import { gamesApi } from '../games/api'
-import { CONDITIONS, type Ability, type Condition, type ParticipantKind } from '../../types/api'
+import { CONDITION_REMOVAL_RULES, CONDITIONS, type Ability, type Condition, type ParticipantKind, type Skill } from '../../types/api'
 import { AttackModal } from './AttackModal'
 import { ParticipantSheetModal } from './ParticipantSheetModal'
 import { battlesApi } from './api'
@@ -143,6 +143,30 @@ export function BattleDetailsPage() {
     },
   })
   const skipTurn = useMutation({ mutationFn: () => battlesApi.skipTurn(gameIdNum, id), onSuccess: invalidate })
+
+  const [removeConditionCondition, setRemoveConditionCondition] = useState<Condition | ''>('')
+  const [removeConditionSkill, setRemoveConditionSkill] = useState<Skill | ''>('')
+  const [removeConditionTarget, setRemoveConditionTarget] = useState('')
+  const [removeConditionRoll, setRemoveConditionRoll] = useState('')
+  const attemptRemoveCondition = useMutation({
+    mutationFn: () => {
+      const [kind, refId] = removeConditionTarget.split(':') as [ParticipantKind, string]
+      return battlesApi.attemptRemoveCondition(gameIdNum, id, {
+        condition: removeConditionCondition as Condition,
+        skill: removeConditionSkill as Skill,
+        targetKind: kind,
+        targetId: Number(refId),
+        roll: removeConditionRoll ? Number(removeConditionRoll) : null,
+      })
+    },
+    onSuccess: async () => {
+      await invalidate()
+      setRemoveConditionCondition('')
+      setRemoveConditionSkill('')
+      setRemoveConditionTarget('')
+      setRemoveConditionRoll('')
+    },
+  })
 
   const [ownStunSaveRoll, setOwnStunSaveRoll] = useState('')
   const rollOwnStunSave = useMutation({
@@ -513,6 +537,103 @@ export function BattleDetailsPage() {
                   {startAttack.error && (
                     <ErrorText>{startAttack.error instanceof ApiError ? startAttack.error.message : 'Не удалось начать атаку'}</ErrorText>
                   )}
+
+                  {(() => {
+                    // Кровотечение/Отравление снимаются броском навыка вместо атаки — тоже основное
+                    // или доп. действие персонажа (см. isBonusActionWindow выше), а для существа —
+                    // всегда весь ход целиком (BattleCombatService.AttemptRemoveConditionAsync).
+                    const removableConditions = activeParticipant.appliedConditions.filter((c) => CONDITION_REMOVAL_RULES[c])
+                    if (removableConditions.length === 0) return null
+                    const rules = removeConditionCondition ? (CONDITION_REMOVAL_RULES[removeConditionCondition] ?? []) : []
+                    const selectedRule = rules.find((r) => r.skill === removeConditionSkill) ?? null
+                    const removalTargetOptions = selectedRule?.selfOnly
+                      ? participants.filter((p) => p.kind === activeParticipant.kind && p.refId === activeParticipant.refId)
+                      : participants
+                    return (
+                      <div className="mt-3 border-t border-neutral-100 pt-3 dark:border-neutral-900">
+                        <h3 className="mb-2 text-sm font-semibold">Снять состояние</h3>
+                        <div className="flex flex-wrap items-end gap-2">
+                          <Field label="Состояние">
+                            <Select
+                              className="w-36"
+                              value={removeConditionCondition}
+                              onChange={(e) => {
+                                setRemoveConditionCondition(e.target.value as Condition)
+                                setRemoveConditionSkill('')
+                                setRemoveConditionTarget('')
+                              }}
+                            >
+                              <option value="">— выберите —</option>
+                              {removableConditions.map((c) => (
+                                <option key={c} value={c}>
+                                  {c}
+                                </option>
+                              ))}
+                            </Select>
+                          </Field>
+                          <Field label="Навык">
+                            <Select
+                              className="w-40"
+                              value={removeConditionSkill}
+                              disabled={!removeConditionCondition}
+                              onChange={(e) => {
+                                setRemoveConditionSkill(e.target.value as Skill)
+                                setRemoveConditionTarget('')
+                              }}
+                            >
+                              <option value="">— выберите —</option>
+                              {rules.map((r) => (
+                                <option key={r.skill} value={r.skill}>
+                                  {r.skill} (сложность {r.difficulty})
+                                </option>
+                              ))}
+                            </Select>
+                          </Field>
+                          <Field label="Цель">
+                            <Select
+                              className="w-44"
+                              value={removeConditionTarget}
+                              disabled={!removeConditionSkill}
+                              onChange={(e) => setRemoveConditionTarget(e.target.value)}
+                            >
+                              <option value="">— выберите —</option>
+                              {removalTargetOptions.map((t) => (
+                                <option key={`${t.kind}-${t.refId}`} value={`${t.kind === 'creature' ? 'Creature' : 'Character'}:${t.refId}`}>
+                                  {t.kind === activeParticipant.kind && t.refId === activeParticipant.refId ? `${t.name} (себя)` : t.name}
+                                </option>
+                              ))}
+                            </Select>
+                          </Field>
+                          <Field label="Чистый бросок д10 (необязательно — иначе бросит сервер)">
+                            <Input
+                              type="number"
+                              className="w-24"
+                              value={removeConditionRoll}
+                              onChange={(e) => setRemoveConditionRoll(e.target.value)}
+                              placeholder="кубик"
+                            />
+                          </Field>
+                          <Button
+                            disabled={
+                              !removeConditionCondition
+                              || !removeConditionSkill
+                              || !removeConditionTarget
+                              || attemptRemoveCondition.isPending
+                              || notEnoughStaForBonusAction
+                            }
+                            onClick={() => attemptRemoveCondition.mutate()}
+                          >
+                            {isBonusActionWindow ? 'Снять (доп. действие, 3 STA, −3)' : 'Снять состояние'}
+                          </Button>
+                        </div>
+                        {attemptRemoveCondition.error && (
+                          <ErrorText>
+                            {attemptRemoveCondition.error instanceof ApiError ? attemptRemoveCondition.error.message : 'Не удалось снять состояние'}
+                          </ErrorText>
+                        )}
+                      </div>
+                    )
+                  })()}
                 </>
               )
             })()

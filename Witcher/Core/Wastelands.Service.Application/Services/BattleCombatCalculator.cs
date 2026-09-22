@@ -66,14 +66,18 @@ namespace Wastelands.Service.Application.Services
 		/// персонажа — по HumanBodyPartCatalog.ResolveByRoll).
 		/// Оглушённый защитник не бросает защиту вовсе — его итог фиксирован на 10 (см. defenderIsStunned).
 		/// Дополнительное действие персонажа (attack.IsBonusAction) вычитает из атаки ещё
-		/// BonusActionAttackPenalty — на каждый выпад активации, включая оба удара мультиатаки.
+		/// BonusActionRules.RollPenalty — на каждый выпад активации, включая оба удара мультиатаки.
+		/// attackerConditionModifier/defenderConditionModifier — штраф от Ошеломления/Ослепления
+		/// каждой стороны (см. BattleParticipants.GetAttackDefenseModifier), уже отрицательный.
 		/// </summary>
 		public static HitResult ResolveHit(
 			ParticipantCombatContext attackerContext,
 			ParticipantCombatContext defenderContext,
 			Ability ability,
 			BattleAttack attack,
-			bool defenderIsStunned = false)
+			bool defenderIsStunned = false,
+			int attackerConditionModifier = 0,
+			int defenderConditionModifier = 0)
 		{
 			long? resolvedPartId = null;
 			HumanBodyPart? resolvedHumanBodyPart = null;
@@ -108,8 +112,9 @@ namespace Wastelands.Service.Application.Services
 			}
 
 			var attackRollUsed = attack.AttackRoll ?? RollDie(10);
-			var bonusActionPenalty = attack.IsBonusAction ? BattleAttack.BonusActionAttackPenalty : 0;
-			var attackTotal = attackerContext.GetSkillValue(ability.AttackSkill) - hitPenalty - bonusActionPenalty + attackRollUsed + ability.AttackModifier;
+			var bonusActionPenalty = attack.IsBonusAction ? BonusActionRules.RollPenalty : 0;
+			var attackTotal = attackerContext.GetSkillValue(ability.AttackSkill) - hitPenalty - bonusActionPenalty
+				+ attackerConditionModifier + attackRollUsed + ability.AttackModifier;
 
 			int defenseRollUsed;
 			int defenseTotal;
@@ -121,7 +126,7 @@ namespace Wastelands.Service.Application.Services
 			else
 			{
 				defenseRollUsed = attack.DefenseRoll ?? RollDie(10);
-				defenseTotal = defenderContext.GetSkillValue(attack.DefensiveSkill!.Value) + defenseRollUsed;
+				defenseTotal = defenderContext.GetSkillValue(attack.DefensiveSkill!.Value) + defenderConditionModifier + defenseRollUsed;
 			}
 
 			var succeeded = attackTotal > defenseTotal;
@@ -208,7 +213,8 @@ namespace Wastelands.Service.Application.Services
 			return new DamageResult(finalDamage, partInfo.Name, rawDamage, armorBeforeHit, armorAbsorbed, armorAfterHit, armorItem?.Id);
 		}
 
-		private static double ApplyDamageTypeModifier(double damage, Dictionary<DamageType, DamageTypeModifier> modifiers, DamageType damageType)
+		/// <summary>internal — переиспользуется BattleTurnProcessor для урона от Fire (тоже Vulnerability/Resistance/Immunity, вне контекста конкретной атаки).</summary>
+		internal static double ApplyDamageTypeModifier(double damage, Dictionary<DamageType, DamageTypeModifier> modifiers, DamageType damageType)
 		{
 			if (!modifiers.TryGetValue(damageType, out var modifier))
 			{
