@@ -6,10 +6,12 @@ namespace Wastelands.Service.Domain.Drafts
 	public sealed record ConditionRemovalRule(Skill Skill, int Difficulty, bool SelfOnly);
 
 	/// <summary>
-	/// Правила снятия состояний действием в бою (BattleCombatService.AttemptRemoveConditionAsync).
-	/// Кровотечение и Отравление снимаются броском навыка ≥ сложности; Огонь снимается автоматически
-	/// (обычным действием, без броска — не входит в этот каталог); Удушье снимает только мастер вручную
-	/// (RemoveCreatureCondition/RemoveCharacterCondition); Ошеломление/Ослепление спадают сами.
+	/// Правила снятия состояний действием в бою. Кровотечение и Отравление снимаются броском навыка ≥
+	/// сложности (BattleCombatService.AttemptRemoveConditionAsync, можно только с себя или, кроме
+	/// self-only навыков, с другого участника); Огонь и Падение снимаются обычным действием без
+	/// броска, всегда успешно и только с себя (BattleCombatService.ClearConditionAsync); Удушье
+	/// снимает только мастер вручную (RemoveCreatureCondition/RemoveCharacterCondition); Ошеломление/
+	/// Ослепление спадают сами.
 	/// </summary>
 	public static class ConditionRemovalCatalog
 	{
@@ -26,7 +28,11 @@ namespace Wastelands.Service.Domain.Drafts
 			],
 		};
 
+		private static readonly HashSet<Condition> AutoClearable = [Condition.Fire, Condition.Prone];
+
 		public static ConditionRemovalRule? FindRule(Condition condition, Skill skill)
 			=> Rules.TryGetValue(condition, out var rules) ? rules.Find(r => r.Skill == skill) : null;
+
+		public static bool IsAutoClearable(Condition condition) => AutoClearable.Contains(condition);
 	}
 }

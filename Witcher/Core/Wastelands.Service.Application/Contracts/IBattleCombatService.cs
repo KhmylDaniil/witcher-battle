@@ -42,5 +42,8 @@ namespace Wastelands.Service.Application.Contracts
 
 		/// <summary>Попытка снять состояние (Кровотечение/Отравление) броском навыка — отдельное действие хода, не атака.</summary>
 		Task<BattleDto> AttemptRemoveConditionAsync(AttemptRemoveConditionRequest request);
+
+		/// <summary>Снятие состояния действием без броска — всегда успешно и только с себя (Огонь, Падение).</summary>
+		Task<BattleDto> ClearConditionAsync(ClearConditionRequest request);
 	}
 }

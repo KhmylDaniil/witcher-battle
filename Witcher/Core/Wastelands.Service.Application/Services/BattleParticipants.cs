@@ -176,7 +176,11 @@ namespace Wastelands.Service.Application.Services
 			}
 		}
 
-		/// <summary>Суммарный штраф к броску атаки/защиты от Ошеломления (-2) и Ослепления (-3) — складываются, если есть оба.</summary>
+		/// <summary>
+		/// Суммарный штраф к броску атаки/защиты от Ошеломления (-2), Ослепления (-3) и Падения (-2) —
+		/// складываются, если есть несколько сразу. В отличие от Ошеломления/Ослепления, Падение не
+		/// спадает само — снимается только действием (см. BattleCombatService.ClearConditionAsync).
+		/// </summary>
 		public static int GetAttackDefenseModifier(Battle battle, ParticipantKind kind, long participantId)
 		{
 			var modifier = 0;
@@ -188,6 +192,11 @@ namespace Wastelands.Service.Application.Services
 			if (HasCondition(battle, kind, participantId, Condition.Blinded))
 			{
 				modifier -= 3;
+			}
+
+			if (HasCondition(battle, kind, participantId, Condition.Prone))
+			{
+				modifier -= 2;
 			}
 
 			return modifier;

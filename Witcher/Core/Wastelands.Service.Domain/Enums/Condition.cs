@@ -35,5 +35,9 @@ namespace Wastelands.Service.Domain.Enums
 		DifficultLegPiercing, DifficultLegSlashing, DifficultLegBludgeoning, DifficultLegFire,
 		DifficultWingPiercing, DifficultWingSlashing, DifficultWingBludgeoning, DifficultWingFire,
 		DifficultTailPiercing, DifficultTailSlashing, DifficultTailBludgeoning, DifficultTailFire,
+
+		// Добавлено после первоначального набора — в конец, чтобы не сдвинуть числовые значения уже
+		// сохранённых условий выше (см. комментарий про jsonb-массив чисел).
+		Prone,
 	}
 }

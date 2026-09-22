@@ -374,6 +374,8 @@ export const CONDITIONS = [
   'DifficultLegPiercing', 'DifficultLegSlashing', 'DifficultLegBludgeoning', 'DifficultLegFire',
   'DifficultWingPiercing', 'DifficultWingSlashing', 'DifficultWingBludgeoning', 'DifficultWingFire',
   'DifficultTailPiercing', 'DifficultTailSlashing', 'DifficultTailBludgeoning', 'DifficultTailFire',
+
+  'Prone',
 ] as const
 export type Condition = (typeof CONDITIONS)[number]
 
@@ -397,6 +399,12 @@ export const CONDITION_REMOVAL_RULES: Partial<Record<Condition, ConditionRemoval
   ],
   Bleed: [{ skill: 'FirstAid', difficulty: 14, selfOnly: false }],
 }
+
+/**
+ * Состояния, снимаемые обычным действием без броска (всегда успешно, только с себя) — зеркало
+ * backend ConditionRemovalCatalog.IsAutoClearable.
+ */
+export const AUTO_CLEARABLE_CONDITIONS: Condition[] = ['Fire', 'Prone']
 
 // ---- Abilities (атакующие способности шаблона существа) ----
 

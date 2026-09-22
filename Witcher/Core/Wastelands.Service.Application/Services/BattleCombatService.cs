@@ -473,6 +473,54 @@ namespace Wastelands.Service.Application.Services
 			return await SaveAndNotifyAsync(battle);
 		}
 
+		/// <summary>
+		/// Снятие состояния действием без броска — всегда успешно и только с себя (Огонь, Падение — см.
+		/// ConditionRemovalCatalog.IsAutoClearable). Расход действия — та же механика, что и у
+		/// AttemptRemoveConditionAsync: обычное или дополнительное действие персонажа, у существа —
+		/// всегда весь ход целиком.
+		/// </summary>
+		public async Task<BattleDto> ClearConditionAsync(ClearConditionRequest request)
+		{
+			var battle = await GetByIdAsync(request.BattleId);
+			BattleParticipants.EnsureInProgress(battle);
+
+			if (battle.Attack is not null)
+			{
+				throw new InvalidArgumentException(ErrorCode.AttackAlreadyInProgress, "Нельзя снимать состояние во время незавершённой атаки.");
+			}
+
+			var (activeKind, activeId) = BattleParticipants.GetActive(battle);
+			await _authorizer.EnsureControllerAsync(battle, activeKind, activeId, ErrorCode.NotYourTurn);
+			EnsureNotStunned(battle, activeKind, activeId);
+
+			if (!ConditionRemovalCatalog.IsAutoClearable(request.Condition))
+			{
+				throw new InvalidArgumentException(ErrorCode.ConditionRemovalRuleNotFound, "Это состояние нельзя снять таким действием.");
+			}
+
+			if (!BattleParticipants.HasCondition(battle, activeKind, activeId, request.Condition))
+			{
+				throw new InvalidArgumentException(ErrorCode.ConditionNotPresentOnTarget, "У вас нет этого состояния.");
+			}
+
+			var isBonusAction = TryChargeBonusAction(battle, activeKind, activeId);
+			BattleParticipants.RemoveCondition(battle, activeKind, activeId, request.Condition);
+
+			var activeName = BattleParticipants.GetName(battle, activeKind, activeId);
+			battle.AddLogEntry($"{activeName} снимает с себя состояние {request.Condition} действием.");
+
+			if (activeKind == ParticipantKind.Character && !isBonusAction)
+			{
+				BattleParticipants.GetBattleCharacter(battle, activeId).MarkActedThisTurn();
+			}
+			else
+			{
+				await _turnProcessor.AdvanceTurnAsync(battle);
+			}
+
+			return await SaveAndNotifyAsync(battle);
+		}
+
 		private async Task<Battle> GetByIdAsync(long id)
 		{
 			var battle = await _battleRepository.GetByIdAsync(id);

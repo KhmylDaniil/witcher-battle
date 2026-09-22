@@ -79,6 +79,8 @@ export const battlesApi = {
     battleId: number,
     payload: { condition: Condition; skill: Skill; targetKind: ParticipantKind; targetId: number; roll: number | null },
   ) => api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/remove-condition`, payload),
+  clearCondition: (gameId: number, battleId: number, condition: Condition) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/clear-condition`, { condition }),
 
   creatureSheet: (gameId: number, battleId: number, creatureId: number) =>
     api.get<CreatureTemplate>(`/api/games/${gameId}/battles/${battleId}/creatures/${creatureId}/sheet`),

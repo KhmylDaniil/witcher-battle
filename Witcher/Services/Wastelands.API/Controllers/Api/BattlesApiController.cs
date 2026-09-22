@@ -180,6 +180,13 @@ namespace Wastelands.API.Controllers.Api
 			return await _battleCombatService.AttemptRemoveConditionAsync(request);
 		}
 
+		[HttpPost("{id:long}/clear-condition")]
+		public async Task<BattleDto> ClearCondition(long gameId, long id, ClearConditionRequest request)
+		{
+			request.BattleId = id;
+			return await _battleCombatService.ClearConditionAsync(request);
+		}
+
 		[HttpGet("{id:long}/creatures/{creatureId:long}/sheet")]
 		public async Task<CreatureTemplateDto> GetCreatureSheet(long gameId, long id, long creatureId)
 			=> await _sheetService.GetCreatureSheetAsync(id, creatureId);

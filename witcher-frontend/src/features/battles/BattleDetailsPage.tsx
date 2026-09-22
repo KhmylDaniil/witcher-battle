@@ -8,7 +8,15 @@ import { useBattleUpdates } from '../../lib/battleHub'
 import { charactersApi } from '../characters/api'
 import { creatureTemplatesApi } from '../creatureTemplates/api'
 import { gamesApi } from '../games/api'
-import { CONDITION_REMOVAL_RULES, CONDITIONS, type Ability, type Condition, type ParticipantKind, type Skill } from '../../types/api'
+import {
+  AUTO_CLEARABLE_CONDITIONS,
+  CONDITION_REMOVAL_RULES,
+  CONDITIONS,
+  type Ability,
+  type Condition,
+  type ParticipantKind,
+  type Skill,
+} from '../../types/api'
 import { AttackModal } from './AttackModal'
 import { ParticipantSheetModal } from './ParticipantSheetModal'
 import { battlesApi } from './api'
@@ -165,6 +173,15 @@ export function BattleDetailsPage() {
       setRemoveConditionSkill('')
       setRemoveConditionTarget('')
       setRemoveConditionRoll('')
+    },
+  })
+
+  const [clearConditionCondition, setClearConditionCondition] = useState<Condition | ''>('')
+  const clearCondition = useMutation({
+    mutationFn: () => battlesApi.clearCondition(gameIdNum, id, clearConditionCondition as Condition),
+    onSuccess: async () => {
+      await invalidate()
+      setClearConditionCondition('')
     },
   })
 
@@ -630,6 +647,44 @@ export function BattleDetailsPage() {
                           <ErrorText>
                             {attemptRemoveCondition.error instanceof ApiError ? attemptRemoveCondition.error.message : 'Не удалось снять состояние'}
                           </ErrorText>
+                        )}
+                      </div>
+                    )
+                  })()}
+
+                  {(() => {
+                    // Огонь/Падение снимаются обычным действием без броска, всегда успешно и только с
+                    // себя (BattleCombatService.ClearConditionAsync) — расход действия тот же, что и у
+                    // AttemptRemoveConditionAsync выше.
+                    const clearableConditions = activeParticipant.appliedConditions.filter((c) => AUTO_CLEARABLE_CONDITIONS.includes(c))
+                    if (clearableConditions.length === 0) return null
+                    return (
+                      <div className="mt-3 border-t border-neutral-100 pt-3 dark:border-neutral-900">
+                        <h3 className="mb-2 text-sm font-semibold">Встать / потушить</h3>
+                        <div className="flex flex-wrap items-end gap-2">
+                          <Field label="Состояние">
+                            <Select
+                              className="w-36"
+                              value={clearConditionCondition}
+                              onChange={(e) => setClearConditionCondition(e.target.value as Condition)}
+                            >
+                              <option value="">— выберите —</option>
+                              {clearableConditions.map((c) => (
+                                <option key={c} value={c}>
+                                  {c}
+                                </option>
+                              ))}
+                            </Select>
+                          </Field>
+                          <Button
+                            disabled={!clearConditionCondition || clearCondition.isPending || notEnoughStaForBonusAction}
+                            onClick={() => clearCondition.mutate()}
+                          >
+                            {isBonusActionWindow ? 'Снять (доп. действие, 3 STA, −3)' : 'Снять действием'}
+                          </Button>
+                        </div>
+                        {clearCondition.error && (
+                          <ErrorText>{clearCondition.error instanceof ApiError ? clearCondition.error.message : 'Не удалось снять состояние'}</ErrorText>
                         )}
                       </div>
                     )
