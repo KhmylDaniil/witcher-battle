@@ -73,6 +73,9 @@ namespace Wastelands.Service.Application.Services
 			return statValue + (character.Skills.TryGetValue(skill, out var skillValue) ? skillValue : 0);
 		}
 
+		/// <summary>Модификатор урона оружием ближнего боя от Str (таблица Body/Melee Bonus из книги правил).</summary>
+		public static int GetMeleeDamageBonus(int str) => 2 * ((str - 1) / 2) - 4;
+
 		public static int GetCreatureTemplateSkillValue(CreatureTemplate template, Skill skill)
 		{
 			var statValue = GetCreatureTemplateStatValue(template, GetStatGroup(skill));

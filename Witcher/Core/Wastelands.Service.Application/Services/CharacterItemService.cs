@@ -134,27 +134,32 @@ namespace Wastelands.Service.Application.Services
 		/// Оружие без мультиатаки (IsMultiAttack == false на предмете) даёт одну способность с именем
 		/// оружия и скоростью 1, атаку/урон копирует как в предмете; с мультиатакой (IsMultiAttack ==
 		/// true) — «Быструю атаку» (скорость 2, атака/урон как в предмете) и «Сильную атаку» (скорость
-		/// 1, урон ×2 кубиками и модификатором урона, штраф -3 к модификатору атаки).
+		/// 1, урон ×2 кубиками и модификатором урона, штраф -3 к модификатору атаки). Для оружия
+		/// ближнего боя (WeaponKind.Melee) модификатор урона дополнительно увеличивается на бонус от
+		/// Str персонажа (см. SkillHelpers.GetMeleeDamageBonus) — этот бонус тоже удваивается для
+		/// «Сильной атаки», как и остальной модификатор урона.
 		/// </summary>
 		private static void GenerateWeaponAbilities(Character character, Item item)
 		{
 			var appliedConditions = item.AppliedConditions.Select(c => (c.Condition, c.ApplyChance)).ToList();
+			var meleeBonus = item.WeaponKind == WeaponKind.Melee ? SkillHelpers.GetMeleeDamageBonus(character.Str) : 0;
+			var damageModifier = item.DamageModifier!.Value + meleeBonus;
 
 			if (item.IsMultiAttack == true)
 			{
 				character.Abilities.Add(Ability.ForEquippedWeapon(
 					character.Id, item.Id, $"Быстрая атака ({item.Name})", item.AttackSkill!.Value, attacksPerTurn: 2,
-					item.DamageDiceCount!.Value, item.AttackModifier!.Value, item.DamageModifier!.Value, item.DamageType!.Value, appliedConditions));
+					item.DamageDiceCount!.Value, item.AttackModifier!.Value, damageModifier, item.DamageType!.Value, appliedConditions));
 
 				character.Abilities.Add(Ability.ForEquippedWeapon(
 					character.Id, item.Id, $"Сильная атака ({item.Name})", item.AttackSkill!.Value, attacksPerTurn: 1,
-					item.DamageDiceCount!.Value * 2, item.AttackModifier!.Value - 3, item.DamageModifier!.Value * 2, item.DamageType!.Value, appliedConditions));
+					item.DamageDiceCount!.Value * 2, item.AttackModifier!.Value - 3, damageModifier * 2, item.DamageType!.Value, appliedConditions));
 			}
 			else
 			{
 				character.Abilities.Add(Ability.ForEquippedWeapon(
 					character.Id, item.Id, item.Name, item.AttackSkill!.Value, attacksPerTurn: 1,
-					item.DamageDiceCount!.Value, item.AttackModifier!.Value, item.DamageModifier!.Value, item.DamageType!.Value, appliedConditions));
+					item.DamageDiceCount!.Value, item.AttackModifier!.Value, damageModifier, item.DamageType!.Value, appliedConditions));
 			}
 		}
 
