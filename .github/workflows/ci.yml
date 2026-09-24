@@ -64,5 +64,81 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Test
+        run: npm run test
+
       - name: Build
         run: npm run build
+
+  e2e:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: wastelands
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      ConnectionStrings__Postgres: "Host=localhost;Port=5432;Database=wastelands;Username=postgres;Password=password"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: witcher-frontend/package-lock.json
+
+      - name: Restore and build backend
+        working-directory: Witcher
+        run: |
+          dotnet restore Wastelands.sln
+          dotnet build Wastelands.sln --no-restore --configuration Release
+
+      - name: Apply EF Core migrations
+        working-directory: Witcher
+        run: |
+          dotnet tool install --global dotnet-ef --version 10.0.12
+          dotnet ef database update --project Infrastructure/Wastelands.EfDataAccess --startup-project Services/Wastelands.API
+
+      - name: Start backend
+        working-directory: Witcher/Services/Wastelands.API
+        run: |
+          ASPNETCORE_ENVIRONMENT=Development nohup dotnet run --no-build --configuration Release --launch-profile https > /tmp/wastelands-api.log 2>&1 &
+          for i in $(seq 1 30); do
+            code=$(curl -k -s -o /dev/null -w '%{http_code}' https://localhost:7114/api/games || true)
+            [ "$code" != "000" ] && exit 0
+            sleep 1
+          done
+          echo "Backend did not become ready in time"; cat /tmp/wastelands-api.log; exit 1
+
+      - name: Install frontend dependencies
+        working-directory: witcher-frontend
+        run: npm ci
+
+      - name: Install Playwright browser
+        working-directory: witcher-frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        working-directory: witcher-frontend
+        run: npm run test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: witcher-frontend/playwright-report/
+          retention-days: 7
