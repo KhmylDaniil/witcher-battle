@@ -27,6 +27,9 @@ namespace Wastelands.Service.Domain.Entities
 		/// <summary>EF-навигация — нужна только для конфигурации FK Battle.GameId.</summary>
 		public List<Battle> Battles { get; set; } = [];
 
+		/// <summary>EF-навигация — нужна только для конфигурации FK BattleMap.GameId.</summary>
+		public List<BattleMap> BattleMaps { get; set; } = [];
+
 		private Game()
 		{
 		}

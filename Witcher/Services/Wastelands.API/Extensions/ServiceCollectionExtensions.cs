@@ -30,6 +30,7 @@ namespace Wastelands.API.Extensions
 			services.AddScoped<ICreatureTemplateRepository, CreatureTemplateRepository>();
 			services.AddScoped<IItemTemplateRepository, ItemTemplateRepository>();
 			services.AddScoped<IBattleRepository, BattleRepository>();
+			services.AddScoped<IBattleMapRepository, BattleMapRepository>();
 
 			services.AddScoped<IUserContext, UserContext>();
 			services.AddScoped<IGameAccessGuard, GameAccessGuard>();
@@ -57,6 +58,7 @@ namespace Wastelands.API.Extensions
 			services.AddScoped<IBattleService, BattleService>();
 			services.AddScoped<IBattleCombatService, BattleCombatService>();
 			services.AddScoped<IBattleParticipantSheetService, BattleParticipantSheetService>();
+			services.AddScoped<IBattleMapService, BattleMapService>();
 
 			services.AddAutoMapper(typeof(MappingProfile));
 

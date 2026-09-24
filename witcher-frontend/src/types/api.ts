@@ -580,3 +580,81 @@ export interface UpdateBattleCreatureFormValues {
   currentHP: number
   currentSta: number
 }
+
+// ---- Battle maps (BattleMapsApiController) — гексагональные карты боя, доступны только мастеру игры ----
+
+/** Зеркалит Wastelands.Service.Domain/Enums/HexTerrainType.cs — влияет на передвижение. */
+export const HEX_TERRAIN_TYPES = ['Open', 'Difficult', 'Impassable', 'Wall', 'Void'] as const
+export type HexTerrainType = (typeof HEX_TERRAIN_TYPES)[number]
+
+export const HEX_TERRAIN_TYPE_LABELS: Record<HexTerrainType, string> = {
+  Open: 'Простой террейн',
+  Difficult: 'Сложный террейн',
+  Impassable: 'Непроходимый террейн',
+  Wall: 'Стена',
+  Void: 'Черное пространство',
+}
+
+/** Зеркалит Wastelands.Service.Domain/Enums/HexTerrainStyle.cs — только внешний вид гекса. */
+export const HEX_TERRAIN_STYLES = ['Grass', 'Sand', 'Water', 'AncientStreet', 'FuturisticMetal'] as const
+export type HexTerrainStyle = (typeof HEX_TERRAIN_STYLES)[number]
+
+export const HEX_TERRAIN_STYLE_LABELS: Record<HexTerrainStyle, string> = {
+  Grass: 'Трава',
+  Sand: 'Песок',
+  Water: 'Вода',
+  AncientStreet: 'Улица античного города',
+  FuturisticMetal: 'Металл футуристического комплекса',
+}
+
+export interface BattleMapHex {
+  column: number
+  row: number
+  terrainType: HexTerrainType
+  terrainStyle: HexTerrainStyle
+  isPassable: boolean
+  movementCost: number | null
+}
+
+/** Карта без гексов — то, что отдаёт список карт игры. */
+export interface BattleMapSummary {
+  id: number
+  gameId: number
+  name: string
+  description: string | null
+  columns: number
+  rows: number
+}
+
+export interface BattleMap extends BattleMapSummary {
+  /** Ровно columns × rows гексов, построчно (row, затем column). */
+  hexes: BattleMapHex[]
+}
+
+/** Зеркалит BattleMap.MinDimension/MaxDimension на бэке. */
+export const BATTLE_MAP_MIN_DIMENSION = 1
+export const BATTLE_MAP_MAX_DIMENSION = 60
+
+export interface CreateBattleMapFormValues {
+  name: string
+  description: string
+  columns: number
+  rows: number
+  terrainStyle: HexTerrainStyle
+}
+
+export interface UpdateBattleMapFormValues {
+  name: string
+  description: string
+  columns: number
+  rows: number
+  /** Стиль простого террейна для гексов, появившихся при увеличении карты. */
+  fillTerrainStyle: HexTerrainStyle
+}
+
+export interface HexPaint {
+  column: number
+  row: number
+  terrainType: HexTerrainType
+  terrainStyle: HexTerrainStyle
+}

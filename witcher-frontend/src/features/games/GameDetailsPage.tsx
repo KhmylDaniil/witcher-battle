@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, ConfirmButton, ErrorText, PageHeader, Pagination, Spinner } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
+import { BattleMapsCard } from '../battleMaps/BattleMapsCard'
 import { BattlesCard } from '../battles/BattlesCard'
 import { charactersApi } from '../characters/api'
 import { gamesApi } from './api'
@@ -211,6 +212,7 @@ export function GameDetailsPage() {
         </Card>
       )}
       {isMember && <BattlesCard gameId={id} isOwner={isOwner} />}
+      {isOwner && <BattleMapsCard gameId={id} />}
 
       <Card>
         <div className="mb-3 flex items-center justify-between">

@@ -98,6 +98,10 @@
 		ItemNotRepairable = 815,
 		WeaponDurabilityDepleted = 816,
 
+		// battle map errors 900...
+		BattleMapNotFound = 900,
+		BattleMapHexOutOfBounds = 901,
+
 		// Common error codes 1100...1199
 		InvalidArgument = 1101,
 		RequiredParameterCannotBeNull = 1103,

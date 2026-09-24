@@ -75,5 +75,15 @@ namespace Wastelands.Service.Infrastructure.IntegrationTest.TestSupport
 
 			return itemTemplate;
 		}
+
+		public static async Task<BattleMap> CreateBattleMapAsync(WastelandsDbContext dbContext, long gameId, string name = "Map", int columns = 3, int rows = 3)
+		{
+			var battleMap = new BattleMap(gameId, name, null, columns, rows, HexTerrainStyle.Grass);
+
+			dbContext.Set<BattleMap>().Add(battleMap);
+			await dbContext.SaveChangesAsync();
+
+			return battleMap;
+		}
 	}
 }

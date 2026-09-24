@@ -45,6 +45,10 @@ namespace Wastelands.Service.Application.Mapping
 			// т.к. требуют подгрузки CreatureTemplate/Character/Ability, которых у BattleAttack нет.
 			CreateMap<BattleAttack, BattleAttackDto>();
 			CreateMap<BattleLogEntry, BattleLogEntryDto>();
+
+			CreateMap<BattleMapHex, BattleMapHexDto>();
+			CreateMap<BattleMap, BattleMapDto>();
+			CreateMap<BattleMap, BattleMapSummaryDto>();
 		}
 	}
 }
