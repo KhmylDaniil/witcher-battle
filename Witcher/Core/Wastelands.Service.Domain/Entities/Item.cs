@@ -130,6 +130,17 @@ namespace Wastelands.Service.Domain.Entities
 			armorPart.Wear();
 		}
 
+		/// <summary>Износ от блокирования удара этим оружием в бою — см. BattleCombatService.ConfirmDefenderAsync.</summary>
+		public void WearWeapon()
+		{
+			if (ItemType != ItemType.Weapon)
+			{
+				throw new InvalidArgumentException(ErrorCode.ItemNotWeapon, "Это не оружие.");
+			}
+
+			Durability = Math.Max(0, (Durability ?? 0) - 1);
+		}
+
 		private ItemArmorPart GetArmorPart(HumanBodyPart part)
 		{
 			if (ItemType != ItemType.Armor)

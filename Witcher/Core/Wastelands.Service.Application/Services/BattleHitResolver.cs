@@ -50,13 +50,24 @@ namespace Wastelands.Service.Application.Services
 			}
 		}
 
+		/// <summary>
+		/// Способность со своим списком защитных навыков ограничивает выбор только им. Иначе —
+		/// стандартный набор Dodge/Acrobatics, и для персонажа-защитника дополнительно навык атаки его
+		/// экипированного оружия ближнего боя (блокирование — см. BattleCombatService.ConfirmDefenderAsync,
+		/// где при выборе этого навыка снижается прочность оружия).
+		/// </summary>
 		public async Task<List<Skill>> GetAvailableDefensiveSkillsAsync(Battle battle, BattleAttack attack)
 		{
 			var attackerContext = await _contextProvider.GetContextAsync(battle, attack.AttackerKind, attack.AttackerId);
 			var ability = attackerContext.Abilities.First(a => a.Id == attack.AbilityId);
-			return ability.DefensiveSkills.Count > 0
-				? ability.DefensiveSkills.Select(x => x.Skill).ToList()
-				: [Skill.Dodge];
+			if (ability.DefensiveSkills.Count > 0)
+			{
+				return ability.DefensiveSkills.Select(x => x.Skill).ToList();
+			}
+
+			var defenderContext = await _contextProvider.GetContextAsync(battle, attack.DefenderKind, attack.DefenderId);
+			var blockSkill = BattleParticipants.GetEquippedMeleeWeaponSkill(attack.DefenderKind, defenderContext);
+			return blockSkill is { } skill ? [Skill.Dodge, Skill.Acrobatics, skill] : [Skill.Dodge, Skill.Acrobatics];
 		}
 	}
 }

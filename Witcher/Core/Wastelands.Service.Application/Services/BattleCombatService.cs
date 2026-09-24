@@ -200,9 +200,36 @@ namespace Wastelands.Service.Application.Services
 
 			var defenderIsStunned = BattleParticipants.HasCondition(battle, attack.DefenderKind, attack.DefenderId, Condition.Stun);
 			attack.ConfirmDefender(defenderIsStunned);
+			await TryWearBlockingWeaponAsync(battle, attack);
 			await _hitResolver.ResolveIfBothConfirmedAsync(battle, attack);
 
 			return await SaveAndNotifyAsync(battle);
+		}
+
+		/// <summary>
+		/// Защита навыком экипированного оружия ближнего боя (блокирование — не парирование: та же
+		/// стандартная защита, что и Dodge/Acrobatics, без штрафа и особого исхода на промахе, см.
+		/// BattleHitResolver.GetAvailableDefensiveSkillsAsync) снижает прочность этого оружия на 1,
+		/// независимо от исхода броска.
+		/// </summary>
+		private async Task TryWearBlockingWeaponAsync(Battle battle, BattleAttack attack)
+		{
+			if (attack.IsParry || attack.DefenderKind != ParticipantKind.Character)
+			{
+				return;
+			}
+
+			var defenderContext = await _contextProvider.GetContextAsync(battle, attack.DefenderKind, attack.DefenderId);
+			var blockSkill = BattleParticipants.GetEquippedMeleeWeaponSkill(attack.DefenderKind, defenderContext);
+			if (blockSkill is null || attack.DefensiveSkill != blockSkill)
+			{
+				return;
+			}
+
+			var weapon = defenderContext.Character!.Items.First(
+				i => i.IsEquipped && i.ItemType == ItemType.Weapon && i.WeaponKind == WeaponKind.Melee);
+			weapon.WearWeapon();
+			await _characterRepository.UpdateAsync(defenderContext.Character);
 		}
 
 		public async Task<BattleDto> SetDamageRollAsync(SetDamageRollRequest request)
