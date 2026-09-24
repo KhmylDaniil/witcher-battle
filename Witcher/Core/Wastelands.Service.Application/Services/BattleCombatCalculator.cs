@@ -149,8 +149,8 @@ namespace Wastelands.Service.Application.Services
 		/// <summary>
 		/// Бросок урона способности + модификатор, затем поглощение бронёй пробитой части, модификатор
 		/// части тела и последним — модификатор типа урона (Vulnerability×2/Resistance÷2/Immunity×0).
-		/// У существа броня и модификаторы — на шаблоне (CalculateCreatureDamage); у персонажа — на
-		/// экипированном предмете, покрывающем пробитую часть, если он есть (CalculateCharacterDamage).
+		/// Тонкая обёртка над CalculateDamageToPart — берёт часть тела/тип урона из уже разрешённого
+		/// выпада (attack); самостоятельная математика — там же.
 		/// </summary>
 		public static DamageResult CalculateDamage(
 			ParticipantCombatContext attackerContext,
@@ -163,14 +163,53 @@ namespace Wastelands.Service.Application.Services
 			double raw = damageRoll + ability.DamageModifier;
 			var rawDamage = Math.Max(0, (int)Math.Round(raw));
 
-			return defenderKind == ParticipantKind.Creature
-				? CalculateCreatureDamage(defenderContext, ability, attack, rawDamage)
-				: CalculateCharacterDamage(defenderContext, ability, attack, rawDamage);
+			return CalculateDamageToPart(
+				defenderContext, defenderKind, ability.DamageType, attack.ResolvedCreaturePartId, attack.ResolvedHumanBodyPart, rawDamage);
 		}
 
-		private static DamageResult CalculateCreatureDamage(ParticipantCombatContext defenderContext, Ability ability, BattleAttack attack, int rawDamage)
+		/// <summary>
+		/// Ядро расчёта урона по конкретной, уже определённой части тела — вынесено из CalculateDamage,
+		/// чтобы им мог пользоваться и BattleFumbleResolver (самоудар при тяжёлом критическом провале,
+		/// где нет настоящего BattleAttack с разрешённым попаданием, а часть тела выбирается заново).
+		/// У существа броня и модификаторы — на шаблоне (CalculateCreatureDamage); у персонажа — на
+		/// экипированном предмете, покрывающем пробитую часть, если он есть (CalculateCharacterDamage).
+		/// </summary>
+		public static DamageResult CalculateDamageToPart(
+			ParticipantCombatContext defenderContext,
+			ParticipantKind defenderKind,
+			DamageType damageType,
+			long? creaturePartId,
+			HumanBodyPart? humanBodyPart,
+			int rawDamage)
 		{
-			var part = defenderContext.Template!.Parts.First(p => p.Id == attack.ResolvedCreaturePartId);
+			return defenderKind == ParticipantKind.Creature
+				? CalculateCreatureDamage(defenderContext, damageType, creaturePartId!.Value, rawDamage)
+				: CalculateCharacterDamage(defenderContext, damageType, humanBodyPart!.Value, rawDamage);
+		}
+
+		/// <summary>
+		/// Часть тела, куда пришёлся бы удар, если бы не выбиралась атакующим — у существа случайная
+		/// по d10 в диапазон MinToHit..MaxToHit (см. ResolveHit), у персонажа — по HumanBodyPartCatalog.
+		/// Отдельный публичный метод — переиспользуется BattleFumbleResolver для самоудара, где нет
+		/// настоящего атакующего, выбирающего цель.
+		/// </summary>
+		public static (long? CreaturePartId, HumanBodyPart? HumanBodyPart) ResolveRandomBodyPart(
+			ParticipantCombatContext defenderContext, ParticipantKind defenderKind)
+		{
+			if (defenderKind == ParticipantKind.Creature)
+			{
+				var parts = defenderContext.Template!.Parts;
+				var hitRoll = RollDie(10);
+				var part = parts.FirstOrDefault(p => hitRoll >= p.MinToHit && hitRoll <= p.MaxToHit) ?? parts.First();
+				return (part.Id, null);
+			}
+
+			return (null, HumanBodyPartCatalog.ResolveByRoll(RollDie(10)));
+		}
+
+		private static DamageResult CalculateCreatureDamage(ParticipantCombatContext defenderContext, DamageType damageType, long creaturePartId, int rawDamage)
+		{
+			var part = defenderContext.Template!.Parts.First(p => p.Id == creaturePartId);
 
 			var armorReduction = defenderContext.Creature!.GetArmorReduction(part.Id);
 			var armorBeforeHit = Math.Max(0, part.Armor - armorReduction);
@@ -179,7 +218,7 @@ namespace Wastelands.Service.Application.Services
 			var damageAfterArmor = Math.Max(0, rawDamage - armorBeforeHit);
 
 			double afterPartModifier = damageAfterArmor * part.DamageModifier;
-			afterPartModifier = ApplyDamageTypeModifier(afterPartModifier, defenderContext.Template.DamageTypeModifiers, ability.DamageType);
+			afterPartModifier = ApplyDamageTypeModifier(afterPartModifier, defenderContext.Template.DamageTypeModifiers, damageType);
 
 			var finalDamage = Math.Max(0, (int)Math.Round(afterPartModifier));
 
@@ -194,9 +233,8 @@ namespace Wastelands.Service.Application.Services
 		/// BattleCombatService после этого расчёта), и пока не изношена до нуля — действуют
 		/// модификаторы типа урона брони.
 		/// </summary>
-		private static DamageResult CalculateCharacterDamage(ParticipantCombatContext defenderContext, Ability ability, BattleAttack attack, int rawDamage)
+		private static DamageResult CalculateCharacterDamage(ParticipantCombatContext defenderContext, DamageType damageType, HumanBodyPart humanPart, int rawDamage)
 		{
-			var humanPart = attack.ResolvedHumanBodyPart!.Value;
 			var partInfo = HumanBodyPartCatalog.Get(humanPart);
 
 			var armorItem = defenderContext.Character!.Items.FirstOrDefault(i =>
@@ -211,7 +249,7 @@ namespace Wastelands.Service.Application.Services
 			double afterPartModifier = damageAfterArmor * partInfo.DamageModifier;
 			if (armorBeforeHit > 0)
 			{
-				afterPartModifier = ApplyDamageTypeModifier(afterPartModifier, armorItem!.DamageTypeModifiers, ability.DamageType);
+				afterPartModifier = ApplyDamageTypeModifier(afterPartModifier, armorItem!.DamageTypeModifiers, damageType);
 			}
 
 			var finalDamage = Math.Max(0, (int)Math.Round(afterPartModifier));

@@ -88,6 +88,24 @@ namespace Wastelands.Service.Domain.Entities
 		public bool? StunSaveSucceeded { get; private set; }
 
 		/// <summary>
+		/// Кто проходит текущую/последнюю проверку Оглушения этого выпада — обычно защитник (см.
+		/// MarkDamageResolved), но при критическом провале атаки/защиты (BattleFumbleResolver) им может
+		/// стать любая сторона. Null, пока проверка Оглушения ни разу не начиналась в этом выпаде.
+		/// </summary>
+		public ParticipantKind? StunSaveOwnerKind { get; private set; }
+
+		public long? StunSaveOwnerId { get; private set; }
+
+		/// <summary>
+		/// Идемпотентные флаги: критический провал атакующего/защитника по этому выпаду уже проверен и
+		/// применён (см. BattleFumbleResolver.FinalizeSwingAsync) — не даёт применить его дважды, если
+		/// после провала пришлось ждать интерактивную проверку Оглушения и возвращаться к финализации.
+		/// </summary>
+		public bool AttackerFumbleResolved { get; private set; }
+
+		public bool DefenderFumbleResolved { get; private set; }
+
+		/// <summary>
 		/// true — это дополнительное действие персонажа за BonusActionRules.StaminaCost выносливости,
 		/// взятое после уже потраченного в этот ход основного действия (см. BattleCombatService.StartAttackAsync/
 		/// EndActivationAsync). К атаке применяется штраф BonusActionRules.RollPenalty — на каждый выпад,
@@ -271,6 +289,12 @@ namespace Wastelands.Service.Domain.Entities
 			}
 
 			Phase = requiresStunSave ? BattleAttackPhase.AwaitingStunSave : BattleAttackPhase.SwingResolved;
+			if (requiresStunSave)
+			{
+				StunSaveOwnerKind = DefenderKind;
+				StunSaveOwnerId = DefenderId;
+			}
+
 			AttacksUsed++;
 		}
 
@@ -296,6 +320,30 @@ namespace Wastelands.Service.Domain.Entities
 			StunSaveSucceeded = succeeded;
 			Phase = BattleAttackPhase.SwingResolved;
 		}
+
+		/// <summary>
+		/// Открывает интерактивную проверку Оглушения от критического провала (BattleFumbleResolver) —
+		/// в отличие от обычной (см. MarkDamageResolved), может понадобиться уже после того, как выпад
+		/// формально разрешился (SwingResolved), и владельцем может быть как защитник, так и сам
+		/// атакующий (провалил собственный бросок атаки/защиты).
+		/// </summary>
+		public void BeginFumbleStunSave(ParticipantKind ownerKind, long ownerId)
+		{
+			if (Phase != BattleAttackPhase.SwingResolved)
+			{
+				throw new InvalidArgumentException(ErrorCode.AttackNotInExpectedPhase, "Сейчас нельзя начать проверку Оглушения от критического провала.");
+			}
+
+			StunSaveOwnerKind = ownerKind;
+			StunSaveOwnerId = ownerId;
+			StunSaveRoll = null;
+			StunSaveSucceeded = null;
+			Phase = BattleAttackPhase.AwaitingStunSave;
+		}
+
+		public void MarkAttackerFumbleResolved() => AttackerFumbleResolved = true;
+
+		public void MarkDefenderFumbleResolved() => DefenderFumbleResolved = true;
 
 		public void PrepareNextSwing(ParticipantKind defenderKind, long defenderId)
 		{
@@ -330,6 +378,10 @@ namespace Wastelands.Service.Domain.Entities
 			DamageRoll = null;
 			StunSaveRoll = null;
 			StunSaveSucceeded = null;
+			StunSaveOwnerKind = null;
+			StunSaveOwnerId = null;
+			AttackerFumbleResolved = false;
+			DefenderFumbleResolved = false;
 		}
 
 		private void EnsureAwaitingChoices()

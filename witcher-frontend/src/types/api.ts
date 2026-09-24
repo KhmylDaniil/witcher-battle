@@ -536,6 +536,13 @@ export interface BattleAttack {
   stunSaveRoll: number | null
   /** true — Оглушение наложено этой атакой, false — не наложено, null — проверка ещё не пройдена. */
   stunSaveSucceeded: boolean | null
+  /**
+   * Кто проходит текущую/последнюю проверку Оглушения — обычно защитник, но при критическом провале
+   * атаки/защиты им может стать любая сторона. Null, пока проверка Оглушения ни разу не начиналась.
+   */
+  stunSaveOwnerKind: ParticipantKind | null
+  stunSaveOwnerId: number | null
+  stunSaveOwnerName: string | null
   /** true — дополнительное действие персонажа за выносливость, со штрафом -3 к атаке. */
   isBonusAction: boolean
 }

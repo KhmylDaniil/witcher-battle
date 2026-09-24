@@ -305,6 +305,14 @@ export function BattleDetailsPage() {
   const isDefenderController = !!attack
     && (attack.defenderKind === 'Creature' ? isOwner : participants.some((p) => p.kind === 'character' && p.refId === attack.defenderId && p.characterUserId === currentUser?.userId))
 
+  // Кто проходит текущую проверку Оглушения — обычно защитник, но при критическом провале атаки/защиты
+  // (BattleFumbleResolver) им может стать сам атакующий; до первой проверки Оглушения в выпаде
+  // stunSaveOwnerKind/Id ещё не заполнены — по умолчанию считаем это защитником, как раньше.
+  const stunSaveOwnerKind = attack?.stunSaveOwnerKind ?? attack?.defenderKind
+  const stunSaveOwnerId = attack?.stunSaveOwnerId ?? attack?.defenderId
+  const isStunSaveOwnerController = !!attack && stunSaveOwnerKind != null && stunSaveOwnerId != null
+    && (stunSaveOwnerKind === 'Creature' ? isOwner : participants.some((p) => p.kind === 'character' && p.refId === stunSaveOwnerId && p.characterUserId === currentUser?.userId))
+
   return (
     <div className="flex flex-col gap-4 pb-56">
       {/* relative z-[70] — выше и модалки атаки (z-50), и лога боя (z-[60]), чтобы "Закончить бой"
@@ -813,6 +821,7 @@ export function BattleDetailsPage() {
           attack={attack}
           isAttackerController={isAttackerController}
           isDefenderController={isDefenderController}
+          isStunSaveOwnerController={isStunSaveOwnerController}
         />
       )}
 

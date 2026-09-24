@@ -23,6 +23,7 @@ namespace Wastelands.Service.Application.Services
 		private readonly IBattleParticipantAuthorizer _authorizer;
 		private readonly IBattleCombatContextProvider _contextProvider;
 		private readonly IBattleHitResolver _hitResolver;
+		private readonly IBattleFumbleResolver _fumbleResolver;
 		private readonly IBattleNotifier _battleNotifier;
 		private readonly IBattleDtoMapper _dtoMapper;
 		private readonly IBattleTurnProcessor _turnProcessor;
@@ -33,6 +34,7 @@ namespace Wastelands.Service.Application.Services
 			IBattleParticipantAuthorizer authorizer,
 			IBattleCombatContextProvider contextProvider,
 			IBattleHitResolver hitResolver,
+			IBattleFumbleResolver fumbleResolver,
 			IBattleNotifier battleNotifier,
 			IBattleDtoMapper dtoMapper,
 			IBattleTurnProcessor turnProcessor)
@@ -42,6 +44,7 @@ namespace Wastelands.Service.Application.Services
 			_authorizer = authorizer;
 			_contextProvider = contextProvider;
 			_hitResolver = hitResolver;
+			_fumbleResolver = fumbleResolver;
 			_battleNotifier = battleNotifier;
 			_dtoMapper = dtoMapper;
 			_turnProcessor = turnProcessor;
@@ -107,6 +110,7 @@ namespace Wastelands.Service.Application.Services
 
 			attack.ConfirmAttacker();
 			await _hitResolver.ResolveIfBothConfirmedAsync(battle, attack);
+			await FinalizeSwingIfResolvedAsync(battle, attack);
 
 			return await SaveAndNotifyAsync(battle);
 		}
@@ -202,8 +206,23 @@ namespace Wastelands.Service.Application.Services
 			attack.ConfirmDefender(defenderIsStunned);
 			await TryWearBlockingWeaponAsync(battle, attack);
 			await _hitResolver.ResolveIfBothConfirmedAsync(battle, attack);
+			await FinalizeSwingIfResolvedAsync(battle, attack);
 
 			return await SaveAndNotifyAsync(battle);
+		}
+
+		/// <summary>
+		/// Фамблы (BattleFumbleResolver) проверяются только когда выпад действительно завершился
+		/// (SwingResolved) — здесь это случай промаха/успешного парирования, разрешённого сразу в
+		/// ResolveIfBothConfirmedAsync без броска урона. Попадание с уроном обрабатывается отдельно —
+		/// см. ContinueDamageAsync/ResolveStunSaveAsync.
+		/// </summary>
+		private async Task FinalizeSwingIfResolvedAsync(Battle battle, BattleAttack attack)
+		{
+			if (attack.Phase == BattleAttackPhase.SwingResolved)
+			{
+				await _fumbleResolver.FinalizeSwingAsync(battle, attack);
+			}
 		}
 
 		/// <summary>
@@ -229,6 +248,7 @@ namespace Wastelands.Service.Application.Services
 			var weapon = defenderContext.Character!.Items.First(
 				i => i.IsEquipped && i.ItemType == ItemType.Weapon && i.WeaponKind == WeaponKind.Melee);
 			weapon.WearWeapon();
+			CharacterItemService.UnequipIfBroken(defenderContext.Character, weapon);
 			await _characterRepository.UpdateAsync(defenderContext.Character);
 		}
 
@@ -303,16 +323,22 @@ namespace Wastelands.Service.Application.Services
 			battle.AddLogEntry(BattleCombatLogFormatter.FormatHit(attackerName, ability.Name, defenderName, attack, damageWithCrit, appliedConditions, crit));
 
 			attack.MarkDamageResolved(requiresStunSave);
+			await FinalizeSwingIfResolvedAsync(battle, attack);
 
 			return await SaveAndNotifyAsync(battle);
 		}
 
-		/// <summary>Ручной ввод д10 для stun save защитника — параллель SetDamageRollAsync, но со стороны защитника.</summary>
+		/// <summary>
+		/// Ручной ввод д10 для проверки Оглушения — параллель SetDamageRollAsync. Обычно проходит
+		/// защитник, но при критическом провале (BattleFumbleResolver) владельцем проверки может стать
+		/// любая сторона — см. BattleAttack.StunSaveOwnerKind/Id.
+		/// </summary>
 		public async Task<BattleDto> SetStunSaveRollAsync(SetStunSaveRollRequest request)
 		{
 			var battle = await GetByIdAsync(request.BattleId);
 			var attack = BattleParticipants.GetActiveAttack(battle);
-			await _authorizer.EnsureControllerAsync(battle, attack.DefenderKind, attack.DefenderId, ErrorCode.CurrentUserNotDefenderController);
+			var (ownerKind, ownerId) = GetStunSaveOwner(attack);
+			await _authorizer.EnsureControllerAsync(battle, ownerKind, ownerId, ErrorCode.CurrentUserNotStunSaveController);
 
 			attack.SetStunSaveRoll(request.Roll);
 
@@ -320,14 +346,18 @@ namespace Wastelands.Service.Application.Services
 		}
 
 		/// <summary>
-		/// Разрешает stun save: чистый д10 (введённый вручную или брошенный сервером) против Устойчивости
-		/// защитника — результат ≥ значения Устойчивости означает, что Оглушение наложено.
+		/// Разрешает проверку Оглушения: чистый д10 (введённый вручную или брошенный сервером) против
+		/// Устойчивости владельца проверки — результат ≥ значения Устойчивости означает, что Оглушение
+		/// наложено. После разрешения — см. BattleFumbleResolver: если по этому выпаду ещё остались
+		/// непроверенные критические провалы (или только что разрешённая проверка сама была одним из
+		/// них), FinalizeSwingAsync проверит их и, если нужно, откроет следующую проверку Оглушения.
 		/// </summary>
 		public async Task<BattleDto> ResolveStunSaveAsync(long battleId)
 		{
 			var battle = await GetByIdAsync(battleId);
 			var attack = BattleParticipants.GetActiveAttack(battle);
-			await _authorizer.EnsureControllerAsync(battle, attack.DefenderKind, attack.DefenderId, ErrorCode.CurrentUserNotDefenderController);
+			var (ownerKind, ownerId) = GetStunSaveOwner(attack);
+			await _authorizer.EnsureControllerAsync(battle, ownerKind, ownerId, ErrorCode.CurrentUserNotStunSaveController);
 
 			if (attack.Phase != BattleAttackPhase.AwaitingStunSave)
 			{
@@ -335,23 +365,33 @@ namespace Wastelands.Service.Application.Services
 			}
 
 			var rollUsed = attack.StunSaveRoll ?? BattleCombatCalculator.RollDie(10);
-			var defenderContext = await _contextProvider.GetContextAsync(battle, attack.DefenderKind, attack.DefenderId);
-			var stunValue = attack.DefenderKind == ParticipantKind.Creature ? defenderContext.Creature!.Stun : defenderContext.Character!.Stun;
+			var ownerContext = await _contextProvider.GetContextAsync(battle, ownerKind, ownerId);
+			var stunValue = ownerKind == ParticipantKind.Creature ? ownerContext.Creature!.Stun : ownerContext.Character!.Stun;
 			var succeeded = rollUsed >= stunValue;
 
 			if (succeeded)
 			{
-				BattleParticipants.AddCondition(battle, attack.DefenderKind, attack.DefenderId, Condition.Stun);
+				BattleParticipants.AddCondition(battle, ownerKind, ownerId, Condition.Stun);
 			}
 
 			attack.ResolveStunSave(rollUsed, succeeded);
 
-			var defenderName = BattleParticipants.GetName(battle, attack.DefenderKind, attack.DefenderId);
+			var ownerName = BattleParticipants.GetName(battle, ownerKind, ownerId);
 			battle.AddLogEntry(
-				$"Проверка Оглушения для {defenderName}: бросок {rollUsed} против Устойчивости {stunValue} — "
+				$"Проверка Оглушения для {ownerName}: бросок {rollUsed} против Устойчивости {stunValue} — "
 					+ (succeeded ? "Оглушение наложено." : "Оглушение не наложено."));
 
+			await FinalizeSwingIfResolvedAsync(battle, attack);
+
 			return await SaveAndNotifyAsync(battle);
+		}
+
+		/// <summary>Защитная страховка — не должно случаться, если BeginFumbleStunSave/MarkDamageResolved всегда выставляют владельца.</summary>
+		private static (ParticipantKind Kind, long Id) GetStunSaveOwner(BattleAttack attack)
+		{
+			return attack.StunSaveOwnerKind is { } kind && attack.StunSaveOwnerId is { } id
+				? (kind, id)
+				: (attack.DefenderKind, attack.DefenderId);
 		}
 
 		/// <summary>

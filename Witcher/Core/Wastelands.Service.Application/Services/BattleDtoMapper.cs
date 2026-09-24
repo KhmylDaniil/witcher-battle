@@ -37,10 +37,15 @@ namespace Wastelands.Service.Application.Services
 			dto.DefenderName = BattleParticipants.GetName(battle, dto.DefenderKind, dto.DefenderId);
 
 			var attackerContext = await _contextProvider.GetContextAsync(battle, dto.AttackerKind, dto.AttackerId);
-			var ability = attackerContext.Abilities.First(a => a.Id == dto.AbilityId);
-			dto.AbilityName = ability.Name;
-			dto.AttackerSkillValue = attackerContext.GetSkillValue(ability.AttackSkill);
-			dto.AbilityDamageDiceCount = ability.DamageDiceCount;
+
+			// Критический провал (BattleFumbleResolver) может снять экипированное оружие и вместе с ним
+			// удалить саму способность, которой шла эта атака (Character.Abilities.RemoveAll по
+			// EquippedItemId) — к моменту показа уже разрешённого выпада её может не быть. Выпад к этому
+			// моменту уже завершён (SwingResolved), так что справочные поля ниже просто дефолтятся.
+			var ability = attackerContext.Abilities.FirstOrDefault(a => a.Id == dto.AbilityId);
+			dto.AbilityName = ability?.Name ?? "(способность удалена)";
+			dto.AttackerSkillValue = ability is not null ? attackerContext.GetSkillValue(ability.AttackSkill) : 0;
+			dto.AbilityDamageDiceCount = ability?.DamageDiceCount ?? 0;
 
 			var defenderContext = await _contextProvider.GetContextAsync(battle, dto.DefenderKind, dto.DefenderId);
 			var parrySkill = BattleParticipants.GetEquippedMeleeWeaponSkill(dto.DefenderKind, defenderContext);
@@ -48,7 +53,7 @@ namespace Wastelands.Service.Application.Services
 			// Способность со своим списком защитных навыков ограничивает выбор только им; иначе —
 			// стандартный набор Dodge/Acrobatics плюс (для персонажа с экипированным оружием ближнего
 			// боя) навык блокирования этим оружием — см. BattleHitResolver.GetAvailableDefensiveSkillsAsync.
-			dto.AvailableDefensiveSkills = ability.DefensiveSkills.Count > 0
+			dto.AvailableDefensiveSkills = ability?.DefensiveSkills.Count > 0
 				? ability.DefensiveSkills.Select(x => x.Skill).ToList()
 				: parrySkill is { } blockSkill
 					? [Skill.Dodge, Skill.Acrobatics, blockSkill]
@@ -56,6 +61,13 @@ namespace Wastelands.Service.Application.Services
 
 			dto.DefensiveSkillValues = dto.AvailableDefensiveSkills.ToDictionary(s => s, defenderContext.GetSkillValue);
 			dto.DefenderIsStunned = BattleParticipants.HasCondition(battle, dto.DefenderKind, dto.DefenderId, Condition.Stun);
+
+			// Обычно проверку Оглушения проходит защитник, но при критическом провале (BattleFumbleResolver)
+			// владельцем может стать любая сторона — см. BattleAttack.StunSaveOwnerKind/Id.
+			if (dto.StunSaveOwnerKind is { } ownerKind && dto.StunSaveOwnerId is { } ownerId)
+			{
+				dto.StunSaveOwnerName = BattleParticipants.GetName(battle, ownerKind, ownerId);
+			}
 
 			dto.CanParry = parrySkill is not null;
 			dto.ParrySkill = parrySkill;

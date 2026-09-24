@@ -73,6 +73,7 @@
 		ParryNotAvailable = 628,
 		ParticipantIsDying = 629,
 		ParticipantNotDying = 630,
+		CurrentUserNotStunSaveController = 631,
 
 		// image errors 700...
 		UnsupportedImageType = 700,
@@ -95,6 +96,7 @@
 		ItemArmorPartNotFound = 813,
 		ArmorPartAlreadyCoveredByAnotherItem = 814,
 		ItemNotRepairable = 815,
+		WeaponDurabilityDepleted = 816,
 
 		// Common error codes 1100...1199
 		InvalidArgument = 1101,

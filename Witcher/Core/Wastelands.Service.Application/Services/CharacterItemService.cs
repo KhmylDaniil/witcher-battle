@@ -177,11 +177,27 @@ namespace Wastelands.Service.Application.Services
 			}
 		}
 
-		private static void RemoveGeneratedAbilities(Character character, Item item)
+		/// <summary>internal — переиспользуется BattleFumbleResolver при снятии оружия, сломавшегося в бою.</summary>
+		internal static void RemoveGeneratedAbilities(Character character, Item item)
 		{
 			foreach (var ability in character.Abilities.Where(a => a.EquippedItemId == item.Id).ToList())
 			{
 				character.Abilities.Remove(ability);
+			}
+		}
+
+		/// <summary>
+		/// Общее правило: оружие с нулевой прочностью автоматически перестаёт быть экипированным (и не
+		/// может быть экипировано обратно, пока не отремонтировано — см. Item.Equip). Вызывается после
+		/// любого износа оружия — как здесь (блокирование), так и из BattleFumbleResolver (критический
+		/// провал).
+		/// </summary>
+		internal static void UnequipIfBroken(Character character, Item item)
+		{
+			if (item.ItemType == ItemType.Weapon && item.IsEquipped && item.Durability <= 0)
+			{
+				item.Unequip();
+				RemoveGeneratedAbilities(character, item);
 			}
 		}
 

@@ -81,7 +81,7 @@ namespace Wastelands.Service.Domain.UnitTest.Entities
 		{
 			var item = TestBuilders.Item(1, TestBuilders.ArmorTemplate());
 
-			var act = item.WearWeapon;
+			var act = () => item.WearWeapon();
 
 			act.Should().Throw<InvalidArgumentException>();
 		}

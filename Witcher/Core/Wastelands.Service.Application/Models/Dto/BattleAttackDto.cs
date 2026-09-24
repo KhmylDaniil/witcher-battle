@@ -82,6 +82,17 @@ namespace Wastelands.Service.Application.Models.Dto
 		/// <summary>true — Оглушение наложено этой атакой, false — не наложено. Null, пока проверка не пройдена.</summary>
 		public bool? StunSaveSucceeded { get; set; }
 
+		/// <summary>
+		/// Кто проходит текущую/последнюю проверку Оглушения этого выпада — обычно защитник, но при
+		/// критическом провале атаки/защиты им может стать любая сторона. Null, пока проверка Оглушения
+		/// ни разу не начиналась в этом выпаде.
+		/// </summary>
+		public ParticipantKind? StunSaveOwnerKind { get; set; }
+
+		public long? StunSaveOwnerId { get; set; }
+
+		public string? StunSaveOwnerName { get; set; }
+
 		/// <summary>true — это дополнительное действие персонажа за выносливость, со штрафом к атаке (см. BattleAttack.IsBonusAction).</summary>
 		public bool IsBonusAction { get; set; }
 	}

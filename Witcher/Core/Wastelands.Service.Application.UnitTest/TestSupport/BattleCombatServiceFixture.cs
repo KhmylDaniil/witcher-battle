@@ -26,6 +26,8 @@ namespace Wastelands.Service.Application.UnitTest.TestSupport
 
 		public Mock<IBattleHitResolver> HitResolver { get; } = new();
 
+		public Mock<IBattleFumbleResolver> FumbleResolver { get; } = new();
+
 		public Mock<IBattleNotifier> Notifier { get; } = new();
 
 		public Mock<IBattleDtoMapper> DtoMapper { get; } = new();
@@ -45,6 +47,7 @@ namespace Wastelands.Service.Application.UnitTest.TestSupport
 			TurnProcessor.Setup(t => t.ProcessCurrentTurnAsync(It.IsAny<Battle>())).Returns(Task.CompletedTask);
 			TurnProcessor.Setup(t => t.OnBattleStartedAsync(It.IsAny<Battle>())).Returns(Task.CompletedTask);
 			HitResolver.Setup(h => h.ResolveIfBothConfirmedAsync(It.IsAny<Battle>(), It.IsAny<BattleAttack>())).Returns(Task.CompletedTask);
+			FumbleResolver.Setup(f => f.FinalizeSwingAsync(It.IsAny<Battle>(), It.IsAny<BattleAttack>())).ReturnsAsync(false);
 		}
 
 		/// <summary>battle.Id всегда 0 вне EF (см. EntityIdSetter) — репозиторий мокается по battleId явно, а не по battle.Id.</summary>
@@ -61,6 +64,7 @@ namespace Wastelands.Service.Application.UnitTest.TestSupport
 				Authorizer.Object,
 				ContextProvider.Object,
 				HitResolver.Object,
+				FumbleResolver.Object,
 				Notifier.Object,
 				DtoMapper.Object,
 				TurnProcessor.Object);

@@ -93,6 +93,12 @@ namespace Wastelands.Service.Domain.Entities
 				throw new InvalidArgumentException(ErrorCode.ItemAlreadyEquipped, "Предмет уже экипирован.");
 			}
 
+			if (ItemType == ItemType.Weapon && Durability <= 0)
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.WeaponDurabilityDepleted, "У оружия нулевая прочность — сначала отремонтируйте его.");
+			}
+
 			IsEquipped = true;
 		}
 
@@ -130,15 +136,21 @@ namespace Wastelands.Service.Domain.Entities
 			armorPart.Wear();
 		}
 
-		/// <summary>Износ от блокирования удара этим оружием в бою — см. BattleCombatService.ConfirmDefenderAsync.</summary>
-		public void WearWeapon()
+		/// <summary>
+		/// Износ от блокирования удара этим оружием в бою (amount=1 — см. BattleCombatService.
+		/// ConfirmDefenderAsync) или от критического провала (переменный бросок — см.
+		/// BattleFumbleResolver). Экипировку при падении прочности до нуля снимает вызывающий код
+		/// (нужен доступ к Character.Abilities, которого у Item нет) — см. CharacterItemService.
+		/// UnequipIfBroken.
+		/// </summary>
+		public void WearWeapon(int amount = 1)
 		{
 			if (ItemType != ItemType.Weapon)
 			{
 				throw new InvalidArgumentException(ErrorCode.ItemNotWeapon, "Это не оружие.");
 			}
 
-			Durability = Math.Max(0, (Durability ?? 0) - 1);
+			Durability = Math.Max(0, (Durability ?? 0) - amount);
 		}
 
 		private ItemArmorPart GetArmorPart(HumanBodyPart part)

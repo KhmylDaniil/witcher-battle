@@ -37,6 +37,7 @@ namespace Wastelands.API.Extensions
 			services.AddScoped<IBattleParticipantAuthorizer, BattleParticipantAuthorizer>();
 			services.AddScoped<IBattleCombatContextProvider, BattleCombatContextProvider>();
 			services.AddScoped<IBattleHitResolver, BattleHitResolver>();
+			services.AddScoped<IBattleFumbleResolver, BattleFumbleResolver>();
 			services.AddScoped<IBattleDtoMapper, BattleDtoMapper>();
 			services.AddScoped<IBattleTurnProcessor, BattleTurnProcessor>();
 

@@ -29,6 +29,7 @@ export function AttackModal({
   attack,
   isAttackerController,
   isDefenderController,
+  isStunSaveOwnerController,
 }: {
   gameId: number
   battleId: number
@@ -36,6 +37,7 @@ export function AttackModal({
   attack: BattleAttack
   isAttackerController: boolean
   isDefenderController: boolean
+  isStunSaveOwnerController: boolean
 }) {
   const queryClient = useQueryClient()
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['battles', gameId, battleId] })
@@ -279,9 +281,9 @@ export function AttackModal({
       {attack.phase === 'AwaitingStunSave' && (
         <div className="flex flex-col gap-3">
           <p className="text-sm text-amber-600 dark:text-amber-400">
-            Попадание! Возможна попытка наложить Оглушение — {attack.defenderName} проходит stun save.
+            {attack.stunSaveOwnerName ?? attack.defenderName} проходит проверку Оглушения.
           </p>
-          {isDefenderController ? (
+          {isStunSaveOwnerController ? (
             <div className="rounded-md border border-neutral-200 p-3 dark:border-neutral-800">
               <div className="mb-2">
                 <Field label="Чистый бросок д10 (stun save; необязательно — иначе бросит сервер)">
@@ -299,7 +301,7 @@ export function AttackModal({
               </Button>
             </div>
           ) : (
-            <p className="text-sm text-neutral-500">Защитник проходит проверку Оглушения…</p>
+            <p className="text-sm text-neutral-500">Ожидание броска…</p>
           )}
         </div>
       )}
@@ -311,7 +313,8 @@ export function AttackModal({
           </p>
           {attack.stunSaveSucceeded !== null && (
             <p className="text-sm">
-              Проверка Оглушения: бросок {attack.stunSaveRoll} — {attack.stunSaveSucceeded ? 'Оглушение наложено.' : 'Оглушение не наложено.'}
+              Проверка Оглушения ({attack.stunSaveOwnerName ?? attack.defenderName}): бросок {attack.stunSaveRoll} —{' '}
+              {attack.stunSaveSucceeded ? 'Оглушение наложено.' : 'Оглушение не наложено.'}
             </p>
           )}
           {isAttackerController && (
