@@ -81,6 +81,10 @@ export const battlesApi = {
   ) => api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/remove-condition`, payload),
   clearCondition: (gameId: number, battleId: number, condition: Condition) =>
     api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/clear-condition`, { condition }),
+  rollDyingSave: (gameId: number, battleId: number, roll: number | null) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/dying-save`, { roll }),
+  stabilize: (gameId: number, battleId: number, payload: { targetCharacterId: number; roll: number | null }) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/stabilize`, payload),
 
   creatureSheet: (gameId: number, battleId: number, creatureId: number) =>
     api.get<CreatureTemplate>(`/api/games/${gameId}/battles/${battleId}/creatures/${creatureId}/sheet`),

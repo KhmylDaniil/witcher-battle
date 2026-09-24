@@ -71,6 +71,8 @@
 		ConditionNotPresentOnTarget = 626,
 		ConditionRemovalTargetInvalid = 627,
 		ParryNotAvailable = 628,
+		ParticipantIsDying = 629,
+		ParticipantNotDying = 630,
 
 		// image errors 700...
 		UnsupportedImageType = 700,

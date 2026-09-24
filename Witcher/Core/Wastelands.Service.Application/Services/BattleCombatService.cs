@@ -55,6 +55,7 @@ namespace Wastelands.Service.Application.Services
 			var (attackerKind, attackerId) = BattleParticipants.GetActive(battle);
 			await _authorizer.EnsureControllerAsync(battle, attackerKind, attackerId, ErrorCode.CurrentUserNotAttackController);
 			EnsureNotStunned(battle, attackerKind, attackerId);
+			EnsureNotDying(battle, attackerKind, attackerId);
 
 			BattleParticipants.EnsureExists(battle, request.DefenderKind, request.DefenderId);
 
@@ -116,6 +117,16 @@ namespace Wastelands.Service.Application.Services
 			{
 				throw new InvalidArgumentException(
 					ErrorCode.ParticipantIsStunned, "Участник оглушён и может в свой ход только пройти проверку Оглушения.");
+			}
+		}
+
+		/// <summary>Умирающий персонаж (Condition.Dying) в свой ход может только пройти проверку на смерть — см. RollDyingSaveAsync.</summary>
+		private static void EnsureNotDying(Battle battle, ParticipantKind kind, long participantId)
+		{
+			if (BattleParticipants.HasCondition(battle, kind, participantId, Condition.Dying))
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.ParticipantIsDying, "Персонаж при смерти и может в свой ход только пройти проверку на смерть.");
 			}
 		}
 
@@ -334,6 +345,10 @@ namespace Wastelands.Service.Application.Services
 			var (activeKind, activeId) = BattleParticipants.GetActive(battle);
 			await _authorizer.EnsureControllerAsync(battle, activeKind, activeId, ErrorCode.NotYourTurn);
 
+			// Dying перекрывает Stun: если персонаж ещё и при смерти, его единственное действие —
+			// RollDyingSaveAsync, а не эта проверка (см. EnsureNotDying).
+			EnsureNotDying(battle, activeKind, activeId);
+
 			if (!BattleParticipants.HasCondition(battle, activeKind, activeId, Condition.Stun))
 			{
 				throw new InvalidArgumentException(ErrorCode.ParticipantNotStunned, "Участник не находится в состоянии Оглушения.");
@@ -355,6 +370,117 @@ namespace Wastelands.Service.Application.Services
 					+ (staysStunned ? "остаётся оглушён." : "приходит в себя."));
 
 			await _turnProcessor.AdvanceTurnAsync(battle);
+
+			return await SaveAndNotifyAsync(battle);
+		}
+
+		/// <summary>
+		/// Умирающий персонаж (Condition.Dying, HP ≤ 0) в свой ход не может ничего, кроме этой проверки
+		/// — тот же бросок, что и stun save (д10 против своей Устойчивости), но с другим исходом: успех
+		/// (бросок ≥ Устойчивости) — персонаж остаётся при смерти и пройдёт эту же проверку в свой
+		/// следующий ход; провал — умирает и выбывает из боя (Character остаётся у игрока, из боя
+		/// удаляется только участие в нём — см. Battle.RemoveCharacter). В любом случае ход завершается;
+		/// если персонаж умер, ход уже передан самим RemoveCharacter — довершаем лишь обработку начала
+		/// хода нового активного участника (см. IBattleTurnProcessor.ProcessCurrentTurnAsync).
+		/// </summary>
+		public async Task<BattleDto> RollDyingSaveAsync(RollDyingSaveRequest request)
+		{
+			var battle = await GetByIdAsync(request.BattleId);
+			BattleParticipants.EnsureInProgress(battle);
+
+			if (battle.Attack is not null)
+			{
+				throw new InvalidArgumentException(ErrorCode.AttackAlreadyInProgress, "Нельзя пройти проверку на смерть во время незавершённой атаки.");
+			}
+
+			var (activeKind, activeId) = BattleParticipants.GetActive(battle);
+			await _authorizer.EnsureControllerAsync(battle, activeKind, activeId, ErrorCode.NotYourTurn);
+
+			if (activeKind != ParticipantKind.Character || !BattleParticipants.HasCondition(battle, activeKind, activeId, Condition.Dying))
+			{
+				throw new InvalidArgumentException(ErrorCode.ParticipantNotDying, "Персонаж не находится при смерти.");
+			}
+
+			var rollUsed = request.Roll ?? BattleCombatCalculator.RollDie(10);
+			var context = await _contextProvider.GetContextAsync(battle, activeKind, activeId);
+			var stunValue = context.Character!.Stun;
+			var survives = rollUsed >= stunValue;
+
+			var battleCharacter = BattleParticipants.GetBattleCharacter(battle, activeId);
+			var name = battleCharacter.Character.Name;
+
+			if (survives)
+			{
+				battle.AddLogEntry(
+					$"{name} проходит проверку на смерть: бросок {rollUsed} против Устойчивости {stunValue} — остаётся при смерти.");
+				await _turnProcessor.AdvanceTurnAsync(battle);
+			}
+			else
+			{
+				battle.AddLogEntry(
+					$"{name} проходит проверку на смерть: бросок {rollUsed} против Устойчивости {stunValue} — умирает и выбывает из боя.");
+				battle.RemoveCharacter(battleCharacter);
+				await _turnProcessor.ProcessCurrentTurnAsync(battle);
+			}
+
+			return await SaveAndNotifyAsync(battle);
+		}
+
+		/// <summary>
+		/// Стабилизация умирающего персонажа — бросок FirstAid против сложности, равной количеству
+		/// "отрицательных хитов" цели (|CurrentHP|, 0 если CurrentHP уже неотрицательный). Доступна
+		/// любому участнику боя, кроме самого умирающего (у него в свой ход — только RollDyingSaveAsync)
+		/// — та же механика расхода действия, что и у AttemptRemoveConditionAsync/ClearConditionAsync.
+		/// При успехе HP цели становится 1, Condition.Dying снимается (см. BattleCharacter.Stabilize).
+		/// </summary>
+		public async Task<BattleDto> StabilizeAsync(StabilizeRequest request)
+		{
+			var battle = await GetByIdAsync(request.BattleId);
+			BattleParticipants.EnsureInProgress(battle);
+
+			if (battle.Attack is not null)
+			{
+				throw new InvalidArgumentException(ErrorCode.AttackAlreadyInProgress, "Нельзя стабилизировать во время незавершённой атаки.");
+			}
+
+			var (activeKind, activeId) = BattleParticipants.GetActive(battle);
+			await _authorizer.EnsureControllerAsync(battle, activeKind, activeId, ErrorCode.NotYourTurn);
+			EnsureNotStunned(battle, activeKind, activeId);
+			EnsureNotDying(battle, activeKind, activeId);
+
+			var target = BattleParticipants.GetBattleCharacter(battle, request.TargetCharacterId);
+			if (!target.AppliedConditions.Contains(Condition.Dying))
+			{
+				throw new InvalidArgumentException(ErrorCode.ParticipantNotDying, "Цель не находится при смерти.");
+			}
+
+			var isBonusAction = TryChargeBonusAction(battle, activeKind, activeId);
+
+			var rollUsed = request.Roll ?? BattleCombatCalculator.RollDie(10);
+			var activeContext = await _contextProvider.GetContextAsync(battle, activeKind, activeId);
+			var penalty = isBonusAction ? BonusActionRules.RollPenalty : 0;
+			var total = activeContext.GetSkillValue(Skill.FirstAid) + rollUsed - penalty;
+			var difficulty = Math.Max(0, -target.CurrentHP);
+			var succeeded = total >= difficulty;
+
+			if (succeeded)
+			{
+				target.Stabilize();
+			}
+
+			var activeName = BattleParticipants.GetName(battle, activeKind, activeId);
+			battle.AddLogEntry(
+				$"{activeName} пытается стабилизировать {target.Character.Name} (FirstAid {total} против сложности {difficulty}) — "
+					+ (succeeded ? "успех, HP восстановлены до 1." : "провал."));
+
+			if (activeKind == ParticipantKind.Character && !isBonusAction)
+			{
+				BattleParticipants.GetBattleCharacter(battle, activeId).MarkActedThisTurn();
+			}
+			else
+			{
+				await _turnProcessor.AdvanceTurnAsync(battle);
+			}
 
 			return await SaveAndNotifyAsync(battle);
 		}
@@ -413,6 +539,7 @@ namespace Wastelands.Service.Application.Services
 			var (activeKind, activeId) = BattleParticipants.GetActive(battle);
 			await _authorizer.EnsureControllerAsync(battle, activeKind, activeId, ErrorCode.NotYourTurn);
 			EnsureNotStunned(battle, activeKind, activeId);
+			EnsureNotDying(battle, activeKind, activeId);
 
 			await _turnProcessor.AdvanceTurnAsync(battle);
 
@@ -439,6 +566,7 @@ namespace Wastelands.Service.Application.Services
 			var (activeKind, activeId) = BattleParticipants.GetActive(battle);
 			await _authorizer.EnsureControllerAsync(battle, activeKind, activeId, ErrorCode.NotYourTurn);
 			EnsureNotStunned(battle, activeKind, activeId);
+			EnsureNotDying(battle, activeKind, activeId);
 
 			var rule = ConditionRemovalCatalog.FindRule(request.Condition, request.Skill);
 			if (rule is null)
@@ -507,6 +635,7 @@ namespace Wastelands.Service.Application.Services
 			var (activeKind, activeId) = BattleParticipants.GetActive(battle);
 			await _authorizer.EnsureControllerAsync(battle, activeKind, activeId, ErrorCode.NotYourTurn);
 			EnsureNotStunned(battle, activeKind, activeId);
+			EnsureNotDying(battle, activeKind, activeId);
 
 			if (!ConditionRemovalCatalog.IsAutoClearable(request.Condition))
 			{

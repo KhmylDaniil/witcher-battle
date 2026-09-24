@@ -45,5 +45,11 @@ namespace Wastelands.Service.Application.Contracts
 
 		/// <summary>Снятие состояния действием без броска — всегда успешно и только с себя (Огонь, Падение).</summary>
 		Task<BattleDto> ClearConditionAsync(ClearConditionRequest request);
+
+		/// <summary>Проверка на смерть для умирающего персонажа (Condition.Dying) — единственное доступное ему в свой ход действие.</summary>
+		Task<BattleDto> RollDyingSaveAsync(RollDyingSaveRequest request);
+
+		/// <summary>Попытка стабилизировать умирающего персонажа броском FirstAid против сложности |его HP|.</summary>
+		Task<BattleDto> StabilizeAsync(StabilizeRequest request);
 	}
 }

@@ -15,5 +15,12 @@ namespace Wastelands.Service.Application.Contracts
 
 		/// <summary>Battle.AdvanceTurn() + обработка начала хода нового активного участника (с каскадом, если тот же тик его убивает).</summary>
 		Task AdvanceTurnAsync(Battle battle);
+
+		/// <summary>
+		/// Обработка начала хода уже-активного участника — для случаев, когда переход хода уже
+		/// произошёл неявно (Battle.RemoveCharacter/RemoveCreature сами передают ход, когда удаляемый
+		/// участник был активным), поэтому голый AdvanceTurn() здесь не нужен, только обработка эффектов.
+		/// </summary>
+		Task ProcessCurrentTurnAsync(Battle battle);
 	}
 }

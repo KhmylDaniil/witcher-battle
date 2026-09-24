@@ -89,12 +89,8 @@ namespace Wastelands.Service.Domain.Entities
 
 		/// <summary>
 		/// Удаляет существо из боя (например, когда его HP падает до нуля — см.
-		/// BattleParticipants.RemoveDeadCreatures). Персонажи так не удаляются, только существа.
-		/// Переиндексирует Initiative оставшихся участников в плотную последовательность 1..N (её
-		/// требует AdvanceTurn — см. BattleInitiativeRoller) и сохраняет, чей сейчас ход: если
-		/// удаляемое существо и было активным участником — ход передаётся дальше по прежнему порядку
-		/// (через AdvanceTurn, включая переход раунда), иначе активный участник остаётся тем же, просто
-		/// с новым номером инициативы.
+		/// BattleParticipants.RemoveDeadCreatures). См. RemoveParticipant — та же механика передачи
+		/// хода/переиндексации, что и у RemoveCharacter.
 		/// </summary>
 		public void RemoveCreature(Creature creature)
 		{
@@ -103,20 +99,47 @@ namespace Wastelands.Service.Domain.Entities
 				return;
 			}
 
+			RemoveParticipant(ParticipantKind.Creature, creature.Id, () => Creatures.Remove(creature));
+		}
+
+		/// <summary>
+		/// Удаляет персонажа из боя (например, при смерти в конце death-спирали Dying — см.
+		/// BattleCombatService.RollDyingSaveAsync). Сам Character остаётся у игрока — удаляется только
+		/// запись участия в этом конкретном бою. См. RemoveParticipant.
+		/// </summary>
+		public void RemoveCharacter(BattleCharacter character)
+		{
+			if (!Characters.Contains(character))
+			{
+				return;
+			}
+
+			RemoveParticipant(ParticipantKind.Character, character.CharacterId, () => Characters.Remove(character));
+		}
+
+		/// <summary>
+		/// Переиндексирует Initiative оставшихся участников в плотную последовательность 1..N (её
+		/// требует AdvanceTurn) и сохраняет, чей сейчас ход: если удаляемый участник и был активным —
+		/// ход передаётся дальше по прежнему порядку (через AdvanceTurn, включая переход раунда), иначе
+		/// активный участник остаётся тем же, просто с новым номером инициативы. CurrentInitiative
+		/// становится null, если участников не осталось вовсе.
+		/// </summary>
+		private void RemoveParticipant(ParticipantKind kind, long refId, Action remove)
+		{
 			if (CurrentInitiative is null)
 			{
-				Creatures.Remove(creature);
+				remove();
 				return;
 			}
 
 			var active = FindParticipantByInitiative(CurrentInitiative.Value);
-			if (active is { Kind: ParticipantKind.Creature } a && a.RefId == creature.Id)
+			if (active is { } a && a.Kind == kind && a.RefId == refId)
 			{
 				AdvanceTurn();
 				active = FindParticipantByInitiative(CurrentInitiative!.Value);
 			}
 
-			Creatures.Remove(creature);
+			remove();
 			RenumberInitiative();
 
 			CurrentInitiative = Creatures.Count + Characters.Count == 0 ? null : FindInitiativeOf(active);

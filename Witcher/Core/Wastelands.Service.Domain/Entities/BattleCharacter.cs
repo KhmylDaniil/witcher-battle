@@ -77,11 +77,23 @@ namespace Wastelands.Service.Domain.Entities
 			Initiative = value;
 		}
 
-		/// <summary>Применяет урон, полученный в результате атаки — CurrentHP не опускается ниже нуля.</summary>
+		/// <summary>
+		/// Применяет урон, полученный в результате атаки — в отличие от Creature (где 0 сразу означает
+		/// смерть и удаление из боя), у персонажа HP может уходить в минус: это и есть счётчик
+		/// "отрицательных хитов" для состояния Dying (см. BattleParticipants.CheckCharacterDying,
+		/// BattleCombatService.StabilizeAsync — сложность стабилизации равна |CurrentHP|).
+		/// </summary>
 		public void ApplyDamage(int damage)
 		{
 			InvalidArgumentException.ThrowIfLessThanZero(damage, nameof(damage));
-			CurrentHP = Math.Max(0, CurrentHP - damage);
+			CurrentHP -= damage;
+		}
+
+		/// <summary>Успешная стабилизация умирающего персонажа (см. BattleCombatService.StabilizeAsync) — HP становится 1, Dying снимается.</summary>
+		public void Stabilize()
+		{
+			CurrentHP = 1;
+			RemoveCondition(Condition.Dying);
 		}
 
 		/// <summary>Списывает выносливость на дополнительное действие — CurrentSta не опускается ниже нуля.</summary>

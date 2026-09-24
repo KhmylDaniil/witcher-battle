@@ -26,11 +26,22 @@ namespace Wastelands.Service.Application.Services
 		public async Task AdvanceTurnAsync(Battle battle)
 		{
 			battle.AdvanceTurn();
+			await ProcessCurrentTurnAsync(battle);
+		}
 
+		/// <summary>
+		/// Обрабатывает начало хода уже-активного участника — сам переход хода в этот момент уже
+		/// произошёл неявно (Battle.RemoveCharacter/RemoveCreature сами передают ход дальше, когда
+		/// удаляемый участник был активным). Используется из BattleCombatService.RollDyingSaveAsync
+		/// после смерти персонажа от провала проверки на смерть, а также из AdvanceTurnAsync выше.
+		/// Ничего не делает, если участников не осталось вовсе (CurrentInitiative == null).
+		/// </summary>
+		public async Task ProcessCurrentTurnAsync(Battle battle)
+		{
 			// Bleed/Poison/Fire/Sufflocation могут убить существо ровно в момент начала его хода, ещё до
 			// того, как оно успеет сходить — тогда его нужно тут же убрать (Battle.RemoveCreature сам
 			// передаёт ход дальше) и обработать начало хода уже для следующего участника, и так далее.
-			while (true)
+			while (battle.CurrentInitiative is not null)
 			{
 				var (kind, id) = BattleParticipants.GetActive(battle);
 				await ProcessStartOfTurnAsync(battle, kind, id);

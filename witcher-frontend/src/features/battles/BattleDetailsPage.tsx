@@ -194,6 +194,30 @@ export function BattleDetailsPage() {
     },
   })
 
+  const [dyingSaveRoll, setDyingSaveRoll] = useState('')
+  const rollDyingSave = useMutation({
+    mutationFn: () => battlesApi.rollDyingSave(gameIdNum, id, dyingSaveRoll ? Number(dyingSaveRoll) : null),
+    onSuccess: async () => {
+      await invalidate()
+      setDyingSaveRoll('')
+    },
+  })
+
+  const [stabilizeTarget, setStabilizeTarget] = useState('')
+  const [stabilizeRoll, setStabilizeRoll] = useState('')
+  const stabilize = useMutation({
+    mutationFn: () =>
+      battlesApi.stabilize(gameIdNum, id, {
+        targetCharacterId: Number(stabilizeTarget),
+        roll: stabilizeRoll ? Number(stabilizeRoll) : null,
+      }),
+    onSuccess: async () => {
+      await invalidate()
+      setStabilizeTarget('')
+      setStabilizeRoll('')
+    },
+  })
+
   const [sheetTarget, setSheetTarget] = useState<{ kind: 'creature' | 'character'; refId: number } | null>(null)
 
   const [conditionDrafts, setConditionDrafts] = useState<Record<string, Condition>>({})
@@ -474,7 +498,31 @@ export function BattleDetailsPage() {
       {b.status === 'InProgress' && !attack && isActiveController && activeParticipant && (
         <Card>
           <h2 className="mb-3 font-semibold">Ваш ход: {activeParticipant.name}</h2>
-          {activeParticipant.appliedConditions.includes('Stun') ? (
+          {activeParticipant.appliedConditions.includes('Dying') ? (
+            <>
+              <p className="mb-2 text-sm text-red-600 dark:text-red-400">
+                {activeParticipant.name} при смерти и может только пройти проверку на смерть — провал означает гибель и выбывание
+                из боя (сам персонаж остаётся у игрока).
+              </p>
+              <div className="mb-3 flex flex-wrap items-end gap-2">
+                <Field label="Чистый бросок д10 (необязательно — иначе бросит сервер)">
+                  <Input
+                    type="number"
+                    className="w-24"
+                    value={dyingSaveRoll}
+                    onChange={(e) => setDyingSaveRoll(e.target.value)}
+                    placeholder="кубик"
+                  />
+                </Field>
+                <Button disabled={rollDyingSave.isPending} onClick={() => rollDyingSave.mutate()}>
+                  Бросить
+                </Button>
+              </div>
+              {rollDyingSave.error && (
+                <ErrorText>{rollDyingSave.error instanceof ApiError ? rollDyingSave.error.message : 'Не удалось пройти проверку на смерть'}</ErrorText>
+              )}
+            </>
+          ) : activeParticipant.appliedConditions.includes('Stun') ? (
             <>
               <p className="mb-2 text-sm text-amber-600 dark:text-amber-400">
                 {activeParticipant.name} оглушён и может только пройти проверку Оглушения — ход завершится сразу после броска.
@@ -685,6 +733,51 @@ export function BattleDetailsPage() {
                         </div>
                         {clearCondition.error && (
                           <ErrorText>{clearCondition.error instanceof ApiError ? clearCondition.error.message : 'Не удалось снять состояние'}</ErrorText>
+                        )}
+                      </div>
+                    )
+                  })()}
+
+                  {(() => {
+                    // Стабилизация доступна любому участнику боя, пока в бою есть хотя бы один
+                    // умирающий персонаж — бросок FirstAid против сложности |текущие HP| цели
+                    // (см. BattleCombatService.StabilizeAsync); расход действия тот же, что и у
+                    // остальных вторичных действий (основное или доп. за 3 STA/−3 для персонажа,
+                    // весь ход для существа).
+                    const dyingTargets = participants.filter((p) => p.kind === 'character' && p.appliedConditions.includes('Dying'))
+                    if (dyingTargets.length === 0) return null
+                    return (
+                      <div className="mt-3 border-t border-neutral-100 pt-3 dark:border-neutral-900">
+                        <h3 className="mb-2 text-sm font-semibold">Стабилизация</h3>
+                        <div className="flex flex-wrap items-end gap-2">
+                          <Field label="Цель (умирающий)">
+                            <Select className="w-44" value={stabilizeTarget} onChange={(e) => setStabilizeTarget(e.target.value)}>
+                              <option value="">— выберите —</option>
+                              {dyingTargets.map((t) => (
+                                <option key={t.refId} value={t.refId}>
+                                  {t.name}
+                                </option>
+                              ))}
+                            </Select>
+                          </Field>
+                          <Field label="Чистый бросок д10 (FirstAid; необязательно — иначе бросит сервер)">
+                            <Input
+                              type="number"
+                              className="w-24"
+                              value={stabilizeRoll}
+                              onChange={(e) => setStabilizeRoll(e.target.value)}
+                              placeholder="кубик"
+                            />
+                          </Field>
+                          <Button
+                            disabled={!stabilizeTarget || stabilize.isPending || notEnoughStaForBonusAction}
+                            onClick={() => stabilize.mutate()}
+                          >
+                            {isBonusActionWindow ? 'Стабилизировать (доп. действие, 3 STA, −3)' : 'Стабилизировать'}
+                          </Button>
+                        </div>
+                        {stabilize.error && (
+                          <ErrorText>{stabilize.error instanceof ApiError ? stabilize.error.message : 'Не удалось стабилизировать'}</ErrorText>
                         )}
                       </div>
                     )

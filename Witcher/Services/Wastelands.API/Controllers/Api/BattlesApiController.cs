@@ -187,6 +187,20 @@ namespace Wastelands.API.Controllers.Api
 			return await _battleCombatService.ClearConditionAsync(request);
 		}
 
+		[HttpPost("{id:long}/dying-save")]
+		public async Task<BattleDto> RollDyingSave(long gameId, long id, RollDyingSaveRequest request)
+		{
+			request.BattleId = id;
+			return await _battleCombatService.RollDyingSaveAsync(request);
+		}
+
+		[HttpPost("{id:long}/stabilize")]
+		public async Task<BattleDto> Stabilize(long gameId, long id, StabilizeRequest request)
+		{
+			request.BattleId = id;
+			return await _battleCombatService.StabilizeAsync(request);
+		}
+
 		[HttpGet("{id:long}/creatures/{creatureId:long}/sheet")]
 		public async Task<CreatureTemplateDto> GetCreatureSheet(long gameId, long id, long creatureId)
 			=> await _sheetService.GetCreatureSheetAsync(id, creatureId);
