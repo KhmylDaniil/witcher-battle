@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Wastelands.Service.Domain\Wastelands.Service.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Wastelands.Service.Application.UnitTest" />
+  </ItemGroup>
+
 </Project>
