@@ -34,6 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wastelands.Service.Domain.U
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wastelands.Service.Application.UnitTest", "Core\Wastelands.Service.Application.UnitTest\Wastelands.Service.Application.UnitTest.csproj", "{47584961-80B9-4543-AB17-760D2B7C2589}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wastelands.Service.Infrastructure.IntegrationTest", "Infrastructure\Wastelands.Service.Infrastructure.IntegrationTest\Wastelands.Service.Infrastructure.IntegrationTest.csproj", "{64D23027-3135-4AF6-8362-86FD148BF04A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -164,6 +166,18 @@ Global
 		{47584961-80B9-4543-AB17-760D2B7C2589}.Release|x64.Build.0 = Release|Any CPU
 		{47584961-80B9-4543-AB17-760D2B7C2589}.Release|x86.ActiveCfg = Release|Any CPU
 		{47584961-80B9-4543-AB17-760D2B7C2589}.Release|x86.Build.0 = Release|Any CPU
+		{64D23027-3135-4AF6-8362-86FD148BF04A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64D23027-3135-4AF6-8362-86FD148BF04A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64D23027-3135-4AF6-8362-86FD148BF04A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{64D23027-3135-4AF6-8362-86FD148BF04A}.Debug|x64.Build.0 = Debug|Any CPU
+		{64D23027-3135-4AF6-8362-86FD148BF04A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{64D23027-3135-4AF6-8362-86FD148BF04A}.Debug|x86.Build.0 = Debug|Any CPU
+		{64D23027-3135-4AF6-8362-86FD148BF04A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64D23027-3135-4AF6-8362-86FD148BF04A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64D23027-3135-4AF6-8362-86FD148BF04A}.Release|x64.ActiveCfg = Release|Any CPU
+		{64D23027-3135-4AF6-8362-86FD148BF04A}.Release|x64.Build.0 = Release|Any CPU
+		{64D23027-3135-4AF6-8362-86FD148BF04A}.Release|x86.ActiveCfg = Release|Any CPU
+		{64D23027-3135-4AF6-8362-86FD148BF04A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -179,6 +193,7 @@ Global
 		{5F0F2AD0-C3F8-4C91-97F0-4182AD742609} = {5854FF58-B8C5-05C6-5BF2-ACE42193F22B}
 		{F1ADA077-C1A3-433B-B897-FDFECEE765C2} = {FBF56CC3-7AE6-AD2D-3F14-7F97FD322CD6}
 		{47584961-80B9-4543-AB17-760D2B7C2589} = {FBF56CC3-7AE6-AD2D-3F14-7F97FD322CD6}
+		{64D23027-3135-4AF6-8362-86FD148BF04A} = {DFEE68D8-A7D0-1A41-506C-9B74AA9A7B7B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B1A21D2E-F09F-4DFA-ABBE-A606D86EB041}
