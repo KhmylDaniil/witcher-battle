@@ -8,6 +8,8 @@ namespace Wastelands.Service.Domain.Entities
 	{
 		public const int MinSkillValue = 1;
 		public const int MaxSkillValue = 10;
+		public const int MinMovement = 0;
+		public const int MaxMovement = 20;
 
 		public long GameId { get; private set; }
 
@@ -44,6 +46,8 @@ namespace Wastelands.Service.Domain.Entities
 
 		public int Luck { get; private set; }
 
+		public int Movement { get; private set; }
+
 		public List<CreatureTemplatePart> Parts { get; private set; } = [];
 
 		public Dictionary<Skill, int> Skills { get; private set; } = [];
@@ -72,7 +76,8 @@ namespace Wastelands.Service.Domain.Entities
 			int cra,
 			int will,
 			int speed,
-			int luck)
+			int luck,
+			int movement)
 		{
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(gameId, nameof(gameId));
 			InvalidArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
@@ -87,6 +92,7 @@ namespace Wastelands.Service.Domain.Entities
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(will, nameof(will));
 			InvalidArgumentException.ThrowIfLessThanZero(speed, nameof(speed));
 			InvalidArgumentException.ThrowIfLessThanZero(luck, nameof(luck));
+			InvalidArgumentException.ThrowIfNotInRange(movement, MinMovement, MaxMovement, nameof(movement));
 
 			GameId = gameId;
 			BodyTemplateId = bodyTemplate.Id;
@@ -104,6 +110,7 @@ namespace Wastelands.Service.Domain.Entities
 			Will = will;
 			Speed = speed;
 			Luck = luck;
+			Movement = movement;
 
 			Parts = bodyTemplate.Parts.Select(part => new CreatureTemplatePart(part)).ToList();
 		}
@@ -122,7 +129,8 @@ namespace Wastelands.Service.Domain.Entities
 			int cra,
 			int will,
 			int speed,
-			int luck)
+			int luck,
+			int movement)
 		{
 			InvalidArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(hp, nameof(hp));
@@ -136,6 +144,7 @@ namespace Wastelands.Service.Domain.Entities
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(will, nameof(will));
 			InvalidArgumentException.ThrowIfLessThanZero(speed, nameof(speed));
 			InvalidArgumentException.ThrowIfLessThanZero(luck, nameof(luck));
+			InvalidArgumentException.ThrowIfNotInRange(movement, MinMovement, MaxMovement, nameof(movement));
 
 			CreatureType = creatureType;
 			Name = name;
@@ -151,6 +160,7 @@ namespace Wastelands.Service.Domain.Entities
 			Will = will;
 			Speed = speed;
 			Luck = luck;
+			Movement = movement;
 		}
 
 		public void SetImage(string? imageKey)

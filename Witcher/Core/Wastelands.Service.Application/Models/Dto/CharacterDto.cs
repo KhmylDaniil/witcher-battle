@@ -36,6 +36,8 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public int Stun { get; set; }
 
+		public int Movement { get; set; }
+
 		public Dictionary<Skill, int> Skills { get; set; }
 
 		public List<AbilityDto> Abilities { get; set; } = [];

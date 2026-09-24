@@ -9,8 +9,8 @@ const DAMAGE_TYPE_MODIFIER_LABEL: Record<DamageTypeModifierKind, string> = {
   Immunity: 'иммунитет',
 }
 
-const CREATURE_STAT_KEYS = ['int', 'ref', 'dex', 'body', 'emp', 'cra', 'will', 'speed', 'luck'] as const
-const CHARACTER_STAT_KEYS = ['int', 'str', 'rea', 'dex', 'cra', 'emp', 'wil'] as const
+const CREATURE_STAT_KEYS = ['int', 'ref', 'dex', 'body', 'emp', 'cra', 'will', 'speed', 'luck', 'movement'] as const
+const CHARACTER_STAT_KEYS = ['int', 'str', 'rea', 'dex', 'cra', 'emp', 'wil', 'movement'] as const
 
 function formatAbility(a: Ability): string {
   const modifier = a.damageModifier >= 0 ? `+${a.damageModifier}` : `${a.damageModifier}`

@@ -242,6 +242,9 @@ export function CharacterDetailsPage() {
           <div>
             <span className="text-neutral-400">Устойчивость</span> <span className="font-medium">{c.stun}</span>
           </div>
+          <div>
+            <span className="text-neutral-400">Движение</span> <span className="font-medium">{c.movement}</span>
+          </div>
         </div>
         <div className="grid grid-cols-4 gap-3 text-sm sm:grid-cols-7">
           {STATS.map((s) => (

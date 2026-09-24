@@ -84,6 +84,10 @@ namespace Wastelands.Service.Infrastructure.Configurations
 			.HasComment("(Str+Wil)/2, вычисляется на сервере")
 			.IsRequired();
 
+			builder.Property(x => x.Movement)
+			.HasColumnName("Movement")
+			.IsRequired();
+
 			builder.Property(x => x.Skills)
 			.HasColumnType("jsonb")
 			.HasColumnName("Skills")

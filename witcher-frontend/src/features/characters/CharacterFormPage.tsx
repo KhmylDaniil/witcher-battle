@@ -11,6 +11,8 @@ const STATS = ['int', 'str', 'rea', 'dex', 'cra', 'emp', 'wil'] as const
 const STAT_MIN = 1
 const STAT_MAX = 15
 const HP_STA = ['hp', 'sta'] as const
+const MOVEMENT_MIN = 0
+const MOVEMENT_MAX = 20
 
 export function CharacterFormPage() {
   const { gameId, characterId } = useParams<{ gameId: string; characterId: string }>()
@@ -27,13 +29,13 @@ export function CharacterFormPage() {
   })
 
   const { register, handleSubmit, reset, formState } = useForm<CharacterFormValues>({
-    defaultValues: { name: '', hp: 10, sta: 10, int: 1, str: 1, rea: 1, dex: 1, cra: 1, emp: 1, wil: 1 },
+    defaultValues: { name: '', hp: 10, sta: 10, int: 1, str: 1, rea: 1, dex: 1, cra: 1, emp: 1, wil: 1, movement: 0 },
   })
 
   useEffect(() => {
     if (existing.data) {
-      const { name, hp, sta, int, str, rea, dex, cra, emp, wil } = existing.data
-      reset({ name, hp, sta, int, str, rea, dex, cra, emp, wil })
+      const { name, hp, sta, int, str, rea, dex, cra, emp, wil, movement } = existing.data
+      reset({ name, hp, sta, int, str, rea, dex, cra, emp, wil, movement })
     }
   }, [existing.data, reset])
 
@@ -41,7 +43,7 @@ export function CharacterFormPage() {
     mutationFn: (values: CharacterFormValues) => {
       const payload: CharacterFormValues = {
         ...values,
-        ...Object.fromEntries([...HP_STA, ...STATS].map((s) => [s, Number(values[s])])),
+        ...Object.fromEntries([...HP_STA, ...STATS, 'movement' as const].map((s) => [s, Number(values[s])])),
       }
       return isEdit ? charactersApi.update(id!, payload) : charactersApi.create(gameIdNum, payload)
     },
@@ -81,6 +83,26 @@ export function CharacterFormPage() {
                   {formState.errors[s] && <span className="text-xs text-red-600">{formState.errors[s]?.message}</span>}
                 </Field>
               ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="mb-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">Движение</h3>
+            <div className="grid grid-cols-2 gap-3 sm:w-1/4">
+              <Field label="Движение">
+                <Input
+                  type="number"
+                  min={MOVEMENT_MIN}
+                  max={MOVEMENT_MAX}
+                  {...register('movement', {
+                    required: true,
+                    valueAsNumber: true,
+                    min: { value: MOVEMENT_MIN, message: `От ${MOVEMENT_MIN} до ${MOVEMENT_MAX}` },
+                    max: { value: MOVEMENT_MAX, message: `От ${MOVEMENT_MIN} до ${MOVEMENT_MAX}` },
+                  })}
+                />
+                {formState.errors.movement && <span className="text-xs text-red-600">{formState.errors.movement?.message}</span>}
+              </Field>
             </div>
           </div>
 

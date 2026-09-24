@@ -33,5 +33,7 @@ namespace Wastelands.Service.Application.Models.Requests
 		public int Speed { get; set; }
 
 		public int Luck { get; set; }
+
+		public int Movement { get; set; }
 	}
 }

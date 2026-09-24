@@ -121,7 +121,8 @@ namespace Wastelands.Service.Application.Services
 				dex: request.Dex,
 				cra: request.Cra,
 				emp: request.Emp,
-				wil: request.Wil);
+				wil: request.Wil,
+				movement: request.Movement);
 
 			await _characterRepository.CreateAsync(entity);
 
@@ -163,7 +164,8 @@ namespace Wastelands.Service.Application.Services
 				dex: request.Dex,
 				cra: request.Cra,
 				emp: request.Emp,
-				wil: request.Wil);
+				wil: request.Wil,
+				movement: request.Movement);
 
 			await _characterRepository.UpdateAsync(character);
 

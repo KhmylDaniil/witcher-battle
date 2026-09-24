@@ -105,6 +105,7 @@ export interface Character {
   recovery: number
   /** (Str+Wil)/2 с округлением вниз — вычисляется на сервере, не редактируется напрямую. */
   stun: number
+  movement: number
   skills: Partial<Record<Skill, number>>
   abilities: Ability[]
   items: Item[]
@@ -121,6 +122,7 @@ export interface CharacterFormValues {
   cra: number
   emp: number
   wil: number
+  movement: number
 }
 
 // ---- Body templates (BodyTemplatesApiController) — доступны только мастеру игры ----
@@ -198,6 +200,7 @@ export interface CreatureTemplate {
   will: number
   speed: number
   luck: number
+  movement: number
   parts: CreatureTemplatePart[]
   skills: Partial<Record<Skill, number>>
   damageTypeModifiers: Partial<Record<DamageType, DamageTypeModifierKind>>
@@ -220,6 +223,7 @@ export interface CreatureTemplateFormValues {
   will: number
   speed: number
   luck: number
+  movement: number
 }
 
 // ---- Item templates (ItemTemplatesApiController) — доступны только мастеру игры ----

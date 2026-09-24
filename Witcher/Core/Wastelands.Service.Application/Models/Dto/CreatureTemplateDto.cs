@@ -38,6 +38,8 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public int Luck { get; set; }
 
+		public int Movement { get; set; }
+
 		public List<CreatureTemplatePartDto> Parts { get; set; } = [];
 
 		public Dictionary<Skill, int> Skills { get; set; } = [];
