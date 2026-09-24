@@ -83,6 +83,10 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnName("Durability")
 				.IsRequired(false);
 
+			builder.Property(x => x.MaxDurability)
+				.HasColumnName("MaxDurability")
+				.IsRequired(false);
+
 			builder.Property(x => x.IsEquipped)
 				.HasColumnName("IsEquipped")
 				.IsRequired();

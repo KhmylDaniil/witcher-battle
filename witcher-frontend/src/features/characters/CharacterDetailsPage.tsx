@@ -503,12 +503,12 @@ export function CharacterDetailsPage() {
 
               {i.itemType === 'Weapon' && (
                 <div className="flex items-center gap-2 text-xs text-neutral-500">
-                  <span>Прочность: {i.durability}</span>
+                  <span>Прочность: {i.durability}/{i.maxDurability}</span>
                   {isGameMaster && c.gameId && (
                     <RepairControl
                       open={repairingKey === `weapon-${i.id}`}
                       value={repairValue}
-                      max={undefined}
+                      max={i.maxDurability ?? undefined}
                       pending={repairItem.isPending}
                       onOpen={() => {
                         setRepairingKey(`weapon-${i.id}`)

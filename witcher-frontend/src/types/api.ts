@@ -334,6 +334,8 @@ export interface Item {
   attackRange: number | null
   handsRequired: number | null
   durability: number | null
+  /** Прочность на момент добавления в инвентарь — верхняя граница для ремонта. */
+  maxDurability: number | null
   appliedConditions: ItemAppliedCondition[]
   armorParts: ItemArmorPart[]
   damageTypeModifiers: Partial<Record<DamageType, DamageTypeModifierKind>>
