@@ -85,6 +85,50 @@ namespace Wastelands.Service.Domain.Entities
 			}
 		}
 
+		/// <summary>
+		/// Добавляет существо в бой. До начала боя инициатива не выставляется (её разыгрывает старт боя),
+		/// а в уже идущем бою — см. <see cref="AssignLateInitiative"/>.
+		/// </summary>
+		/// <returns>true — бой шёл без участников, и добавленный сразу становится активным (вызывающему
+		/// нужно обработать начало его хода).</returns>
+		public bool AddCreature(Creature creature)
+		{
+			Creatures.Add(creature);
+			return AssignLateInitiative(creature.SetInitiative);
+		}
+
+		/// <inheritdoc cref="AddCreature"/>
+		public bool AddCharacter(BattleCharacter character)
+		{
+			Characters.Add(character);
+			return AssignLateInitiative(character.SetInitiative);
+		}
+
+		/// <summary>
+		/// Участник, вступивший в уже идущий бой, инициативу не бросает: он встаёт в конец очереди
+		/// (номер N+1 при плотной нумерации 1..N — её поддерживает RenumberInitiative), поэтому
+		/// несколько поздних участников ходят в порядке добавления. Если все прежние участники выбыли
+		/// (CurrentInitiative == null), ход сразу переходит к новому.
+		/// </summary>
+		private bool AssignLateInitiative(Action<int> setInitiative)
+		{
+			if (Status != BattleStatus.InProgress)
+			{
+				return false;
+			}
+
+			var initiative = Creatures.Count + Characters.Count;
+			setInitiative(initiative);
+
+			if (CurrentInitiative is null)
+			{
+				CurrentInitiative = initiative;
+				return true;
+			}
+
+			return false;
+		}
+
 		public void AddLogEntry(string message)
 		{
 			LogEntries.Add(new BattleLogEntry(Id, message));

@@ -95,10 +95,10 @@ namespace Wastelands.Service.Application.Services
 			await _battleRepository.DeleteAsync(battle);
 		}
 
+		/// <summary>Добавить существо можно и в уже идущий бой — без броска инициативы, в конец очереди (см. Battle.AddCreature).</summary>
 		public async Task<BattleDto> AddCreatureAsync(AddCreatureToBattleRequest request)
 		{
 			var battle = await GetByIdForGmAsync(request.BattleId);
-			ThrowIfNotDraft(battle);
 
 			var creatureTemplate = await _creatureTemplateRepository.GetByIdAsync(request.CreatureTemplateId);
 			NotFoundException.ThrowIfNull(
@@ -110,7 +110,8 @@ namespace Wastelands.Service.Application.Services
 			}
 
 			var creature = new Creature(battle.Id, creatureTemplate, request.Name);
-			battle.Creatures.Add(creature);
+			var startsTurnNow = battle.AddCreature(creature);
+			await OnParticipantJoinedAsync(battle, creature.Name, creature.Initiative, startsTurnNow);
 
 			return await SaveAndNotifyAsync(battle);
 		}
@@ -152,10 +153,10 @@ namespace Wastelands.Service.Application.Services
 			return await SaveAndNotifyAsync(battle);
 		}
 
+		/// <summary>Добавить персонажа можно и в уже идущий бой — без броска инициативы, в конец очереди (см. Battle.AddCharacter).</summary>
 		public async Task<BattleDto> AddCharacterAsync(AddCharacterToBattleRequest request)
 		{
 			var battle = await GetByIdForGmAsync(request.BattleId);
-			ThrowIfNotDraft(battle);
 
 			if (battle.Characters.Any(x => x.CharacterId == request.CharacterId))
 			{
@@ -173,7 +174,8 @@ namespace Wastelands.Service.Application.Services
 			}
 
 			var battleCharacter = new BattleCharacter(battle.Id, character);
-			battle.Characters.Add(battleCharacter);
+			var startsTurnNow = battle.AddCharacter(battleCharacter);
+			await OnParticipantJoinedAsync(battle, character.Name, battleCharacter.Initiative, startsTurnNow);
 
 			return await SaveAndNotifyAsync(battle);
 		}
@@ -226,11 +228,30 @@ namespace Wastelands.Service.Application.Services
 			return await SaveAndNotifyAsync(battle);
 		}
 
+		/// <summary>
+		/// Вступление в уже идущий бой видно в логе; если бой шёл без участников и ход сразу перешёл к
+		/// новому — обрабатываем начало его хода (эффекты состояний и т.п.), как при обычной передаче хода.
+		/// </summary>
+		private async Task OnParticipantJoinedAsync(Battle battle, string name, int? initiative, bool startsTurnNow)
+		{
+			if (battle.Status != BattleStatus.InProgress)
+			{
+				return;
+			}
+
+			battle.AddLogEntry($"{name} вступает в бой (инициатива {initiative}, без броска).");
+
+			if (startsTurnNow)
+			{
+				await _turnProcessor.ProcessCurrentTurnAsync(battle);
+			}
+		}
+
 		private static void ThrowIfNotDraft(Battle battle)
 		{
 			if (battle.Status != BattleStatus.Draft)
 			{
-				throw new InvalidArgumentException(ErrorCode.BattleAlreadyStarted, "Изменять состав участников можно только до начала боя.");
+				throw new InvalidArgumentException(ErrorCode.BattleAlreadyStarted, "Убирать участников из боя можно только до его начала.");
 			}
 		}
 

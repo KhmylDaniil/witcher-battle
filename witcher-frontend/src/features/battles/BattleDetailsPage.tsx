@@ -848,9 +848,15 @@ export function BattleDetailsPage() {
 
       {isOwner && <BattleMapAttachCard gameId={gameIdNum} battle={b} />}
 
-      {isOwner && b.status === 'Draft' && (
+      {isOwner && (
         <Card>
           <h2 className="mb-3 font-semibold">Добавить участников</h2>
+          {b.status === 'InProgress' && (
+            <p className="mb-3 text-xs text-neutral-500">
+              Бой уже идёт: новый участник не бросает инициативу, а встаёт в конец очереди — несколько добавленных
+              ходят в порядке добавления.
+            </p>
+          )}
 
           <div className="mb-4 flex flex-wrap items-end gap-2">
             <Select
