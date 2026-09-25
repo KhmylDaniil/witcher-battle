@@ -23,5 +23,7 @@
 		public int Emp { get; set; }
 
 		public int Wil { get; set; }
+
+		public int Movement { get; set; }
 	}
 }

@@ -51,6 +51,7 @@ namespace Wastelands.Service.Infrastructure.Configurations
 			builder.Property(x => x.Will).HasColumnName("Will").IsRequired();
 			builder.Property(x => x.Speed).HasColumnName("Speed").IsRequired();
 			builder.Property(x => x.Luck).HasColumnName("Luck").IsRequired();
+			builder.Property(x => x.Movement).HasColumnName("Movement").IsRequired();
 
 			builder.Property(x => x.Skills)
 				.HasColumnType("jsonb")

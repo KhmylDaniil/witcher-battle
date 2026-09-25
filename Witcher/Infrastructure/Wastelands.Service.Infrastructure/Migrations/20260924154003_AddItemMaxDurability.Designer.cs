@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Wastelands.Service.Domain.Enums;
@@ -13,9 +14,11 @@ using Wastelands.Service.Infrastructure;
 namespace Wastelands.Service.Infrastructure.Migrations
 {
     [DbContext(typeof(WastelandsDbContext))]
-    partial class WastelandsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260924154003_AddItemMaxDurability")]
+    partial class AddItemMaxDurability
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -390,80 +393,6 @@ namespace Wastelands.Service.Infrastructure.Migrations
                     b.ToTable("BattleLogEntry", (string)null);
                 });
 
-            modelBuilder.Entity("Wastelands.Service.Domain.Entities.BattleMap", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("Id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<int>("Columns")
-                        .HasColumnType("integer")
-                        .HasColumnName("Columns");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("Description");
-
-                    b.Property<long>("GameId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("GameId");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Name");
-
-                    b.Property<int>("Rows")
-                        .HasColumnType("integer")
-                        .HasColumnName("Rows");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("BattleMap", (string)null);
-                });
-
-            modelBuilder.Entity("Wastelands.Service.Domain.Entities.BattleMapHex", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("Id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("BattleMapId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("BattleMapId");
-
-                    b.Property<int>("Column")
-                        .HasColumnType("integer")
-                        .HasColumnName("Column");
-
-                    b.Property<int>("Row")
-                        .HasColumnType("integer")
-                        .HasColumnName("Row");
-
-                    b.Property<int>("TerrainStyle")
-                        .HasColumnType("integer")
-                        .HasColumnName("TerrainStyle");
-
-                    b.Property<int>("TerrainType")
-                        .HasColumnType("integer")
-                        .HasColumnName("TerrainType");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BattleMapId", "Column", "Row")
-                        .IsUnique();
-
-                    b.ToTable("BattleMapHex", (string)null);
-                });
-
             modelBuilder.Entity("Wastelands.Service.Domain.Entities.BodyTemplate", b =>
                 {
                     b.Property<long>("Id")
@@ -581,10 +510,6 @@ namespace Wastelands.Service.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("Int")
                         .HasComment("Intellect");
-
-                    b.Property<int>("Movement")
-                        .HasColumnType("integer")
-                        .HasColumnName("Movement");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -787,10 +712,6 @@ namespace Wastelands.Service.Infrastructure.Migrations
                     b.Property<int>("Luck")
                         .HasColumnType("integer")
                         .HasColumnName("Luck");
-
-                    b.Property<int>("Movement")
-                        .HasColumnType("integer")
-                        .HasColumnName("Movement");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1358,24 +1279,6 @@ namespace Wastelands.Service.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Wastelands.Service.Domain.Entities.BattleMap", b =>
-                {
-                    b.HasOne("Wastelands.Service.Domain.Entities.Game", null)
-                        .WithMany("BattleMaps")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Wastelands.Service.Domain.Entities.BattleMapHex", b =>
-                {
-                    b.HasOne("Wastelands.Service.Domain.Entities.BattleMap", null)
-                        .WithMany("Hexes")
-                        .HasForeignKey("BattleMapId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Wastelands.Service.Domain.Entities.BodyTemplate", b =>
                 {
                     b.HasOne("Wastelands.Service.Domain.Entities.Game", null)
@@ -1543,11 +1446,6 @@ namespace Wastelands.Service.Infrastructure.Migrations
                     b.Navigation("LogEntries");
                 });
 
-            modelBuilder.Entity("Wastelands.Service.Domain.Entities.BattleMap", b =>
-                {
-                    b.Navigation("Hexes");
-                });
-
             modelBuilder.Entity("Wastelands.Service.Domain.Entities.BodyTemplate", b =>
                 {
                     b.Navigation("CreatureTemplates");
@@ -1571,8 +1469,6 @@ namespace Wastelands.Service.Infrastructure.Migrations
 
             modelBuilder.Entity("Wastelands.Service.Domain.Entities.Game", b =>
                 {
-                    b.Navigation("BattleMaps");
-
                     b.Navigation("Battles");
 
                     b.Navigation("BodyTemplates");

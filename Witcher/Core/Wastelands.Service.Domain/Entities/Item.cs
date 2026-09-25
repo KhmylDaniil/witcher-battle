@@ -46,6 +46,9 @@ namespace Wastelands.Service.Domain.Entities
 
 		public int? Durability { get; private set; }
 
+		/// <summary>Прочность оружия на момент добавления в инвентарь (снапшот ItemTemplate.Durability) — верхняя граница для RepairWeapon, ремонт выше неё запрещён.</summary>
+		public int? MaxDurability { get; private set; }
+
 		public List<ItemAppliedCondition> AppliedConditions { get; private set; } = [];
 
 		/// <summary>Заполнены только когда ItemType == Armor — снапшот ItemTemplate.ArmorParts.</summary>
@@ -81,6 +84,7 @@ namespace Wastelands.Service.Domain.Entities
 			AttackRange = template.AttackRange;
 			HandsRequired = template.HandsRequired;
 			Durability = template.Durability;
+			MaxDurability = template.Durability;
 			AppliedConditions = template.AppliedConditions.Select(c => new ItemAppliedCondition(c.Condition, c.ApplyChance)).ToList();
 			ArmorParts = template.ArmorParts.Select(p => new ItemArmorPart(p.Part, p.Armor)).ToList();
 			DamageTypeModifiers = new Dictionary<DamageType, DamageTypeModifier>(template.DamageTypeModifiers);
@@ -119,7 +123,7 @@ namespace Wastelands.Service.Domain.Entities
 				throw new InvalidArgumentException(ErrorCode.ItemNotWeapon, "Это не оружие.");
 			}
 
-			InvalidArgumentException.ThrowIfLessThanZero(durability, nameof(durability));
+			InvalidArgumentException.ThrowIfNotInRange(durability, 0, MaxDurability ?? 0, nameof(durability));
 			Durability = durability;
 		}
 

@@ -8,7 +8,7 @@ namespace Wastelands.Service.Application.UnitTest.TestSupport
 	internal static class TestBuilders
 	{
 		public static Character Character(long userId = 1, long gameId = 1, string name = "Hero", int hp = 10, int sta = 10, int stat = 8)
-			=> new(userId, gameId, name, hp, sta, stat, stat, stat, stat, stat, stat, stat);
+			=> new(userId, gameId, name, hp, sta, stat, stat, stat, stat, stat, stat, stat, movement: 5);
 
 		public static BattleCharacter BattleCharacter(long battleId, Character character)
 			=> new(battleId, character);
@@ -17,7 +17,7 @@ namespace Wastelands.Service.Application.UnitTest.TestSupport
 		public static CreatureTemplate CreatureTemplate(long gameId = 1, string name = "Wolf", int hp = 10, int sta = 10, int stat = 8)
 		{
 			var bodyTemplate = new BodyTemplate(gameId, "Body", null);
-			return new CreatureTemplate(gameId, bodyTemplate, CreatureType.Beast, name, null, hp, sta, stat, stat, stat, stat, stat, stat, stat, stat, stat);
+			return new CreatureTemplate(gameId, bodyTemplate, CreatureType.Beast, name, null, hp, sta, stat, stat, stat, stat, stat, stat, stat, stat, stat, movement: 5);
 		}
 
 		public static Creature Creature(long battleId, CreatureTemplate template, string? nameOverride = null)

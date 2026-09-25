@@ -70,7 +70,8 @@ namespace Wastelands.Service.Application.Services
 				cra: request.Cra,
 				will: request.Will,
 				speed: request.Speed,
-				luck: request.Luck);
+				luck: request.Luck,
+				movement: request.Movement);
 
 			await _creatureTemplateRepository.CreateAsync(entity);
 
@@ -95,7 +96,8 @@ namespace Wastelands.Service.Application.Services
 				cra: request.Cra,
 				will: request.Will,
 				speed: request.Speed,
-				luck: request.Luck);
+				luck: request.Luck,
+				movement: request.Movement);
 
 			await _creatureTemplateRepository.UpdateAsync(creatureTemplate);
 

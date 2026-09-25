@@ -37,7 +37,7 @@ namespace Wastelands.Service.Infrastructure.IntegrationTest.TestSupport
 
 		public static async Task<Character> CreateCharacterAsync(WastelandsDbContext dbContext, long userId, long gameId, string name)
 		{
-			var character = new Character(userId, gameId, name, hp: 10, sta: 10, @int: 8, str: 8, rea: 8, dex: 8, cra: 8, emp: 8, wil: 8);
+			var character = new Character(userId, gameId, name, hp: 10, sta: 10, @int: 8, str: 8, rea: 8, dex: 8, cra: 8, emp: 8, wil: 8, movement: 5);
 
 			dbContext.Set<Character>().Add(character);
 			await dbContext.SaveChangesAsync();
@@ -58,7 +58,7 @@ namespace Wastelands.Service.Infrastructure.IntegrationTest.TestSupport
 		public static async Task<CreatureTemplate> CreateCreatureTemplateAsync(WastelandsDbContext dbContext, long gameId, BodyTemplate bodyTemplate, string name = "Wolf")
 		{
 			var creatureTemplate = new CreatureTemplate(
-				gameId, bodyTemplate, CreatureType.Beast, name, null, hp: 10, sta: 10, @int: 8, @ref: 8, dex: 8, body: 8, emp: 8, cra: 8, will: 8, speed: 8, luck: 8);
+				gameId, bodyTemplate, CreatureType.Beast, name, null, hp: 10, sta: 10, @int: 8, @ref: 8, dex: 8, body: 8, emp: 8, cra: 8, will: 8, speed: 8, luck: 8, movement: 5);
 
 			dbContext.Set<CreatureTemplate>().Add(creatureTemplate);
 			await dbContext.SaveChangesAsync();

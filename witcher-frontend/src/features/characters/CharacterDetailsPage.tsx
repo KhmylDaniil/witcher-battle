@@ -242,6 +242,9 @@ export function CharacterDetailsPage() {
           <div>
             <span className="text-neutral-400">Устойчивость</span> <span className="font-medium">{c.stun}</span>
           </div>
+          <div>
+            <span className="text-neutral-400">Движение</span> <span className="font-medium">{c.movement}</span>
+          </div>
         </div>
         <div className="grid grid-cols-4 gap-3 text-sm sm:grid-cols-7">
           {STATS.map((s) => (
@@ -503,12 +506,12 @@ export function CharacterDetailsPage() {
 
               {i.itemType === 'Weapon' && (
                 <div className="flex items-center gap-2 text-xs text-neutral-500">
-                  <span>Прочность: {i.durability}</span>
+                  <span>Прочность: {i.durability}/{i.maxDurability}</span>
                   {isGameMaster && c.gameId && (
                     <RepairControl
                       open={repairingKey === `weapon-${i.id}`}
                       value={repairValue}
-                      max={undefined}
+                      max={i.maxDurability ?? undefined}
                       pending={repairItem.isPending}
                       onOpen={() => {
                         setRepairingKey(`weapon-${i.id}`)

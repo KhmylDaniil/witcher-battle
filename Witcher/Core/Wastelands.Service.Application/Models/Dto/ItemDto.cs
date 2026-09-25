@@ -36,6 +36,8 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public int? Durability { get; set; }
 
+		public int? MaxDurability { get; set; }
+
 		public List<ItemAppliedConditionDto> AppliedConditions { get; set; } = [];
 
 		public List<ItemArmorPartDto> ArmorParts { get; set; } = [];

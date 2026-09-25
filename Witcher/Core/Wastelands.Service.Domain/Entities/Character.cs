@@ -10,6 +10,8 @@ namespace Wastelands.Service.Domain.Entities
 		public const int MaxStat = 15;
 		public const int MinSkillValue = 1;
 		public const int MaxSkillValue = 10;
+		public const int MinMovement = 0;
+		public const int MaxMovement = 20;
 
 		public long UserId { get; private set; }
 
@@ -54,6 +56,8 @@ namespace Wastelands.Service.Domain.Entities
 		/// <summary>(Str+Wil)/2 с округлением вниз — см. Recovery.</summary>
 		public int Stun { get; private set; }
 
+		public int Movement { get; private set; }
+
 		public Dictionary<Skill, int> Skills { get; private set; } = [];
 
 		public List<Ability> Abilities { get; private set; } = [];
@@ -64,7 +68,7 @@ namespace Wastelands.Service.Domain.Entities
 		{
 		}
 
-		public Character(long userId, long gameId, string name, int hp, int sta, int @int, int str, int rea, int dex, int cra, int emp, int wil)
+		public Character(long userId, long gameId, string name, int hp, int sta, int @int, int str, int rea, int dex, int cra, int emp, int wil, int movement)
 		{
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(userId, nameof(userId));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(gameId, nameof(gameId));
@@ -78,6 +82,7 @@ namespace Wastelands.Service.Domain.Entities
 			InvalidArgumentException.ThrowIfNotInRange(cra, MinStat, MaxStat, nameof(cra));
 			InvalidArgumentException.ThrowIfNotInRange(emp, MinStat, MaxStat, nameof(emp));
 			InvalidArgumentException.ThrowIfNotInRange(wil, MinStat, MaxStat, nameof(wil));
+			InvalidArgumentException.ThrowIfNotInRange(movement, MinMovement, MaxMovement, nameof(movement));
 
 			UserId = userId;
 			GameId = gameId;
@@ -92,11 +97,12 @@ namespace Wastelands.Service.Domain.Entities
 			Cra = cra;
 			Emp = emp;
 			Wil = wil;
+			Movement = movement;
 			Recovery = (str + wil) / 2;
 			Stun = (str + wil) / 2;
 		}
 
-		public void UpdateCharacter(string name, int hp, int sta, int @int, int str, int rea, int dex, int cra, int emp, int wil)
+		public void UpdateCharacter(string name, int hp, int sta, int @int, int str, int rea, int dex, int cra, int emp, int wil, int movement)
 		{
 			InvalidArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
 			InvalidArgumentException.ThrowIfLessOrEqualToZero(hp, nameof(hp));
@@ -108,6 +114,7 @@ namespace Wastelands.Service.Domain.Entities
 			InvalidArgumentException.ThrowIfNotInRange(cra, MinStat, MaxStat, nameof(cra));
 			InvalidArgumentException.ThrowIfNotInRange(emp, MinStat, MaxStat, nameof(emp));
 			InvalidArgumentException.ThrowIfNotInRange(wil, MinStat, MaxStat, nameof(wil));
+			InvalidArgumentException.ThrowIfNotInRange(movement, MinMovement, MaxMovement, nameof(movement));
 
 			Name = name;
 			HP = hp;
@@ -120,6 +127,7 @@ namespace Wastelands.Service.Domain.Entities
 			Cra = cra;
 			Emp = emp;
 			Wil = wil;
+			Movement = movement;
 			Recovery = (str + wil) / 2;
 			Stun = (str + wil) / 2;
 		}

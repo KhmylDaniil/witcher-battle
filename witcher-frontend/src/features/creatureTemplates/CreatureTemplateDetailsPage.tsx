@@ -16,7 +16,7 @@ import {
 } from '../../types/api'
 import { creatureTemplatesApi } from './api'
 
-const STATS = ['hp', 'sta', 'int', 'ref', 'dex', 'body', 'emp', 'cra', 'will', 'speed', 'luck'] as const
+const STATS = ['hp', 'sta', 'int', 'ref', 'dex', 'body', 'emp', 'cra', 'will', 'speed', 'luck', 'movement'] as const
 
 // SKILLS_BY_STAT группирует навыки по именам статов персонажа (Str/Rea) — у существа те же группы
 // навыков хранятся под другими именами характеристик (Body/Ref), поэтому для меток используем их,
@@ -40,6 +40,7 @@ function toFormValues(ct: {
   will: number
   speed: number
   luck: number
+  movement: number
 }): CreatureTemplateFormValues {
   return {
     bodyTemplateId: ct.bodyTemplateId,
@@ -57,6 +58,7 @@ function toFormValues(ct: {
     will: ct.will,
     speed: ct.speed,
     luck: ct.luck,
+    movement: ct.movement,
   }
 }
 
@@ -276,7 +278,8 @@ export function CreatureTemplateDetailsPage() {
                   <Field key={s} label={s.toUpperCase()}>
                     <Input
                       type="number"
-                      min={s === 'speed' || s === 'luck' ? 0 : 1}
+                      min={s === 'speed' || s === 'luck' || s === 'movement' ? 0 : 1}
+                      max={s === 'movement' ? 20 : undefined}
                       value={templateValues[s]}
                       onChange={(e) => setTemplateValues({ ...templateValues, [s]: Number(e.target.value) })}
                     />

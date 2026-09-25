@@ -8,7 +8,7 @@ import { CREATURE_TYPES, type CreatureTemplateFormValues } from '../../types/api
 import { bodyTemplatesApi } from '../bodyTemplates/api'
 import { creatureTemplatesApi } from './api'
 
-const STATS = ['hp', 'sta', 'int', 'ref', 'dex', 'body', 'emp', 'cra', 'will', 'speed', 'luck'] as const
+const STATS = ['hp', 'sta', 'int', 'ref', 'dex', 'body', 'emp', 'cra', 'will', 'speed', 'luck', 'movement'] as const
 
 export function CreatureTemplateFormPage() {
   const { gameId } = useParams<{ gameId: string }>()
@@ -40,6 +40,7 @@ export function CreatureTemplateFormPage() {
       will: 1,
       speed: 0,
       luck: 0,
+      movement: 0,
     },
   })
 
@@ -115,7 +116,15 @@ export function CreatureTemplateFormPage() {
               <div className="grid grid-cols-4 gap-3 sm:grid-cols-6">
                 {STATS.map((s) => (
                   <Field key={s} label={s.toUpperCase()}>
-                    <Input type="number" {...register(s, { required: true, valueAsNumber: true, min: s === 'speed' || s === 'luck' ? 0 : 1 })} />
+                    <Input
+                      type="number"
+                      {...register(s, {
+                        required: true,
+                        valueAsNumber: true,
+                        min: s === 'speed' || s === 'luck' || s === 'movement' ? 0 : 1,
+                        max: s === 'movement' ? 20 : undefined,
+                      })}
+                    />
                   </Field>
                 ))}
               </div>
