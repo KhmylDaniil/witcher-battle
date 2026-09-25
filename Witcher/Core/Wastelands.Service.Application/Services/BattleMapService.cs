@@ -84,7 +84,7 @@ namespace Wastelands.Service.Application.Services
 		public async Task<BattleMapDto> SetMarkerAsync(SetBattleMapMarkerRequest request)
 		{
 			var battleMap = await GetByIdAsync(request.BattleMapId);
-			battleMap.SetMarker(request.Column, request.Row, request.Text);
+			battleMap.SetMarker(request.Column, request.Row, request.Text, request.VisibleToPlayers);
 
 			await _battleMapRepository.SaveTrackedChangesAsync();
 

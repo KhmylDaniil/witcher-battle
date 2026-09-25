@@ -20,8 +20,8 @@ export const battleMapsApi = {
   update: (id: number, payload: UpdateBattleMapFormValues) => api.put<BattleMap>(`/api/battle-maps/${id}`, payload),
   paintHexes: (id: number, hexes: HexPaint[]) => api.put<BattleMap>(`/api/battle-maps/${id}/hexes`, { hexes }),
   remove: (id: number) => api.delete<void>(`/api/battle-maps/${id}`),
-  setMarker: (id: number, column: number, row: number, text: string) =>
-    api.put<BattleMap>(`/api/battle-maps/${id}/hexes/${column}/${row}/marker`, { text }),
+  setMarker: (id: number, column: number, row: number, text: string, visibleToPlayers: boolean) =>
+    api.put<BattleMap>(`/api/battle-maps/${id}/hexes/${column}/${row}/marker`, { text, visibleToPlayers }),
   removeMarker: (id: number, column: number, row: number) =>
     api.delete<BattleMap>(`/api/battle-maps/${id}/hexes/${column}/${row}/marker`),
 }

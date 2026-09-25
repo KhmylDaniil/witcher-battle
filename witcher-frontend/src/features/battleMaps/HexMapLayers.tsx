@@ -53,9 +53,11 @@ export const HexCell = memo(function HexCell({
 
 /**
  * Маркер мастера на гексе — булавка в правом верхнем углу гекса, чтобы не перекрываться с фишкой
- * участника в центре (на гексе может быть и участник, и объект).
+ * участника в центре (на гексе может быть и участник, и объект). Янтарная — заметка только для мастера,
+ * бирюзовая — маркер, открытый игрокам.
  */
-export const MarkerPin = memo(function MarkerPin({ column, row }: { column: number; row: number }) {
+export const MarkerPin = memo(function MarkerPin({ column, row, visibleToPlayers }: { column: number; row: number; visibleToPlayers: boolean }) {
+  const [fill, dark] = visibleToPlayers ? ['#2dd4bf', '#134e4a'] : ['#f59e0b', '#451a03']
   const { x, y } = hexCenter(column, row, HEX_SIZE)
   const px = x + HEX_SIZE * 0.42
   const py = y - HEX_SIZE * 0.5
@@ -64,11 +66,11 @@ export const MarkerPin = memo(function MarkerPin({ column, row }: { column: numb
     <g pointerEvents="none">
       <path
         d={`M${px} ${py + r * 2.1} L${px - r * 0.8} ${py + r * 0.6} A${r} ${r} 0 1 1 ${px + r * 0.8} ${py + r * 0.6} Z`}
-        fill="#f59e0b"
-        stroke="#451a03"
+        fill={fill}
+        stroke={dark}
         strokeWidth={1}
       />
-      <circle cx={px} cy={py} r={r * 0.4} fill="#451a03" />
+      <circle cx={px} cy={py} r={r * 0.4} fill={dark} />
     </g>
   )
 })

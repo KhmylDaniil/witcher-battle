@@ -38,6 +38,10 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnType($"varchar({BattleMapHex.MaxMarkerTextLength})")
 				.IsRequired(false);
 
+			builder.Property(x => x.MarkerVisibleToPlayers)
+				.HasColumnName("MarkerVisibleToPlayers")
+				.IsRequired();
+
 			builder.Ignore(x => x.IsPassable);
 			builder.Ignore(x => x.MovementCost);
 

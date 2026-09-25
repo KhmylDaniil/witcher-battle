@@ -286,7 +286,7 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
               {map.hexes
                 .filter((h) => h.markerText)
                 .map((h) => (
-                  <MarkerPin key={hexKey(h.column, h.row)} column={h.column} row={h.row} />
+                  <MarkerPin key={hexKey(h.column, h.row)} column={h.column} row={h.row} visibleToPlayers={h.markerVisibleToPlayers} />
                 ))}
               {placed.map((p) => (
                 <ParticipantToken
@@ -324,7 +324,14 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
                   </div>
                 </div>
               )}
-              {hoveredHex?.markerText && <div>📍 {hoveredHex.markerText}</div>}
+              {hoveredHex?.markerText && (
+                <div>
+                  📍 {hoveredHex.markerText}
+                  {view.canEdit && (
+                    <div className="mt-1 text-[11px] opacity-70">{hoveredHex.markerVisibleToPlayers ? 'Видно игрокам' : 'Только мастеру'}</div>
+                  )}
+                </div>
+              )}
             </MapTooltip>
           )}
 

@@ -35,6 +35,12 @@ namespace Wastelands.Service.Domain.Entities
 		/// <summary>Текст маркера, который мастер поставил на гекс (показывается всплывающей подсказкой). Null — маркера нет.</summary>
 		public string? MarkerText { get; private set; }
 
+		/// <summary>
+		/// Видят ли маркер игроки на карте идущего боя. По умолчанию нет: маркер — заметка мастера
+		/// (ловушки, засады), открывать её игрокам мастер решает явно.
+		/// </summary>
+		public bool MarkerVisibleToPlayers { get; private set; }
+
 		/// <summary>Можно ли вообще зайти на гекс.</summary>
 		public bool IsPassable => TerrainType is HexTerrainType.Open or HexTerrainType.Difficult;
 
@@ -66,7 +72,7 @@ namespace Wastelands.Service.Domain.Entities
 			TerrainStyle = terrainStyle;
 		}
 
-		internal void SetMarker(string text)
+		internal void SetMarker(string text, bool visibleToPlayers)
 		{
 			InvalidArgumentException.ThrowIfNullOrEmpty(text?.Trim(), nameof(text));
 			if (text!.Length > MaxMarkerTextLength)
@@ -75,11 +81,13 @@ namespace Wastelands.Service.Domain.Entities
 			}
 
 			MarkerText = text.Trim();
+			MarkerVisibleToPlayers = visibleToPlayers;
 		}
 
 		internal void RemoveMarker()
 		{
 			MarkerText = null;
+			MarkerVisibleToPlayers = false;
 		}
 	}
 }

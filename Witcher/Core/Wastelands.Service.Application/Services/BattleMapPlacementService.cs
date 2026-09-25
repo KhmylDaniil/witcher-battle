@@ -14,7 +14,7 @@ namespace Wastelands.Service.Application.Services
 	/// <summary>
 	/// Смотреть карту боя могут все, кому виден сам бой (скоуп BattleRepository): мастер — всегда, игрок —
 	/// только пока бой идёт и в нём есть его персонаж. Менять (подключать карту, расставлять) — только мастер.
-	/// Маркеры карты — заметки мастера, игрокам они не отдаются.
+	/// Маркеры карты — заметки мастера: игрокам отдаются только отмеченные "видно игрокам".
 	/// </summary>
 	public class BattleMapPlacementService : IBattleMapPlacementService
 	{
@@ -153,10 +153,12 @@ namespace Wastelands.Service.Application.Services
 				}
 			}
 
+			// Игрокам — только маркеры, которые мастер явно открыл (MarkerVisibleToPlayers); остальные —
+			// его заметки, их текст не должен уходить с сервера.
 			var mapDto = battleMap is null ? null : _mapper.Map<BattleMapDto>(battleMap);
 			if (mapDto is not null && !isGm)
 			{
-				foreach (var hex in mapDto.Hexes)
+				foreach (var hex in mapDto.Hexes.Where(h => !h.MarkerVisibleToPlayers))
 				{
 					hex.MarkerText = null;
 				}

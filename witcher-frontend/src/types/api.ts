@@ -630,6 +630,8 @@ export interface BattleMapHex {
   movementCost: number | null
   /** Текст маркера мастера на гексе; null — маркера нет. На гексе не больше одного объекта. */
   markerText: string | null
+  /** Маркер показывается игрокам на карте идущего боя; false — заметка только для мастера. */
+  markerVisibleToPlayers: boolean
 }
 
 /** Карта без гексов — то, что отдаёт список карт игры. */

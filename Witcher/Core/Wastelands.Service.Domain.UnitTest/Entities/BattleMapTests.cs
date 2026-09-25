@@ -126,6 +126,21 @@ namespace Wastelands.Service.Domain.UnitTest.Entities
 		}
 
 		[TestMethod]
+		public void SetMarker_HiddenFromPlayersByDefault_FlagCanBeToggled_AndResetsOnRemoval()
+		{
+			var map = new BattleMap(1, "Map", null, 3, 3, HexTerrainStyle.Grass);
+
+			map.SetMarker(0, 0, "Ловушка");
+			map.FindHex(0, 0)!.MarkerVisibleToPlayers.Should().BeFalse();
+
+			map.SetMarker(0, 0, "Колодец", visibleToPlayers: true);
+			map.FindHex(0, 0)!.MarkerVisibleToPlayers.Should().BeTrue();
+
+			map.RemoveMarker(0, 0);
+			map.FindHex(0, 0)!.MarkerVisibleToPlayers.Should().BeFalse();
+		}
+
+		[TestMethod]
 		[DataRow("")]
 		[DataRow("   ")]
 		public void SetMarker_EmptyText_Throws(string text)

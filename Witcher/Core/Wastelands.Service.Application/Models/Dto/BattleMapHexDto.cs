@@ -17,5 +17,7 @@ namespace Wastelands.Service.Application.Models.Dto
 		public int? MovementCost { get; set; }
 
 		public string? MarkerText { get; set; }
+
+		public bool MarkerVisibleToPlayers { get; set; }
 	}
 }

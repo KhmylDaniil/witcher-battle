@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Wastelands.Service.Domain.Enums;
@@ -13,9 +14,11 @@ using Wastelands.Service.Infrastructure;
 namespace Wastelands.Service.Infrastructure.Migrations
 {
     [DbContext(typeof(WastelandsDbContext))]
-    partial class WastelandsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260925110512_AddMarkerVisibleToPlayers")]
+    partial class AddMarkerVisibleToPlayers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

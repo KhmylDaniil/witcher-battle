@@ -217,7 +217,7 @@ function Editor({ gameId, map }: { gameId: number; map: BattleMap }) {
 
   const { width: viewWidth, height: viewHeight } = mapViewSize(map.columns, map.rows)
   const markedHexes = map.hexes.filter((h) => h.markerText)
-  const hoveredMarker = hovered ? saved.get(hexKey(hovered.column, hovered.row))?.markerText : null
+  const hoveredMarkerHex = hovered ? saved.get(hexKey(hovered.column, hovered.row)) : undefined
 
   const hoveredLook = hovered ? effectiveLook(hexKey(hovered.column, hovered.row), saved, pending) : undefined
   const brushPreview =
@@ -392,7 +392,7 @@ function Editor({ gameId, map }: { gameId: number; map: BattleMap }) {
                 )
               })}
               {markedHexes.map((h) => (
-                <MarkerPin key={hexKey(h.column, h.row)} column={h.column} row={h.row} />
+                <MarkerPin key={hexKey(h.column, h.row)} column={h.column} row={h.row} visibleToPlayers={h.markerVisibleToPlayers} />
               ))}
               {tool === 'marker' && markerHex && (
                 <polygon
@@ -416,7 +416,12 @@ function Editor({ gameId, map }: { gameId: number; map: BattleMap }) {
             </g>
           </svg>
 
-          {hoveredMarker && pointer && <MapTooltip x={pointer.x} y={pointer.y}>{hoveredMarker}</MapTooltip>}
+          {hoveredMarkerHex?.markerText && pointer && (
+            <MapTooltip x={pointer.x} y={pointer.y}>
+              {hoveredMarkerHex.markerText}
+              <div className="mt-1 text-[11px] opacity-70">{hoveredMarkerHex.markerVisibleToPlayers ? 'Видно игрокам' : 'Только мастеру'}</div>
+            </MapTooltip>
+          )}
 
           {hovered && hoveredLook && (
             <div className="pointer-events-none fixed bottom-3 right-3 rounded-md bg-black/75 px-3 py-1.5 text-xs text-white">
@@ -496,15 +501,18 @@ function TerrainLegend() {
 /** Маркер выбранного гекса: поставить/изменить текст или убрать. Сохраняется сразу, без кнопки "Сохранить" карты. */
 function MarkerForm({ gameId, map, hex, onDone }: { gameId: number; map: BattleMap; hex: HexCoord; onDone: () => void }) {
   const queryClient = useQueryClient()
-  const existing = map.hexes.find((h) => h.column === hex.column && h.row === hex.row)?.markerText ?? null
+  const existingHex = map.hexes.find((h) => h.column === hex.column && h.row === hex.row)
+  const existing = existingHex?.markerText ?? null
   const [text, setText] = useState(existing ?? '')
+  // Новый маркер по умолчанию скрыт от игроков: открыть заметку мастер решает сам.
+  const [visibleToPlayers, setVisibleToPlayers] = useState(existingHex?.markerVisibleToPlayers ?? false)
 
   const onSuccess = (updated: BattleMap) => {
     queryClient.setQueryData(['battle-maps', map.id], updated)
     notifyBattleMapsChanged(gameId)
     onDone()
   }
-  const save = useMutation({ mutationFn: () => battleMapsApi.setMarker(map.id, hex.column, hex.row, text), onSuccess })
+  const save = useMutation({ mutationFn: () => battleMapsApi.setMarker(map.id, hex.column, hex.row, text, visibleToPlayers), onSuccess })
   const remove = useMutation({ mutationFn: () => battleMapsApi.removeMarker(map.id, hex.column, hex.row), onSuccess })
   const error = save.error ?? remove.error
 
@@ -528,6 +536,15 @@ function MarkerForm({ gameId, map, hex, onDone }: { gameId: number; map: BattleM
         required
         autoFocus
       />
+      <label className="flex items-center gap-2 text-sm">
+        <input type="checkbox" checked={visibleToPlayers} onChange={(e) => setVisibleToPlayers(e.target.checked)} />
+        Видно игрокам
+      </label>
+      <p className="text-xs text-neutral-500">
+        {visibleToPlayers
+          ? 'Игроки увидят маркер и его текст на карте идущего боя.'
+          : 'Заметка только для мастера — игрокам маркер не показывается.'}
+      </p>
       {error && <ErrorText>{error instanceof ApiError ? error.message : 'Не удалось сохранить маркер'}</ErrorText>}
       <div className="flex flex-wrap gap-1">
         <Button type="submit" className="flex-1 px-2 py-1" disabled={save.isPending || !text.trim()}>

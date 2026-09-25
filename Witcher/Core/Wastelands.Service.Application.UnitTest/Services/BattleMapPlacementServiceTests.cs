@@ -38,6 +38,7 @@ namespace Wastelands.Service.Application.UnitTest.Services
 		{
 			_map = new BattleMap(1, "Map", null, 3, 3, HexTerrainStyle.Grass).WithId(MapId);
 			_map.SetMarker(2, 2, "Секретный лаз");
+			_map.SetMarker(0, 1, "Колодец", visibleToPlayers: true);
 
 			_battle = new Battle(1, "Battle").WithId(BattleId);
 			var wolf = TestBuilders.Creature(BattleId, TestBuilders.CreatureTemplate().WithId(7), "Wolf").WithId(10);
@@ -82,13 +83,15 @@ namespace Wastelands.Service.Application.UnitTest.Services
 		}
 
 		[TestMethod]
-		public async Task GetMapView_Player_IsReadOnly_WithoutMarkers_ButWithPositionsAndAvatars()
+		public async Task GetMapView_Player_IsReadOnly_SeesOnlyPlayerVisibleMarkers_PositionsAndAvatars()
 		{
 			var view = await BuildService(PlayerUserId).GetMapViewAsync(BattleId);
 
 			view.CanEdit.Should().BeFalse();
 			view.Map.Should().NotBeNull();
-			view.Map!.Hexes.Should().OnlyContain(h => h.MarkerText == null);
+			view.Map!.Hexes.Single(h => h.Column == 2 && h.Row == 2).MarkerText.Should().BeNull("маркер мастера скрыт от игроков");
+			view.Map.Hexes.Single(h => h.Column == 0 && h.Row == 1).MarkerText.Should().Be("Колодец");
+			view.Map.Hexes.Count(h => h.MarkerText != null).Should().Be(1);
 			view.Participants.Should().HaveCount(2);
 
 			var wolf = view.Participants.Single(p => p.Kind == ParticipantKind.Creature);

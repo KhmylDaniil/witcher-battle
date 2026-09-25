@@ -124,10 +124,10 @@ namespace Wastelands.Service.Domain.Entities
 				$"Гекс ({column}, {row}) находится за пределами карты {Columns}×{Rows}.");
 		}
 
-		/// <summary>Ставит на гекс маркер с текстом (или меняет текст уже стоящего).</summary>
-		public void SetMarker(int column, int row, string text)
+		/// <summary>Ставит на гекс маркер с текстом (или меняет текст/видимость уже стоящего).</summary>
+		public void SetMarker(int column, int row, string text, bool visibleToPlayers = false)
 		{
-			GetHex(column, row).SetMarker(text);
+			GetHex(column, row).SetMarker(text, visibleToPlayers);
 		}
 
 		public void RemoveMarker(int column, int row)

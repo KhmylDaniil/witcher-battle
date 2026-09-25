@@ -2,7 +2,8 @@ import { expect, test, type APIRequestContext, type Browser } from '@playwright/
 
 /**
  * A player whose character is in a battle sees the battle map only once the battle is running, and only
- * read-only: positions and tokens yes, GM markers and placement controls no.
+ * read-only: positions, tokens and markers the GM marked "видно игрокам" yes; GM-only markers and
+ * placement controls no.
  */
 
 async function send<T>(request: APIRequestContext, method: 'post' | 'put', url: string, data?: unknown): Promise<T> {
@@ -35,6 +36,7 @@ test('player sees the battle map read-only while the battle is in progress', asy
 
   const map = await send<{ id: number }>(gmApi, 'post', '/api/battle-maps', { gameId: game.id, name: 'Руины', columns: 5, rows: 4, terrainStyle: 'AncientStreet' })
   await send(gmApi, 'put', `/api/battle-maps/${map.id}/hexes/3/2/marker`, { text: 'Засада мастера' })
+  await send(gmApi, 'put', `/api/battle-maps/${map.id}/hexes/0/2/marker`, { text: 'Старый колодец', visibleToPlayers: true })
   const battle = await send<{ id: number }>(gmApi, 'post', `/api/games/${game.id}/battles`, { name: 'Налёт' })
   await send(gmApi, 'post', `/api/games/${game.id}/battles/${battle.id}/characters`, { characterId: character.id })
   await send(gmApi, 'put', `/api/games/${game.id}/battles/${battle.id}/map`, { battleMapId: map.id })
@@ -48,7 +50,7 @@ test('player sees the battle map read-only while the battle is in progress', asy
 
   const view = (await (await playerApi.get(mapUrl)).json()) as { canEdit: boolean; map: { hexes: { markerText: string | null }[] } }
   expect(view.canEdit).toBe(false)
-  expect(view.map.hexes.every((h) => h.markerText === null)).toBe(true)
+  expect(view.map.hexes.filter((h) => h.markerText !== null).map((h) => h.markerText)).toEqual(['Старый колодец'])
   // Менять расстановку игрок не может.
   const place = await playerApi.put(`${mapUrl}/participants/Character/${character.id}`, { data: { column: 2, row: 1 } })
   expect(place.ok()).toBe(false)
@@ -73,6 +75,14 @@ test('player sees the battle map read-only while the battle is in progress', asy
   const token = hexPoint(1, 1)
   await mapWindow.mouse.move(token.x, token.y)
   await expect(mapWindow.getByRole('tooltip')).toContainText('Цири')
+
+  const openMarker = hexPoint(0, 2)
+  await mapWindow.mouse.move(openMarker.x, openMarker.y)
+  await expect(mapWindow.getByRole('tooltip')).toContainText('Старый колодец')
+  await expect(mapWindow.getByRole('tooltip')).not.toContainText('Видно игрокам')
+  const hiddenMarker = hexPoint(3, 2)
+  await mapWindow.mouse.move(hiddenMarker.x, hiddenMarker.y)
+  await expect(mapWindow.getByRole('tooltip')).toHaveCount(0)
 
   await gm.close()
   await player.close()

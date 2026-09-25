@@ -52,4 +52,17 @@ test('create a battle map, paint a hex in the editor window, save', async ({ pag
   await editor.mouse.move(0, 0)
   await editor.mouse.move(box.x + 30, box.y + 32)
   await expect(editor.getByText(/Гекс \(0, 0\) · Стена/)).toBeVisible()
+
+  // Маркер, открытый игрокам: инструмент "Маркер", текст + флажок "Видно игрокам".
+  await editor.getByRole('button', { name: 'Маркер' }).click()
+  await editor.mouse.click(box.x + 30, box.y + 32)
+  await editor.getByPlaceholder(/сундук/).fill('Вход в пещеру')
+  await editor.getByLabel('Видно игрокам').check()
+  const markerResponse = editor.waitForResponse((res) => res.url().includes('/marker') && res.request().method() === 'PUT')
+  await editor.getByRole('button', { name: 'Поставить' }).click()
+  expect(((await (await markerResponse).request().postDataJSON()) as { visibleToPlayers: boolean }).visibleToPlayers).toBe(true)
+  await editor.mouse.move(0, 0)
+  await editor.mouse.move(box.x + 30, box.y + 32)
+  await expect(editor.getByRole('tooltip')).toContainText('Вход в пещеру')
+  await expect(editor.getByRole('tooltip')).toContainText('Видно игрокам')
 })

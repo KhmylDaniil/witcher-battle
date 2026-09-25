@@ -9,5 +9,8 @@ namespace Wastelands.Service.Application.Models.Requests
 		public int Row { get; set; }
 
 		public string Text { get; set; }
+
+		/// <summary>Показывать маркер игрокам на карте идущего боя (по умолчанию — только мастеру).</summary>
+		public bool VisibleToPlayers { get; set; }
 	}
 }
