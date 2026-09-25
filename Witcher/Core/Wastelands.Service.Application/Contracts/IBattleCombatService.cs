@@ -1,5 +1,6 @@
 using Wastelands.Service.Application.Models.Dto;
 using Wastelands.Service.Application.Models.Requests;
+using Wastelands.Service.Domain.Enums;
 
 namespace Wastelands.Service.Application.Contracts
 {
@@ -51,5 +52,28 @@ namespace Wastelands.Service.Application.Contracts
 
 		/// <summary>Попытка стабилизировать умирающего персонажа броском FirstAid против сложности |его HP|.</summary>
 		Task<BattleDto> StabilizeAsync(StabilizeRequest request);
+
+		/// <summary>
+		/// Перемещение по подключённой к бою карте в свой ход — тратит очки движения, не является
+		/// действием хода (в отличие от атаки/снятия состояния — ход не заканчивает и не открывает окно
+		/// дополнительного действия), поэтому можно двигаться несколькими вызовами за один ход, пока
+		/// хватает запаса.
+		/// </summary>
+		Task<BattleDto> MoveAsync(MoveParticipantRequest request);
+
+		/// <summary>
+		/// Гексы, на которые активный участник может дойти прямо сейчас, вместе со стоимостью пути до
+		/// каждого — для подсветки на карте. Доступно и не в свой ход (просмотр), фактически передвинуться
+		/// может только контроллер активного участника в его ход (см. MoveAsync).
+		/// </summary>
+		Task<List<MovementRangeHexDto>> GetMovementRangeAsync(long battleId, ParticipantKind kind, long participantId);
+
+		/// <summary>
+		/// Обновляет запас движения участника до базового значения — основное или дополнительное действие
+		/// хода (та же механика TryChargeBonusAction, что и у AttemptRemoveConditionAsync): у персонажа
+		/// первый вызов в ходу — обычное действие (окно доп. действия открывается), второй — доп. действие
+		/// за стамину и заканчивает ход; у существа любой вызов сразу заканчивает ход.
+		/// </summary>
+		Task<BattleDto> RefreshMovementAsync(long battleId);
 	}
 }

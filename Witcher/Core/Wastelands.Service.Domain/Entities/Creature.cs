@@ -39,6 +39,12 @@ namespace Wastelands.Service.Domain.Entities
 
 		public int? Initiative { get; private set; }
 
+		/// <summary>Базовый запас движения за ход — скопирован из CreatureTemplate.Movement при добавлении в бой.</summary>
+		public int MaxMovement { get; private set; }
+
+		/// <summary>Остаток запаса движения в текущем ходу — сбрасывается до MaxMovement в начале каждого хода (см. Battle.AdvanceTurn).</summary>
+		public int CurrentMovement { get; private set; }
+
 		public List<Condition> AppliedConditions { get; private set; } = [];
 
 		/// <summary>
@@ -75,6 +81,8 @@ namespace Wastelands.Service.Domain.Entities
 			Ref = template.Ref;
 			Recovery = (template.Body + template.Will) / 2;
 			Stun = (template.Body + template.Will) / 2;
+			MaxMovement = template.Movement;
+			CurrentMovement = template.Movement;
 		}
 
 		public void UpdateState(string name, int currentHp, int currentSta)
@@ -104,6 +112,23 @@ namespace Wastelands.Service.Domain.Entities
 		{
 			MapColumn = null;
 			MapRow = null;
+		}
+
+		/// <summary>Сбрасывает запас движения до базового — начало хода (Battle.AdvanceTurn) или действие "обновить движение".</summary>
+		internal void RefreshMovement()
+		{
+			CurrentMovement = MaxMovement;
+		}
+
+		internal void SpendMovement(int amount)
+		{
+			InvalidArgumentException.ThrowIfLessOrEqualToZero(amount, nameof(amount));
+			if (amount > CurrentMovement)
+			{
+				throw new InvalidArgumentException(ErrorCode.NotEnoughMovement, "Недостаточно очков движения.");
+			}
+
+			CurrentMovement -= amount;
 		}
 
 		internal void ReassignInitiative(int value)

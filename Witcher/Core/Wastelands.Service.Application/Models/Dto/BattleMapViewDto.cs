@@ -45,6 +45,10 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public int? Row { get; set; }
 
+		public int MaxMovement { get; set; }
+
+		public int CurrentMovement { get; set; }
+
 		/// <summary>Участником управляет текущий пользователь: свой персонаж игрока или, для мастера, любое существо.</summary>
 		public bool ControlledByCurrentUser { get; set; }
 	}

@@ -208,6 +208,21 @@ namespace Wastelands.API.Controllers.Api
 		[HttpGet("{id:long}/characters/{characterId:long}/sheet")]
 		public async Task<CharacterDto> GetCharacterSheet(long gameId, long id, long characterId)
 			=> await _sheetService.GetCharacterSheetAsync(id, characterId);
+
+		[HttpPost("{id:long}/move")]
+		public async Task<BattleDto> Move(long gameId, long id, MoveParticipantRequest request)
+		{
+			request.BattleId = id;
+			return await _battleCombatService.MoveAsync(request);
+		}
+
+		[HttpGet("{id:long}/movement-range")]
+		public async Task<List<MovementRangeHexDto>> GetMovementRange(long gameId, long id, ParticipantKind kind, long participantId)
+			=> await _battleCombatService.GetMovementRangeAsync(id, kind, participantId);
+
+		[HttpPost("{id:long}/refresh-movement")]
+		public async Task<BattleDto> RefreshMovement(long gameId, long id)
+			=> await _battleCombatService.RefreshMovementAsync(id);
 	}
 
 	public sealed class ConditionPayload

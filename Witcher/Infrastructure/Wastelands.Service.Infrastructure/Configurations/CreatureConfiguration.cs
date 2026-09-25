@@ -52,6 +52,9 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnName("MapRow")
 				.IsRequired(false);
 
+			builder.Property(x => x.MaxMovement).HasColumnName("MaxMovement").IsRequired();
+			builder.Property(x => x.CurrentMovement).HasColumnName("CurrentMovement").IsRequired();
+
 			// Страховка на уровне БД к доменному правилу "один участник на гекс" (Battle.PlaceParticipantOnMap)
 			// в пределах этой таблицы; пересечение существо/персонаж проверяет только домен. NULL-позиции
 			// (не выставлен) в Postgres уникальность не нарушают.

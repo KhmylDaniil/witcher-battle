@@ -29,6 +29,10 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public int? MapRow { get; set; }
 
+		public int MaxMovement { get; set; }
+
+		public int CurrentMovement { get; set; }
+
 		public List<Condition> AppliedConditions { get; set; } = [];
 
 		/// <summary>Износ брони по частям тела в этом бою — для расчёта текущей (эффективной) брони на фронте.</summary>

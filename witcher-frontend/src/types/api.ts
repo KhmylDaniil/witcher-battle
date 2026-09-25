@@ -469,6 +469,8 @@ export interface BattleCreature {
   /** Позиция на подключённой к бою карте; null — не выставлен. */
   mapColumn: number | null
   mapRow: number | null
+  maxMovement: number
+  currentMovement: number
   appliedConditions: Condition[]
   /** Износ брони по частям тела в этом бою (partId -> сколько очков брони потеряно). */
   armorReductionByPartId: Partial<Record<number, number>>
@@ -487,6 +489,8 @@ export interface BattleCharacterEntry {
   /** Позиция на подключённой к бою карте; null — не выставлен. */
   mapColumn: number | null
   mapRow: number | null
+  maxMovement: number
+  currentMovement: number
   appliedConditions: Condition[]
   /** Уже потратил основное действие в этот ход — доступно доп. действие за 3 выносливости или конец хода. */
   hasActedThisTurn: boolean
@@ -691,6 +695,8 @@ export interface BattleMapParticipant {
   initiative: number | null
   column: number | null
   row: number | null
+  maxMovement: number
+  currentMovement: number
   /** Своим участником управляет текущий пользователь (свой персонаж игрока; для мастера — существа). */
   controlledByCurrentUser: boolean
 }
@@ -704,4 +710,11 @@ export interface BattleMapView {
   canEdit: boolean
   map: BattleMap | null
   participants: BattleMapParticipant[]
+}
+
+/** Гекс, до которого участник может дойти прямо сейчас, и во сколько очков движения это обойдётся. */
+export interface MovementRangeHex {
+  column: number
+  row: number
+  cost: number
 }

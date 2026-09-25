@@ -26,6 +26,10 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public int? MapRow { get; set; }
 
+		public int MaxMovement { get; set; }
+
+		public int CurrentMovement { get; set; }
+
 		public List<Condition> AppliedConditions { get; set; } = [];
 
 		/// <summary>true — этот персонаж уже потратил в свой текущий ход основное действие и может взять дополнительное (см. BattleAttack.BonusActionStaminaCost) или закончить ход.</summary>

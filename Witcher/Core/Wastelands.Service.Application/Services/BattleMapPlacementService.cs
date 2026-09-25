@@ -123,6 +123,8 @@ namespace Wastelands.Service.Application.Services
 					Initiative = c.Initiative,
 					Column = c.MapColumn,
 					Row = c.MapRow,
+					MaxMovement = c.MaxMovement,
+					CurrentMovement = c.CurrentMovement,
 					ControlledByCurrentUser = isGm,
 				})
 				.Concat(battle.Characters.Select(bc => new BattleMapParticipantDto
@@ -136,6 +138,8 @@ namespace Wastelands.Service.Application.Services
 					Initiative = bc.Initiative,
 					Column = bc.MapColumn,
 					Row = bc.MapRow,
+					MaxMovement = bc.MaxMovement,
+					CurrentMovement = bc.CurrentMovement,
 					ControlledByCurrentUser = bc.Character.UserId == currentUserId,
 				}))
 				.OrderBy(p => p.Initiative ?? int.MaxValue)

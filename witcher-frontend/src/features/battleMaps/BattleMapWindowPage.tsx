@@ -5,6 +5,7 @@ import { Button, ErrorText, Spinner } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
 import { useBattleUpdates } from '../../lib/battleHub'
 import { HEX_TERRAIN_TYPE_LABELS, type BattleMapParticipant, type BattleMapView, type ParticipantKind } from '../../types/api'
+import { battlesApi } from '../battles/api'
 import { battleMapPlacementApi } from './api'
 import { subscribeBattleMapsChanged } from './editorWindow'
 import { HexCell, MapTooltip, MarkerPin, ParticipantAvatar, ParticipantToken } from './HexMapLayers'
@@ -69,6 +70,16 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
     mutationFn: (p: ParticipantRef) => battleMapPlacementApi.remove(gameId, view.battleId, p.kind, p.id),
     onSuccess,
   })
+  // Движение по правилам (в отличие от place — свободной расстановки мастером): доступно, только пока
+  // выбран участник, чей сейчас ход, и им управляет текущий пользователь (свой персонаж или, для
+  // мастера, существо). Сервер сам считает кратчайший маршрут и списывает очки движения.
+  const move = useMutation({
+    mutationFn: (hex: HexCoord) => battlesApi.move(gameId, view.battleId, hex.column, hex.row),
+    // /move возвращает BattleDto (не BattleMapView) — вместо ручного патча кэша просто перезапрашиваем
+    // карту; SignalR-обновление (useBattleUpdates в BattleMapWindowPage) сделало бы то же самое, но не
+    // обязательно долетит быстрее собственного ответа мутации.
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['battles', gameId, view.battleId, 'map'] }),
+  })
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -88,7 +99,27 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
   const readOnly = !view.canEdit
   const selectedParticipant = view.participants.find((p) => sameParticipant(p, selected)) ?? null
   const isActive = (p: BattleMapParticipant) => view.currentInitiative !== null && p.initiative === view.currentInitiative
-  const error = place.error ?? remove.error
+  const error = place.error ?? remove.error ?? move.error
+
+  // Двигать (в отличие от свободно расставлять) можно только выбранного сейчас-активного участника,
+  // которым управляет текущий пользователь (свой персонаж или, для мастера, существо), и только пока
+  // бой идёт — сервер бы всё равно это перепроверил, но так UI не предлагает то, что заведомо откажет.
+  const movable =
+    !!selectedParticipant
+    && selectedParticipant.column !== null
+    && view.status === 'InProgress'
+    && isActive(selectedParticipant)
+    && selectedParticipant.controlledByCurrentUser
+  const movementRange = useQuery({
+    queryKey: ['battles', gameId, view.battleId, 'movement-range', selected?.kind, selected?.id],
+    queryFn: () => battlesApi.movementRange(gameId, view.battleId, selected!.kind, selected!.id),
+    enabled: movable,
+  })
+  const reachableByKey = useMemo(() => {
+    const result = new Map<string, number>()
+    for (const h of movementRange.data ?? []) result.set(hexKey(h.column, h.row), h.cost)
+    return result
+  }, [movementRange.data])
 
   const header = (
     <header className="flex flex-wrap items-center gap-3 border-b border-neutral-200 bg-white px-4 py-2 dark:border-neutral-800 dark:bg-neutral-900">
@@ -127,16 +158,22 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
   const hexAt = (e: ReactPointerEvent<SVGSVGElement>) => hexAtClientPoint(svgRef.current!, e.clientX, e.clientY, zoom, map.columns, map.rows)
 
   const onPointerDown = (e: ReactPointerEvent<SVGSVGElement>) => {
-    if (readOnly || e.button !== 0) return
+    if (e.button !== 0) return
     const hex = hexAt(e)
     if (!hex) return
     const occupant = participantByHex.get(hexKey(hex.column, hex.row))
-    // Клик по чужой фишке — выбрать её (а не пытаться поставить выбранного поверх).
+    // Клик по чужой фишке — выбрать её (а не пытаться поставить/подвинуть выбранного поверх). Работает
+    // и для игрока без права на place — выбор сам по себе ничего не меняет.
     if (occupant && !sameParticipant(occupant, selected)) {
       setSelected({ kind: occupant.kind, id: occupant.id })
       return
     }
-    if (selected && !occupant) place.mutate({ ...selected, ...hex })
+    if (occupant) return
+    if (movable) {
+      if (reachableByKey.has(hexKey(hex.column, hex.row))) move.mutate(hex)
+      return
+    }
+    if (!readOnly && selected) place.mutate({ ...selected, ...hex })
   }
 
   const onPointerMove = (e: ReactPointerEvent<SVGSVGElement>) => {
@@ -148,8 +185,15 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
   const { width: viewWidth, height: viewHeight } = mapViewSize(map.columns, map.rows)
   const hoveredHex = hovered ? hexesByKey.get(hexKey(hovered.column, hovered.row)) : undefined
   const hoveredParticipant = hovered ? participantByHex.get(hexKey(hovered.column, hovered.row)) : undefined
+  const canMoveToHovered = movable && !!hovered && reachableByKey.has(hexKey(hovered.column, hovered.row))
   const canPlaceOnHovered =
-    !!selected && !!hoveredHex && hoveredHex.isPassable && (!hoveredParticipant || sameParticipant(hoveredParticipant, selected))
+    !movable
+    && !readOnly
+    && !!selected
+    && !!hoveredHex
+    && hoveredHex.isPassable
+    && (!hoveredParticipant || sameParticipant(hoveredParticipant, selected))
+  const canActOnHovered = canMoveToHovered || canPlaceOnHovered
 
   const placed = view.participants.filter((p) => p.column !== null)
   const unplaced = view.participants.filter((p) => p.column === null)
@@ -162,23 +206,18 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
         <span className="min-w-0 flex-1">
           <span className="block truncate">
             {p.name}
-            {readOnly && p.controlledByCurrentUser && <span className="ml-1 text-xs text-violet-600">(вы)</span>}
+            {p.controlledByCurrentUser && <span className="ml-1 text-xs text-violet-600">(вы)</span>}
             {isActive(p) && <span className="ml-1 text-xs text-amber-600">● ход</span>}
           </span>
           <span className="block text-xs text-neutral-500">
             {p.kind === 'Creature' ? 'Существо' : 'Персонаж'} · ПЗ {p.currentHP}/{p.maxHP}
             {p.column !== null && ` · (${p.column}, ${p.row})`}
+            {' · движение '}
+            {p.currentMovement}/{p.maxMovement}
           </span>
         </span>
       </>
     )
-    if (readOnly) {
-      return (
-        <li key={`${p.kind}-${p.id}`} className="flex items-center gap-2 px-2 py-1.5">
-          {content}
-        </li>
-      )
-    }
     return (
       <li key={`${p.kind}-${p.id}`}>
         <button
@@ -209,8 +248,8 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
         <aside className="flex w-72 shrink-0 flex-col gap-4 overflow-y-auto border-r border-neutral-200 bg-white p-3 text-sm dark:border-neutral-800 dark:bg-neutral-900">
           <p className="text-xs text-neutral-500">
             {readOnly
-              ? 'Просмотр карты. Расставляет участников мастер; наведите на фишку, чтобы увидеть подробности.'
-              : 'Выберите участника и кликните по свободному проходимому гексу, чтобы выставить или переставить его. На гексе может стоять только один участник. Esc — снять выбор.'}
+              ? 'Просмотр карты. Расставляет участников мастер; наведите на фишку, чтобы увидеть подробности. Когда наступит ваш ход — выберите своего персонажа, чтобы увидеть, куда он может дойти.'
+              : 'Выберите участника и кликните по свободному проходимому гексу, чтобы выставить или переставить его. На гексе может стоять только один участник. В свой ход выбор активного участника вместо этого подсвечивает гексы для движения по правилам. Esc — снять выбор.'}
           </p>
 
           {selectedParticipant && (
@@ -219,12 +258,21 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
                 <ParticipantAvatar kind={selectedParticipant.kind} name={selectedParticipant.name} imageUrl={selectedParticipant.imageUrl} />
                 <span className="font-medium">{selectedParticipant.name}</span>
               </div>
-              <p className="text-xs text-neutral-500">
-                {selectedParticipant.column !== null
-                  ? `Стоит на гексе (${selectedParticipant.column}, ${selectedParticipant.row}). Кликните по другому гексу, чтобы переставить.`
-                  : 'Не на карте. Кликните по гексу, чтобы выставить.'}
-              </p>
-              {selectedParticipant.column !== null && (
+              {movable ? (
+                <p className="text-xs text-neutral-500">
+                  Ваш ход. Движение: {selectedParticipant.currentMovement}/{selectedParticipant.maxMovement}.{' '}
+                  {reachableByKey.size > 1 ? 'Подсвеченные гексы — куда можно дойти прямо сейчас.' : 'Запас движения исчерпан.'}
+                </p>
+              ) : (
+                <p className="text-xs text-neutral-500">
+                  {readOnly
+                    ? selectedParticipant.column !== null && `Стоит на гексе (${selectedParticipant.column}, ${selectedParticipant.row}).`
+                    : selectedParticipant.column !== null
+                      ? `Стоит на гексе (${selectedParticipant.column}, ${selectedParticipant.row}). Кликните по другому гексу, чтобы переставить.`
+                      : 'Не на карте. Кликните по гексу, чтобы выставить.'}
+                </p>
+              )}
+              {!readOnly && selectedParticipant.column !== null && (
                 <Button variant="secondary" className="px-2 py-1" disabled={remove.isPending} onClick={() => remove.mutate(selected!)}>
                   Убрать с карты
                 </Button>
@@ -264,7 +312,22 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
             height={viewHeight * zoom}
             viewBox={`0 0 ${viewWidth} ${viewHeight}`}
             className="m-4 touch-none select-none"
-            style={{ cursor: readOnly ? 'default' : selected ? (canPlaceOnHovered ? 'copy' : hoveredParticipant ? 'pointer' : 'not-allowed') : hoveredParticipant ? 'pointer' : 'default' }}
+            style={{
+              cursor:
+                movable || !readOnly
+                  ? selected
+                    ? canActOnHovered
+                      ? 'copy'
+                      : hoveredParticipant
+                        ? 'pointer'
+                        : 'not-allowed'
+                    : hoveredParticipant
+                      ? 'pointer'
+                      : 'default'
+                  : hoveredParticipant
+                    ? 'pointer'
+                    : 'default',
+            }}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerLeave={() => {
@@ -288,6 +351,22 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
                 .map((h) => (
                   <MarkerPin key={hexKey(h.column, h.row)} column={h.column} row={h.row} />
                 ))}
+              {movable &&
+                [...reachableByKey.keys()]
+                  .filter((key) => key !== hexKey(selectedParticipant!.column!, selectedParticipant!.row!))
+                  .map((key) => {
+                    const [column, row] = key.split(',').map(Number)
+                    return (
+                      <polygon
+                        key={`reachable-${key}`}
+                        points={hexPolygonPoints(column, row, HEX_SIZE)}
+                        fill="rgba(56,189,248,0.22)"
+                        stroke="rgba(14,165,233,0.6)"
+                        strokeWidth={1}
+                        pointerEvents="none"
+                      />
+                    )
+                  })}
               {placed.map((p) => (
                 <ParticipantToken
                   key={`${p.kind}-${p.id}`}
@@ -301,11 +380,11 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
                   selected={sameParticipant(p, selected)}
                 />
               ))}
-              {selected && hovered && (
+              {selected && hovered && (movable || !readOnly) && (
                 <polygon
                   points={hexPolygonPoints(hovered.column, hovered.row, HEX_SIZE)}
-                  fill={canPlaceOnHovered ? 'rgba(34,197,94,0.25)' : 'rgba(239,68,68,0.2)'}
-                  stroke={canPlaceOnHovered ? '#22c55e' : '#ef4444'}
+                  fill={canActOnHovered ? 'rgba(34,197,94,0.25)' : 'rgba(239,68,68,0.2)'}
+                  stroke={canActOnHovered ? '#22c55e' : '#ef4444'}
                   strokeWidth={2}
                   pointerEvents="none"
                 />
@@ -331,6 +410,7 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
           {hovered && hoveredHex && (
             <div className="pointer-events-none fixed bottom-3 right-3 rounded-md bg-black/75 px-3 py-1.5 text-xs text-white">
               Гекс ({hovered.column}, {hovered.row}) · {HEX_TERRAIN_TYPE_LABELS[hoveredHex.terrainType]}
+              {movable && canMoveToHovered && ` · движение: ${reachableByKey.get(hexKey(hovered.column, hovered.row))}`}
             </div>
           )}
         </main>

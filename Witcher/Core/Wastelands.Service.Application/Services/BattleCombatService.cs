@@ -20,6 +20,7 @@ namespace Wastelands.Service.Application.Services
 	{
 		private readonly IBattleRepository _battleRepository;
 		private readonly ICharacterRepository _characterRepository;
+		private readonly IBattleMapRepository _battleMapRepository;
 		private readonly IBattleParticipantAuthorizer _authorizer;
 		private readonly IBattleCombatContextProvider _contextProvider;
 		private readonly IBattleHitResolver _hitResolver;
@@ -31,6 +32,7 @@ namespace Wastelands.Service.Application.Services
 		public BattleCombatService(
 			IBattleRepository battleRepository,
 			ICharacterRepository characterRepository,
+			IBattleMapRepository battleMapRepository,
 			IBattleParticipantAuthorizer authorizer,
 			IBattleCombatContextProvider contextProvider,
 			IBattleHitResolver hitResolver,
@@ -41,6 +43,7 @@ namespace Wastelands.Service.Application.Services
 		{
 			_battleRepository = battleRepository;
 			_characterRepository = characterRepository;
+			_battleMapRepository = battleMapRepository;
 			_authorizer = authorizer;
 			_contextProvider = contextProvider;
 			_hitResolver = hitResolver;
@@ -730,6 +733,95 @@ namespace Wastelands.Service.Application.Services
 			}
 
 			return await SaveAndNotifyAsync(battle);
+		}
+
+		/// <summary>
+		/// Перемещение по карте — не действие хода: можно двигаться несколько раз за ход, пока хватает
+		/// запаса движения, и это не мешает потом ещё и атаковать. Доступно только контроллеру активного
+		/// участника и только в его собственный ход (как и остальные действия хода).
+		/// </summary>
+		public async Task<BattleDto> MoveAsync(MoveParticipantRequest request)
+		{
+			var battle = await GetByIdAsync(request.BattleId);
+			BattleParticipants.EnsureInProgress(battle);
+
+			if (battle.Attack is not null)
+			{
+				throw new InvalidArgumentException(ErrorCode.AttackAlreadyInProgress, "Нельзя двигаться во время незавершённой атаки.");
+			}
+
+			var (activeKind, activeId) = BattleParticipants.GetActive(battle);
+			await _authorizer.EnsureControllerAsync(battle, activeKind, activeId, ErrorCode.NotYourTurn);
+			EnsureNotStunned(battle, activeKind, activeId);
+			EnsureNotDying(battle, activeKind, activeId);
+
+			var battleMap = await GetBattleMapAsync(battle);
+			battle.MoveParticipant(activeKind, activeId, battleMap, request.Column, request.Row);
+
+			return await SaveAndNotifyAsync(battle);
+		}
+
+		public async Task<List<MovementRangeHexDto>> GetMovementRangeAsync(long battleId, ParticipantKind kind, long participantId)
+		{
+			var battle = await GetByIdAsync(battleId);
+			BattleParticipants.EnsureExists(battle, kind, participantId);
+
+			var battleMap = await GetBattleMapAsync(battle);
+			var reachable = battle.GetReachableHexes(kind, participantId, battleMap);
+
+			return reachable.Select(kv => new MovementRangeHexDto { Column = kv.Key.Column, Row = kv.Key.Row, Cost = kv.Value }).ToList();
+		}
+
+		/// <summary>
+		/// Обновляет запас движения — обычное или дополнительное действие хода (см. TryChargeBonusAction),
+		/// та же механика, что и у AttemptRemoveConditionAsync/ClearConditionAsync.
+		/// </summary>
+		public async Task<BattleDto> RefreshMovementAsync(long battleId)
+		{
+			var battle = await GetByIdAsync(battleId);
+			BattleParticipants.EnsureInProgress(battle);
+
+			if (battle.Attack is not null)
+			{
+				throw new InvalidArgumentException(ErrorCode.AttackAlreadyInProgress, "Нельзя обновить движение во время незавершённой атаки.");
+			}
+
+			var (activeKind, activeId) = BattleParticipants.GetActive(battle);
+			await _authorizer.EnsureControllerAsync(battle, activeKind, activeId, ErrorCode.NotYourTurn);
+			EnsureNotStunned(battle, activeKind, activeId);
+			EnsureNotDying(battle, activeKind, activeId);
+
+			var isBonusAction = TryChargeBonusAction(battle, activeKind, activeId);
+			battle.RefreshParticipantMovement(activeKind, activeId);
+
+			var activeName = BattleParticipants.GetName(battle, activeKind, activeId);
+			battle.AddLogEntry($"{activeName} тратит действие, чтобы обновить запас движения.");
+
+			if (activeKind == ParticipantKind.Character && !isBonusAction)
+			{
+				BattleParticipants.GetBattleCharacter(battle, activeId).MarkActedThisTurn();
+			}
+			else
+			{
+				await _turnProcessor.AdvanceTurnAsync(battle);
+			}
+
+			return await SaveAndNotifyAsync(battle);
+		}
+
+		private async Task<BattleMap> GetBattleMapAsync(Battle battle)
+		{
+			if (battle.BattleMapId is not { } mapId)
+			{
+				throw new InvalidArgumentException(ErrorCode.BattleMapNotAttached, "К бою не подключена карта.");
+			}
+
+			// Unscoped: карту идущего боя должен видеть и игрок, не только мастер — доступ к самому бою
+			// уже проверен через скоуп BattleRepository/EnsureControllerAsync.
+			var battleMap = await _battleMapRepository.GetByIdUnscopedAsync(mapId);
+			NotFoundException.ThrowIfNull(battleMap, ErrorCode.BattleMapNotFound, nameof(BattleMap), nameof(BattleMap.Id), mapId.ToString());
+
+			return battleMap;
 		}
 
 		private async Task<Battle> GetByIdAsync(long id)

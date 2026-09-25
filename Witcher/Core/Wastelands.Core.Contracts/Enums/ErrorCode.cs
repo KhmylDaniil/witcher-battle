@@ -105,6 +105,9 @@
 		BattleMapNotAttached = 903,
 		BattleMapHexNotPassable = 904,
 		BattleMapHexOccupied = 905,
+		BattleMapHexUnreachable = 906,
+		NotEnoughMovement = 907,
+		ParticipantNotPlacedOnMap = 908,
 
 		// Common error codes 1100...1199
 		InvalidArgument = 1101,

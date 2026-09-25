@@ -1,4 +1,4 @@
-import { api } from '../../lib/apiClient'
+import { api, buildQuery } from '../../lib/apiClient'
 import type {
   AddCreatureToBattleFormValues,
   Battle,
@@ -7,6 +7,7 @@ import type {
   Condition,
   CreatureTemplate,
   HumanBodyPart,
+  MovementRangeHex,
   ParticipantKind,
   Skill,
   UpdateBattleCreatureFormValues,
@@ -90,4 +91,11 @@ export const battlesApi = {
     api.get<CreatureTemplate>(`/api/games/${gameId}/battles/${battleId}/creatures/${creatureId}/sheet`),
   characterSheet: (gameId: number, battleId: number, characterId: number) =>
     api.get<Character>(`/api/games/${gameId}/battles/${battleId}/characters/${characterId}/sheet`),
+
+  move: (gameId: number, battleId: number, column: number, row: number) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/move`, { column, row }),
+  movementRange: (gameId: number, battleId: number, kind: ParticipantKind, participantId: number) =>
+    api.get<MovementRangeHex[]>(`/api/games/${gameId}/battles/${battleId}/movement-range${buildQuery({ kind, participantId })}`),
+  refreshMovement: (gameId: number, battleId: number) =>
+    api.post<Battle>(`/api/games/${gameId}/battles/${battleId}/refresh-movement`),
 }

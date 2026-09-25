@@ -35,6 +35,8 @@ type Participant = {
   maxSta: number
   currentSta: number
   initiative: number | null
+  maxMovement: number
+  currentMovement: number
   appliedConditions: Condition[]
   creatureTemplateId?: number
   characterUserId?: number
@@ -153,6 +155,7 @@ export function BattleDetailsPage() {
     },
   })
   const skipTurn = useMutation({ mutationFn: () => battlesApi.skipTurn(gameIdNum, id), onSuccess: invalidate })
+  const refreshMovement = useMutation({ mutationFn: () => battlesApi.refreshMovement(gameIdNum, id), onSuccess: invalidate })
 
   const [removeConditionCondition, setRemoveConditionCondition] = useState<Condition | ''>('')
   const [removeConditionSkill, setRemoveConditionSkill] = useState<Skill | ''>('')
@@ -267,6 +270,8 @@ export function BattleDetailsPage() {
       maxSta: c.maxSta,
       currentSta: c.currentSta,
       initiative: c.initiative,
+      maxMovement: c.maxMovement,
+      currentMovement: c.currentMovement,
       appliedConditions: c.appliedConditions,
       creatureTemplateId: c.creatureTemplateId,
       armorReductionByPartId: c.armorReductionByPartId,
@@ -281,6 +286,8 @@ export function BattleDetailsPage() {
       maxSta: bc.maxSta,
       currentSta: bc.currentSta,
       initiative: bc.initiative,
+      maxMovement: bc.maxMovement,
+      currentMovement: bc.currentMovement,
       appliedConditions: bc.appliedConditions,
       characterUserId: bc.characterUserId,
       hasActedThisTurn: bc.hasActedThisTurn,
@@ -623,6 +630,25 @@ export function BattleDetailsPage() {
                   {startAttack.error && (
                     <ErrorText>{startAttack.error instanceof ApiError ? startAttack.error.message : 'Не удалось начать атаку'}</ErrorText>
                   )}
+
+                  <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-neutral-100 pt-3 text-sm dark:border-neutral-900">
+                    <span className="text-neutral-500">
+                      Движение: {activeParticipant.currentMovement}/{activeParticipant.maxMovement}
+                    </span>
+                    {activeParticipant.currentMovement < activeParticipant.maxMovement && (
+                      <Button
+                        variant="secondary"
+                        className="px-2 py-1"
+                        disabled={refreshMovement.isPending || notEnoughStaForBonusAction}
+                        onClick={() => refreshMovement.mutate()}
+                      >
+                        {isBonusActionWindow ? 'Обновить движение (доп. действие, 3 STA, −3)' : 'Обновить движение (действие)'}
+                      </Button>
+                    )}
+                    {refreshMovement.error && (
+                      <ErrorText>{refreshMovement.error instanceof ApiError ? refreshMovement.error.message : 'Не удалось обновить движение'}</ErrorText>
+                    )}
+                  </div>
 
                   {(() => {
                     // Кровотечение/Отравление снимаются броском навыка вместо атаки — тоже основное

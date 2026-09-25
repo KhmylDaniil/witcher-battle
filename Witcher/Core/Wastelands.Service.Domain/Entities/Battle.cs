@@ -1,6 +1,7 @@
 using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
 using Wastelands.Core.EfDataAccess.Entities;
+using Wastelands.Service.Domain.Drafts;
 using Wastelands.Service.Domain.Enums;
 
 namespace Wastelands.Service.Domain.Entities
@@ -82,6 +83,19 @@ namespace Wastelands.Service.Domain.Entities
 			foreach (var character in Characters)
 			{
 				character.ResetTurnState();
+			}
+
+			// Запас движения не копится между ходами — обнуляется до базового значения при любой
+			// передаче хода (в реальности имеет значение только для того участника, чей ход начинается,
+			// но сбрасываем всем сразу — та же простота, что и с ResetTurnState выше).
+			foreach (var creature in Creatures)
+			{
+				creature.RefreshMovement();
+			}
+
+			foreach (var character in Characters)
+			{
+				character.RefreshMovement();
 			}
 		}
 
@@ -321,6 +335,146 @@ namespace Wastelands.Service.Domain.Entities
 			{
 				GetCharacterForMap(participantId).RemoveFromMap();
 			}
+		}
+
+		/// <summary>
+		/// Передвижение участника в его собственный ход — в отличие от PlaceParticipantOnMap (свободная
+		/// расстановка мастером до применения правил), тратит очки движения по кратчайшему (по стоимости)
+		/// маршруту до целевого гекса (см. HexPathfinder.ComputeReachable), с учётом непроходимого и
+		/// сложного террейна и других участников на пути — маршрут всегда выбирается сервером, клиент
+		/// присылает только конечную точку.
+		/// </summary>
+		public void MoveParticipant(ParticipantKind kind, long participantId, BattleMap battleMap, int column, int row)
+		{
+			if (BattleMapId is null || battleMap.Id != BattleMapId)
+			{
+				throw new InvalidArgumentException(ErrorCode.BattleMapNotAttached, "К бою не подключена эта карта.");
+			}
+
+			var targetHex = battleMap.GetHex(column, row);
+			if (!targetHex.IsPassable)
+			{
+				throw new InvalidArgumentException(ErrorCode.BattleMapHexNotPassable, "На непроходимый гекс переместиться нельзя.");
+			}
+
+			var occupant = FindParticipantAt(column, row);
+			if (occupant is { } o && !(o.Kind == kind && o.Id == participantId))
+			{
+				throw new InvalidArgumentException(ErrorCode.BattleMapHexOccupied, "На этом гексе уже стоит другой участник боя.");
+			}
+
+			var (startColumn, startRow, currentMovement) = kind == ParticipantKind.Creature
+				? GetCreatureMovementState(participantId)
+				: GetCharacterMovementState(participantId);
+
+			if (startColumn is null || startRow is null)
+			{
+				throw new InvalidArgumentException(ErrorCode.ParticipantNotPlacedOnMap, "Участник ещё не выставлен на карту.");
+			}
+
+			var start = new HexPathfinder.HexPosition(startColumn.Value, startRow.Value);
+			var target = new HexPathfinder.HexPosition(column, row);
+			if (start == target)
+			{
+				return;
+			}
+
+			var occupied = GetOccupiedHexes(kind, participantId);
+			var costs = HexPathfinder.ComputeReachable(battleMap, start, currentMovement, occupied);
+			if (!costs.TryGetValue(target, out var cost))
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.BattleMapHexUnreachable, "До этого гекса не хватает движения, либо путь к нему перекрыт.");
+			}
+
+			if (kind == ParticipantKind.Creature)
+			{
+				var creature = GetCreatureForMap(participantId);
+				creature.SpendMovement(cost);
+				creature.PlaceOnMap(column, row);
+			}
+			else
+			{
+				var character = GetCharacterForMap(participantId);
+				character.SpendMovement(cost);
+				character.PlaceOnMap(column, row);
+			}
+		}
+
+		/// <summary>
+		/// Все гексы, на которые участник может дойти прямо сейчас (в пределах его текущего запаса
+		/// движения), вместе со стоимостью пути до каждого — для подсветки на фронте. Участник, ещё не
+		/// выставленный на карту, никуда дойти не может (пустой результат).
+		/// </summary>
+		public IReadOnlyDictionary<HexPathfinder.HexPosition, int> GetReachableHexes(ParticipantKind kind, long participantId, BattleMap battleMap)
+		{
+			if (BattleMapId is null || battleMap.Id != BattleMapId)
+			{
+				throw new InvalidArgumentException(ErrorCode.BattleMapNotAttached, "К бою не подключена эта карта.");
+			}
+
+			var (startColumn, startRow, currentMovement) = kind == ParticipantKind.Creature
+				? GetCreatureMovementState(participantId)
+				: GetCharacterMovementState(participantId);
+
+			if (startColumn is null || startRow is null)
+			{
+				return new Dictionary<HexPathfinder.HexPosition, int>();
+			}
+
+			var start = new HexPathfinder.HexPosition(startColumn.Value, startRow.Value);
+			var occupied = GetOccupiedHexes(kind, participantId);
+			return HexPathfinder.ComputeReachable(battleMap, start, currentMovement, occupied);
+		}
+
+		/// <summary>Восстанавливает запас движения участника до базового значения — действие хода (см. BattleCombatService).</summary>
+		public void RefreshParticipantMovement(ParticipantKind kind, long participantId)
+		{
+			if (kind == ParticipantKind.Creature)
+			{
+				GetCreatureForMap(participantId).RefreshMovement();
+			}
+			else
+			{
+				GetCharacterForMap(participantId).RefreshMovement();
+			}
+		}
+
+		private (int? Column, int? Row, int CurrentMovement) GetCreatureMovementState(long creatureId)
+		{
+			var creature = GetCreatureForMap(creatureId);
+			return (creature.MapColumn, creature.MapRow, creature.CurrentMovement);
+		}
+
+		private (int? Column, int? Row, int CurrentMovement) GetCharacterMovementState(long characterId)
+		{
+			var character = GetCharacterForMap(characterId);
+			return (character.MapColumn, character.MapRow, character.CurrentMovement);
+		}
+
+		/// <summary>Гексы, занятые другими участниками (кроме kind/participantId самого движущегося) — для блокировки прохода.</summary>
+		private HashSet<HexPathfinder.HexPosition> GetOccupiedHexes(ParticipantKind exceptKind, long exceptId)
+		{
+			var occupied = new HashSet<HexPathfinder.HexPosition>();
+
+			foreach (var creature in Creatures)
+			{
+				if (creature.MapColumn is { } column && creature.MapRow is { } row && !(exceptKind == ParticipantKind.Creature && creature.Id == exceptId))
+				{
+					occupied.Add(new HexPathfinder.HexPosition(column, row));
+				}
+			}
+
+			foreach (var character in Characters)
+			{
+				if (character.MapColumn is { } column && character.MapRow is { } row
+					&& !(exceptKind == ParticipantKind.Character && character.CharacterId == exceptId))
+				{
+					occupied.Add(new HexPathfinder.HexPosition(column, row));
+				}
+			}
+
+			return occupied;
 		}
 
 		/// <summary>Кто стоит на гексе (column, row) подключённой карты, если кто-то стоит.</summary>

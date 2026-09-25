@@ -20,6 +20,8 @@ namespace Wastelands.Service.Application.UnitTest.TestSupport
 
 		public Mock<ICharacterRepository> CharacterRepository { get; } = new();
 
+		public Mock<IBattleMapRepository> BattleMapRepository { get; } = new();
+
 		public Mock<IBattleParticipantAuthorizer> Authorizer { get; } = new();
 
 		public Mock<IBattleCombatContextProvider> ContextProvider { get; } = new();
@@ -61,6 +63,7 @@ namespace Wastelands.Service.Application.UnitTest.TestSupport
 			=> new(
 				BattleRepository.Object,
 				CharacterRepository.Object,
+				BattleMapRepository.Object,
 				Authorizer.Object,
 				ContextProvider.Object,
 				HitResolver.Object,
