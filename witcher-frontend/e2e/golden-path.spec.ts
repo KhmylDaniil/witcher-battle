@@ -42,7 +42,11 @@ test('register, create a game, add a character, delete the game', async ({ page 
   await expect(page.getByRole('heading', { name: characterName })).toBeVisible()
 
   await page.goto(`/games/${gameId}`)
-  await expect(page.getByRole('link', { name: characterName })).toBeVisible()
+  // Создатель игры — её мастер, поэтому его персонаж есть и в мастерской карточке "Персонажи игроков",
+  // и в общей "Персонажи" (карточка = <Card><div><h2/>…</div>…</Card>). Проверяем общий список, иначе
+  // локатор находит две ссылки, как только догрузится мастерская карточка.
+  const charactersCard = page.getByRole('heading', { name: 'Персонажи', exact: true }).locator('xpath=../..')
+  await expect(charactersCard.getByRole('link', { name: characterName })).toBeVisible()
 
   await page.getByRole('button', { name: 'Удалить игру' }).click()
   await expect(page).toHaveURL('/games')
