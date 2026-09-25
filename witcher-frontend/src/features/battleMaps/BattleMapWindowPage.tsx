@@ -29,9 +29,13 @@ export function BattleMapWindowPage() {
   const bid = Number(battleId)
   const queryClient = useQueryClient()
   const queryKey = useMemo(() => ['battles', gid, bid, 'map'], [gid, bid])
+  // Более широкий префикс battles/gid/bid матчит и 'map', и 'movement-range' — область подсветки
+  // остатка движения должна обновляться на каждый SignalR-пуш (например, если движение обновили
+  // действием на странице боя, а не в этом окне), не только когда меняется сама карта.
+  const battleQueryKey = useMemo(() => ['battles', gid, bid], [gid, bid])
 
   const view = useQuery({ queryKey, queryFn: () => battleMapPlacementApi.get(gid, bid), retry: false })
-  const invalidate = () => queryClient.invalidateQueries({ queryKey })
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: battleQueryKey })
   useBattleUpdates(bid, invalidate)
   // Карту перерисовали в окне редактора — подтягиваем свежую.
   useEffect(() => subscribeBattleMapsChanged(gid, () => queryClient.invalidateQueries({ queryKey })), [gid, queryClient, queryKey])
@@ -61,7 +65,14 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
   const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null)
   const svgRef = useRef<SVGSVGElement>(null)
 
-  const onSuccess = (updated: BattleMapView) => queryClient.setQueryData(['battles', gameId, view.battleId, 'map'], updated)
+  // Префикс, а не полный ключ конкретного запроса — invalidateQueries матчит по нему и 'map', и
+  // 'movement-range' (см. movementRange ниже): область подсветки остатка движения обязана обновляться
+  // вместе с картой после любого изменения расстановки/позиции, не только после самого move.
+  const battleQueryKey = ['battles', gameId, view.battleId]
+  const onSuccess = (updated: BattleMapView) => {
+    queryClient.setQueryData(['battles', gameId, view.battleId, 'map'], updated)
+    queryClient.invalidateQueries({ queryKey: [...battleQueryKey, 'movement-range'] })
+  }
   const place = useMutation({
     mutationFn: (p: ParticipantRef & HexCoord) => battleMapPlacementApi.place(gameId, view.battleId, p.kind, p.id, p.column, p.row),
     onSuccess,
@@ -76,9 +87,10 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
   const move = useMutation({
     mutationFn: (hex: HexCoord) => battlesApi.move(gameId, view.battleId, hex.column, hex.row),
     // /move возвращает BattleDto (не BattleMapView) — вместо ручного патча кэша просто перезапрашиваем
-    // карту; SignalR-обновление (useBattleUpdates в BattleMapWindowPage) сделало бы то же самое, но не
+    // и карту (новая позиция), и movement-range (после частичного хода остаток движения и, значит,
+    // подсветка доступных гексов меняются) — SignalR-обновление сделало бы то же самое, но не
     // обязательно долетит быстрее собственного ответа мутации.
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['battles', gameId, view.battleId, 'map'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: battleQueryKey }),
   })
 
   useEffect(() => {
