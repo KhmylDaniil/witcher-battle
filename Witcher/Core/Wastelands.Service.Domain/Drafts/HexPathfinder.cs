@@ -40,6 +40,20 @@ namespace Wastelands.Service.Domain.Drafts
 		}
 
 		/// <summary>
+		/// Расстояние между гексами по прямой ("напрямую", без учёта террейна/препятствий) — для
+		/// проверки дальности атаки (см. BattleCombatService.EnsureWithinAttackRange), в отличие от
+		/// ComputeReachable, которое считает стоимость реального маршрута для движения.
+		/// </summary>
+		public static int Distance(HexPosition a, HexPosition b)
+		{
+			var (qa, ra) = ToCube(a.Column, a.Row);
+			var (qb, rb) = ToCube(b.Column, b.Row);
+			var sa = -qa - ra;
+			var sb = -qb - rb;
+			return Math.Max(Math.Abs(qa - qb), Math.Max(Math.Abs(ra - rb), Math.Abs(sa - sb)));
+		}
+
+		/// <summary>
 		/// Дейкстра от start в пределах budget очков движения. Гексы из occupied (кроме самого start)
 		/// считаются непроходимыми — на них уже стоят другие участники боя; непроходимый по террейну
 		/// гекс (BattleMapHex.MovementCost == null) тоже не входит в результат. Возвращает минимальную

@@ -108,6 +108,7 @@
 		BattleMapHexUnreachable = 906,
 		NotEnoughMovement = 907,
 		ParticipantNotPlacedOnMap = 908,
+		TargetOutOfAttackRange = 909,
 
 		// Common error codes 1100...1199
 		InvalidArgument = 1101,

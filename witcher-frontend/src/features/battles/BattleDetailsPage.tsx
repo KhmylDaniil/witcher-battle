@@ -5,6 +5,8 @@ import { Button, Card, ConfirmButton, ErrorText, Field, Input, PageHeader, Selec
 import { useCurrentUser } from '../auth/useAuth'
 import { ApiError } from '../../lib/apiClient'
 import { BattleMapAttachCard } from '../battleMaps/BattleMapAttachCard'
+import { BattleMapBoard } from '../battleMaps/BattleMapBoard'
+import { battleMapPlacementApi } from '../battleMaps/api'
 import { battleMapWindowPath, openBattleMapWindow } from '../battleMaps/editorWindow'
 import { useBattleUpdates } from '../../lib/battleHub'
 import { charactersApi } from '../characters/api'
@@ -67,6 +69,16 @@ export function BattleDetailsPage() {
   })
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['battles', gameIdNum, id] })
   useBattleUpdates(id, invalidate)
+
+  // Карта боя встраивается прямо в страницу боя (не только отдельным окном), когда к бою подключена
+  // карта — чтобы видеть расстановку и двигаться по правилам, выбирать действия хода и следить за
+  // логом боя в одном месте. invalidate выше уже покрывает этот запрос (тот же префикс ключа).
+  const mapView = useQuery({
+    queryKey: ['battles', gameIdNum, id, 'map'],
+    queryFn: () => battleMapPlacementApi.get(gameIdNum, id),
+    enabled: battle.data?.battleMapId !== null && battle.data?.battleMapId !== undefined,
+    retry: false,
+  })
 
   // Выпадающий список для добавления существа в бой должен показывать все шаблоны игры —
   // запрашиваем через тот же пагинируемый эндпоинт, но с большим pageSize.
@@ -334,17 +346,6 @@ export function BattleDetailsPage() {
             <Link to={`/games/${gameId}`}>
               <Button variant="secondary">К игре</Button>
             </Link>
-            {/* Игрокам (они видят только идущий бой) — просмотр карты; мастер открывает её из карточки "Карта боя". */}
-            {!isOwner && b.battleMapId !== null && (
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  if (!openBattleMapWindow(gameIdNum, id)) navigate(battleMapWindowPath(gameIdNum, id))
-                }}
-              >
-                Карта боя
-              </Button>
-            )}
             {isOwner && b.status === 'Draft' && (
               <Button disabled={start.isPending || participants.length === 0} onClick={() => start.mutate()}>
                 Начать бой
@@ -522,6 +523,32 @@ export function BattleDetailsPage() {
           </tbody>
         </table>
       </Card>
+
+      {b.battleMapId !== null && (
+        <Card>
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h2 className="font-semibold">Карта боя</h2>
+            <Button
+              variant="secondary"
+              className="px-2 py-1"
+              onClick={() => {
+                if (!openBattleMapWindow(gameIdNum, id)) navigate(battleMapWindowPath(gameIdNum, id))
+              }}
+            >
+              Открыть в отдельном окне
+            </Button>
+          </div>
+          {mapView.isLoading && <Spinner />}
+          {mapView.error && (
+            <ErrorText>{mapView.error instanceof ApiError ? mapView.error.message : 'Не удалось загрузить карту боя'}</ErrorText>
+          )}
+          {mapView.data && (
+            <div className="flex h-[70vh] max-h-[720px] min-h-[420px] flex-col">
+              <BattleMapBoard gameId={gameIdNum} view={mapView.data} />
+            </div>
+          )}
+        </Card>
+      )}
 
       {b.status === 'InProgress' && !attack && isActiveController && activeParticipant && (
         <Card>

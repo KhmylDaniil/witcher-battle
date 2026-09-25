@@ -5,6 +5,7 @@ using Wastelands.Service.Application.Contracts.Repositories;
 using Wastelands.Service.Domain.Drafts;
 using Wastelands.Service.Domain.Entities;
 using Wastelands.Service.Domain.Enums;
+using Wastelands.Service.Application.Models;
 using Wastelands.Service.Application.Models.Dto;
 using Wastelands.Service.Application.Models.Requests;
 
@@ -72,6 +73,8 @@ namespace Wastelands.Service.Application.Services
 				throw new InvalidArgumentException(ErrorCode.AbilityDoesNotBelongToAttacker, "У атакующего нет такой способности.");
 			}
 
+			EnsureWithinAttackRange(battle, attackerContext, ability, attackerKind, attackerId, request.DefenderKind, request.DefenderId);
+
 			var isBonusAction = TryChargeBonusAction(battle, attackerKind, attackerId);
 
 			var attack = new BattleAttack(
@@ -135,6 +138,73 @@ namespace Wastelands.Service.Application.Services
 				throw new InvalidArgumentException(
 					ErrorCode.ParticipantIsDying, "Персонаж при смерти и может в свой ход только пройти проверку на смерть.");
 			}
+		}
+
+		/// <summary>
+		/// Без подключённой к бою карты дальность не ограничена — атаковать можно любое существо в бою
+		/// (как и раньше). С картой — и атакующий, и цель обязаны быть выставлены на неё, а расстояние
+		/// между их гексами (по прямой, без учёта террейна — препятствия для атаки пока не моделируются,
+		/// только для движения) не должно превышать дальность атаки: AttackRange экипированного оружия,
+		/// которым бьёт способность, либо 1 (соседний гекс) для способностей без оружия за спиной
+		/// (природные атаки существ, безоружный бой) или для оружия без выставленной дальности.
+		/// </summary>
+		private static void EnsureWithinAttackRange(
+			Battle battle,
+			ParticipantCombatContext attackerContext,
+			Ability ability,
+			ParticipantKind attackerKind,
+			long attackerId,
+			ParticipantKind defenderKind,
+			long defenderId)
+		{
+			if (battle.BattleMapId is null)
+			{
+				return;
+			}
+
+			var attackerPosition = GetMapPosition(battle, attackerKind, attackerId);
+			var defenderPosition = GetMapPosition(battle, defenderKind, defenderId);
+			if (attackerPosition is null || defenderPosition is null)
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.ParticipantNotPlacedOnMap,
+					"Чтобы атаковать при подключённой к бою карте, и атакующий, и цель должны быть выставлены на неё.");
+			}
+
+			var range = GetAttackRange(attackerContext, ability);
+			var distance = HexPathfinder.Distance(attackerPosition.Value, defenderPosition.Value);
+			if (distance > range)
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.TargetOutOfAttackRange,
+					$"Цель вне дальности атаки: расстояние {distance}, дальность {range}.");
+			}
+		}
+
+		private static HexPathfinder.HexPosition? GetMapPosition(Battle battle, ParticipantKind kind, long participantId)
+		{
+			if (kind == ParticipantKind.Creature)
+			{
+				var creature = BattleParticipants.GetCreature(battle, participantId);
+				return creature.MapColumn is { } column && creature.MapRow is { } row ? new HexPathfinder.HexPosition(column, row) : null;
+			}
+
+			var character = BattleParticipants.GetBattleCharacter(battle, participantId);
+			return character.MapColumn is { } charColumn && character.MapRow is { } charRow ? new HexPathfinder.HexPosition(charColumn, charRow) : null;
+		}
+
+		private static int GetAttackRange(ParticipantCombatContext attackerContext, Ability ability)
+		{
+			if (ability.EquippedItemId is { } itemId)
+			{
+				var item = attackerContext.Character?.Items.FirstOrDefault(i => i.Id == itemId);
+				if (item?.AttackRange is { } range)
+				{
+					return range;
+				}
+			}
+
+			return 1;
 		}
 
 		/// <summary>
