@@ -19,7 +19,8 @@ const sameParticipant = (a: ParticipantRef | null, b: ParticipantRef | null) => 
 /**
  * Окно "Карта боя" (открывается со страницы боя в отдельном окне): мастер расставляет участников боя
  * по гексам подключённой карты. Это расстановка, а не движение по правилам — работает и до, и после
- * начала боя. Обновляется по SignalR вместе со страницей боя (участник погиб — пропал с карты и т.п.).
+ * начала боя. Игроки, чьи персонажи в идущем бою, видят то же окно только для просмотра (view.canEdit
+ * = false, маркеры мастера им не приходят). Обновляется по SignalR вместе со страницей боя.
  */
 export function BattleMapWindowPage() {
   const { gameId, battleId } = useParams<{ gameId: string; battleId: string }>()
@@ -84,6 +85,7 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
     return result
   }, [view.participants])
 
+  const readOnly = !view.canEdit
   const selectedParticipant = view.participants.find((p) => sameParticipant(p, selected)) ?? null
   const isActive = (p: BattleMapParticipant) => view.currentInitiative !== null && p.initiative === view.currentInitiative
   const error = place.error ?? remove.error
@@ -115,7 +117,9 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
     return (
       <div className="flex h-screen flex-col">
         {header}
-        <p className="p-6 text-sm text-neutral-500">К этому бою карта не подключена — подключите её на странице боя.</p>
+        <p className="p-6 text-sm text-neutral-500">
+          {view.canEdit ? 'К этому бою карта не подключена — подключите её на странице боя.' : 'Мастер пока не подключил карту к этому бою.'}
+        </p>
       </div>
     )
   }
@@ -123,7 +127,7 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
   const hexAt = (e: ReactPointerEvent<SVGSVGElement>) => hexAtClientPoint(svgRef.current!, e.clientX, e.clientY, zoom, map.columns, map.rows)
 
   const onPointerDown = (e: ReactPointerEvent<SVGSVGElement>) => {
-    if (e.button !== 0) return
+    if (readOnly || e.button !== 0) return
     const hex = hexAt(e)
     if (!hex) return
     const occupant = participantByHex.get(hexKey(hex.column, hex.row))
@@ -152,6 +156,29 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
 
   const participantRow = (p: BattleMapParticipant) => {
     const isSelected = sameParticipant(p, selected)
+    const content = (
+      <>
+        <ParticipantAvatar kind={p.kind} name={p.name} imageUrl={p.imageUrl} />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate">
+            {p.name}
+            {readOnly && p.controlledByCurrentUser && <span className="ml-1 text-xs text-violet-600">(вы)</span>}
+            {isActive(p) && <span className="ml-1 text-xs text-amber-600">● ход</span>}
+          </span>
+          <span className="block text-xs text-neutral-500">
+            {p.kind === 'Creature' ? 'Существо' : 'Персонаж'} · ПЗ {p.currentHP}/{p.maxHP}
+            {p.column !== null && ` · (${p.column}, ${p.row})`}
+          </span>
+        </span>
+      </>
+    )
+    if (readOnly) {
+      return (
+        <li key={`${p.kind}-${p.id}`} className="flex items-center gap-2 px-2 py-1.5">
+          {content}
+        </li>
+      )
+    }
     return (
       <li key={`${p.kind}-${p.id}`}>
         <button
@@ -162,17 +189,7 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
             isSelected ? 'border-violet-500 bg-violet-50 dark:bg-violet-950' : 'border-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800'
           }`}
         >
-          <ParticipantAvatar kind={p.kind} name={p.name} imageUrl={p.imageUrl} />
-          <span className="min-w-0 flex-1">
-            <span className="block truncate">
-              {p.name}
-              {isActive(p) && <span className="ml-1 text-xs text-amber-600">● ход</span>}
-            </span>
-            <span className="block text-xs text-neutral-500">
-              {p.kind === 'Creature' ? 'Существо' : 'Персонаж'} · ПЗ {p.currentHP}/{p.maxHP}
-              {p.column !== null && ` · (${p.column}, ${p.row})`}
-            </span>
-          </span>
+          {content}
         </button>
       </li>
     )
@@ -191,8 +208,9 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
       <div className="flex min-h-0 flex-1">
         <aside className="flex w-72 shrink-0 flex-col gap-4 overflow-y-auto border-r border-neutral-200 bg-white p-3 text-sm dark:border-neutral-800 dark:bg-neutral-900">
           <p className="text-xs text-neutral-500">
-            Выберите участника и кликните по свободному проходимому гексу, чтобы выставить или переставить его. На гексе
-            может стоять только один участник. Esc — снять выбор.
+            {readOnly
+              ? 'Просмотр карты. Расставляет участников мастер; наведите на фишку, чтобы увидеть подробности.'
+              : 'Выберите участника и кликните по свободному проходимому гексу, чтобы выставить или переставить его. На гексе может стоять только один участник. Esc — снять выбор.'}
           </p>
 
           {selectedParticipant && (
@@ -215,7 +233,7 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
           )}
 
           <section>
-            <h2 className="mb-1.5 font-medium">Не выставлены ({unplaced.length})</h2>
+            <h2 className="mb-1.5 font-medium">{readOnly ? 'Не на карте' : 'Не выставлены'} ({unplaced.length})</h2>
             {unplaced.length === 0 ? (
               <p className="text-xs text-neutral-500">Все участники на карте.</p>
             ) : (
@@ -246,7 +264,7 @@ function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleMapView 
             height={viewHeight * zoom}
             viewBox={`0 0 ${viewWidth} ${viewHeight}`}
             className="m-4 touch-none select-none"
-            style={{ cursor: selected ? (canPlaceOnHovered ? 'copy' : hoveredParticipant ? 'pointer' : 'not-allowed') : hoveredParticipant ? 'pointer' : 'default' }}
+            style={{ cursor: readOnly ? 'default' : selected ? (canPlaceOnHovered ? 'copy' : hoveredParticipant ? 'pointer' : 'not-allowed') : hoveredParticipant ? 'pointer' : 'default' }}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerLeave={() => {

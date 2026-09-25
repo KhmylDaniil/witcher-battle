@@ -28,6 +28,12 @@ namespace Wastelands.Service.Application.Services
 			return game;
 		}
 
+		public async Task<bool> IsOwnerAsync(long gameId)
+		{
+			var game = await _gameRepository.GetByIdAsync(gameId);
+			return game is not null && game.CreatedByUserId == _userContext.CurrentUserId;
+		}
+
 		public void EnsureOwner(Game game)
 		{
 			if (game.CreatedByUserId != _userContext.CurrentUserId)

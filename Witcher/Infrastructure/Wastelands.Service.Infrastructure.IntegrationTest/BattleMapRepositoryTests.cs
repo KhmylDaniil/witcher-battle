@@ -59,6 +59,38 @@ namespace Wastelands.Service.Infrastructure.IntegrationTest
 		}
 
 		[TestMethod]
+		public async Task GetByIdUnscopedAsync_NotGameOwner_StillReturnsMapWithHexes()
+		{
+			// Путь для игроков: доступ к карте они получают через идущий бой, а не через владение игрой.
+			var owner = await TestDataFactory.CreateUserAsync(_dbContext, "owner");
+			var player = await TestDataFactory.CreateUserAsync(_dbContext, "player");
+			var game = await TestDataFactory.CreateGameAsync(_dbContext, owner.Id);
+			var battleMap = await TestDataFactory.CreateBattleMapAsync(_dbContext, game.Id, columns: 2, rows: 2);
+
+			await using var readContext = CreateDbContext();
+			var result = await new BattleMapRepository(readContext, new TestUserContext { CurrentUserId = player.Id }).GetByIdUnscopedAsync(battleMap.Id);
+
+			result.Should().NotBeNull();
+			result!.Hexes.Should().HaveCount(4);
+		}
+
+		[TestMethod]
+		public async Task CreatureTemplateRepository_GetImageKeysUnscopedAsync_IgnoresOwnerScoping()
+		{
+			var owner = await TestDataFactory.CreateUserAsync(_dbContext, "owner");
+			var player = await TestDataFactory.CreateUserAsync(_dbContext, "player");
+			var game = await TestDataFactory.CreateGameAsync(_dbContext, owner.Id);
+			var bodyTemplate = await TestDataFactory.CreateBodyTemplateAsync(_dbContext, game.Id);
+			var template = await TestDataFactory.CreateCreatureTemplateAsync(_dbContext, game.Id, bodyTemplate);
+
+			await using var readContext = CreateDbContext();
+			var keys = await new CreatureTemplateRepository(readContext, new TestUserContext { CurrentUserId = player.Id })
+				.GetImageKeysUnscopedAsync([template.Id]);
+
+			keys.Should().ContainKey(template.Id);
+		}
+
+		[TestMethod]
 		public async Task GetPagedWithoutHexesAsync_ReturnsOnlyOwnedMapsOfGame_WithoutHexes()
 		{
 			var owner = await TestDataFactory.CreateUserAsync(_dbContext, "owner");

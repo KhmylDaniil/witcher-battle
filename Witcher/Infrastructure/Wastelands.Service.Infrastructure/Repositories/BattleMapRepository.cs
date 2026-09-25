@@ -11,7 +11,7 @@ using Wastelands.Service.Domain.Entities;
 namespace Wastelands.Service.Infrastructure.Repositories
 {
 	// GM-only ресурс, как BodyTemplateRepository: карта видна только создателю игры, к которой относится.
-	// Когда карты начнут использоваться в бою, игрокам понадобится отдельный путь доступа (через бой).
+	// Игроки видят карту только через идущий бой — см. GetByIdUnscopedAsync и BattleMapPlacementService.
 	public class BattleMapRepository : BaseRepository<BattleMap>, IBattleMapRepository
 	{
 		private readonly DbContext _dbContext;
@@ -30,6 +30,13 @@ namespace Wastelands.Service.Infrastructure.Repositories
 				.ApplyFiltering(filter)
 				.ApplyOrdering(request)
 				.ApplyPagingAsync(request);
+		}
+
+		public async Task<BattleMap?> GetByIdUnscopedAsync(long id)
+		{
+			return await IncludeRelatedEntities(_dbContext.Set<BattleMap>())
+				.AsNoTracking()
+				.FirstOrDefaultAsync(x => x.Id == id);
 		}
 
 		public async Task SaveTrackedChangesAsync()

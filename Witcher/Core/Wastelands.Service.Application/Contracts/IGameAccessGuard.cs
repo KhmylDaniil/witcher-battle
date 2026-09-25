@@ -13,5 +13,8 @@ namespace Wastelands.Service.Application.Contracts
 
 		/// <summary>Проверяет уже загруженную игру.</summary>
 		void EnsureOwner(Game game);
+
+		/// <summary>Является ли текущий пользователь мастером (создателем) игры — без исключения, для ветвления прав.</summary>
+		Task<bool> IsOwnerAsync(long gameId);
 	}
 }

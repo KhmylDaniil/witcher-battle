@@ -19,5 +19,11 @@ namespace Wastelands.Service.Application.Contracts.Repositories
 		/// а не для всех до MaxDimension² штук.
 		/// </summary>
 		Task SaveTrackedChangesAsync();
+
+		/// <summary>
+		/// Без скоупинга по владельцу игры — карта идущего боя видна и игрокам, чьи персонажи в нём
+		/// участвуют. Доступ к самому бою проверяет вызывающий сервис (через скоуп BattleRepository).
+		/// </summary>
+		Task<BattleMap?> GetByIdUnscopedAsync(long id);
 	}
 }

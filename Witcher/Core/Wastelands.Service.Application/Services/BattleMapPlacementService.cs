@@ -1,4 +1,5 @@
 using AutoMapper;
+using Wastelands.Core.Contracts.Contracts;
 using Wastelands.Core.Contracts.Enums;
 using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
 using Wastelands.Service.Application.Contracts;
@@ -10,6 +11,11 @@ using Wastelands.Service.Domain.Enums;
 
 namespace Wastelands.Service.Application.Services
 {
+	/// <summary>
+	/// Смотреть карту боя могут все, кому виден сам бой (скоуп BattleRepository): мастер — всегда, игрок —
+	/// только пока бой идёт и в нём есть его персонаж. Менять (подключать карту, расставлять) — только мастер.
+	/// Маркеры карты — заметки мастера, игрокам они не отдаются.
+	/// </summary>
 	public class BattleMapPlacementService : IBattleMapPlacementService
 	{
 		private readonly IBattleRepository _battleRepository;
@@ -17,6 +23,7 @@ namespace Wastelands.Service.Application.Services
 		private readonly ICreatureTemplateRepository _creatureTemplateRepository;
 		private readonly IGameAccessGuard _gameAccessGuard;
 		private readonly IBattleNotifier _battleNotifier;
+		private readonly IUserContext _userContext;
 		private readonly IMapper _mapper;
 
 		public BattleMapPlacementService(
@@ -25,6 +32,7 @@ namespace Wastelands.Service.Application.Services
 			ICreatureTemplateRepository creatureTemplateRepository,
 			IGameAccessGuard gameAccessGuard,
 			IBattleNotifier battleNotifier,
+			IUserContext userContext,
 			IMapper mapper)
 		{
 			_battleRepository = battleRepository;
@@ -32,15 +40,24 @@ namespace Wastelands.Service.Application.Services
 			_creatureTemplateRepository = creatureTemplateRepository;
 			_gameAccessGuard = gameAccessGuard;
 			_battleNotifier = battleNotifier;
+			_userContext = userContext;
 			_mapper = mapper;
 		}
 
 		public async Task<BattleMapViewDto> GetMapViewAsync(long battleId)
 		{
-			var battle = await GetBattleForGmAsync(battleId);
-			var battleMap = battle.BattleMapId is { } mapId ? await _battleMapRepository.GetByIdAsync(mapId) : null;
+			// Скоуп BattleRepository сам отсекает чужих и игроков до начала боя — для них это 404.
+			var battle = await _battleRepository.GetByIdAsync(battleId);
+			NotFoundException.ThrowIfNull(battle, ErrorCode.BattleNotFound, nameof(Battle), nameof(Battle.Id), battleId.ToString());
 
-			return await ToViewAsync(battle, battleMap);
+			var isGm = await _gameAccessGuard.IsOwnerAsync(battle.GameId);
+
+			// Репозиторий карт скоупит по мастеру — игроку карта нужна через бой, отсюда unscoped.
+			var battleMap = battle.BattleMapId is not { } mapId ? null
+				: isGm ? await _battleMapRepository.GetByIdAsync(mapId)
+				: await _battleMapRepository.GetByIdUnscopedAsync(mapId);
+
+			return await ToViewAsync(battle, battleMap, isGm);
 		}
 
 		public async Task<BattleMapViewDto> AttachMapAsync(AttachBattleMapRequest request)
@@ -81,16 +98,18 @@ namespace Wastelands.Service.Application.Services
 			await _battleRepository.UpdateAsync(battle);
 			await _battleNotifier.NotifyBattleUpdatedAsync(battle.Id);
 
-			return await ToViewAsync(battle, battleMap);
+			return await ToViewAsync(battle, battleMap, isGm: true);
 		}
 
-		private async Task<BattleMapViewDto> ToViewAsync(Battle battle, BattleMap? battleMap)
+		private async Task<BattleMapViewDto> ToViewAsync(Battle battle, BattleMap? battleMap, bool isGm)
 		{
-			// Картинки существ живут в шаблонах — одним запросом на все шаблоны, встречающиеся в бою.
+			// Картинки существ живут в шаблонах — одним запросом на все шаблоны, встречающиеся в бою
+			// (unscoped: аватарки существ видят и игроки).
 			var templateIds = battle.Creatures.Select(c => c.CreatureTemplateId).Distinct().ToList();
 			var imageKeyByTemplateId = templateIds.Count == 0
 				? []
-				: (await _creatureTemplateRepository.GetByIdsAsync(templateIds)).ToDictionary(t => t.Id, t => t.ImageKey);
+				: await _creatureTemplateRepository.GetImageKeysUnscopedAsync(templateIds);
+			var currentUserId = _userContext.CurrentUserId;
 
 			var participants = battle.Creatures
 				.Select(c => new BattleMapParticipantDto
@@ -104,6 +123,7 @@ namespace Wastelands.Service.Application.Services
 					Initiative = c.Initiative,
 					Column = c.MapColumn,
 					Row = c.MapRow,
+					ControlledByCurrentUser = isGm,
 				})
 				.Concat(battle.Characters.Select(bc => new BattleMapParticipantDto
 				{
@@ -116,6 +136,7 @@ namespace Wastelands.Service.Application.Services
 					Initiative = bc.Initiative,
 					Column = bc.MapColumn,
 					Row = bc.MapRow,
+					ControlledByCurrentUser = bc.Character.UserId == currentUserId,
 				}))
 				.OrderBy(p => p.Initiative ?? int.MaxValue)
 				.ThenBy(p => p.Name)
@@ -132,13 +153,23 @@ namespace Wastelands.Service.Application.Services
 				}
 			}
 
+			var mapDto = battleMap is null ? null : _mapper.Map<BattleMapDto>(battleMap);
+			if (mapDto is not null && !isGm)
+			{
+				foreach (var hex in mapDto.Hexes)
+				{
+					hex.MarkerText = null;
+				}
+			}
+
 			return new BattleMapViewDto
 			{
 				BattleId = battle.Id,
 				BattleName = battle.Name,
 				Status = battle.Status,
 				CurrentInitiative = battle.CurrentInitiative,
-				Map = battleMap is null ? null : _mapper.Map<BattleMapDto>(battleMap),
+				CanEdit = isGm,
+				Map = mapDto,
 				Participants = participants,
 			};
 		}

@@ -11,5 +11,11 @@ namespace Wastelands.Service.Application.Contracts.Repositories
 		/// защищающийся игрок. Авторизацию делает вызывающий сервис.
 		/// </summary>
 		Task<CreatureTemplate?> GetByIdUnscopedAsync(long id);
+
+		/// <summary>
+		/// Ключи картинок шаблонов по их Id, без скоупинга по владельцу и без подгрузки частей/способностей —
+		/// для аватарок существ на карте боя, которую видят и игроки. Авторизацию делает вызывающий сервис.
+		/// </summary>
+		Task<Dictionary<long, string?>> GetImageKeysUnscopedAsync(IReadOnlyCollection<long> ids);
 	}
 }

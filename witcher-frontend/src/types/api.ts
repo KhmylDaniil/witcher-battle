@@ -691,6 +691,8 @@ export interface BattleMapParticipant {
   initiative: number | null
   column: number | null
   row: number | null
+  /** Своим участником управляет текущий пользователь (свой персонаж игрока; для мастера — существа). */
+  controlledByCurrentUser: boolean
 }
 
 export interface BattleMapView {
@@ -698,6 +700,8 @@ export interface BattleMapView {
   battleName: string
   status: BattleStatus
   currentInitiative: number | null
+  /** true — мастер (подключение карты и расстановка); false — игрок, только просмотр, без маркеров. */
+  canEdit: boolean
   map: BattleMap | null
   participants: BattleMapParticipant[]
 }

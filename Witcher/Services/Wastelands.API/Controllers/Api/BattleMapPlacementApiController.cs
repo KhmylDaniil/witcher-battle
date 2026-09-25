@@ -6,7 +6,10 @@ using Wastelands.Service.Domain.Enums;
 
 namespace Wastelands.API.Controllers.Api
 {
-	/// <summary>Карта в бою: подключение карты игры к бою и расстановка участников — только мастер игры (см. BattleMapPlacementService).</summary>
+	/// <summary>
+	/// Карта в бою. Просмотр — мастеру и игрокам, чьи персонажи в идущем бою; подключение карты и расстановка
+	/// участников — только мастеру (см. BattleMapPlacementService).
+	/// </summary>
 	[Route("api/games/{gameId:long}/battles/{battleId:long}/map")]
 	public class BattleMapPlacementApiController : ApiControllerBase
 	{

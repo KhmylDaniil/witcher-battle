@@ -13,6 +13,9 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public int? CurrentInitiative { get; set; }
 
+		/// <summary>true — смотрит мастер игры (может подключать карту и расставлять); false — игрок, только просмотр.</summary>
+		public bool CanEdit { get; set; }
+
 		/// <summary>Подключённая карта; null — к бою карта не подключена.</summary>
 		public BattleMapDto? Map { get; set; }
 
@@ -41,5 +44,8 @@ namespace Wastelands.Service.Application.Models.Dto
 		public int? Column { get; set; }
 
 		public int? Row { get; set; }
+
+		/// <summary>Участником управляет текущий пользователь: свой персонаж игрока или, для мастера, любое существо.</summary>
+		public bool ControlledByCurrentUser { get; set; }
 	}
 }

@@ -5,7 +5,8 @@ using Wastelands.Service.Domain.Enums;
 namespace Wastelands.Service.Application.Contracts
 {
 	/// <summary>
-	/// Карта в бою: подключение карты игры к бою и расстановка участников по гексам. Только мастер игры.
+	/// Карта в бою: подключение карты игры к бою и расстановка участников по гексам — только мастер игры.
+	/// Просмотр (GetMapViewAsync) — также игрокам, чьи персонажи участвуют в идущем бою.
 	/// Движения по правилам (стоимость шага, очередь хода) здесь нет — это расстановка.
 	/// </summary>
 	public interface IBattleMapPlacementService

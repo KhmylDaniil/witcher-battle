@@ -5,6 +5,7 @@ import { Button, Card, ConfirmButton, ErrorText, Field, Input, PageHeader, Selec
 import { useCurrentUser } from '../auth/useAuth'
 import { ApiError } from '../../lib/apiClient'
 import { BattleMapAttachCard } from '../battleMaps/BattleMapAttachCard'
+import { battleMapWindowPath, openBattleMapWindow } from '../battleMaps/editorWindow'
 import { useBattleUpdates } from '../../lib/battleHub'
 import { charactersApi } from '../characters/api'
 import { creatureTemplatesApi } from '../creatureTemplates/api'
@@ -326,6 +327,17 @@ export function BattleDetailsPage() {
             <Link to={`/games/${gameId}`}>
               <Button variant="secondary">К игре</Button>
             </Link>
+            {/* Игрокам (они видят только идущий бой) — просмотр карты; мастер открывает её из карточки "Карта боя". */}
+            {!isOwner && b.battleMapId !== null && (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  if (!openBattleMapWindow(gameIdNum, id)) navigate(battleMapWindowPath(gameIdNum, id))
+                }}
+              >
+                Карта боя
+              </Button>
+            )}
             {isOwner && b.status === 'Draft' && (
               <Button disabled={start.isPending || participants.length === 0} onClick={() => start.mutate()}>
                 Начать бой

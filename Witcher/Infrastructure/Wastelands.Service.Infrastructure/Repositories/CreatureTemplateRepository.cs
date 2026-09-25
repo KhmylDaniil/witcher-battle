@@ -34,6 +34,13 @@ namespace Wastelands.Service.Infrastructure.Repositories
 				.Include(x => x.Abilities).ThenInclude(a => a.DefensiveSkills);
 		}
 
+		public async Task<Dictionary<long, string?>> GetImageKeysUnscopedAsync(IReadOnlyCollection<long> ids)
+		{
+			return await _dbContext.Set<CreatureTemplate>()
+				.Where(x => ids.Contains(x.Id))
+				.ToDictionaryAsync(x => x.Id, x => x.ImageKey);
+		}
+
 		public async Task<CreatureTemplate?> GetByIdUnscopedAsync(long id)
 		{
 			return await IncludeRelatedEntities(_dbContext.Set<CreatureTemplate>())
