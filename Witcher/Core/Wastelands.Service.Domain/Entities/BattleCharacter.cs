@@ -61,6 +61,23 @@ namespace Wastelands.Service.Domain.Entities
 			CurrentSta = character.Sta;
 		}
 
+		/// <summary>Позиция на карте, подключённой к бою (см. Battle.PlaceParticipantOnMap). Null — участник на карту не выставлен.</summary>
+		public int? MapColumn { get; private set; }
+
+		public int? MapRow { get; private set; }
+
+		internal void PlaceOnMap(int column, int row)
+		{
+			MapColumn = column;
+			MapRow = row;
+		}
+
+		internal void RemoveFromMap()
+		{
+			MapColumn = null;
+			MapRow = null;
+		}
+
 		public void SetInitiative(int value)
 		{
 			if (Initiative.HasValue)

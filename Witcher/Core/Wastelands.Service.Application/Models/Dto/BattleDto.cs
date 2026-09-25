@@ -21,5 +21,7 @@ namespace Wastelands.Service.Application.Models.Dto
 		public BattleAttackDto? Attack { get; set; }
 
 		public List<BattleLogEntryDto> LogEntries { get; set; } = [];
+
+		public long? BattleMapId { get; set; }
 	}
 }

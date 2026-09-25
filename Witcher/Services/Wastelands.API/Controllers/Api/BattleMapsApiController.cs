@@ -44,6 +44,19 @@ namespace Wastelands.API.Controllers.Api
 			return await _battleMapService.PaintHexesAsync(request);
 		}
 
+		[HttpPut("{battleMapId:long}/hexes/{column:int}/{row:int}/marker")]
+		public async Task<BattleMapDto> SetMarker(long battleMapId, int column, int row, SetBattleMapMarkerRequest request)
+		{
+			request.BattleMapId = battleMapId;
+			request.Column = column;
+			request.Row = row;
+			return await _battleMapService.SetMarkerAsync(request);
+		}
+
+		[HttpDelete("{battleMapId:long}/hexes/{column:int}/{row:int}/marker")]
+		public async Task<BattleMapDto> RemoveMarker(long battleMapId, int column, int row)
+			=> await _battleMapService.RemoveMarkerAsync(battleMapId, column, row);
+
 		[HttpDelete("{id:long}")]
 		public async Task<IActionResult> Delete(long id)
 		{

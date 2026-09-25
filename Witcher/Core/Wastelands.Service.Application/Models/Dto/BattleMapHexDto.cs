@@ -15,5 +15,7 @@ namespace Wastelands.Service.Application.Models.Dto
 		public bool IsPassable { get; set; }
 
 		public int? MovementCost { get; set; }
+
+		public string? MarkerText { get; set; }
 	}
 }

@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, ConfirmButton, ErrorText, Field, Input, PageHeader, Select, Spinner } from '../../components/ui'
 import { useCurrentUser } from '../auth/useAuth'
 import { ApiError } from '../../lib/apiClient'
+import { BattleMapAttachCard } from '../battleMaps/BattleMapAttachCard'
 import { useBattleUpdates } from '../../lib/battleHub'
 import { charactersApi } from '../characters/api'
 import { creatureTemplatesApi } from '../creatureTemplates/api'
@@ -844,6 +845,8 @@ export function BattleDetailsPage() {
           />
         )
       })()}
+
+      {isOwner && <BattleMapAttachCard gameId={gameIdNum} battle={b} />}
 
       {isOwner && b.status === 'Draft' && (
         <Card>

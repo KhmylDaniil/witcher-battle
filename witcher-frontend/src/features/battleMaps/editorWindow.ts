@@ -28,6 +28,17 @@ export function reserveEditorWindow(): Window | null {
   return window.open('about:blank', '_blank', WINDOW_FEATURES)
 }
 
+export function battleMapWindowPath(gameId: number, battleId: number): string {
+  return `/games/${gameId}/battles/${battleId}/map`
+}
+
+/** Открывает (или переиспользует) окно "Карта боя" для расстановки участников. false — окно заблокировал браузер. */
+export function openBattleMapWindow(gameId: number, battleId: number): boolean {
+  const w = window.open(battleMapWindowPath(gameId, battleId), `battle-${battleId}-map`, WINDOW_FEATURES)
+  w?.focus()
+  return w !== null
+}
+
 const CHANNEL_NAME = 'wastelands-battle-maps'
 
 export function notifyBattleMapsChanged(gameId: number): void {

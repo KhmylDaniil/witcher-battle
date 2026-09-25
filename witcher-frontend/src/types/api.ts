@@ -466,6 +466,9 @@ export interface BattleCreature {
   recovery: number
   stun: number
   initiative: number | null
+  /** Позиция на подключённой к бою карте; null — не выставлен. */
+  mapColumn: number | null
+  mapRow: number | null
   appliedConditions: Condition[]
   /** Износ брони по частям тела в этом бою (partId -> сколько очков брони потеряно). */
   armorReductionByPartId: Partial<Record<number, number>>
@@ -481,6 +484,9 @@ export interface BattleCharacterEntry {
   maxSta: number
   currentSta: number
   initiative: number | null
+  /** Позиция на подключённой к бою карте; null — не выставлен. */
+  mapColumn: number | null
+  mapRow: number | null
   appliedConditions: Condition[]
   /** Уже потратил основное действие в этот ход — доступно доп. действие за 3 выносливости или конец хода. */
   hasActedThisTurn: boolean
@@ -570,6 +576,8 @@ export interface Battle {
   characters: BattleCharacterEntry[]
   attack: BattleAttack | null
   logEntries: BattleLogEntry[]
+  /** Подключённая карта боя (BattleMap.id); null — бой без карты. */
+  battleMapId: number | null
 }
 
 export interface BattleFormValues {
@@ -620,6 +628,8 @@ export interface BattleMapHex {
   terrainStyle: HexTerrainStyle
   isPassable: boolean
   movementCost: number | null
+  /** Текст маркера мастера на гексе; null — маркера нет. На гексе не больше одного объекта. */
+  markerText: string | null
 }
 
 /** Карта без гексов — то, что отдаёт список карт игры. */
@@ -663,4 +673,31 @@ export interface HexPaint {
   row: number
   terrainType: HexTerrainType
   terrainStyle: HexTerrainStyle
+}
+
+/** Зеркалит BattleMapHex.MaxMarkerTextLength на бэке. */
+export const BATTLE_MAP_MARKER_MAX_LENGTH = 500
+
+// ---- Карта в бою (BattleMapPlacementApiController) — только мастер игры ----
+
+export interface BattleMapParticipant {
+  kind: ParticipantKind
+  /** Creature.id или Character.id — как attackerId/defenderId в атаке. */
+  id: number
+  name: string
+  imageUrl: string | null
+  currentHP: number
+  maxHP: number
+  initiative: number | null
+  column: number | null
+  row: number | null
+}
+
+export interface BattleMapView {
+  battleId: number
+  battleName: string
+  status: BattleStatus
+  currentInitiative: number | null
+  map: BattleMap | null
+  participants: BattleMapParticipant[]
 }

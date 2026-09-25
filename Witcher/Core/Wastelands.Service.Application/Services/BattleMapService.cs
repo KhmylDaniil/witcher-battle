@@ -81,15 +81,27 @@ namespace Wastelands.Service.Application.Services
 			await _battleMapRepository.DeleteAsync(battleMap);
 		}
 
-		// Порядок гексов в БД не гарантирован (а после Resize новые гексы ещё и дописаны в конец списка) —
-		// отдаём их построчно, чтобы клиенту не приходилось сортировать.
-		private BattleMapDto ToDto(BattleMap battleMap)
+		public async Task<BattleMapDto> SetMarkerAsync(SetBattleMapMarkerRequest request)
 		{
-			var dto = _mapper.Map<BattleMapDto>(battleMap);
-			dto.Hexes = dto.Hexes.OrderBy(h => h.Row).ThenBy(h => h.Column).ToList();
+			var battleMap = await GetByIdAsync(request.BattleMapId);
+			battleMap.SetMarker(request.Column, request.Row, request.Text);
 
-			return dto;
+			await _battleMapRepository.SaveTrackedChangesAsync();
+
+			return ToDto(battleMap);
 		}
+
+		public async Task<BattleMapDto> RemoveMarkerAsync(long battleMapId, int column, int row)
+		{
+			var battleMap = await GetByIdAsync(battleMapId);
+			battleMap.RemoveMarker(column, row);
+
+			await _battleMapRepository.SaveTrackedChangesAsync();
+
+			return ToDto(battleMap);
+		}
+
+		private BattleMapDto ToDto(BattleMap battleMap) => _mapper.Map<BattleMapDto>(battleMap);
 
 		private async Task<BattleMap> GetByIdAsync(long id)
 		{

@@ -101,6 +101,10 @@
 		// battle map errors 900...
 		BattleMapNotFound = 900,
 		BattleMapHexOutOfBounds = 901,
+		BattleMapBelongsToAnotherGame = 902,
+		BattleMapNotAttached = 903,
+		BattleMapHexNotPassable = 904,
+		BattleMapHexOccupied = 905,
 
 		// Common error codes 1100...1199
 		InvalidArgument = 1101,

@@ -18,5 +18,9 @@ namespace Wastelands.Service.Application.Contracts
 		Task<BattleMapDto> PaintHexesAsync(PaintBattleMapHexesRequest request);
 
 		Task DeleteBattleMapAsync(long id);
+
+		Task<BattleMapDto> SetMarkerAsync(SetBattleMapMarkerRequest request);
+
+		Task<BattleMapDto> RemoveMarkerAsync(long battleMapId, int column, int row);
 	}
 }

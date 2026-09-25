@@ -103,13 +103,7 @@ namespace Wastelands.Service.Domain.Entities
 
 			foreach (var paint in paints)
 			{
-				if (!hexesByPosition.TryGetValue((paint.Column, paint.Row), out var hex))
-				{
-					throw new InvalidArgumentException(
-						ErrorCode.BattleMapHexOutOfBounds,
-						$"Гекс ({paint.Column}, {paint.Row}) находится за пределами карты {Columns}×{Rows}.");
-				}
-
+				var hex = hexesByPosition.GetValueOrDefault((paint.Column, paint.Row)) ?? GetHex(paint.Column, paint.Row);
 				targets.Add((hex, paint));
 			}
 
@@ -121,6 +115,25 @@ namespace Wastelands.Service.Domain.Entities
 
 		public BattleMapHex? FindHex(int column, int row)
 			=> Hexes.FirstOrDefault(h => h.Column == column && h.Row == row);
+
+		/// <summary>Гекс по координатам; если координаты вне карты — исключение.</summary>
+		public BattleMapHex GetHex(int column, int row)
+		{
+			return FindHex(column, row) ?? throw new InvalidArgumentException(
+				ErrorCode.BattleMapHexOutOfBounds,
+				$"Гекс ({column}, {row}) находится за пределами карты {Columns}×{Rows}.");
+		}
+
+		/// <summary>Ставит на гекс маркер с текстом (или меняет текст уже стоящего).</summary>
+		public void SetMarker(int column, int row, string text)
+		{
+			GetHex(column, row).SetMarker(text);
+		}
+
+		public void RemoveMarker(int column, int row)
+		{
+			GetHex(column, row).RemoveMarker();
+		}
 
 		private static void ValidateDimensions(int columns, int rows)
 		{

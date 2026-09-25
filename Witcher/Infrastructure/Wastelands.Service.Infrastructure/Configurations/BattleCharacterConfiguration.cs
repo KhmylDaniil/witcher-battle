@@ -32,6 +32,20 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnName("Initiative")
 				.IsRequired(false);
 
+			builder.Property(x => x.MapColumn)
+				.HasColumnName("MapColumn")
+				.IsRequired(false);
+
+			builder.Property(x => x.MapRow)
+				.HasColumnName("MapRow")
+				.IsRequired(false);
+
+			// Страховка на уровне БД к доменному правилу "один участник на гекс" (Battle.PlaceParticipantOnMap)
+			// в пределах этой таблицы; пересечение существо/персонаж проверяет только домен. NULL-позиции
+			// (не выставлен) в Postgres уникальность не нарушают.
+			builder.HasIndex(x => new { x.BattleId, x.MapColumn, x.MapRow })
+				.IsUnique();
+
 			builder.Property(x => x.AppliedConditions)
 				.HasColumnType("jsonb")
 				.HasColumnName("AppliedConditions")

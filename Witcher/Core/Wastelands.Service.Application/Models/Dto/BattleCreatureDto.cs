@@ -24,6 +24,11 @@ namespace Wastelands.Service.Application.Models.Dto
 
 		public int? Initiative { get; set; }
 
+		/// <summary>Позиция на подключённой к бою карте; null — не выставлен.</summary>
+		public int? MapColumn { get; set; }
+
+		public int? MapRow { get; set; }
+
 		public List<Condition> AppliedConditions { get; set; } = [];
 
 		/// <summary>Износ брони по частям тела в этом бою — для расчёта текущей (эффективной) брони на фронте.</summary>

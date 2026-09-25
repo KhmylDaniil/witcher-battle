@@ -9,6 +9,7 @@ const hex = (column: number, row: number): BattleMapHex => ({
   terrainStyle: 'Grass',
   isPassable: true,
   movementCost: 1,
+  markerText: null,
 })
 
 const saved = indexHexes([hex(0, 0), hex(1, 0), hex(0, 1)])

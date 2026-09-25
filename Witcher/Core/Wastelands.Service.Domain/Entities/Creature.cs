@@ -89,6 +89,23 @@ namespace Wastelands.Service.Domain.Entities
 		}
 
 		/// <summary>Переиндексация после Battle.RemoveCreature — в отличие от SetInitiative, перезаписывает уже выставленное значение.</summary>
+		/// <summary>Позиция на карте, подключённой к бою (см. Battle.PlaceParticipantOnMap). Null — участник на карту не выставлен.</summary>
+		public int? MapColumn { get; private set; }
+
+		public int? MapRow { get; private set; }
+
+		internal void PlaceOnMap(int column, int row)
+		{
+			MapColumn = column;
+			MapRow = row;
+		}
+
+		internal void RemoveFromMap()
+		{
+			MapColumn = null;
+			MapRow = null;
+		}
+
 		internal void ReassignInitiative(int value)
 		{
 			Initiative = value;

@@ -47,7 +47,10 @@ namespace Wastelands.Service.Application.Mapping
 			CreateMap<BattleLogEntry, BattleLogEntryDto>();
 
 			CreateMap<BattleMapHex, BattleMapHexDto>();
-			CreateMap<BattleMap, BattleMapDto>();
+			// Порядок гексов в БД не гарантирован (а после Resize новые гексы ещё и дописаны в конец
+			// списка) — отдаём их построчно, чтобы клиенту не приходилось сортировать.
+			CreateMap<BattleMap, BattleMapDto>()
+				.ForMember(dst => dst.Hexes, opt => opt.MapFrom(src => src.Hexes.OrderBy(h => h.Row).ThenBy(h => h.Column)));
 			CreateMap<BattleMap, BattleMapSummaryDto>();
 		}
 	}

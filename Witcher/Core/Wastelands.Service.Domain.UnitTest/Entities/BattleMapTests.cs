@@ -110,5 +110,43 @@ namespace Wastelands.Service.Domain.UnitTest.Entities
 			hex.IsPassable.Should().Be(isPassable);
 			hex.MovementCost.Should().Be(movementCost);
 		}
+
+		[TestMethod]
+		public void SetMarker_StoresTrimmedText_RemoveMarker_ClearsIt()
+		{
+			var map = new BattleMap(1, "Map", null, 3, 3, HexTerrainStyle.Grass);
+
+			map.SetMarker(1, 2, "  Сундук с ловушкой ");
+
+			map.FindHex(1, 2)!.MarkerText.Should().Be("Сундук с ловушкой");
+
+			map.RemoveMarker(1, 2);
+
+			map.FindHex(1, 2)!.MarkerText.Should().BeNull();
+		}
+
+		[TestMethod]
+		[DataRow("")]
+		[DataRow("   ")]
+		public void SetMarker_EmptyText_Throws(string text)
+		{
+			var map = new BattleMap(1, "Map", null, 3, 3, HexTerrainStyle.Grass);
+
+			var act = () => map.SetMarker(0, 0, text);
+
+			act.Should().Throw<InvalidArgumentException>();
+		}
+
+		[TestMethod]
+		public void SetMarker_TooLongOrOutOfBounds_Throws()
+		{
+			var map = new BattleMap(1, "Map", null, 3, 3, HexTerrainStyle.Grass);
+
+			var tooLong = () => map.SetMarker(0, 0, new string('x', BattleMapHex.MaxMarkerTextLength + 1));
+			var outOfBounds = () => map.SetMarker(3, 0, "text");
+
+			tooLong.Should().Throw<InvalidArgumentException>();
+			outOfBounds.Should().Throw<InvalidArgumentException>();
+		}
 	}
 }

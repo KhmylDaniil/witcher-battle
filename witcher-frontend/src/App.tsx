@@ -2,6 +2,7 @@ import { Navigate, Route, BrowserRouter, Routes } from 'react-router-dom'
 import { LoginPage } from './features/auth/LoginPage'
 import { RegisterPage } from './features/auth/RegisterPage'
 import { BattleMapEditorPage } from './features/battleMaps/BattleMapEditorPage'
+import { BattleMapWindowPage } from './features/battleMaps/BattleMapWindowPage'
 import { BattleDetailsPage } from './features/battles/BattleDetailsPage'
 import { BodyTemplateDetailsPage } from './features/bodyTemplates/BodyTemplateDetailsPage'
 import { BodyTemplatesListPage } from './features/bodyTemplates/BodyTemplatesListPage'
@@ -31,8 +32,9 @@ export default function App() {
         <Route path="/register" element={<RegisterPage />} />
 
         <Route element={<ProtectedRoute />}>
-          {/* Редактор карты открывается в отдельном окне — без шапки AppLayout, на всю площадь окна. */}
+          {/* Редактор карты и карта боя открываются в отдельных окнах — без шапки AppLayout, на всю площадь окна. */}
           <Route path="/games/:gameId/battle-maps/:battleMapId" element={<BattleMapEditorPage />} />
+          <Route path="/games/:gameId/battles/:battleId/map" element={<BattleMapWindowPage />} />
           <Route element={<AppLayout />}>
             <Route path="/" element={<Navigate to="/games" replace />} />
             <Route path="/games" element={<GamesListPage />} />

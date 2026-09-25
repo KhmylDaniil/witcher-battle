@@ -1,3 +1,5 @@
+using Wastelands.Core.Contracts.Enums;
+using Wastelands.Core.Contracts.Exceptions.BusinessLogicExceptions;
 using Wastelands.Core.EfDataAccess.Entities;
 using Wastelands.Service.Domain.Enums;
 
@@ -6,12 +8,19 @@ namespace Wastelands.Service.Domain.Entities
 	/// <summary>
 	/// Один гекс карты боя. Адресуется offset-координатами (Column, Row) внутри своей карты — раскладку
 	/// сетки см. в <see cref="BattleMap"/>. Отдельная строка на гекс, а не JSON-блоб на всю карту: к гексу
-	/// в будущем будут привязываться туман войны, двери, персонажи/существа и объекты.
+	/// в будущем будут привязываться туман войны и двери.
+	/// <para>
+	/// На гексе может лежать не больше одного объекта. Сейчас единственный вид объекта — текстовый
+	/// маркер мастера (<see cref="MarkerText"/>); персонажи/существа хранят свою позицию сами (см.
+	/// <see cref="Battle.PlaceParticipantOnMap"/>) — они не объекты карты, а участники конкретного боя.
+	/// </para>
 	/// </summary>
 	public class BattleMapHex : Entity
 	{
 		/// <summary>Во сколько раз дороже обычного обходится шаг на гекс сложного террейна.</summary>
 		public const int DifficultTerrainMovementCost = 2;
+
+		public const int MaxMarkerTextLength = 500;
 
 		public long BattleMapId { get; private set; }
 
@@ -22,6 +31,9 @@ namespace Wastelands.Service.Domain.Entities
 		public HexTerrainType TerrainType { get; private set; }
 
 		public HexTerrainStyle TerrainStyle { get; private set; }
+
+		/// <summary>Текст маркера, который мастер поставил на гекс (показывается всплывающей подсказкой). Null — маркера нет.</summary>
+		public string? MarkerText { get; private set; }
 
 		/// <summary>Можно ли вообще зайти на гекс.</summary>
 		public bool IsPassable => TerrainType is HexTerrainType.Open or HexTerrainType.Difficult;
@@ -52,6 +64,22 @@ namespace Wastelands.Service.Domain.Entities
 		{
 			TerrainType = terrainType;
 			TerrainStyle = terrainStyle;
+		}
+
+		internal void SetMarker(string text)
+		{
+			InvalidArgumentException.ThrowIfNullOrEmpty(text?.Trim(), nameof(text));
+			if (text!.Length > MaxMarkerTextLength)
+			{
+				throw new InvalidArgumentException(ErrorCode.InvalidArgument, $"Текст маркера длиннее {MaxMarkerTextLength} символов.");
+			}
+
+			MarkerText = text.Trim();
+		}
+
+		internal void RemoveMarker()
+		{
+			MarkerText = null;
 		}
 	}
 }

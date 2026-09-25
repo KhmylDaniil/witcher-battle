@@ -59,6 +59,7 @@ namespace Wastelands.API.Extensions
 			services.AddScoped<IBattleCombatService, BattleCombatService>();
 			services.AddScoped<IBattleParticipantSheetService, BattleParticipantSheetService>();
 			services.AddScoped<IBattleMapService, BattleMapService>();
+			services.AddScoped<IBattleMapPlacementService, BattleMapPlacementService>();
 
 			services.AddAutoMapper(typeof(MappingProfile));
 

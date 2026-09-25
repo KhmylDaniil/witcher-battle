@@ -57,6 +57,17 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasForeignKey(x => x.BattleId)
 				.HasPrincipalKey(x => x.Id)
 				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.Property(x => x.BattleMapId)
+				.HasColumnName("BattleMapId")
+				.IsRequired(false);
+
+			// SetNull: удаление карты не удаляет бой, он просто остаётся без карты.
+			builder.HasOne<BattleMap>()
+				.WithMany()
+				.HasForeignKey(x => x.BattleMapId)
+				.HasPrincipalKey(x => x.Id)
+				.OnDelete(DeleteBehavior.SetNull);
 		}
 	}
 }

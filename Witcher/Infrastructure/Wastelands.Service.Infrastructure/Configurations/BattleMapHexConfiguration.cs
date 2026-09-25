@@ -33,6 +33,11 @@ namespace Wastelands.Service.Infrastructure.Configurations
 				.HasColumnName("TerrainStyle")
 				.IsRequired();
 
+			builder.Property(x => x.MarkerText)
+				.HasColumnName("MarkerText")
+				.HasColumnType($"varchar({BattleMapHex.MaxMarkerTextLength})")
+				.IsRequired(false);
+
 			builder.Ignore(x => x.IsPassable);
 			builder.Ignore(x => x.MovementCost);
 

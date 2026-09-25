@@ -1,5 +1,4 @@
 import {
-  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -11,9 +10,10 @@ import {
 } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
-import { Button, ErrorText, Field, Input, Select, Spinner, Textarea } from '../../components/ui'
+import { Button, ConfirmButton, ErrorText, Field, Input, Select, Spinner, Textarea } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
 import {
+  BATTLE_MAP_MARKER_MAX_LENGTH,
   BATTLE_MAP_MAX_DIMENSION,
   BATTLE_MAP_MIN_DIMENSION,
   HEX_TERRAIN_STYLE_LABELS,
@@ -26,22 +26,21 @@ import {
 } from '../../types/api'
 import { battleMapsApi } from './api'
 import { notifyBattleMapsChanged } from './editorWindow'
-import { floodFill, gridPixelSize, hexCenter, hexesInRadius, hexKey, hexPolygonPoints, isInBounds, pixelToHex, type HexCoord } from './hexGrid'
+import { HexCell, MapTooltip, MarkerPin } from './HexMapLayers'
+import { floodFill, hexesInRadius, hexKey, hexPolygonPoints, type HexCoord } from './hexGrid'
+import { HEX_SIZE, MAP_PADDING, hexAtClientPoint, mapViewSize } from './mapLayout'
 import { applyPaint, effectiveLook, indexHexes, type PendingPaints } from './pendingPaints'
 import { TerrainPatternDefs, TerrainSwatch } from './terrainAppearance'
-import { TERRAIN_TYPE_GLYPHS, terrainFill } from './terrainFill'
 
-/** Радиус гекса (от центра до вершины) в единицах SVG при масштабе 1. */
-const HEX_SIZE = 24
-const PADDING = 8
 const MAX_UNDO = 50
 
-type Tool = 'brush' | 'fill' | 'picker'
+type Tool = 'brush' | 'fill' | 'picker' | 'marker'
 
 const TOOLS: { id: Tool; label: string; hotkey: string }[] = [
   { id: 'brush', label: 'Кисть', hotkey: 'B' },
   { id: 'fill', label: 'Заливка', hotkey: 'F' },
   { id: 'picker', label: 'Пипетка', hotkey: 'I' },
+  { id: 'marker', label: 'Маркер', hotkey: 'M' },
 ]
 
 const BRUSH_SIZES = [
@@ -94,11 +93,15 @@ function Editor({ gameId, map }: { gameId: number; map: BattleMap }) {
   const [pending, setPending] = useState<PendingPaints>(() => new Map())
   const [undoStack, setUndoStack] = useState<PendingPaints[]>([])
   const [hovered, setHovered] = useState<HexCoord | null>(null)
+  const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null)
+  /** Гекс, маркер которого сейчас редактируется (инструмент "Маркер"). */
+  const [markerHex, setMarkerHex] = useState<HexCoord | null>(null)
 
   const save = useMutation({
     mutationFn: (snapshot: PendingPaints) => battleMapsApi.paintHexes(map.id, [...snapshot.values()]),
     onSuccess: (updated, snapshot) => {
       queryClient.setQueryData(['battle-maps', map.id], updated)
+      notifyBattleMapsChanged(gameId)
       // Пока шёл запрос, мастер мог продолжить рисовать — сохранённое убираем, более свежее оставляем.
       setPending((prev) => {
         const rest = new Map(prev)
@@ -153,13 +156,14 @@ function Editor({ gameId, map }: { gameId: number; map: BattleMap }) {
   const stroking = useRef(false)
   const lastStrokeHex = useRef<string | null>(null)
 
-  const hexAt = (e: ReactPointerEvent<SVGSVGElement>): HexCoord | null => {
-    const rect = svgRef.current!.getBoundingClientRect()
-    const hex = pixelToHex((e.clientX - rect.left) / zoom - PADDING, (e.clientY - rect.top) / zoom - PADDING, HEX_SIZE)
-    return isInBounds(hex, map.columns, map.rows) ? hex : null
-  }
+  const hexAt = (e: ReactPointerEvent<SVGSVGElement>): HexCoord | null =>
+    hexAtClientPoint(svgRef.current!, e.clientX, e.clientY, zoom, map.columns, map.rows)
 
   const applyTool = (hex: HexCoord) => {
+    if (tool === 'marker') {
+      setMarkerHex(hex)
+      return
+    }
     if (tool === 'picker') {
       const look = effectiveLook(hexKey(hex.column, hex.row), saved, pending)
       if (look) {
@@ -188,7 +192,8 @@ function Editor({ gameId, map }: { gameId: number; map: BattleMap }) {
     const hex = hexAt(e)
     if (!hex) return
     e.currentTarget.setPointerCapture(e.pointerId)
-    setUndoStack((prev) => [...prev.slice(-(MAX_UNDO - 1)), pending])
+    // Маркеры сохраняются сразу и в историю отмены раскраски не попадают.
+    if (tool !== 'marker') setUndoStack((prev) => [...prev.slice(-(MAX_UNDO - 1)), pending])
     stroking.current = tool === 'brush'
     lastStrokeHex.current = hexKey(hex.column, hex.row)
     applyTool(hex)
@@ -197,6 +202,7 @@ function Editor({ gameId, map }: { gameId: number; map: BattleMap }) {
   const onPointerMove = (e: ReactPointerEvent<SVGSVGElement>) => {
     const hex = hexAt(e)
     setHovered((prev) => (prev?.column === hex?.column && prev?.row === hex?.row ? prev : hex))
+    setPointer({ x: e.clientX, y: e.clientY })
     if (!stroking.current || !hex) return
     const key = hexKey(hex.column, hex.row)
     if (key === lastStrokeHex.current) return
@@ -209,13 +215,13 @@ function Editor({ gameId, map }: { gameId: number; map: BattleMap }) {
     lastStrokeHex.current = null
   }
 
-  const grid = gridPixelSize(map.columns, map.rows, HEX_SIZE)
-  const viewWidth = grid.width + PADDING * 2
-  const viewHeight = grid.height + PADDING * 2
+  const { width: viewWidth, height: viewHeight } = mapViewSize(map.columns, map.rows)
+  const markedHexes = map.hexes.filter((h) => h.markerText)
+  const hoveredMarker = hovered ? saved.get(hexKey(hovered.column, hovered.row))?.markerText : null
 
   const hoveredLook = hovered ? effectiveLook(hexKey(hovered.column, hovered.row), saved, pending) : undefined
   const brushPreview =
-    hovered && tool === 'brush' ? hexesInRadius(hovered, brushRadius, map.columns, map.rows) : hovered ? [hovered] : []
+    hovered && tool === 'brush' ? hexesInRadius(hovered, brushRadius, map.columns, map.rows) : hovered && tool !== 'marker' ? [hovered] : []
 
   return (
     <div className="flex h-screen flex-col bg-neutral-100 dark:bg-neutral-950">
@@ -265,10 +271,19 @@ function Editor({ gameId, map }: { gameId: number; map: BattleMap }) {
       <div className="flex min-h-0 flex-1">
         <aside className="flex w-72 shrink-0 flex-col gap-4 overflow-y-auto border-r border-neutral-200 bg-white p-3 text-sm dark:border-neutral-800 dark:bg-neutral-900">
           {showSettings && <MapSettingsForm gameId={gameId} map={map} hasPendingChanges={pending.size > 0} />}
+          {tool === 'marker' && markerHex && (
+            <MarkerForm
+              key={hexKey(markerHex.column, markerHex.row)}
+              gameId={gameId}
+              map={map}
+              hex={markerHex}
+              onDone={() => setMarkerHex(null)}
+            />
+          )}
 
           <section>
             <h2 className="mb-1.5 font-medium">Инструмент</h2>
-            <div className="flex gap-1">
+            <div className="grid grid-cols-2 gap-1">
               {TOOLS.map((t) => (
                 <ToggleButton key={t.id} active={tool === t.id} onClick={() => setTool(t.id)} title={`Горячая клавиша: ${t.hotkey}`}>
                   {t.label}
@@ -288,6 +303,7 @@ function Editor({ gameId, map }: { gameId: number; map: BattleMap }) {
               {tool === 'brush' && 'Зажмите кнопку мыши и ведите по карте.'}
               {tool === 'fill' && 'Перекрашивает связную область гексов того же типа и стиля.'}
               {tool === 'picker' && 'Кликните по гексу, чтобы взять его тип и стиль.'}
+              {tool === 'marker' && 'Кликните по гексу, чтобы поставить или изменить маркер. Текст маркера всплывает при наведении.'}
             </p>
           </section>
 
@@ -350,14 +366,17 @@ function Editor({ gameId, map }: { gameId: number; map: BattleMap }) {
             height={viewHeight * zoom}
             viewBox={`0 0 ${viewWidth} ${viewHeight}`}
             className="m-4 touch-none select-none"
-            style={{ cursor: tool === 'picker' ? 'copy' : 'crosshair' }}
+            style={{ cursor: tool === 'picker' ? 'copy' : tool === 'marker' ? 'pointer' : 'crosshair' }}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={endStroke}
             onPointerCancel={endStroke}
-            onPointerLeave={() => setHovered(null)}
+            onPointerLeave={() => {
+              setHovered(null)
+              setPointer(null)
+            }}
           >
-            <g transform={`translate(${PADDING} ${PADDING})`}>
+            <g transform={`translate(${MAP_PADDING} ${MAP_PADDING})`}>
               {map.hexes.map((h) => {
                 const key = hexKey(h.column, h.row)
                 const look = pending.get(key) ?? h
@@ -372,6 +391,18 @@ function Editor({ gameId, map }: { gameId: number; map: BattleMap }) {
                   />
                 )
               })}
+              {markedHexes.map((h) => (
+                <MarkerPin key={hexKey(h.column, h.row)} column={h.column} row={h.row} />
+              ))}
+              {tool === 'marker' && markerHex && (
+                <polygon
+                  points={hexPolygonPoints(markerHex.column, markerHex.row, HEX_SIZE)}
+                  fill="none"
+                  stroke="#f59e0b"
+                  strokeWidth={3}
+                  pointerEvents="none"
+                />
+              )}
               {brushPreview.map((h) => (
                 <polygon
                   key={hexKey(h.column, h.row)}
@@ -384,6 +415,8 @@ function Editor({ gameId, map }: { gameId: number; map: BattleMap }) {
               ))}
             </g>
           </svg>
+
+          {hoveredMarker && pointer && <MapTooltip x={pointer.x} y={pointer.y}>{hoveredMarker}</MapTooltip>}
 
           {hovered && hoveredLook && (
             <div className="pointer-events-none fixed bottom-3 right-3 rounded-md bg-black/75 px-3 py-1.5 text-xs text-white">
@@ -407,50 +440,6 @@ function movementHint(type: HexTerrainType): string {
       return 'непроходим'
   }
 }
-
-/** Один гекс карты. memo — при мазке кистью перерисовываются только изменённые гексы, а не вся карта. */
-const HexCell = memo(function HexCell({
-  column,
-  row,
-  terrainType,
-  terrainStyle,
-  showGlyph,
-}: {
-  column: number
-  row: number
-  terrainType: HexTerrainType
-  terrainStyle: HexTerrainStyle
-  showGlyph: boolean
-}) {
-  const glyph = showGlyph ? TERRAIN_TYPE_GLYPHS[terrainType] : ''
-  const center = glyph ? hexCenter(column, row, HEX_SIZE) : null
-  return (
-    <g>
-      <polygon
-        points={hexPolygonPoints(column, row, HEX_SIZE)}
-        fill={terrainFill(terrainType, terrainStyle)}
-        stroke={terrainType === 'Void' ? '#1c1c22' : 'rgba(0,0,0,0.35)'}
-        strokeWidth={1}
-      />
-      {center && (
-        <text
-          x={center.x}
-          y={center.y}
-          textAnchor="middle"
-          dominantBaseline="central"
-          fontSize={HEX_SIZE * 0.7}
-          fill="#fff"
-          stroke="rgba(0,0,0,0.7)"
-          strokeWidth={2.5}
-          paintOrder="stroke"
-          pointerEvents="none"
-        >
-          {glyph}
-        </text>
-      )}
-    </g>
-  )
-})
 
 function ToggleButton({ active, className = '', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { active: boolean }) {
   return (
@@ -501,6 +490,65 @@ function TerrainLegend() {
         </tbody>
       </table>
     </section>
+  )
+}
+
+/** Маркер выбранного гекса: поставить/изменить текст или убрать. Сохраняется сразу, без кнопки "Сохранить" карты. */
+function MarkerForm({ gameId, map, hex, onDone }: { gameId: number; map: BattleMap; hex: HexCoord; onDone: () => void }) {
+  const queryClient = useQueryClient()
+  const existing = map.hexes.find((h) => h.column === hex.column && h.row === hex.row)?.markerText ?? null
+  const [text, setText] = useState(existing ?? '')
+
+  const onSuccess = (updated: BattleMap) => {
+    queryClient.setQueryData(['battle-maps', map.id], updated)
+    notifyBattleMapsChanged(gameId)
+    onDone()
+  }
+  const save = useMutation({ mutationFn: () => battleMapsApi.setMarker(map.id, hex.column, hex.row, text), onSuccess })
+  const remove = useMutation({ mutationFn: () => battleMapsApi.removeMarker(map.id, hex.column, hex.row), onSuccess })
+  const error = save.error ?? remove.error
+
+  return (
+    <form
+      className="flex flex-col gap-2 rounded-md border border-amber-400 p-2"
+      onSubmit={(e) => {
+        e.preventDefault()
+        save.mutate()
+      }}
+    >
+      <h2 className="font-medium">
+        Маркер гекса ({hex.column}, {hex.row})
+      </h2>
+      <Textarea
+        rows={3}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        maxLength={BATTLE_MAP_MARKER_MAX_LENGTH}
+        placeholder="Например: сундук с ловушкой, СЛ 15"
+        required
+        autoFocus
+      />
+      {error && <ErrorText>{error instanceof ApiError ? error.message : 'Не удалось сохранить маркер'}</ErrorText>}
+      <div className="flex flex-wrap gap-1">
+        <Button type="submit" className="flex-1 px-2 py-1" disabled={save.isPending || !text.trim()}>
+          {existing ? 'Изменить' : 'Поставить'}
+        </Button>
+        {existing && (
+          <ConfirmButton
+            type="button"
+            className="px-2 py-1"
+            confirmMessage="Убрать маркер с гекса?"
+            onConfirm={() => remove.mutate()}
+            disabled={remove.isPending}
+          >
+            Убрать
+          </ConfirmButton>
+        )}
+        <Button type="button" variant="secondary" className="px-2 py-1" onClick={onDone}>
+          Отмена
+        </Button>
+      </div>
+    </form>
   )
 }
 
