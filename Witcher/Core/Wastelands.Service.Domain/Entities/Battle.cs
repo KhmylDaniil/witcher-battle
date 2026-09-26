@@ -452,6 +452,45 @@ namespace Wastelands.Service.Domain.Entities
 			return (character.MapColumn, character.MapRow, character.CurrentMovement);
 		}
 
+		/// <summary>
+		/// Без подключённой к бою карты дальность не ограничена. С картой — и атакующий, и цель обязаны
+		/// быть выставлены на неё, а расстояние между их гексами (по прямой, без учёта террейна —
+		/// препятствия для атаки пока не моделируются, только для движения) не должно превышать range
+		/// (см. BattleCombatService.StartAttackAsync, где вычисляется дальность атакующей способности).
+		/// </summary>
+		public void EnsureWithinAttackRange(ParticipantKind attackerKind, long attackerId, ParticipantKind defenderKind, long defenderId, int range)
+		{
+			if (BattleMapId is null)
+			{
+				return;
+			}
+
+			var attackerPosition = GetMapPosition(attackerKind, attackerId);
+			var defenderPosition = GetMapPosition(defenderKind, defenderId);
+			if (attackerPosition is null || defenderPosition is null)
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.ParticipantNotPlacedOnMap,
+					"Чтобы атаковать при подключённой к бою карте, и атакующий, и цель должны быть выставлены на неё.");
+			}
+
+			var distance = HexPathfinder.Distance(attackerPosition.Value, defenderPosition.Value);
+			if (distance > range)
+			{
+				throw new InvalidArgumentException(
+					ErrorCode.TargetOutOfAttackRange, $"Цель вне дальности атаки: расстояние {distance}, дальность {range}.");
+			}
+		}
+
+		private HexPathfinder.HexPosition? GetMapPosition(ParticipantKind kind, long participantId)
+		{
+			var (column, row, _) = kind == ParticipantKind.Creature
+				? GetCreatureMovementState(participantId)
+				: GetCharacterMovementState(participantId);
+
+			return column is { } c && row is { } r ? new HexPathfinder.HexPosition(c, r) : null;
+		}
+
 		/// <summary>Гексы, занятые другими участниками (кроме kind/participantId самого движущегося) — для блокировки прохода.</summary>
 		private HashSet<HexPathfinder.HexPosition> GetOccupiedHexes(ParticipantKind exceptKind, long exceptId)
 		{

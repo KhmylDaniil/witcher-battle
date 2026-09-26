@@ -235,6 +235,16 @@ namespace Wastelands.Service.Application.Services
 			return weapon?.AttackSkill;
 		}
 
+		/// <summary>
+		/// Экипированный предмет, породивший данную способность (Ability.EquippedItemId) — если это
+		/// персонаж и предмет всё ещё у него в инвентаре. Null для способностей без оружия за спиной
+		/// (природные атаки существ, способности существ вообще — у них нет предметов).
+		/// </summary>
+		public static Item? GetEquippedWeapon(ParticipantCombatContext context, Ability ability)
+		{
+			return ability.EquippedItemId is { } itemId ? context.Character?.Items.FirstOrDefault(i => i.Id == itemId) : null;
+		}
+
 		public static void ApplyCriticalWound(Battle battle, ParticipantKind kind, long participantId, string slotKey, Condition wound)
 		{
 			if (kind == ParticipantKind.Creature)

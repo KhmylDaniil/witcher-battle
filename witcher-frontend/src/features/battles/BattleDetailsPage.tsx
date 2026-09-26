@@ -76,7 +76,7 @@ export function BattleDetailsPage() {
   const mapView = useQuery({
     queryKey: ['battles', gameIdNum, id, 'map'],
     queryFn: () => battleMapPlacementApi.get(gameIdNum, id),
-    enabled: battle.data?.battleMapId !== null && battle.data?.battleMapId !== undefined,
+    enabled: battle.data?.battleMapId != null,
     retry: false,
   })
 

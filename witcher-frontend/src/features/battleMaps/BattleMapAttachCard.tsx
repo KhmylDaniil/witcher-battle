@@ -1,18 +1,16 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
 import { Button, Card, ErrorText, Select, Spinner } from '../../components/ui'
 import { ApiError } from '../../lib/apiClient'
 import type { Battle } from '../../types/api'
 import { battleMapPlacementApi, battleMapsApi } from './api'
-import { battleMapWindowPath, openBattleMapWindow } from './editorWindow'
 
 /**
- * Карточка "Карта боя" на странице боя — только мастеру: подключить к бою одну из карт игры и открыть
- * окно расстановки участников. Смена карты снимает всех участников с поля (позиции относятся к карте).
+ * Карточка "Карта боя" на странице боя — только мастеру: подключить к бою одну из карт игры или
+ * отключить её. Сама карта (расстановка, движение) видна ниже на той же странице — см. BattleMapBoard,
+ * встроенный в BattleDetailsPage. Смена карты снимает всех участников с поля (позиции относятся к карте).
  */
 export function BattleMapAttachCard({ gameId, battle }: { gameId: number; battle: Battle }) {
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
 
   const maps = useQuery({
@@ -29,10 +27,6 @@ export function BattleMapAttachCard({ gameId, battle }: { gameId: number; battle
       await queryClient.invalidateQueries({ queryKey: ['battles', gameId, battle.id] })
     },
   })
-
-  const openWindow = () => {
-    if (!openBattleMapWindow(gameId, battle.id)) navigate(battleMapWindowPath(gameId, battle.id))
-  }
 
   const attachedMap = maps.data?.items.find((m) => m.id === battle.battleMapId)
   const placedCount =
@@ -58,14 +52,9 @@ export function BattleMapAttachCard({ gameId, battle }: { gameId: number; battle
               — на карте {placedCount} из {totalCount} участников
             </span>
           </span>
-          <div className="flex gap-2">
-            <Button className="px-2 py-1" onClick={openWindow}>
-              Открыть карту боя
-            </Button>
-            <Button variant="secondary" className="px-2 py-1" disabled={attach.isPending} onClick={() => confirmChange(null)}>
-              Отключить
-            </Button>
-          </div>
+          <Button variant="secondary" className="px-2 py-1" disabled={attach.isPending} onClick={() => confirmChange(null)}>
+            Отключить
+          </Button>
         </div>
       )}
 

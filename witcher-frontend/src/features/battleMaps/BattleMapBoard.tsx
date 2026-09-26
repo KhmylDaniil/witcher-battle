@@ -146,6 +146,8 @@ export function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleM
     && hoveredHex.isPassable
     && (!hoveredParticipant || sameParticipant(hoveredParticipant, selected))
   const canActOnHovered = canMoveToHovered || canPlaceOnHovered
+  const cursorStyle =
+    selected && (movable || !readOnly) ? (canActOnHovered ? 'copy' : hoveredParticipant ? 'pointer' : 'not-allowed') : hoveredParticipant ? 'pointer' : 'default'
 
   const placed = view.participants.filter((p) => p.column !== null)
   const unplaced = view.participants.filter((p) => p.column === null)
@@ -263,22 +265,7 @@ export function BattleMapBoard({ gameId, view }: { gameId: number; view: BattleM
             height={viewHeight * zoom}
             viewBox={`0 0 ${viewWidth} ${viewHeight}`}
             className="m-4 touch-none select-none"
-            style={{
-              cursor:
-                movable || !readOnly
-                  ? selected
-                    ? canActOnHovered
-                      ? 'copy'
-                      : hoveredParticipant
-                        ? 'pointer'
-                        : 'not-allowed'
-                    : hoveredParticipant
-                      ? 'pointer'
-                      : 'default'
-                  : hoveredParticipant
-                    ? 'pointer'
-                    : 'default',
-            }}
+            style={{ cursor: cursorStyle }}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerLeave={() => {

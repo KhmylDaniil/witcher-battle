@@ -66,11 +66,7 @@ namespace Wastelands.Service.Application.Services
 			var attackerContext = await _contextProvider.GetContextAsync(battle, attack.AttackerKind, attack.AttackerId);
 			var ability = attackerContext.Abilities.First(a => a.Id == attack.AbilityId);
 
-			Item? weapon = null;
-			if (ability.EquippedItemId is { } equippedItemId && attack.AttackerKind == ParticipantKind.Character)
-			{
-				weapon = attackerContext.Character!.Items.FirstOrDefault(i => i.Id == equippedItemId);
-			}
+			var weapon = BattleParticipants.GetEquippedWeapon(attackerContext, ability);
 
 			if (weapon is { WeaponKind: WeaponKind.Ranged })
 			{

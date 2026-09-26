@@ -141,12 +141,11 @@ namespace Wastelands.Service.Application.Services
 		}
 
 		/// <summary>
-		/// Без подключённой к бою карты дальность не ограничена — атаковать можно любое существо в бою
-		/// (как и раньше). С картой — и атакующий, и цель обязаны быть выставлены на неё, а расстояние
-		/// между их гексами (по прямой, без учёта террейна — препятствия для атаки пока не моделируются,
-		/// только для движения) не должно превышать дальность атаки: AttackRange экипированного оружия,
-		/// которым бьёт способность, либо 1 (соседний гекс) для способностей без оружия за спиной
-		/// (природные атаки существ, безоружный бой) или для оружия без выставленной дальности.
+		/// Дальность атаки — AttackRange экипированного оружия, которым бьёт способность, либо 1
+		/// (соседний гекс) для способностей без оружия за спиной (природные атаки существ, безоружный
+		/// бой) или для оружия без выставленной дальности. Само сравнение с расстоянием до цели и
+		/// требование "оба выставлены на карту" — в Battle.EnsureWithinAttackRange (не ограничено, если
+		/// к бою не подключена карта).
 		/// </summary>
 		private static void EnsureWithinAttackRange(
 			Battle battle,
@@ -157,55 +156,12 @@ namespace Wastelands.Service.Application.Services
 			ParticipantKind defenderKind,
 			long defenderId)
 		{
-			if (battle.BattleMapId is null)
-			{
-				return;
-			}
-
-			var attackerPosition = GetMapPosition(battle, attackerKind, attackerId);
-			var defenderPosition = GetMapPosition(battle, defenderKind, defenderId);
-			if (attackerPosition is null || defenderPosition is null)
-			{
-				throw new InvalidArgumentException(
-					ErrorCode.ParticipantNotPlacedOnMap,
-					"Чтобы атаковать при подключённой к бою карте, и атакующий, и цель должны быть выставлены на неё.");
-			}
-
 			var range = GetAttackRange(attackerContext, ability);
-			var distance = HexPathfinder.Distance(attackerPosition.Value, defenderPosition.Value);
-			if (distance > range)
-			{
-				throw new InvalidArgumentException(
-					ErrorCode.TargetOutOfAttackRange,
-					$"Цель вне дальности атаки: расстояние {distance}, дальность {range}.");
-			}
-		}
-
-		private static HexPathfinder.HexPosition? GetMapPosition(Battle battle, ParticipantKind kind, long participantId)
-		{
-			if (kind == ParticipantKind.Creature)
-			{
-				var creature = BattleParticipants.GetCreature(battle, participantId);
-				return creature.MapColumn is { } column && creature.MapRow is { } row ? new HexPathfinder.HexPosition(column, row) : null;
-			}
-
-			var character = BattleParticipants.GetBattleCharacter(battle, participantId);
-			return character.MapColumn is { } charColumn && character.MapRow is { } charRow ? new HexPathfinder.HexPosition(charColumn, charRow) : null;
+			battle.EnsureWithinAttackRange(attackerKind, attackerId, defenderKind, defenderId, range);
 		}
 
 		private static int GetAttackRange(ParticipantCombatContext attackerContext, Ability ability)
-		{
-			if (ability.EquippedItemId is { } itemId)
-			{
-				var item = attackerContext.Character?.Items.FirstOrDefault(i => i.Id == itemId);
-				if (item?.AttackRange is { } range)
-				{
-					return range;
-				}
-			}
-
-			return 1;
-		}
+			=> BattleParticipants.GetEquippedWeapon(attackerContext, ability)?.AttackRange ?? 1;
 
 		/// <summary>
 		/// Если участник — персонаж, уже действовавший в этот ход, списывает стамину за дополнительное
